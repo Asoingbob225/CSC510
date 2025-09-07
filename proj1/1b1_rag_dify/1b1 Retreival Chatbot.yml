@@ -1,0 +1,585 @@
+app:
+  description: ''
+  icon: 📑
+  icon_background: '#EFF1F5'
+  mode: advanced-chat
+  name: 1b1 Retreival Chatbot
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.5.4@22fa3d100c55f8fc4b2837d8fb0831e3c8de333a5a5b028e073d502d2df9cb35
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/ollama:0.0.7@8fc496b3892344da47db6125c76fc0dbfd8020753f198032751d83f561d9443e
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1757259618395--1757261856471-target
+      source: '1757259618395'
+      sourceHandle: source
+      target: '1757261856471'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1757259626269-source-17572619056510-target
+      source: '1757259626269'
+      sourceHandle: source
+      target: '17572619056510'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: knowledge-retrieval
+      id: 1711528914102-source-1757262345191-target
+      source: '1711528914102'
+      sourceHandle: source
+      target: '1757262345191'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1757262345191-source-1757259618395-target
+      source: '1757262345191'
+      sourceHandle: source
+      target: '1757259618395'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1757262345191-source-1757259626269-target
+      source: '1757262345191'
+      sourceHandle: source
+      target: '1757259626269'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables: []
+      height: 53
+      id: '1711528914102'
+      position:
+        x: -126.95624064855124
+        y: 2634.5
+      positionAbsolute:
+        x: -126.95624064855124
+        y: 2634.5
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        dataset_ids:
+        - /6JEPfVVdegKkV1xjPSrCEOTWiBgSRxJ+3SUPjHyyOSdxpt19i63NcGur/XYcc65
+        desc: ''
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: weighted_score
+          top_k: 4
+          weights:
+            keyword_setting:
+              keyword_weight: 0
+            vector_setting:
+              embedding_model_name: nomic-embed-text
+              embedding_provider_name: langgenius/ollama/ollama
+              vector_weight: 1
+        query_variable_selector:
+        - '1711528914102'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索 2
+        type: knowledge-retrieval
+      height: 91
+      id: '1757262345191'
+      position:
+        x: 222.038040972903
+        y: 2634.5
+      positionAbsolute:
+        x: 222.038040972903
+        y: 2634.5
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1757262345191'
+          - result
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: bae4f511-c659-412c-a9ca-bd0e7fec1611
+          role: system
+          text: '1. CORE TASK
+
+            You are acting as a professional Systems Analyst: Based on the context
+            related to tax regulations and health I provide in <RAG_CONTEXT>, expand
+            my existing list of use cases, <EXISTING_USE_CASES>, by 5 new use cases.
+
+            2. CRITICAL INSTRUCTION: USE CASE STRUCTURE AND EXAMPLES
+
+            This is the most important rule: All new use cases you generate MUST learn
+            from and strictly follow the template and example format below.
+
+            --- USE CASE TEMPLATE START ---
+
+            Use Case Title: (A short, descriptive name)
+
+            Summary: (Briefly describe the overall goal and flow of this use case
+            in 1-2 sentences)
+
+            Preconditions:
+
+            Condition 1.
+
+            ...
+
+            Main Flow: (Describe the process of successfully completing the goal in
+            one paragraph. Within the flow, reference the Subflows and Alternative
+            Flows defined below using [square brackets].)
+
+            Subflows:
+
+            [Subflow Name]: Description.
+
+            [Another Subflow Name]: Description.
+
+            Alternative Flows:
+
+            [Alternative Flow Name]: Description.
+
+            [Another Alternative Flow Name]: Description.
+
+            --- USE CASE TEMPLATE END ---
+
+            --- LEARNING EXAMPLES (FEW-SHOT) ---
+
+            Example 1: UC1 Customer Places an Order
+
+            Summary: This use case describes how a Customer browses the WolfCafe menu,
+            builds a cart, and completes the checkout process, resulting in a confirmed
+            order that is passed to Staff for fulfillment.
+
+            Preconditions:
+
+            The Customer is authenticated in the WolfCafe system.
+
+            At least one item has already been added to the shopping cart.
+
+            Main Flow: The Customer proceeds to checkout. On the summary screen, they
+            may [Edit Cart], [Apply Coupon], add a tip, and select payment before
+            submitting. The system validates the order: failed transactions trigger
+            [Payment Declined], unavailable items trigger [Item Out of Stock]. Successful
+            orders generate a confirmation and unique number. Inactivity causes [Session
+            Timeout], clearing the cart.
+
+            Subflows:
+
+            [Edit Cart]: Add, remove, or update items. If unavailable, triggers [Item
+            Out of Stock].
+
+            [Apply Coupon]: Enter promo code; valid codes apply discount, invalid
+            ones show inline error for retry.
+
+            Alternative Flows:
+
+            [Payment Declined]: Payment rejected; system notifies and returns to payment
+            selection.
+
+            [Item Out of Stock]: Removes unavailable items, updates totals, and prompts
+            confirmation.
+
+            [Session Timeout]: Inactivity logs out user, clears cart, and requires
+            re-login.
+
+            Example 2: UC2 Fulfill Customer Order
+
+            Summary: This use case describes how Staff process and complete a customer
+            order once it has been placed.
+
+            Preconditions:
+
+            The staff member is logged into the WolfCafe system with Staff privileges.
+
+            At least one order exists in “Pending” status.
+
+            The required ingredients and equipment are available in the café.
+
+            Main Flow: A staff member [Claims Order] from the queue. They [View Order
+            Details], prepare items, and the system [Adjusts Inventory]. If ingredients
+            are low, a [Low Stock Alert] is issued. Staff may [Contact Customer] if
+            issues arise; unresolved cases lead to [Order Cancellation]. When done,
+            the order is marked "Ready for Pickup".
+
+            Subflows:
+
+            [View Order Details]: Shows items, modifiers, and notes.
+
+            [Claim Order]: Locks order to staff; prevents duplicates.
+
+            [Adjust Inventory]: Deducts ingredients; triggers [Low Stock Alert] if
+            insufficient.
+
+            Alternative Flows:
+
+            [Low Stock Alert]: Flags shortages; may allow substitution.
+
+            [Contact Customer]: If instructions can’t be fulfilled; unresolved → [Order
+            Cancellation].
+
+            [Order Cancellation]: Logs reason, updates status, notifies customer.
+
+            ---------------------------------
+
+            3. WORKFLOW
+
+            I will provide the specific content for <RAG_CONTEXT> and <EXISTING_USE_CASES>
+            at the end of this prompt, enclosed in XML tags.
+
+            Please parse the entire prompt, including the XML content at the end,
+            before starting the task.
+
+            <RAG_CONTEXT>{{#context#}}</RAG_CONTEXT>
+
+
+            <EXISTING_USE_CASES>
+
+            UC1 Customer Places an Order UC2 Fulfill Customer Order UC3 Add Menu Item
+            UC4 Manage Customer Profile UC5 View Order History UC6 Staff Manages Inventory
+            UC7 Generate Sales Report UC8 Notify Customer of Order UC9 Provide Customer
+            Feedback UC10 Deploy System Update</EXISTING_USE_CASES>'
+        selected: false
+        title: LLM 1
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 89
+      id: '1757259618395'
+      position:
+        x: 615.5337284204511
+        y: 2634.5
+      positionAbsolute:
+        x: 615.5337284204511
+        y: 2634.5
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1757262345191'
+          - result
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+            '
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3:8b
+          provider: langgenius/ollama/ollama
+        prompt_template:
+        - id: 327c8b55-0b75-40de-bb00-4ebe3f25a32d
+          role: system
+          text: '1. CORE TASK
+
+            You are acting as a professional Systems Analyst: Based on the context
+            related to tax regulations and health I provide in <RAG_CONTEXT>, expand
+            my existing list of use cases, <EXISTING_USE_CASES>, by 5 new use cases.
+
+            2. CRITICAL INSTRUCTION: USE CASE STRUCTURE AND EXAMPLES
+
+            This is the most important rule: All new use cases you generate MUST learn
+            from and strictly follow the template and example format below.
+
+            --- USE CASE TEMPLATE START ---
+
+            Use Case Title: (A short, descriptive name)
+
+            Summary: (Briefly describe the overall goal and flow of this use case
+            in 1-2 sentences)
+
+            Preconditions:
+
+            Condition 1.
+
+            ...
+
+            Main Flow: (Describe the process of successfully completing the goal in
+            one paragraph. Within the flow, reference the Subflows and Alternative
+            Flows defined below using [square brackets].)
+
+            Subflows:
+
+            [Subflow Name]: Description.
+
+            [Another Subflow Name]: Description.
+
+            Alternative Flows:
+
+            [Alternative Flow Name]: Description.
+
+            [Another Alternative Flow Name]: Description.
+
+            --- USE CASE TEMPLATE END ---
+
+            --- LEARNING EXAMPLES (FEW-SHOT) ---
+
+            Example 1: UC1 Customer Places an Order
+
+            Summary: This use case describes how a Customer browses the WolfCafe menu,
+            builds a cart, and completes the checkout process, resulting in a confirmed
+            order that is passed to Staff for fulfillment.
+
+            Preconditions:
+
+            The Customer is authenticated in the WolfCafe system.
+
+            At least one item has already been added to the shopping cart.
+
+            Main Flow: The Customer proceeds to checkout. On the summary screen, they
+            may [Edit Cart], [Apply Coupon], add a tip, and select payment before
+            submitting. The system validates the order: failed transactions trigger
+            [Payment Declined], unavailable items trigger [Item Out of Stock]. Successful
+            orders generate a confirmation and unique number. Inactivity causes [Session
+            Timeout], clearing the cart.
+
+            Subflows:
+
+            [Edit Cart]: Add, remove, or update items. If unavailable, triggers [Item
+            Out of Stock].
+
+            [Apply Coupon]: Enter promo code; valid codes apply discount, invalid
+            ones show inline error for retry.
+
+            Alternative Flows:
+
+            [Payment Declined]: Payment rejected; system notifies and returns to payment
+            selection.
+
+            [Item Out of Stock]: Removes unavailable items, updates totals, and prompts
+            confirmation.
+
+            [Session Timeout]: Inactivity logs out user, clears cart, and requires
+            re-login.
+
+            Example 2: UC2 Fulfill Customer Order
+
+            Summary: This use case describes how Staff process and complete a customer
+            order once it has been placed.
+
+            Preconditions:
+
+            The staff member is logged into the WolfCafe system with Staff privileges.
+
+            At least one order exists in “Pending” status.
+
+            The required ingredients and equipment are available in the café.
+
+            Main Flow: A staff member [Claims Order] from the queue. They [View Order
+            Details], prepare items, and the system [Adjusts Inventory]. If ingredients
+            are low, a [Low Stock Alert] is issued. Staff may [Contact Customer] if
+            issues arise; unresolved cases lead to [Order Cancellation]. When done,
+            the order is marked "Ready for Pickup".
+
+            Subflows:
+
+            [View Order Details]: Shows items, modifiers, and notes.
+
+            [Claim Order]: Locks order to staff; prevents duplicates.
+
+            [Adjust Inventory]: Deducts ingredients; triggers [Low Stock Alert] if
+            insufficient.
+
+            Alternative Flows:
+
+            [Low Stock Alert]: Flags shortages; may allow substitution.
+
+            [Contact Customer]: If instructions can’t be fulfilled; unresolved → [Order
+            Cancellation].
+
+            [Order Cancellation]: Logs reason, updates status, notifies customer.
+
+            ---------------------------------
+
+            3. WORKFLOW
+
+            I will provide the specific content for <RAG_CONTEXT> and <EXISTING_USE_CASES>
+            at the end of this prompt, enclosed in XML tags.
+
+            Please parse the entire prompt, including the XML content at the end,
+            before starting the task.
+
+            <RAG_CONTEXT>{{#context#}}</RAG_CONTEXT>
+
+
+            <EXISTING_USE_CASES>
+
+            UC1 Customer Places an Order UC2 Fulfill Customer Order UC3 Add Menu Item
+            UC4 Manage Customer Profile UC5 View Order History UC6 Staff Manages Inventory
+            UC7 Generate Sales Report UC8 Notify Customer of Order UC9 Provide Customer
+            Feedback UC10 Deploy System Update</EXISTING_USE_CASES>'
+        selected: false
+        title: LLM 2
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 89
+      id: '1757259626269'
+      position:
+        x: 615.5337284204511
+        y: 2885.0419677718455
+      positionAbsolute:
+        x: 615.5337284204511
+        y: 2885.0419677718455
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        answer: '{{#1757259618395.text#}}'
+        desc: ''
+        selected: false
+        title: ANSWER 1
+        type: answer
+        variables: []
+      height: 104
+      id: '1757261856471'
+      position:
+        x: 911.6184349790167
+        y: 2634.5
+      positionAbsolute:
+        x: 911.6184349790167
+        y: 2634.5
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        answer: '{{#1757259626269.text#}}'
+        desc: ''
+        selected: false
+        title: ANSWER 2
+        type: answer
+        variables: []
+      height: 104
+      id: '17572619056510'
+      position:
+        x: 923.143924048074
+        y: 2885.0419677718455
+      positionAbsolute:
+        x: 923.143924048074
+        y: 2885.0419677718455
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    viewport:
+      x: -125.29337245111378
+      y: -2373.111012364548
+      zoom: 0.9460576467255967
