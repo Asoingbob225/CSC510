@@ -1,5 +1,7 @@
 # 1b1-rag
 
+![1b1-dify-workflow](assets/1b1-dify-workflow.png)
+
 ## Prerequisites
 
 Please install Dify first. Refer to the official documentation: [Dify Installation Guide](https://docs.dify.ai/en/getting-started/install-self-hosted/readme)
