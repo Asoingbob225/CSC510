@@ -1,10 +1,11 @@
-# 1b1-rag
+# 1b1-rag-dify
 
 ![1b1-dify-workflow](assets/1b1-dify-workflow.png)
 
 ## Prerequisites
 
-Please install Dify first. Refer to the official documentation: [Dify Installation Guide](https://docs.dify.ai/en/getting-started/install-self-hosted/readme)
+- Please install Dify first. Refer to the official documentation: [Dify Installation Guide](https://docs.dify.ai/en/getting-started/install-self-hosted/readme)
+- Download and copy the assests file from discord, or you may build one using `download` scripts
 
 ## Build your knowledge base in Dify
 
@@ -77,7 +78,7 @@ This will upload all `.md` files in `assets/mds` and all `.pdf` files in `assets
 
 ## Step 5: Import DSL
 
-Import the provided `.dsl` file in Dify to quickly set up recommended prompts and workflows for this knowledge base.
+Import the provided `.yml` file in Dify to quickly set up recommended prompts and workflows for this knowledge base.
 
 ---
 
