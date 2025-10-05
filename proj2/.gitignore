@@ -1,0 +1,100 @@
+# ============================================
+# Node.js / Bun Dependencies
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+bun.lockb
+
+# ============================================
+# Build Output (Frontend)
+# ============================================
+dist/
+dist-ssr/
+out/
+build/
+*.tgz
+*.local
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============================================
+# Logs
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# ============================================
+# Testing & Coverage (Frontend)
+# ============================================
+coverage/
+*.lcov
+.nyc_output/
+
+# ============================================
+# Caches (Frontend)
+# ============================================
+.cache/
+.eslintcache
+*.tsbuildinfo
+.vite/
+.turbo/
+
+# ============================================
+# IDE & Editors
+# ============================================
+# VSCode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ============================================
+# Operating System Files
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================================
+# Temporary Files
+# ============================================
+*.swp
+*.swo
+*.tmp
+*.temp
+.tmp/
