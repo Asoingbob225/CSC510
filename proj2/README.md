@@ -144,3 +144,7 @@ bun dev:backend
 - If you encounter port conflicts, check that ports 5173 and 8000 are available
 - For Python dependency issues, try removing `backend/uv.lock` and running `uv sync` again
 - For frontend issues, try deleting `node_modules` and `bun.lock`, then run `bun install` again
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0) - see the [LICENSE](LICENSE) file for details.
