@@ -1,0 +1,84 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'proj2/backend/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'proj2/backend/**'
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+
+    - name: Install dependencies
+      run: |
+        cd proj2/backend
+        uv sync
+
+    - name: Run linting with Ruff
+      run: |
+        cd proj2/backend
+        uv run ruff check .
+
+    - name: Run formatting check with Ruff
+      run: |
+        cd proj2/backend
+        uv run ruff format --check .
+
+    - name: Install test dependencies
+      run: |
+        cd proj2/backend
+        uv sync --group test
+
+    - name: Run tests
+      run: |
+        cd proj2/backend
+        uv run python test_api.py
+
+    - name: Test imports
+      run: |
+        cd proj2/backend
+        uv run python -c "from index import app; print('FastAPI app imported successfully')"
+
+    - name: Test API endpoints
+      run: |
+        cd proj2/backend
+        # Start FastAPI server in background
+        uv run fastapi dev index.py --port 8000 &
+        SERVER_PID=$!
+        
+        # Wait for server to start
+        sleep 5
+        
+        # Test the API endpoint
+        response=$(curl -s http://localhost:8000/api)
+        echo "API Response: $response"
+        
+        # Check if response contains expected data
+        if echo "$response" | grep -q "Hello World"; then
+          echo "✅ API test passed"
+        else
+          echo "❌ API test failed"
+          exit 1
+        fi
+        
+        # Clean up
+        kill $SERVER_PID
