@@ -139,6 +139,16 @@ bun dev:backend
 - **Package Manager:** uv
 - **Location:** `backend/`
 
+## CI/CD Pipeline
+
+This project includes automated testing workflows using GitHub Actions:
+
+- **Frontend CI/CD:** Tests TypeScript/React code with linting, type checking, and builds
+- **Backend CI/CD:** Tests Python/FastAPI code with linting, formatting, and API testing  
+- **Integration Tests:** Validates frontend-backend communication and end-to-end functionality
+
+See [CI-CD-README.md](../CI-CD-README.md) for detailed documentation on the testing pipeline.
+
 ## Troubleshooting
 
 - If you encounter port conflicts, check that ports 5173 and 8000 are available

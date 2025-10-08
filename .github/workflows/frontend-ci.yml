@@ -1,0 +1,69 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'proj2/frontend/**'
+      - 'proj2/package.json'
+      - 'proj2/tsconfig.json'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'proj2/frontend/**'
+      - 'proj2/package.json'
+      - 'proj2/tsconfig.json'
+
+jobs:
+  frontend-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: 'proj2/frontend/package-lock.json'
+
+    - name: Install dependencies
+      run: |
+        cd proj2/frontend
+        npm ci
+
+    - name: Run linting
+      run: |
+        cd proj2/frontend
+        npm run lint
+
+    - name: Type check
+      run: |
+        cd proj2/frontend
+        npx tsc --noEmit
+
+    - name: Run tests
+      run: |
+        cd proj2/frontend
+        npm test
+
+    - name: Build application
+      run: |
+        cd proj2/frontend
+        npm run build
+
+    - name: Test build artifacts
+      run: |
+        cd proj2/frontend
+        # Check that build artifacts exist
+        test -f dist/index.html
+        test -d dist/assets
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: proj2/frontend/dist/
+        retention-days: 30

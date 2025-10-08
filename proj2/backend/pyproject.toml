@@ -12,3 +12,7 @@ dependencies = [
 dev = [
     "ruff>=0.13.3",
 ]
+test = [
+    "pytest>=7.0.0",
+    "httpx>=0.24.0",
+]
