@@ -6,6 +6,7 @@ Repo for CSC510 - Software Engineering. I was told by instructor to make public,
 
 New to the project? Complete the **Hello Workflow** to ensure you can run the full development workflow!
 
+- **🎯 Quick Reference**: [docs/QUICK_REFERENCE.md](./docs/QUICK_REFERENCE.md) - Start here!
 - **📋 View All Issues**: [HELLO_WORKFLOW_ISSUES.md](./HELLO_WORKFLOW_ISSUES.md)
 - **📚 Visual Guide**: [docs/WORKFLOW_VISUAL_GUIDE.md](./docs/WORKFLOW_VISUAL_GUIDE.md)
 - **👥 For Team Leads**: [docs/TEAM_LEAD_GUIDE.md](./docs/TEAM_LEAD_GUIDE.md)
