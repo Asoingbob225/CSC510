@@ -32,6 +32,10 @@ jobs:
       run: |
         cd proj2/backend
         uv sync
+    
+    - name: Install Ruff
+      working-directory: proj2/backend
+      run: uv pip install ruff
 
     - name: Run linting with Ruff
       run: |
