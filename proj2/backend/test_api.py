@@ -1,6 +1,7 @@
 """
 Simple tests for the FastAPI backend.
 """
+
 from fastapi.testclient import TestClient
 from index import app
 
@@ -17,8 +18,9 @@ def test_api_with_test_client():
 def test_app_import():
     """Test that the FastAPI app can be imported without errors."""
     from index import app
+
     assert app is not None
-    assert hasattr(app, 'get')
+    assert hasattr(app, "get")
 
 
 if __name__ == "__main__":
@@ -30,12 +32,12 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ API test client test failed: {e}")
         exit(1)
-    
+
     try:
         test_app_import()
         print("✅ App import test passed")
     except Exception as e:
         print(f"❌ App import test failed: {e}")
         exit(1)
-    
+
     print("All tests passed!")
