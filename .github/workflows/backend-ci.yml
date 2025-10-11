@@ -27,59 +27,75 @@ jobs:
       uses: astral-sh/setup-uv@v4
       with:
         enable-cache: true
-        cache-dependency-glob: proj2/backend/uv.lock
+        cache-dependency-glob: |
+            proj2/backend/uv.lock
+            proj2/backend/pyproject.toml
 
-    - name: Install dependencies
+    - name: Sync env (dev)
+      working-directory: proj2/backend
+      run: uv sync --dev
+
+    - name: Show tool versions
+      working-directory: proj2/backend
       run: |
-        cd proj2/backend
-        uv sync
+        uv --version
+        uv run python -V
 
     - name: Run linting with Ruff
-      run: |
-        cd proj2/backend
-        uv run ruff check .
+      working-directory: proj2/backend
+      run: uvx ruff check .
 
     - name: Run formatting check with Ruff
-      run: |
-        cd proj2/backend
-        uv run ruff format --check .
+      working-directory: proj2/backend
+      run: uvx ruff format --check .
 
     - name: Install test dependencies
-      run: |
-        cd proj2/backend
-        uv sync --group test
+      working-directory: proj2/backend
+      run: uv sync --group test
 
     - name: Run tests
-      run: |
-        cd proj2/backend
-        uv run python test_api.py
+      working-directory: proj2/backend
+      run: uv run pytest -q
 
     - name: Test imports
+      working-directory: proj2/backend
+      run: uv run python -c "from index import app; print('FastAPI app imported successfully')"
+
+    - name: Start API (background)
+      working-directory: proj2/backend
       run: |
-        cd proj2/backend
-        uv run python -c "from index import app; print('FastAPI app imported successfully')"
+        uv run uvicorn index:app --host 127.0.0.1 --port 8000 --workers 1 &
+        echo $! > server.pid
+
+    - name: Wait for API up
+      working-directory: proj2/backend
+      run: |
+        for i in {1..30}; do
+          if curl -sSf http://127.0.0.1:8000/ > /dev/null; then
+            echo "Server is up"; exit 0
+          fi
+          sleep 1
+        done
+        echo "Server did not start in time" >&2
+        exit 1
 
     - name: Test API endpoints
+      working-directory: proj2/backend
       run: |
-        cd proj2/backend
-        # Start FastAPI server in background
-        uv run fastapi dev index.py --port 8000 &
-        SERVER_PID=$!
-        
-        # Wait for server to start
-        sleep 5
-        
-        # Test the API endpoint
-        response=$(curl -s http://localhost:8000/api)
+        response=$(curl -s http://127.0.0.1:8000/api || true)
         echo "API Response: $response"
-        
-        # Check if response contains expected data
         if echo "$response" | grep -q "Hello World"; then
           echo "✅ API test passed"
         else
           echo "❌ API test failed"
           exit 1
         fi
-        
-        # Clean up
-        kill $SERVER_PID
+
+    - name: Stop API
+      if: always()
+      working-directory: proj2/backend
+      run: |
+        if [ -f server.pid ]; then
+          kill "$(cat server.pid)" || true
+          wait "$(cat server.pid)" 2>/dev/null || true
+        fi
