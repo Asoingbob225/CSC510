@@ -45,15 +45,15 @@ jobs:
       working-directory: proj2/backend
       run: uvx ruff check .
 
-    - name: Run formatting check with Ruff
-      working-directory: proj2/backend
-      run: uvx ruff format --check .
-
     - name: Debug Ruff formatter
       working-directory: proj2/backend
       run: |
         uvx ruff --version
         uvx ruff format --check --diff .
+
+    - name: Run formatting check with Ruff
+      working-directory: proj2/backend
+      run: uvx ruff format --check .
 
     - name: Install test dependencies
       working-directory: proj2/backend
