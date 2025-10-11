@@ -12,4 +12,24 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ruff>=0.12.12",
+    "black>=24.0.0",
+    "flake8>=7.0.0",
 ]
+
+[tool.black]
+line-length = 88
+target-version = ['py313']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
