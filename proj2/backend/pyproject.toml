@@ -11,24 +11,4 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ruff>=0.13.3",
-    "black>=24.0.0",
-    "flake8>=7.0.0",
 ]
-
-[tool.black]
-line-length = 88
-target-version = ['py39']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | build
-  | dist
-)/
-'''
