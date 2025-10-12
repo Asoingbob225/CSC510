@@ -7,14 +7,14 @@ on:
       - 'proj2/frontend/**'
       - 'proj2/package.json'
       - 'proj2/tsconfig.json'
-      - 'proj2/package-lock.json'
+      - 'proj2/bun.lockb'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'proj2/frontend/**'
       - 'proj2/package.json'
       - 'proj2/tsconfig.json'
-      - 'proj2/package-lock.json'
+      - 'proj2/bun.lockb'
 
 jobs:
   frontend-test:
@@ -28,31 +28,27 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
       with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: 'proj2/package-lock.json'
+        bun-version: latest
 
     - name: Install dependencies
-      run: npm ci --workspace ./frontend
-
-    - name: Run linting
-      run: npm run -w ./frontend lint
+      run: bun install --frozen-lockfile
 
     - name: Type check
-      run: npx tsc --noEmit
+      run: bun run --filter frontend typecheck
 
     - name: Run test 
-      run: npm test
+      run: bun run --filter frontend test
 
     - name: Build application
-      run: npm run build
+      run: bun run --filter frontend build
 
     - name: Test build artifacts
       run: |
         # Check that build artifacts exist
+        cd frontend
         test -f dist/index.html
         test -d dist/assets
         

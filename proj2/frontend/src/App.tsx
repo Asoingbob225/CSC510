@@ -5,7 +5,7 @@ function App() {
   useEffect(() => {
     fetch('/api')
       .then((response) => response.json())
-      .then((data) => setMessage(data['The server is running']));
+      .then((data: { 'The server is running': string }) => setMessage(data['The server is running']));
   }, []);
 
   return (

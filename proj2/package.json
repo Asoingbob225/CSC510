@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev:backend": "cd backend && uv run fastapi dev index.py",
-    "dev:frontend": "cd frontend && npm run dev",
+    "dev:frontend": "bun --filter frontend dev",
     "dev": "concurrently \"bun dev:backend\" \"bun dev:frontend\""
   },
   "peerDependencies": {
