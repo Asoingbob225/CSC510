@@ -19,6 +19,10 @@ on:
 jobs:
   frontend-test:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: proj2
     
     steps:
     - name: Checkout code
