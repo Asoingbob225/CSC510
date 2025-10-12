@@ -7,16 +7,22 @@ on:
       - 'proj2/frontend/**'
       - 'proj2/package.json'
       - 'proj2/tsconfig.json'
+      - 'proj2/package-lock.json'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'proj2/frontend/**'
       - 'proj2/package.json'
       - 'proj2/tsconfig.json'
+      - 'proj2/package-lock.json'
 
 jobs:
   frontend-test:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: proj2
     
     steps:
     - name: Checkout code
@@ -27,36 +33,25 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: 'proj2/frontend/package-lock.json'
+        cache-dependency-path: 'proj2/package-lock.json'
 
     - name: Install dependencies
-      run: |
-        cd proj2/frontend
-        npm ci
+      run: npm ci --workspace ./frontend
 
     - name: Run linting
-      run: |
-        cd proj2/frontend
-        npm run lint
+      run: npm run lint
 
     - name: Type check
-      run: |
-        cd proj2/frontend
-        npx tsc --noEmit
+      run: npx tsc --noEmit
 
-    - name: Run tests
-      run: |
-        cd proj2/frontend
-        npm test
+    - name: Run test 
+      run: npm test
 
     - name: Build application
-      run: |
-        cd proj2/frontend
-        npm run build
+      run: npm run build
 
     - name: Test build artifacts
       run: |
-        cd proj2/frontend
         # Check that build artifacts exist
         test -f dist/index.html
         test -d dist/assets
