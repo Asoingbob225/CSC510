@@ -32,7 +32,7 @@ jobs:
         cache-dependency-path: 'proj2/package-lock.json'
 
     - name: Install dependencies
-      run: npm ci --workspace proj2/frontend
+      run: npm ci --workspace ./frontend
 
     - name: Run linting
       run: |
