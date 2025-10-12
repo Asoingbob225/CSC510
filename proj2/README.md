@@ -67,6 +67,16 @@ This project is currently a **work in progress**. Our development is planned in 
     * Launch a Community & Social Hub for users to connect and share their journey.
     * Close the Personalization Loop with an advanced feedback system to refine AI recommendations.
 
+## 🤖 CI/CD Pipeline
+
+This project includes automated testing workflows using GitHub Actions:
+
+- **Frontend CI/CD:** Tests TypeScript/React code with linting, type checking, and builds
+- **Backend CI/CD:** Tests Python/FastAPI code with linting, formatting, and API testing  
+- **Integration Tests:** Validates frontend-backend communication and end-to-end functionality
+
+See [CI-CD-README.md](../CI-CD-README.md) for detailed documentation on the testing pipeline.
+
 
 ## 🤝 Contributing
 
@@ -78,7 +88,6 @@ All contributors are expected to adhere to our [CODE_OF_CONDUCT.md](CODE_OF_COND
 ## 👥 Authors
 
 This project is brought to you by Group 12.
-
 
 ## License
 

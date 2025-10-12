@@ -1,0 +1,49 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'proj2/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'proj2/**'
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+
+    - name: Install frontend dependencies
+      run: |
+        cd proj2/frontend
+        bun install --frozen-lockfile
+
+    - name: Install backend dependencies
+      run: |
+        cd proj2/backend
+        uv sync
+
+    - name: Run integration tests
+      run: |
+        chmod +x ./integration-test.sh
+        ./integration-test.sh
