@@ -1,6 +1,8 @@
 # Eatsential 🥗
 
-[![CI/CD Pipeline](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/Asoingbob225/CSC510/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml)
+[![Super-Linter](https://github.com/Asoingbob225/CSC510/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![Formatters](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml)
 [![codecov](https://codecov.io/gh/Asoingbob225/CSC510/branch/main/graph/badge.svg)](https://codecov.io/gh/Asoingbob225/CSC510)
 [![Project Status: WIP](https://img.shields.io/badge/status-wip-yellow.svg)](#)
 
