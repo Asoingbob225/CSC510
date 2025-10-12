@@ -39,7 +39,7 @@ jobs:
       run: npm ci --workspace ./frontend
 
     - name: Run linting
-      run: npm run lint
+      run: npm run -w ./frontend lint
 
     - name: Type check
       run: npx tsc --noEmit
