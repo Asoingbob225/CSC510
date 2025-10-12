@@ -1,0 +1,88 @@
+name: Python Tests with Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-proj2-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proj2/backend
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+    
+    - name: Install uv
+      run: pip install uv
+    
+    - name: Install dependencies
+      run: |
+        uv sync --dev
+    
+    - name: Run tests with coverage
+      run: |
+        uv run coverage run -m pytest
+        uv run coverage xml
+        uv run coverage report
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        file: ./proj2/backend/coverage.xml
+        flags: backend
+        name: proj2-backend-coverage
+        fail_ci_if_error: false
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  test-proj1-rag:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proj1/1b1_rag_dify
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+    
+    - name: Install uv
+      run: pip install uv
+    
+    - name: Create .env file for tests
+      run: |
+        echo "DIFY_API_KEY=test-key" > .env
+        echo "DATASET_ID=test-dataset-id" >> .env
+        echo "DIFY_BASE_URL=https://test.local" >> .env
+    
+    - name: Install dependencies
+      run: |
+        uv sync --dev
+    
+    - name: Run tests with coverage
+      run: |
+        uv run coverage run -m pytest
+        uv run coverage xml
+        uv run coverage report
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        file: ./proj1/1b1_rag_dify/coverage.xml
+        flags: proj1-rag
+        name: proj1-rag-coverage
+        fail_ci_if_error: false
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

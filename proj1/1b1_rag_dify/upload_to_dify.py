@@ -64,7 +64,8 @@ def monitor_processing_progress(batch_id, file_name):
 
         if status == "completed":
             print(
-                f"✅ {file_name} processing completed! ({completed_segments}/{total_segments} segments)"
+                f"✅ {file_name} processing completed! "
+                f"({completed_segments}/{total_segments} segments)"
             )
             break
         elif status == "error":
@@ -139,7 +140,8 @@ def upload_file_to_dify(file_path, file_name):
                 monitor_processing_progress(batch_id, file_name)
             else:
                 print(
-                    f"⚠️  No batch ID returned for {file_name}, skipping progress monitoring"
+                    f"⚠️  No batch ID returned for {file_name}, "
+                    f"skipping progress monitoring"
                 )
 
             return document_id
@@ -169,7 +171,8 @@ def upload_files_from_directory(directory, file_extension):
         time.sleep(3)
 
     print(
-        f"Successfully uploaded {successful_uploads}/{len(files)} {file_extension} files"
+        f"Successfully uploaded {successful_uploads}/{len(files)} "
+        f"{file_extension} files"
     )
 
 
