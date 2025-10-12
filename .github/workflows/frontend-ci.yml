@@ -7,12 +7,14 @@ on:
       - 'proj2/frontend/**'
       - 'proj2/package.json'
       - 'proj2/tsconfig.json'
+      - 'proj2/package-lock.json'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'proj2/frontend/**'
       - 'proj2/package.json'
       - 'proj2/tsconfig.json'
+      - 'proj2/package-lock.json'
 
 jobs:
   frontend-test:
@@ -27,12 +29,10 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: 'proj2/frontend/package-lock.json'
+        cache-dependency-path: 'proj2/package-lock.json'
 
     - name: Install dependencies
-      run: |
-        cd proj2/frontend
-        npm ci
+      run: npm ci --workspace proj2/frontend
 
     - name: Run linting
       run: |
