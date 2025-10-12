@@ -67,30 +67,45 @@ jobs:
       working-directory: proj2/backend
       run: uv run python -c "from index import app; print('FastAPI app imported successfully')"
 
-    - name: Start API (background)
+    - name: Start API and run integration test
       working-directory: proj2/backend
+      shell: bash
       run: |
-        uv run uvicorn index:app --host 127.0.0.1 --port 8000 --workers 1 &
-        echo $! > server.pid
-
-    - name: Wait for API up
-      working-directory: proj2/backend
-      run: |
-        for i in {1..30}; do
-          if curl -sSf http://127.0.0.1:8000/ > /dev/null; then
-            echo "Server is up"; exit 0
+        set -euo pipefail
+        
+        uv run uvicorn index:app --host 0.0.0.0 --port 8000 --workers 1 > server.log 2>&1 &
+        SERVER_PID=$!
+        echo "PID=$SERVER_PID"
+    
+        cleanup() {
+          echo "---- server.log (tail) ----"
+          tail -n 200 server.log || true
+          echo "---------------------------"
+          kill "$SERVER_PID" 2>/dev/null || true
+          wait "$SERVER_PID" 2>/dev/null || true
+        }
+        trap cleanup EXIT
+    
+        for i in {1..60}; do
+          code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/api || true)
+          if [[ "$code" != "000" ]]; then
+            echo "Server is up with HTTP $code"
+            break
           fi
           sleep 1
+          if ! kill -0 "$SERVER_PID" 2>/dev/null; then
+            echo "Server process died early. Dumping logs..."
+            exit 1
+          fi
+          if [[ $i -eq 60 ]]; then
+            echo "Server did not start in time (60s)"
+            exit 1
+          fi
         done
-        echo "Server did not start in time" >&2
-        exit 1
-
-    - name: Test API endpoints
-      working-directory: proj2/backend
-      run: |
-        response=$(curl -s http://127.0.0.1:8000/api || true)
-        echo "API Response: $response"
-        if echo "$response" | grep -q "Hello World"; then
+    
+        resp=$(curl -s http://127.0.0.1:8000/api || true)
+        echo "API Response: $resp"
+        if echo "$resp" | grep -q "Hello World"; then
           echo "✅ API test passed"
         else
           echo "❌ API test failed"
