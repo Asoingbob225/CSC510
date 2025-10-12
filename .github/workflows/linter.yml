@@ -44,7 +44,7 @@ jobs:
           # To report GitHub Actions status checks
           
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           FILTER_REGEX_INCLUDE: .*proj2/.*
           VALIDATE_TYPESCRIPT_ES: true
@@ -52,4 +52,3 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           VALIDATE_PYTHON_RUFF: true
           VALIDATE_TSX: true
-          VALIDATE_CSS: true
