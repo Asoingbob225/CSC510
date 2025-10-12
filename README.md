@@ -1,102 +1,55 @@
-[![CI/CD Pipeline](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/Asoingbob225/CSC510/branch/main/graph/badge.svg)](https://codecov.io/gh/Asoingbob225/CSC510)
 
-## Getting Started
+# CSC510 Project Workspace
 
-### Prerequisites
+Welcome to the main repository for CSC510. This repo contains two major subprojects: `proj1` and `proj2`.
 
-- **Python** (>=3.9) for backend projects
-- **[Bun](https://bun.sh)** (v1.2.21 or later) for proj2 frontend/backend orchestration
-- **[uv](https://github.com/astral-sh/uv)** - Fast Python package installer
+---
 
-#### Installing Prerequisites
+## 📁 Project Structure Overview
 
-**Install Bun:**
+- **proj1/**
+  - Archive files and early experiments. Not the focus of current development.
 
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
+- **proj2/**
+  - The core project of our team, focused on building the full-stack "Eatsential" intelligent nutrition and wellness platform.
+  - Includes frontend (React + Vite), backend (Python FastAPI), and all related dependencies.
+  - Features: user health profiles, AI-powered recommendations, healthy restaurant discovery, and progress visualization.
+  - For detailed setup, development, and contribution instructions, see `proj2/README.md`.
 
-**Install uv:**
+---
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+## 🏆 Project Focus
 
-### Installation
+Our main effort is dedicated to `proj2`, aiming to deliver a personalized, LLM-powered health and nutrition recommendation platform.
 
-**Clone the repository:**
+**Eatsential Platform Highlights:**
 
-```bash
-git clone https://github.com/Asoingbob225/CSC510.git
-cd CSC510
-```
+- Dual-dimension health goals: physical and mental well-being
+- Scientific nutrition engine and health tagging system
+- Real-time AI health concierge
+- Curated healthy restaurants with transparent nutrition info
+- Progress tracking and data visualization
 
-**For proj2 (Full-stack application):**
+For more features, installation, and development details, see [`proj2/README.md`](proj2/README.md).
 
-```bash
-cd proj2
-# Install root dependencies
-bun install
-# Install frontend dependencies
-cd frontend && bun install && cd ..
-# Set up backend Python environment
-cd backend && uv sync && cd ..
-```
+---
 
-**For proj1/1b1_rag_dify:**
+## 🚀 Quick Start
 
-```bash
-cd proj1/1b1_rag_dify
-uv sync
-```
-
-### Running Tests
-
-**proj2 - Frontend:**
-
-```bash
-cd proj2/frontend
-bun run lint
-bun run build
-```
-
-**proj2 - Backend:**
-
-```bash
-cd proj2/backend
-uv run ruff check .
-```
-
-**proj1/1b1_rag_dify:**
-
-```bash
-cd proj1/1b1_rag_dify
-uv run ruff check .
-```
-
-### Running the Applications
-
-**proj2 - Full-stack application:**
-
-Run both frontend and backend simultaneously:
-
-```bash
-cd proj2
-bun dev
-```
-
-This starts:
-- **Frontend** at `http://localhost:5173`
-- **Backend** at `http://localhost:8000`
-
-**proj1/1b1_rag_dify:**
-
-See [proj1/1b1_rag_dify/README.md](proj1/1b1_rag_dify/README.md) for detailed setup instructions.
-## Code Coverage
-
-We use Codecov to track test coverage. View the coverage report at: https://codecov.io/gh/Asoingbob225/CSC510
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for information on running tests and coverage locally.
+1. Clone the repository:
+    ```bash
+    git clone <repository-url>
+    cd CSC510/proj2
+    ```
+2. Install dependencies:
+    ```bash
+    bun install
+    cd frontend && bun install && cd ..
+    cd backend && uv sync && cd ..
+    ```
+3. Start the services:
+    ```bash
+    bun dev
+    ```
+    - Frontend: http://localhost:5173
+    - Backend: http://localhost:8000
