@@ -1,4 +1,5 @@
 # Eatsential 🥗
+
 [![CI/CD Pipeline](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Asoingbob225/CSC510/branch/main/graph/badge.svg)](https://codecov.io/gh/Asoingbob225/CSC510)
 [![Project Status: WIP](https://img.shields.io/badge/status-wip-yellow.svg)](#)
@@ -11,25 +12,25 @@ Eatsential is an LLM-powered platform that connects users to hyper-personalized 
 
 ## ✨ Core Features
 
-* **Dual-Dimension Health Profile:** We offer support for both physical goals (muscle gain, weight loss) and mental well-being objectives (stress reduction, improved focus).
-* **Scientific Nutrition Engine:** Our recommendation system is built on a large nutritional database and a proprietary health-tagging system (e.g., `#PostWorkoutRecovery`, `#StressRelief`) to ensure every suggestion is a perfect nutritional match.
-* **AI Health Concierge:** A conversational AI, powered by a cutting-edge LLM, provides users with real-time, human-like support for questions, plan adjustments, or meal insights.
-* **Curated Healthy Restaurants:** We partner exclusively with vetted restaurants that use high-quality ingredients and provide transparent nutritional information.
-* **Visual Wellness Journey:** Users can track their progress—from calorie intake and weight changes to mood fluctuations—through intuitive charts and timelines.
+- **Dual-Dimension Health Profile:** We offer support for both physical goals (muscle gain, weight loss) and mental well-being objectives (stress reduction, improved focus).
+- **Scientific Nutrition Engine:** Our recommendation system is built on a large nutritional database and a proprietary health-tagging system (e.g., `#PostWorkoutRecovery`, `#StressRelief`) to ensure every suggestion is a perfect nutritional match.
+- **AI Health Concierge:** A conversational AI, powered by a cutting-edge LLM, provides users with real-time, human-like support for questions, plan adjustments, or meal insights.
+- **Curated Healthy Restaurants:** We partner exclusively with vetted restaurants that use high-quality ingredients and provide transparent nutritional information.
+- **Visual Wellness Journey:** Users can track their progress—from calorie intake and weight changes to mood fluctuations—through intuitive charts and timelines.
 
 ## 🚀 Quick Start Guide
 
 This guide will get the project running on your local machine.
 
 1. Prerequisites
-Ensure you have the following installed:
+   Ensure you have the following installed:
 
 - Bun (v1.2.21+)
 - uv
 - Python (3.9+)
 
 2. Setup
-Clone the repository and install all dependencies for the root, frontend, and backend with these commands:
+   Clone the repository and install all dependencies for the root, frontend, and backend with these commands:
 
 ```Bash
 # Clone the project and navigate into it
@@ -43,47 +44,45 @@ cd backend && uv sync && cd ..
 ```
 
 3. Run the Application
-Start both the frontend and backend servers simultaneously with a single command from the root directory (proj2/):
+   Start both the frontend and backend servers simultaneously with a single command from the root directory (proj2/):
 
 ```Bash
 bun dev
 ```
+
 The application will now be running:
 
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8000
 
-
 ## 🚀 Project Status & Roadmap
 
 This project is currently a **work in progress**. Our development is planned in two main releases:
 
-* **October: The Intelligent MVP** 
-    * Launch core user accounts and the Dual-Dimension Health Profile
-    * Deploy the V1 Scientific Nutrition Engine for AI-powered recommendations
-    * Implement the interactive AI Health Concierge and Restaurant Discovery module.
-* **November: The Integrated Life Planner**
-    * Introduce a Dynamic Meal Planner and Smart Grocery Lists.
-    * Launch a Community & Social Hub for users to connect and share their journey.
-    * Close the Personalization Loop with an advanced feedback system to refine AI recommendations.
+- **October: The Intelligent MVP**
+  - Launch core user accounts and the Dual-Dimension Health Profile
+  - Deploy the V1 Scientific Nutrition Engine for AI-powered recommendations
+  - Implement the interactive AI Health Concierge and Restaurant Discovery module.
+- **November: The Integrated Life Planner**
+  - Introduce a Dynamic Meal Planner and Smart Grocery Lists.
+  - Launch a Community & Social Hub for users to connect and share their journey.
+  - Close the Personalization Loop with an advanced feedback system to refine AI recommendations.
 
 ## 🤖 CI/CD Pipeline
 
 This project includes automated testing workflows using GitHub Actions:
 
 - **Frontend CI/CD:** Tests TypeScript/React code with linting, type checking, and builds
-- **Backend CI/CD:** Tests Python/FastAPI code with linting, formatting, and API testing  
+- **Backend CI/CD:** Tests Python/FastAPI code with linting, formatting, and API testing
 - **Integration Tests:** Validates frontend-backend communication and end-to-end functionality
 
 See [CI-CD-README.md](../CI-CD-README.md) for detailed documentation on the testing pipeline.
-
 
 ## 🤝 Contributing
 
 We welcome contributions to Eatsential! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) to learn how you can get involved.
 
 All contributors are expected to adhere to our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
-
 
 ## 👥 Authors
 

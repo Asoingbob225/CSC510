@@ -1,0 +1,54 @@
+name: Lint Codebase
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: read
+  statuses: write
+
+jobs:
+  build:
+    name: Lint Codebase
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proj2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Super-linter
+        uses: super-linter/super-linter/slim@v8.2.0 # x-release-please-version
+        env:
+          # To report GitHub Actions status checks
+          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+          FILTER_REGEX_INCLUDE: .*proj2/.*
+          VALIDATE_TYPESCRIPT_ES: true
+          LINTER_RULES_PATH: proj2/frontend 
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
+          VALIDATE_PYTHON_RUFF: true
+          VALIDATE_TSX: true
