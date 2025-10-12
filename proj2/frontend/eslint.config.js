@@ -39,17 +39,14 @@ export default [
       ...tsPlugin.configs['recommended'].rules,
       ...reactPlugin.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      
+
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
 

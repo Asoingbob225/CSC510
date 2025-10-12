@@ -40,8 +40,7 @@ jobs:
           DEFAULT_BRANCH: main
           FILTER_REGEX_INCLUDE: .*proj2/.*
           VALIDATE_TYPESCRIPT_ES: true 
-          VALIDATE_TYPESCRIPT_STANDARD: true
-          TYPESCRIPT_ES_CONFIG_FILE: proj2/frontend/eslint.config.js
+          TYPESCRIPT_ES_CONFIG_FILE: frontend/eslint.config.js
           VALIDATE_PYTHON_RUFF: true
           VALIDATE_TSX: true
           VALIDATE_CSS: true
