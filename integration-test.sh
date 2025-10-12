@@ -43,10 +43,10 @@ fi
 # Build and start frontend
 echo "🏗️ Building frontend..."
 cd proj2/frontend
-npm run build
+bun run build
 
 echo "🔧 Starting frontend server..."
-npm run preview -- --port 5173 &
+bun run preview -- --port 5173 &
 FRONTEND_PID=$!
 cd ../..
 
