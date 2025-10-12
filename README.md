@@ -97,3 +97,10 @@ This starts:
 **proj1/1b1_rag_dify:**
 
 See [proj1/1b1_rag_dify/README.md](proj1/1b1_rag_dify/README.md) for detailed setup instructions.
+## Code Coverage
+
+We use Codecov to track test coverage. View the coverage report at: https://codecov.io/gh/Asoingbob225/CSC510
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for information on running tests and coverage locally.
