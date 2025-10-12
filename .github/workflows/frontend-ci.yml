@@ -39,28 +39,18 @@ jobs:
       run: npm ci --workspace ./frontend
 
     - name: Run linting
-      run: |
-        cd proj2/frontend
-        npm run lint
+      run: npm run lint
 
     - name: Type check
-      run: |
-        cd proj2/frontend
-        npx tsc --noEmit
+      run: npx tsc --noEmit
 
-    - name: Run tests
-      run: |
-        cd proj2/frontend
-        npm test
+    - name: npm test
 
     - name: Build application
-      run: |
-        cd proj2/frontend
-        npm run build
+      run: npm run build
 
     - name: Test build artifacts
       run: |
-        cd proj2/frontend
         # Check that build artifacts exist
         test -f dist/index.html
         test -d dist/assets
