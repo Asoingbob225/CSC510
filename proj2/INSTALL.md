@@ -1,4 +1,4 @@
-# Contributing to CSC510
+# Development Setup
 
 Thank you for your interest in contributing! This guide provides all the information you need to get the project running and make your first contribution.
 
@@ -11,7 +11,7 @@ proj2/
 └── package.json       # Root package configuration
 ```
 
-## Development Setup
+## Setup
 
 Follow these steps to set up the project for local development:
 
