@@ -24,6 +24,7 @@ jobs:
       - name: 'Run Ruff Linter and Formatter Check'
         uses: astral-sh/ruff-action@v3
         with:
+          src: proj2/backend
           args: "format --check --diff"
 
   check-prettier:
