@@ -1,145 +1,73 @@
-# proj2
+# Eatsential 🥗
+[![CI/CD Pipeline](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Asoingbob225/CSC510/branch/main/graph/badge.svg)](https://codecov.io/gh/Asoingbob225/CSC510)
+[![Project Status: WIP](https://img.shields.io/badge/status-wip-yellow.svg)](#)
 
-A full-stack application with a React + TypeScript frontend and FastAPI backend.
+**YOUR PLATE, YOUR RULES. PRECISION NUTRITION FOR BODY AND MIND.**
 
-## Project Structure
+Eatsential is an LLM-powered platform that connects users to hyper-personalized food options. In a world of information overload, our platform is designed to eliminate the frustration and health risks associated with finding food that truly meets an individual's unique needs. We empower users to take control of their health by providing meal recommendations, recipes, and restaurant suggestions tailored to their holistic profile—from allergies and fitness goals to mental wellness objectives.
 
+---
+
+## ✨ Core Features
+
+* **Dual-Dimension Health Profile:** We offer support for both physical goals (muscle gain, weight loss) and mental well-being objectives (stress reduction, improved focus).
+* **Scientific Nutrition Engine:** Our recommendation system is built on a large nutritional database and a proprietary health-tagging system (e.g., `#PostWorkoutRecovery`, `#StressRelief`) to ensure every suggestion is a perfect nutritional match.
+* **AI Health Concierge:** A conversational AI, powered by a cutting-edge LLM, provides users with real-time, human-like support for questions, plan adjustments, or meal insights.
+* **Curated Healthy Restaurants:** We partner exclusively with vetted restaurants that use high-quality ingredients and provide transparent nutritional information.
+* **Visual Wellness Journey:** Users can track their progress—from calorie intake and weight changes to mood fluctuations—through intuitive charts and timelines.
+
+## 🚀 Quick Start Guide
+
+This guide will get the project running on your local machine.
+
+1. Prerequisites
+Ensure you have the following installed:
+
+- Bun (v1.2.21+)
+- uv
+- Python (3.9+)
+
+2. Setup
+Clone the repository and install all dependencies for the root, frontend, and backend with these commands:
+
+```Bash
+# Clone the project and navigate into it
+git clone <repository-url>
+cd CSC510/proj2
+
+# Install root, frontend, and backend dependencies
+bun install
+cd frontend && bun install && cd ..
+cd backend && uv sync && cd ..
 ```
-proj2/
-├── frontend/          # React + TypeScript + Vite frontend
-├── backend/           # FastAPI Python backend
-└── package.json       # Root package configuration
-```
 
-## Development Setup
+3. Run the Application
+Start both the frontend and backend servers simultaneously with a single command from the root directory (proj2/):
 
-Follow these steps to set up the project for local development:
-
-### Prerequisites
-
-Make sure you have the following installed on your system:
-
-- **[Bun](https://bun.sh)** (v1.2.21 or later) - JavaScript runtime and package manager
-- **[uv](https://github.com/astral-sh/uv)** - Fast Python package installer
-- **Python** (>=3.9)
-
-#### Installing Prerequisites
-
-**Install Bun:**
-
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
-
-See also https://bun.com/docs/installation
-
-**Install uv:**
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-See also https://docs.astral.sh/uv/getting-started/installation/
-
-### VS Code Extensions (Recommended)
-
-Install the following extensions in Visual Studio Code for the best development experience:
-
-1. **[Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)** (`esbenp.prettier-vscode`)
-   - Auto-formats JavaScript/TypeScript code
-   - Already configured in this project
-
-2. **[Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)** (`charliermarsh.ruff`)
-   - Fast Python linter and formatter
-   - Replaces multiple tools (flake8, black, isort, etc.)
-
-3. **[Python Envy](https://marketplace.visualstudio.com/items?itemName=teticio.python-envy)**
-   - Automatically activates Python virtual environments in monorepos
-   - Essential for this project structure
-
-4. **[Tailwind editor setup](https://tailwindcss.com/docs/editor-setup)**
-
-### Initial Setup
-
-1. **Clone the repository** (if you haven't already):
-
-   ```bash
-   git clone <repository-url>
-   cd CSC510/proj2
-   ```
-
-2. **Install root dependencies:**
-
-   ```bash
-   bun install
-   ```
-
-   This installs the root dependencies including `concurrently` for running both servers simultaneously.
-
-3. **Install frontend dependencies:**
-
-   ```bash
-   cd frontend
-   bun install
-   cd ..
-   ```
-
-   The frontend uses Bun as its package manager (monorepo setup).
-
-4. **Set up the backend Python environment:**
-   ```bash
-   cd backend
-   uv sync
-   cd ..
-   ```
-
-### Running the Application
-
-#### Development Mode (Recommended)
-
-Run both frontend and backend simultaneously:
-
-```bash
+```Bash
 bun dev
 ```
+The application will now be running:
 
-This will start:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
 
-- **Frontend** at `http://localhost:5173` (Vite dev server)
-- **Backend** at `http://localhost:8000` (FastAPI server)
 
-#### Running Servers Separately
+## 🚀 Project Status & Roadmap
 
-**Run frontend only:**
+This project is currently a **work in progress**. Our development is planned in two main releases:
 
-```bash
-bun dev:frontend
-```
+* **October: The Intelligent MVP** 
+    * Launch core user accounts and the Dual-Dimension Health Profile
+    * Deploy the V1 Scientific Nutrition Engine for AI-powered recommendations
+    * Implement the interactive AI Health Concierge and Restaurant Discovery module.
+* **November: The Integrated Life Planner**
+    * Introduce a Dynamic Meal Planner and Smart Grocery Lists.
+    * Launch a Community & Social Hub for users to connect and share their journey.
+    * Close the Personalization Loop with an advanced feedback system to refine AI recommendations.
 
-**Run backend only:**
-
-```bash
-bun dev:backend
-```
-
-### Project Details
-
-#### Frontend
-
-- **Framework:** React 18 with TypeScript
-- **Build Tool:** Vite
-- **Package Manager:** Bun (monorepo setup)
-- **Dev Server:** Hot Module Replacement (HMR) enabled
-- **Location:** `frontend/`
-
-#### Backend
-
-- **Framework:** FastAPI
-- **Python Version:** >=3.9
-- **Package Manager:** uv
-- **Location:** `backend/`
-
-## CI/CD Pipeline
+## 🤖 CI/CD Pipeline
 
 This project includes automated testing workflows using GitHub Actions:
 
@@ -149,11 +77,17 @@ This project includes automated testing workflows using GitHub Actions:
 
 See [CI-CD-README.md](../CI-CD-README.md) for detailed documentation on the testing pipeline.
 
-## Troubleshooting
 
-- If you encounter port conflicts, check that ports 5173 and 8000 are available
-- For Python dependency issues, try removing `backend/uv.lock` and running `uv sync` again
-- For frontend issues, try deleting `node_modules` and `bun.lock`, then run `bun install` again
+## 🤝 Contributing
+
+We welcome contributions to Eatsential! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) to learn how you can get involved.
+
+All contributors are expected to adhere to our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+
+## 👥 Authors
+
+This project is brought to you by Group 12.
 
 ## License
 
