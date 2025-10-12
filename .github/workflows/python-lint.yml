@@ -1,0 +1,44 @@
+name: Python Linting and Formatting based on Ruff
+
+on:
+  push:
+    branches: [main, copilot/**]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-project:
+          - path: proj2/backend
+            python-version: "3.9"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-project.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-project.python-version }}
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.python-project.path }}
+        run: |
+          uv sync --dev
+
+      - name: Run Ruff linter
+        working-directory: ${{ matrix.python-project.path }}
+        run: |
+          uv run ruff check .
+
+      - name: Run Ruff formatter
+        working-directory: ${{ matrix.python-project.path }}
+        run: |
+          uv run ruff format --check .
