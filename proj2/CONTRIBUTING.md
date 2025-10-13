@@ -43,46 +43,48 @@ Ready to contribute code? Follow these steps to submit a Pull Request (PR).
 
     **Branch Naming Convention:**
     `type/iss<issue-number>-short-description`
-
     - **`type`**: Must be one of `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
     - **`issue-number`**: The number of the GitHub issue you are addressing.
     - **`short-description`**: A few words describing the change.
 
     **Examples:**
+
     ```bash
     # Good:
     git checkout -b feat/iss24-user-profile-avatars
     git checkout -b fix/iss31-login-form-bug
-    
+
     # Bad (missing type or issue number):
     git checkout -b user-profile-avatars
     git checkout -b fix-login-form
     ```
+
 3.  **Make your changes:** Write your code and add any necessary tests. Ensure your code follows the project's style guidelines.
 
 4.  **Commit your changes:** We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. This is mandatory.
 
     **Commit Message Format:**
     `<type>: <description>`
-
     - **`type`**: Must be one of the types listed in the branching section.
     - **`description`**: A concise, imperative-mood summary of the change.
 
     **Examples:**
+
     ```bash
     # Good:
     git commit -m "feat: Add user profile avatars"
     git commit -m "docs: Update contributing guidelines with new branch convention"
-    
+
     # Bad (unclear type or description):
     git commit -m "updated code"
     git commit -m "stuff"
     ```
+
 5.  **Push to your branch:**
+
     ```bash
     git push origin <branch-name>
     ```
-   
 
 6.  **Open a Pull Request:** Go to the original repository on GitHub and open a PR.
     - Provide a clear title and a detailed description of your changes.
