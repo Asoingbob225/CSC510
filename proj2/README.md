@@ -72,13 +72,13 @@ This project is currently a **work in progress**. Our development is planned in 
 
 ## 🤖 CI/CD Pipeline
 
-This project includes automated testing workflows using GitHub Actions:
+This project uses GitHub Actions for CI/CD:
 
-- **Frontend CI/CD:** Tests TypeScript/React code with linting, type checking, and builds
-- **Backend CI/CD:** Tests Python/FastAPI code with linting, formatting, and API testing
-- **Integration Tests:** Validates frontend-backend communication and end-to-end functionality
+- **test-coverage.yml:** Runs all tests and reports coverage for frontend and backend.
+- **linter.yml:** Lints frontend and backend code for style and quality.
+- **format-check.yml:** Checks code formatting for Python (Ruff) and frontend (Prettier).
 
-See [CI-CD-README.md](../CI-CD-README.md) for detailed documentation on the testing pipeline.
+Workflow files are in `.github/workflows/`. CI status badges are at the top.
 
 ## 🤝 Contributing
 
