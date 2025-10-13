@@ -22,12 +22,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['lcov'],
-      exclude: [
-        'vite.config.ts',
-        'eslint.config.js',
-        'src/main.tsx', 
-        'src/vite-env.d.ts',
-      ],
+      exclude: ['vite.config.ts', 'eslint.config.js', 'src/main.tsx', 'src/vite-env.d.ts'],
     },
   },
 });
