@@ -69,4 +69,7 @@ Ready to contribute code? Follow these steps to submit a Pull Request (PR).
 
 - **Keep it focused:** Each PR should address a single issue or feature. Don't mix bug fixes and new features in the same PR.
 - **Ensure tests pass:** All new code should have corresponding tests, and the existing test suite must pass.
+- **Testing requirements:**
+  - **Frontend:** For each new or updated component, please create a corresponding `test.tsx` file alongside the component or in the appropriate test directory to ensure proper coverage.
+  - **Backend:** For backend code, add your test files into the `tests` directory (e.g., `tests/your_module_test.py`). Follow the existing structure and naming conventions for backend tests.
 - **Request a review:** Once your PR is open, request a review from one of the project maintainers. Be open to feedback and be prepared to make changes.
