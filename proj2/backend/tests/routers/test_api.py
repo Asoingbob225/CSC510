@@ -1,11 +1,15 @@
+"""
+Test for the /api endpoint of FastAPI backend.
+"""
+
 from fastapi.testclient import TestClient
 from index import app
 
 client = TestClient(app)
 
 
-def test_read_root():
-    """Test the root endpoint"""
+def test_api_endpoint():
+    """Test the /api endpoint returns correct response."""
     response = client.get("/api")
     assert response.status_code == 200
     assert response.json() == {"The server is running": "Hello World"}

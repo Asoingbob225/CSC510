@@ -8,40 +8,40 @@ on:
 
 jobs:
   check-python:
-    name: 'Check Python Formatting'
+    name: "Check Python Formatting"
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: proj2/backend
     steps:
-      - name: 'Checkout Code'
+      - name: "Checkout Code"
         uses: actions/checkout@v4
 
-      - name: 'Set up Python'
+      - name: "Set up Python"
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
-      - name: 'Run Ruff Linter and Formatter Check'
+          python-version: "3.9"
+      - name: "Run Ruff Linter and Formatter Check"
         uses: astral-sh/ruff-action@v3
         with:
           src: proj2/backend
           args: "format --check --diff"
 
   check-prettier:
-    name: 'Check Prettier Formatting'
+    name: "Check Prettier Formatting"
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: proj2
 
     steps:
-      - name: 'Checkout Code'
+      - name: "Checkout Code"
         uses: actions/checkout@v4
-      - name: 'Set up Bun'
+      - name: "Set up Bun"
         uses: oven-sh/setup-bun@v2
 
-      - name: 'Install frontend dependencies with Bun'
+      - name: "Install frontend dependencies with Bun"
         run: bun install
 
-      - name: 'Check frontend formatting'
+      - name: "Check frontend formatting"
         run: bun run format-check

@@ -1,88 +1,104 @@
-name: Python Tests with Coverage
+name: CI & Test Coverage
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main]
 
 jobs:
-  test-proj2-backend:
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: proj2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run test
+        run: bun run --filter frontend coverage
+
+      - name: Build application
+        run: bun run --filter frontend build
+
+      - name: Test build artifacts
+        run: |
+          # Check that build artifacts exist
+          cd frontend
+          test -f dist/index.html
+          test -d dist/assets
+
+      - name: upload frontend coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/lcov.info
+          retention-days: 30
+
+  test-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: proj2/backend
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.9'
-    
-    - name: Install uv
-      run: pip install uv
-    
-    - name: Install dependencies
-      run: |
-        uv sync --dev
-    
-    - name: Run tests with coverage
-      run: |
-        uv run coverage run -m pytest
-        uv run coverage xml
-        uv run coverage report
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        file: ./proj2/backend/coverage.xml
-        flags: backend
-        name: proj2-backend-coverage
-        fail_ci_if_error: false
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  test-proj1-rag:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: proj1/1b1_rag_dify
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    
-    - name: Install uv
-      run: pip install uv
-    
-    - name: Create .env file for tests
-      run: |
-        echo "DIFY_API_KEY=test-key" > .env
-        echo "DATASET_ID=test-dataset-id" >> .env
-        echo "DIFY_BASE_URL=https://test.local" >> .env
-    
-    - name: Install dependencies
-      run: |
-        uv sync --dev
-    
-    - name: Run tests with coverage
-      run: |
-        uv run coverage run -m pytest
-        uv run coverage xml
-        uv run coverage report
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        file: ./proj1/1b1_rag_dify/coverage.xml
-        flags: proj1-rag
-        name: proj1-rag-coverage
-        fail_ci_if_error: false
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            proj2/backend/uv.lock
+            proj2/backend/pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          uv sync
+
+      - name: Run tests with coverage
+        run: uv run -m pytest --cov --cov-report=xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: proj2/backend/coverage.xml
+          retention-days: 30
+
+  upload-coverage:
+    runs-on: ubuntu-latest
+    needs: [test-frontend, test-backend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download backend coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          flags: frontend,backend
+          name: proj2-backend-coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
