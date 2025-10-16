@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Prevent ignoring of lib/ and lib64/ for frontend
+!lib/
+!lib64/
