@@ -1,24 +1,41 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router';
 import App from './App';
 
 describe('App', () => {
-  beforeEach(() => {
-    // mock fetch
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({ 'The server is running': 'Hello World!' }),
-      })
-    ) as unknown as typeof fetch;
+  it('renders the Welcome page with main heading', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
+
+    // Check if the main heading from Welcome page is rendered
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      /crafted nutrition for vibrant living/i
+    );
   });
 
-  afterEach(() => {
-    vi.resetAllMocks();
+  it('renders navigation links', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByRole('link', { name: /benefits/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /pricing/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /contact/i })).toBeInTheDocument();
   });
 
-  it('renders message from API', async () => {
-    render(<App />);
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Hello World!');
-    });
+  it('renders the Eatsential brand', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
+
+    const eatsentialLinks = screen.getAllByText('Eatsential');
+    expect(eatsentialLinks.length).toBeGreaterThan(0);
   });
 });
