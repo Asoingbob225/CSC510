@@ -42,7 +42,7 @@ const features = [
 
 function Welcome() {
   return (
-    <div className="text-foreground flex min-h-screen flex-col bg-lime-50">
+    <div className="flex min-h-screen flex-col bg-lime-50 text-foreground">
       <header className="sticky top-0 z-50 bg-white/90 shadow-xs backdrop-blur">
         <div className="container mx-auto flex h-20 items-center justify-between px-6">
           <div className="flex">
