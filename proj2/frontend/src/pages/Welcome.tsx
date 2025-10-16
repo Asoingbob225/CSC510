@@ -104,7 +104,7 @@ function Welcome() {
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-slate-700 sm:text-lg">
               Eatsential blends culinary artistry with data-backed insights to power your goals,
-              from metabolic balance to mindful energy. Discover restaurant that celebrate flavor,
+              from metabolic balance to mindful energy. Discover restaurants that celebrate flavor,
               function, and sustainability in equal measure.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -237,7 +237,7 @@ function Welcome() {
                 </ul>
               </div>
               <div className="relative overflow-hidden rounded-3xl bg-white p-[1px] shadow-lg">
-                <div className="text-state-700 flex h-full flex-col justify-between rounded-3xl p-10">
+                <div className="flex h-full flex-col justify-between rounded-3xl p-10 text-slate-700">
                   <div>
                     <p className="text-xs font-semibold tracking-[0.3em] text-emerald-500 uppercase">
                       Member spotlight
