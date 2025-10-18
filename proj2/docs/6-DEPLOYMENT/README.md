@@ -5,7 +5,7 @@
 This directory will contain deployment-related documentation including:
 
 - Deployment configuration and procedures
-- Environment setup guides  
+- Environment setup guides
 - Infrastructure requirements
 - CI/CD pipeline documentation
 - Production deployment strategies

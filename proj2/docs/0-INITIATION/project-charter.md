@@ -3,7 +3,7 @@
 **Project Name:** Eatsential - Precision Nutrition Platform  
 **Project Code:** EATS-MVP-2025  
 **Document Version:** 1.0  
-**Date:** October 17, 2025  
+**Date:** October 17, 2025
 
 ---
 
@@ -18,18 +18,21 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 ## 2. Project Purpose & Business Justification
 
 ### 2.1 Problem Statement
+
 - **Health Risk**: Allergy sufferers face life-threatening situations due to inadequate food information
 - **Decision Fatigue**: Conflicting nutritional advice creates daily stress for health-conscious consumers
 - **Personalization Gap**: Existing solutions fail to address both physical and mental wellness simultaneously
 - **Information Opacity**: Restaurant nutritional data is unreliable or incomplete
 
 ### 2.2 Business Opportunity
+
 - **Target Market**: 50M+ Americans with food allergies, 100M+ fitness enthusiasts, growing wellness market
 - **Competitive Advantage**: First platform combining RAG-based AI, mental wellness tagging, and zero-tolerance safety
 - **Revenue Potential**: Freemium model, premium subscriptions, restaurant partnerships
 
 ### 2.3 Strategic Alignment
-- Aligns with CSC510 course objectives: full-stack development, AI integration, software engineering best practices
+
+- **Course Objectives**: Demonstrates complete SDLC with modern tech stack
 - Demonstrates practical application of LLM technology in safety-critical domain
 - Addresses real-world social impact (food safety, public health)
 
@@ -39,30 +42,33 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 
 ### 3.1 SMART Objectives
 
-| Objective | Measurement | Target | Timeline |
-|-----------|-------------|--------|----------|
-| **Launch MVP** | Functional release | 100% core features | Week 8 (Oct 31) |
-| **User Registration** | Active accounts | 1,000+ users | Post-launch Week 2 |
-| **Safety Compliance** | Allergen false positive rate | 0% (Zero tolerance) | Ongoing |
-| **System Performance** | P95 response time | ≤ 2 seconds | Pre-launch |
-| **Code Quality** | Test coverage | ≥ 80% | Pre-launch |
-| **User Satisfaction** | Recommendation approval rate | ≥ 80% | Post-launch Week 4 |
+| Objective              | Measurement                  | Target              | Timeline           |
+| ---------------------- | ---------------------------- | ------------------- | ------------------ |
+| **Launch MVP**         | Functional release           | 100% core features  | Week 8 (Oct 31)    |
+| **User Registration**  | Active accounts              | 1,000+ users        | Post-launch Week 2 |
+| **Safety Compliance**  | Allergen false positive rate | 0% (Zero tolerance) | Ongoing            |
+| **System Performance** | P95 response time            | ≤ 2 seconds         | Pre-launch         |
+| **Code Quality**       | Test coverage                | ≥ 80%               | Pre-launch         |
+| **User Satisfaction**  | Recommendation approval rate | ≥ 80%               | Post-launch Week 4 |
 
 ### 3.2 Success Criteria by Dimension
 
 #### Technical Success
+
 - ✅ All MVP features functional and tested
 - ✅ Zero critical bugs in production
 - ✅ System uptime ≥ 99.5%
 - ✅ RAG pipeline operational with ≥85% retrieval accuracy
 
 #### User Success
+
 - ✅ User onboarding completion rate ≥ 70%
 - ✅ Average session duration ≥ 5 minutes
 - ✅ Zero allergen-related incidents
 - ✅ 7-day retention rate ≥ 30%
 
 #### Academic Success
+
 - ✅ Complete documentation (SRS, SAD, STP)
 - ✅ Adherence to software engineering standards (IEEE 830, 829)
 - ✅ Demonstrated V-Model traceability
@@ -75,6 +81,7 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 ### 4.1 In Scope (MVP - Release 1)
 
 #### Core Features
+
 1. **User Account System**
    - Secure registration and authentication
    - OAuth integration (Google/Apple)
@@ -124,20 +131,21 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 ❌ Native mobile apps (iOS/Android) - MVP is web PWA only  
 ❌ Multi-language support (English only for MVP)  
 ❌ E-commerce / food ordering  
-❌ Medical-grade diagnostic advice  
+❌ Medical-grade diagnostic advice
 
 ### 4.3 Scope Boundaries
 
 **Geographic**: United States only (nutritional database, restaurants)  
 **Platform**: Web application (desktop and mobile responsive)  
 **Data Sources**: USDA FoodData Central, partner restaurants only  
-**User Segments**: General consumers (not medical professionals)  
+**User Segments**: General consumers (not medical professionals)
 
 ---
 
 ## 5. Project Deliverables
 
 ### 5.1 Software Deliverables
+
 - ✅ Web application (frontend + backend)
 - ✅ Database with seed data (≥500 meals, ≥50 restaurants)
 - ✅ RAG pipeline (vector database + retrieval logic)
@@ -145,6 +153,7 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 - ✅ CI/CD pipeline (automated testing and deployment)
 
 ### 5.2 Documentation Deliverables
+
 - ✅ Software Project Plan (SPP)
 - ✅ Software Requirements Specification (SRS) - IEEE 830
 - ✅ Software Architecture Document (SAD)
@@ -154,6 +163,7 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 - ✅ API Documentation (OpenAPI 3.0)
 
 ### 5.3 Academic Deliverables
+
 - ✅ Project presentation (final demo)
 - ✅ Technical report
 - ✅ Source code repository (GitHub)
@@ -165,46 +175,48 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 
 ### 6.1 Team Structure (4-person agile team)
 
-| Role | Responsibilities |
-|------|------------------|
+| Role                         | Responsibilities                                       |
+| ---------------------------- | ------------------------------------------------------ |
 | **Full-Stack Developer** × 2 | Frontend (React), Backend (Python), RAG implementation |
-| **AI/ML Engineer** × 1 | LLM integration, prompt engineering, vector database |
-| **DevOps/QA Engineer** × 1 | CI/CD, testing strategy, deployment |
+| **AI/ML Engineer** × 1       | LLM integration, prompt engineering, vector database   |
+| **DevOps/QA Engineer** × 1   | CI/CD, testing strategy, deployment                    |
 
 **Note:** In an agile small team, roles are fluid - all members contribute to planning, design, and quality assurance.
 
 ### 6.2 External Stakeholders
 
-| Stakeholder | Interest | Influence | Engagement Strategy |
-|-------------|----------|-----------|---------------------|
-| **End Users (Allergy)** | Safe food recommendations | High | User testing, feedback loops |
-| **End Users (Fitness)** | Accurate nutrition tracking | High | Beta testing, surveys |
-| **Nutritionists & Dietitians** | Client management tools | Medium | Professional partnerships, B2B features |
-| **Restaurant Partners** | Platform visibility | Medium | Partnership agreements, transparent data |
-| **Data Providers** | API usage, attribution | Low | License agreements |
-| **Course Instructor (CSC510)** | Academic standards, learning objectives | High | Regular demos, documentation reviews |
+| Stakeholder                    | Interest                                | Influence | Engagement Strategy                      |
+| ------------------------------ | --------------------------------------- | --------- | ---------------------------------------- |
+| **End Users (Allergy)**        | Safe food recommendations               | High      | User testing, feedback loops             |
+| **End Users (Fitness)**        | Accurate nutrition tracking             | High      | Beta testing, surveys                    |
+| **Nutritionists & Dietitians** | Client management tools                 | Medium    | Professional partnerships, B2B features  |
+| **Restaurant Partners**        | Platform visibility                     | Medium    | Partnership agreements, transparent data |
+| **Data Providers**             | API usage, attribution                  | Low       | License agreements                       |
+| **Course Instructor (CSC510)** | Academic standards, learning objectives | High      | Regular demos, documentation reviews     |
 
 ---
 
 ## 7. High-Level Requirements
 
 ### 7.1 Functional Requirements (Summary)
+
 - **FR-001 to FR-015**: User account and dual-dimension profile management
 - **FR-016 to FR-030**: Scientific nutrition engine with RAG and health tagging
 - **FR-031 to FR-045**: AI Health Concierge with conversational memory
 - **FR-046 to FR-060**: Restaurant discovery with community reviews
 - **FR-061 to FR-075**: Visual wellness journey tracking (charts, timelines, mood)
 
-*(Detailed requirements in SRS document)*
+_(Detailed requirements in SRS document)_
 
 ### 7.2 Non-Functional Requirements (Summary)
+
 - **Performance**: P95 response time ≤ 2 seconds
 - **Reliability**: System uptime ≥ 99.5%, allergen filter 100% accurate
 - **Security**: HTTPS, encrypted data at rest, GDPR/CCPA compliance
 - **Usability**: Onboarding completion ≤ 3 minutes, accessibility (WCAG 2.1 Level AA)
 - **Scalability**: Support 10,000 concurrent users
 
-*(Detailed NFRs in SRS document)*
+_(Detailed NFRs in SRS document)_
 
 ---
 
@@ -223,21 +235,25 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 ## 9. Constraints
 
 ### 9.1 Time Constraints
+
 - **Fixed deadline**: 8 weeks (October 17 - December 12, 2025)
 - **Academic calendar**: No buffer for semester breaks
 - **Sprint length**: 1-week sprints (no flexibility)
 
 ### 9.2 Resource Constraints
+
 - **Team size**: 4 members (fixed)
 - **Budget**: $500 for LLM API credits (strict limit)
 - **Infrastructure**: Free tier cloud services only (Vercel, Supabase)
 
 ### 9.3 Technical Constraints
+
 - **No proprietary databases**: Open-source stack only
 - **LLM token limits**: Must implement caching and optimization
 - **Data quality**: Dependent on third-party nutritional accuracy
 
 ### 9.4 Regulatory Constraints
+
 - **FDA compliance**: Cannot make medical claims or diagnose conditions
 - **Privacy laws**: GDPR (if EU users), CCPA (California)
 - **Liability**: Must include disclaimer for allergen information accuracy
@@ -246,16 +262,16 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 
 ## 10. High-Level Risks
 
-| Risk ID | Description | Probability | Impact | Mitigation |
-|---------|-------------|-------------|--------|------------|
-| R-001 | LLM recommends allergen-containing food | Low | Critical | Multi-layer filtering, manual audit |
-| R-002 | Third-party data unavailable/incomplete | High | High | Mock data, multiple sources |
-| R-003 | Team member unavailable (sick/drop) | Medium | High | Knowledge sharing, documentation |
-| R-004 | LLM API cost overrun | Medium | Medium | Caching, request optimization |
-| R-005 | Scope creep from stakeholders | High | Medium | Strict change control process |
-| R-006 | Technical debt accumulating | High | Medium | Code reviews, refactoring sprints |
+| Risk ID | Description                             | Probability | Impact   | Mitigation                          |
+| ------- | --------------------------------------- | ----------- | -------- | ----------------------------------- |
+| R-001   | LLM recommends allergen-containing food | Low         | Critical | Multi-layer filtering, manual audit |
+| R-002   | Third-party data unavailable/incomplete | High        | High     | Mock data, multiple sources         |
+| R-003   | Team member unavailable (sick/drop)     | Medium      | High     | Knowledge sharing, documentation    |
+| R-004   | LLM API cost overrun                    | Medium      | Medium   | Caching, request optimization       |
+| R-005   | Scope creep from stakeholders           | High        | Medium   | Strict change control process       |
+| R-006   | Technical debt accumulating             | High        | Medium   | Code reviews, refactoring sprints   |
 
-*(Detailed risk register in SPP Risk Management Plan)*
+_(Detailed risk register in SPP Risk Management Plan)_
 
 ---
 
@@ -263,16 +279,16 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 
 ### 11.1 Major Milestones
 
-| Milestone | Date | Deliverable | Success Criteria |
-|-----------|------|-------------|------------------|
-| **M1: Project Kickoff** | Oct 17 | Project Charter, Team formation | Charter approved |
-| **M2: Requirements Complete** | Oct 24 (Week 2) | SRS v1.0, Use Cases | Stakeholder sign-off |
-| **M3: Architecture Design** | Oct 31 (Week 3) | SAD v1.0, Tech stack finalized | Design review passed |
-| **M4: Core Features Demo** | Nov 14 (Week 5) | Auth, Profile, Recommendations | Functional demo |
-| **M5: AI Integration** | Nov 21 (Week 6) | AI Concierge, Restaurant module | End-to-end flow |
-| **M6: Testing Complete** | Nov 28 (Week 7) | All tests passed, ≥80% coverage | QA sign-off |
-| **M7: MVP Release** | Dec 5 (Week 8) | Production deployment | Acceptance criteria met |
-| **M8: Final Presentation** | Dec 12 (Week 9) | Academic deliverables | Course requirements met |
+| Milestone                     | Date            | Deliverable                     | Success Criteria        |
+| ----------------------------- | --------------- | ------------------------------- | ----------------------- |
+| **M1: Project Kickoff**       | Oct 17          | Project Charter, Team formation | Charter approved        |
+| **M2: Requirements Complete** | Oct 24 (Week 2) | SRS v1.0, Use Cases             | Stakeholder sign-off    |
+| **M3: Architecture Design**   | Oct 31 (Week 3) | SAD v1.0, Tech stack finalized  | Design review passed    |
+| **M4: Core Features Demo**    | Nov 14 (Week 5) | Auth, Profile, Recommendations  | Functional demo         |
+| **M5: AI Integration**        | Nov 21 (Week 6) | AI Concierge, Restaurant module | End-to-end flow         |
+| **M6: Testing Complete**      | Nov 28 (Week 7) | All tests passed, ≥80% coverage | QA sign-off             |
+| **M7: MVP Release**           | Dec 5 (Week 8)  | Production deployment           | Acceptance criteria met |
+| **M8: Final Presentation**    | Dec 12 (Week 9) | Academic deliverables           | Course requirements met |
 
 ### 11.2 Phase Overview
 
@@ -289,16 +305,16 @@ Week 8-9: Presentation Preparation
 
 ## 12. Budget Estimate
 
-| Category | Item | Estimated Cost | Notes |
-|----------|------|----------------|-------|
-| **Development** | Labor (4 members × 200hrs) | $0 (Academic) | Student project |
-| **Infrastructure** | Hosting (Vercel/Netlify) | $0 | Free tier |
-| **Database** | Supabase/PostgreSQL | $0 | Free tier |
-| **LLM API** | OpenAI/Anthropic credits | $300-500 | Main cost |
-| **Data** | USDA FoodData | $0 | Public API |
-| **Tools** | GitHub, CI/CD | $0 | Free for education |
-| **Design** | Figma, Draw.io | $0 | Free tier |
-| **Total** | | **~$500** | |
+| Category           | Item                       | Estimated Cost | Notes              |
+| ------------------ | -------------------------- | -------------- | ------------------ |
+| **Development**    | Labor (4 members × 200hrs) | $0 (Academic)  | Student project    |
+| **Infrastructure** | Hosting (Vercel/Netlify)   | $0             | Free tier          |
+| **Database**       | Supabase/PostgreSQL        | $0             | Free tier          |
+| **LLM API**        | OpenAI/Anthropic credits   | $300-500       | Main cost          |
+| **Data**           | USDA FoodData              | $0             | Public API         |
+| **Tools**          | GitHub, CI/CD              | $0             | Free for education |
+| **Design**         | Figma, Draw.io             | $0             | Free tier          |
+| **Total**          |                            | **~$500**      |                    |
 
 ---
 
@@ -307,22 +323,26 @@ Week 8-9: Presentation Preparation
 ### 13.1 Agile Team Structure
 
 **Team Composition:** 4 members working collaboratively
+
 - **Shared Ownership:** All team members participate in planning, design, development, and testing
 - **Pair Programming:** Complex features (RAG, LLM) developed collaboratively
 - **Knowledge Sharing:** Daily standups, code reviews, documentation
 
 **Decision-Making Process:**
+
 - **Technical Decisions:** Team consensus after discussion
 - **Priority Decisions:** Based on MVP scope and academic requirements
 - **Escalation:** Course instructor for scope/timeline conflicts
 
 ### 13.2 Communication Plan
+
 - **Daily Standups**: Async updates via Slack
 - **Weekly Sprint Review**: Demo progress to instructor
 - **Weekly Sprint Planning**: Plan next sprint collaboratively
 - **Bi-weekly Stakeholder Update**: 30 min, status report
 
 ### 13.3 Tools & Collaboration
+
 - **Code**: GitHub (main repository)
 - **Project Management**: GitHub Projects
 - **Communication**: Slack, Discord
@@ -335,13 +355,13 @@ Week 8-9: Presentation Preparation
 
 **Version:** 1.0  
 **Status:** Active  
-**Next Review:** Week 4 (November 7, 2025)  
+**Next Review:** Week 4 (November 7, 2025)
 
 ### Revision History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | Oct 17, 2025 | Initial version |
+| Version | Date         | Changes         |
+| ------- | ------------ | --------------- |
+| 1.0     | Oct 17, 2025 | Initial version |
 
 ---
 
