@@ -139,7 +139,7 @@ JWT_SECRET_KEY         # JWT signing key
 SENTRY_DSN            # Error monitoring (optional)
 ```
 
-## � Deployment Strategies
+## 🛠️ Deployment Strategies
 
 ### Development Environment
 - **Trigger**: Push to `develop` branch
