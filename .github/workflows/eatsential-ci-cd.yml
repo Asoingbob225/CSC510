@@ -1,0 +1,417 @@
+name: Eatsential CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, requirements]
+    paths: ['proj2/**']
+  pull_request:
+    branches: [main, develop]
+    paths: ['proj2/**']
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  PYTHON_VERSION: '3.9'
+  BUN_VERSION: 'latest'
+
+jobs:
+  # ================================
+  # Code Quality & Security Checks
+  # ================================
+  code-quality:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proj2
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install Frontend Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          uv sync --all-groups
+
+      - name: TypeScript Type Check
+        run: |
+          cd frontend
+          bun run typecheck
+
+      - name: Frontend Linting
+        run: |
+          cd frontend
+          bun run lint
+
+      - name: Backend Linting & Format Check
+        uses: astral-sh/ruff-action@v3
+        with:
+          src: proj2/backend
+          args: "check --diff"
+
+      - name: Python Security Check (Bandit)
+        run: |
+          cd backend
+          uv add --group dev bandit[toml]
+          uv run bandit -r . -f json -o bandit-report.json || true
+
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: proj2/backend/bandit-report.json
+          retention-days: 30
+
+  # ================================
+  # Backend Testing & API Documentation
+  # ================================
+  backend-test:
+    name: Backend Tests & API Docs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proj2/backend
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            proj2/backend/uv.lock
+            proj2/backend/pyproject.toml
+
+      - name: Install Dependencies
+        run: uv sync --all-groups
+
+      - name: Run Unit Tests with Coverage
+        run: |
+          uv run pytest \
+            --cov=. \
+            --cov-report=xml \
+            --cov-report=html \
+            --cov-report=term-missing \
+            --junitxml=pytest-report.xml \
+            -v
+
+      - name: Generate API Documentation
+        run: |
+          # Install additional documentation dependencies
+          uv add --group dev pydantic[email] python-multipart
+          
+          # Start FastAPI server in background to generate OpenAPI spec
+          uv run uvicorn index:app --host 0.0.0.0 --port 8000 &
+          sleep 5
+          
+          # Download OpenAPI spec
+          curl -o openapi.json http://localhost:8000/openapi.json
+          
+          # Generate API documentation
+          uv add --group dev redoc-cli
+          uv run redoc-cli build openapi.json --output api-docs.html
+          
+          # Create docs directory structure
+          mkdir -p docs/api
+          cp openapi.json docs/api/
+          cp api-docs.html docs/api/
+          
+          # Kill background server
+          pkill -f uvicorn || true
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: |
+            proj2/backend/coverage.xml
+            proj2/backend/htmlcov/
+            proj2/backend/pytest-report.xml
+          retention-days: 30
+
+      - name: Upload API Documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-documentation
+          path: |
+            proj2/backend/docs/api/
+          retention-days: 30
+
+  # ================================
+  # Frontend Testing & Build
+  # ================================
+  frontend-test:
+    name: Frontend Tests & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proj2
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run Frontend Tests with Coverage
+        run: bun run --filter frontend coverage
+
+      - name: Build Frontend Application
+        run: bun run --filter frontend build
+
+      - name: Validate Build Artifacts
+        run: |
+          cd frontend
+          test -f dist/index.html
+          test -d dist/assets
+          echo "✅ Build artifacts validated successfully"
+
+      - name: Upload Frontend Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: proj2/frontend/coverage/
+          retention-days: 30
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: proj2/frontend/dist/
+          retention-days: 30
+
+  # ================================
+  # Integration Tests
+  # ================================
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+    defaults:
+      run:
+        working-directory: proj2
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install Dependencies
+        run: |
+          bun install --frozen-lockfile
+          cd backend && uv sync --all-groups
+
+      - name: Start Backend Server
+        run: |
+          cd backend
+          uv run uvicorn index:app --host 0.0.0.0 --port 8000 &
+          echo $! > backend.pid
+          sleep 5
+
+      - name: Download Frontend Build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: proj2/frontend/dist
+
+      - name: Start Frontend Server
+        run: |
+          cd frontend
+          bun run preview --host 0.0.0.0 --port 3000 &
+          echo $! > frontend.pid
+          sleep 5
+
+      - name: Run Integration Tests
+        run: |
+          # Test backend health
+          curl -f http://localhost:8000/health || exit 1
+          
+          # Test frontend serving
+          curl -f http://localhost:3000 || exit 1
+          
+          # Test API endpoints
+          curl -f http://localhost:8000/docs || exit 1
+          curl -f http://localhost:8000/openapi.json || exit 1
+          
+          echo "✅ Integration tests passed"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          cd proj2
+          kill $(cat backend/backend.pid) || true
+          kill $(cat frontend/frontend.pid) || true
+
+  # ================================
+  # Coverage Reporting
+  # ================================
+  coverage-report:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+    if: always()
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Backend Coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-test-results
+          path: backend-coverage
+
+      - name: Download Frontend Coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend-coverage
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: |
+            backend-coverage/coverage.xml
+            frontend-coverage/lcov.info
+          flags: backend,frontend
+          name: eatsential-coverage
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # ================================
+  # Deployment (only on main branch)
+  # ================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [code-quality, backend-test, frontend-test, integration-test]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: staging
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend-build
+
+      - name: Download API Documentation
+        uses: actions/download-artifact@v4
+        with:
+          name: api-documentation
+          path: api-docs
+
+      - name: Deploy to Staging
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "Frontend build size: $(du -sh frontend-build)"
+          echo "API docs available at: api-docs/"
+          # Here you would add actual deployment commands
+          # e.g., rsync, scp, or cloud provider CLI commands
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [code-quality, backend-test, frontend-test, integration-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend-build
+
+      - name: Download API Documentation
+        uses: actions/download-artifact@v4
+        with:
+          name: api-documentation
+          path: api-docs
+
+      - name: Deploy to Production
+        run: |
+          echo "🚀 Deploying to production environment..."
+          echo "Frontend build size: $(du -sh frontend-build)"
+          echo "API docs available at: api-docs/"
+          # Here you would add actual deployment commands
+          # e.g., rsync, scp, or cloud provider CLI commands
+
+  # ================================
+  # Notification
+  # ================================
+  notify:
+    name: Notify Team
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    
+    steps:
+      - name: Notify Success
+        if: ${{ contains(needs.*.result, 'success') }}
+        run: |
+          echo "✅ Pipeline completed successfully!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          # Add Slack/Discord/Email notification here
+
+      - name: Notify Failure
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: |
+          echo "❌ Pipeline failed!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          # Add Slack/Discord/Email notification here
