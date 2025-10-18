@@ -37,6 +37,3 @@ With Eatsential, users can finally eat with confidence and purpose. We empower t
 - Smart Grocery Lists: Deploy the Smart Grocery List feature, which automatically generates an aisle-categorized, shareable shopping list from any meal plan.
 - Community & Social Hub: Implement the Community Hub, enabling users to follow others, share their wellness journey, and engage via a social activity feed.
 - The Personalization Loop: Close the Personalization Loop with an advanced feedback system that uses user input to intelligently refine all future AI recommendations.
-
-# System Mockup
-![alt text](image.png)

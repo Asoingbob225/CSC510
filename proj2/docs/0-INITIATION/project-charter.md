@@ -163,8 +163,6 @@ This project will deliver an MVP (Minimum Viable Product) within 8 weeks, featur
 
 ## 6. Project Stakeholders
 
-## 6. Stakeholders & Roles
-
 ### 6.1 Team Structure (4-person agile team)
 
 | Role | Responsibilities |

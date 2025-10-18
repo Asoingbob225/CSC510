@@ -569,9 +569,9 @@ jobs:
           mkdir -p docs-output/api
           curl -o docs-output/api/openapi.json http://localhost:8000/openapi.json
           
-          # Generate ReDoc static page
-          uv add --group dev redoc-cli
-          uv run redoc-cli build docs-output/api/openapi.json --output docs-output/api/index.html
+          # Generate ReDoc static page using bunx (Node.js tool)
+          # Alternative: bunx @redocly/cli build-docs docs-output/api/openapi.json --output docs-output/api/index.html
+          bunx redoc-cli bundle docs-output/api/openapi.json -o docs-output/api/index.html
           
           pkill -f uvicorn || true
 

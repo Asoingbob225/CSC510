@@ -264,9 +264,9 @@ Our personas are based on:
 5. Community features for sharing mindful eating experiences
 
 ### Success Metrics
-- Identifies personal food-mood patterns within 30 days
+- Identifies personal food-mood patterns through consistent tracking
 - Maintains consistent energy throughout teaching days
-- Reduces anxiety episodes by 40% through nutrition awareness
+- Reduces anxiety episodes significantly through nutrition awareness
 - Develops 3-4 go-to meals for different emotional states
 - Feels more connected to food choices and their impact
 
@@ -334,7 +334,7 @@ Our personas are based on:
 - **Current systems**: EMR for clinical notes, various nutrition analysis software
 - **Preferred features**: Evidence-based recommendations, customizable client portals
 - **Integration needs**: Seamless connection with clinical workflows
-- **Security requirements**: HIPAA compliance is non-negotiable
+- **Security requirements**: Healthcare data privacy and security compliance is essential
 - **Training approach**: Prefers comprehensive training with ongoing support
 
 ### Eatsential Usage Scenarios
@@ -418,4 +418,4 @@ These personas will be validated through:
 
 | Version | Date | Author | Changes |
 |---------|------|---------|---------|
-| 1.0 | 2025-10-17 | Development Team | Initial persona development |
+| 1.0 | 2025-10-18 | Development Team | Initial persona development |

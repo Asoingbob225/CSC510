@@ -3,7 +3,7 @@
 **Project:** Eatsential - Precision Nutrition Platform  
 **Team:** 4-person agile team (CSC510 Group 12)  
 **Documentation Standard:** IEEE/ISO Software Engineering Standards  
-**Last Updated:** October 17, 2025  
+**Last Updated:** October 18, 2025  
 
 ---
 
@@ -91,14 +91,17 @@ This documentation follows **IEEE 830** (SRS), **IEEE 829** (STP), and **V-Model
 
 | Document | Status | Priority | Owner |
 |----------|--------|----------|-------|
-| Project Charter | 🟢 Complete | P0 | PM |
-| SPP Master | 🟢 Complete | P0 | PM |
-| SRS Master | 🟢 Complete | P0 | BA |
-| Use Cases | 🟢 Complete | P0 | BA |
-| SAD Master | 🟢 Complete | P0 | Architect |
-| STP Master | 🟢 Complete | P0 | QA |
+| Project Charter | � Draft | P0 | PM |
+| SPP Master | � Draft | P0 | PM |
+| SRS Master | � Draft | P0 | BA |
+| Use Cases | � Draft | P0 | BA |
+| Functional Requirements | � Draft | P0 | BA |
+| Non-Functional Requirements | � Draft | P0 | BA |
+| User Personas | � Draft | P0 | BA |
+| SAD Master | 🔴 Not Started | P1 | Architect |
+| STP Master | 🔴 Not Started | P1 | QA |
 
-**Legend:** 🟢 Complete | 🟡 In Progress | 🔴 Not Started
+**Legend:** 🟢 Complete | 🟡 Draft/In Progress | 🔴 Not Started
 
 ---
 
