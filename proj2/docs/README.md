@@ -18,17 +18,17 @@ This documentation follows **IEEE 830** (SRS), **IEEE 829** (STP), and **V-Model
 │                                                             │
 │  Requirements Phase          ←→         Testing Phase       │
 │                                                             │
-│  Business Needs      ←────────────→  Acceptance Testing    │
-│  (Initiation)                        (UAT)                 │
+│  Business Needs      ←────────────→  Acceptance Testing     │
+│  (Initiation)                        (UAT)                  │
 │       ↓                                   ↑                 │
-│  User Requirements   ←────────────→  System Testing        │
-│  (SRS)                               (End-to-End)          │
+│  User Requirements   ←────────────→  System Testing         │
+│  (SRS)                               (End-to-End)           │
 │       ↓                                   ↑                 │
-│  System Design       ←────────────→  Integration Testing   │
-│  (SAD)                               (API/Module)          │
+│  System Design       ←────────────→  Integration Testing    │
+│  (SAD)                               (API/Module)           │
 │       ↓                                   ↑                 │
-│  Detailed Design     ←────────────→  Unit Testing          │
-│  (SDD)                               (Function/Class)      │
+│  Detailed Design     ←────────────→  Unit Testing           │
+│  (SDD)                               (Function/Class)       │
 │       ↓                                   ↑                 │
 │           Implementation (Coding)                           │
 │                                                             │
