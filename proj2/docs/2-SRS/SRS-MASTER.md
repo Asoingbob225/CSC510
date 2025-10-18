@@ -387,7 +387,7 @@ Eatsential is a **new, independent web-based platform** that integrates with ext
 - **External Services**: Free/developer tiers only
 
 #### 2.4.5 Design Constraints
-- **Architecture**: Microservices not feasible (monolithic backend acceptable)
+- **Architecture**: For MVP, microservices are not required due to resource constraints; a monolithic backend is acceptable provided it supports horizontal scaling (e.g., stateless API, ability to run multiple instances). The system should be designed to allow future transition to microservices for independent scaling as per NFR-003.
 - **Database**: PostgreSQL (no NoSQL in MVP)
 - **Frontend**: React (already chosen, no alternatives)
 - **Backend**: Python (already chosen, no alternatives)
