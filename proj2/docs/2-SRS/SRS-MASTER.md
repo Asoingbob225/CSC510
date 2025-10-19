@@ -45,19 +45,23 @@
 - [📄 3.5 User Stories](./3-specific-requirements/3.5-user-stories.md)
 - [📄 3.6 Data Requirements](./3-specific-requirements/3.6-data-requirements.md)
 
-### 4. System Models
+### 4. System Features
 
-- [📄 4.1 Use Case Diagrams](./4-system-models.md)
-- [📄 4.2 Data Flow Diagrams](./4-system-models.md)
-- [📄 4.3 State Diagrams](./4-system-models.md)
+- [📄 4.1 System Features](./4-system-features/4-system-features.md) ⭐
 
-### 5. Appendices
+### 5. System Models
+
+- [📄 5.1 Use Case Diagrams](./5-system-models.md)
+- [📄 5.2 Data Flow Diagrams](./5-system-models.md)
+- [📄 5.3 State Diagrams](./5-system-models.md)
+
+### 6. Appendices
 
 - [📄 Appendix A: Glossary](./5-appendices/A-glossary.md)
 - [📄 Appendix B: User Personas](./5-appendices/B-user-personas.md) ⭐
 - [📄 Appendix C: Assumptions & Dependencies](./5-appendices/C-assumptions-dependencies.md)
 
-### 6. Traceability
+### 7. Traceability
 
 - [📄 Requirements Traceability Matrix](./requirements-traceability-matrix.md) ⭐
 

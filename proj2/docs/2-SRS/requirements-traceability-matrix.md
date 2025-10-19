@@ -81,7 +81,7 @@ graph LR
 
 | Req ID | Requirement | Use Case | Design Component | Code Module | Test Cases | Status |
 |--------|-------------|----------|------------------|-------------|------------|--------|
-| **FR-001** | User Registration | UC-001 | Auth Service | `auth.register` | TC-001 to TC-005 | ⚡ UI Done |
+| **FR-001** | User Registration | UC-001 | Auth Service | `auth.register` | TC-001 to TC-005 | ⚡ UI Partial |
 | **FR-002** | Multi-Factor Auth | UC-002 | Auth Service | `auth.mfa` | TC-006 to TC-008 | ○ |
 | **FR-003** | Social Login | UC-001 | Auth Service | `auth.oauth` | TC-009 to TC-012 | ○ |
 | **FR-004** | Password Recovery | UC-003 | Auth Service | `auth.recovery` | TC-013 to TC-015 | ○ |
