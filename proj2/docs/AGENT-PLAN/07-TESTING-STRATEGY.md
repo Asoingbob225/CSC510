@@ -27,20 +27,20 @@
 describe('AllergyInput', () => {
   it('should validate allergen against approved list', () => {
     render(<AllergyInput />);
-    
+
     // Try invalid allergen
     const input = screen.getByRole('combobox');
     fireEvent.change(input, { target: { value: 'InvalidAllergen' } });
-    
+
     expect(screen.getByText(/not a recognized allergen/i)).toBeInTheDocument();
   });
-  
+
   it('should show severity warning for life-threatening allergies', () => {
     render(<AllergyInput />);
-    
+
     // Select peanut allergy with life-threatening severity
     selectAllergy('Peanuts', 'LIFE_THREATENING');
-    
+
     expect(screen.getByRole('alert')).toHaveClass('bg-red-600');
     expect(screen.getByText(/life-threatening/i)).toBeInTheDocument();
   });
@@ -59,15 +59,15 @@ describe('User Registration Flow', () => {
         return res(ctx.status(201), ctx.json({ success: true }));
       })
     );
-    
+
     // Test flow
     render(<App />);
-    
+
     // Fill form
     await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
     await userEvent.type(screen.getByLabelText(/password/i), 'TestPass123!');
     await userEvent.click(screen.getByRole('button', { name: /register/i }));
-    
+
     // Verify redirect
     await waitFor(() => {
       expect(screen.getByText(/verify your email/i)).toBeInTheDocument();
@@ -85,18 +85,18 @@ test('complete health profile setup', async ({ page }) => {
   await page.fill('[name="email"]', 'test@example.com');
   await page.fill('[name="password"]', 'TestPass123!');
   await page.click('button[type="submit"]');
-  
+
   // Complete health profile
   await page.goto('/health-profile');
-  
+
   // Add severe peanut allergy
   await page.click('[aria-label="Add allergy"]');
   await page.selectOption('[name="allergy"]', 'peanuts');
   await page.selectOption('[name="severity"]', 'SEVERE');
-  
+
   // Verify warning appears
   await expect(page.locator('.allergy-warning')).toContainText('Severe Peanut Allergy');
-  
+
   // Save profile
   await page.click('button:has-text("Save Profile")');
   await expect(page).toHaveURL('/dashboard');
@@ -111,7 +111,7 @@ test('complete health profile setup', async ({ page }) => {
 def test_password_validation():
     """Test password meets requirements."""
     from app.schemas.user import UserCreate
-    
+
     # Valid password
     user = UserCreate(
         email="test@example.com",
@@ -119,7 +119,7 @@ def test_password_validation():
         password="TestPass123!"
     )
     assert user.password == "TestPass123!"
-    
+
     # Invalid password (no special char)
     with pytest.raises(ValueError, match="must contain"):
         UserCreate(
@@ -131,10 +131,10 @@ def test_password_validation():
 def test_allergen_validation():
     """Test allergen validation against approved list."""
     from app.services.health import validate_allergen
-    
+
     # Valid allergen
     assert validate_allergen("Peanuts") == True
-    
+
     # Invalid allergen
     with pytest.raises(ValueError, match="Invalid allergen"):
         validate_allergen("InvalidAllergen")
@@ -158,7 +158,7 @@ async def test_health_profile_creation(client: AsyncClient, auth_headers):
             "medical_conditions": ["Diabetes Type 2"]
         }
     )
-    
+
     assert response.status_code == 201
     data = response.json()
     assert len(data["allergies"]) == 2
@@ -176,7 +176,7 @@ async def test_allergen_safety_check(client: AsyncClient, auth_headers):
             ]
         }
     )
-    
+
     assert response.status_code == 400
     assert "Invalid allergen" in response.json()["detail"]
 ```
@@ -188,7 +188,7 @@ from locust import HttpUser, task, between
 
 class EatsentialUser(HttpUser):
     wait_time = between(1, 3)
-    
+
     def on_start(self):
         """Login before running tasks."""
         response = self.client.post("/api/v1/auth/login", json={
@@ -197,12 +197,12 @@ class EatsentialUser(HttpUser):
         })
         self.token = response.json()["access_token"]
         self.headers = {"Authorization": f"Bearer {self.token}"}
-    
+
     @task(3)
     def get_recommendations(self):
         """Most common operation."""
         self.client.get("/api/v1/recommendations", headers=self.headers)
-    
+
     @task(1)
     def update_health_profile(self):
         """Less frequent operation."""
@@ -243,13 +243,13 @@ async def authenticated_user(client: AsyncClient, test_user):
     """Create and authenticate a test user."""
     # Register
     await client.post("/api/v1/auth/register", json=test_user)
-    
+
     # Login
     response = await client.post("/api/v1/auth/login", json={
         "email": test_user["email"],
         "password": test_user["password"]
     })
-    
+
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
 ```
@@ -257,6 +257,7 @@ async def authenticated_user(client: AsyncClient, test_user):
 ## Critical Test Scenarios
 
 ### 1. Allergen Safety Tests (MANDATORY)
+
 ```python
 # Must test ALL of these scenarios
 - Reject invalid allergens
@@ -267,6 +268,7 @@ async def authenticated_user(client: AsyncClient, test_user):
 ```
 
 ### 2. Authentication Security
+
 ```python
 # Test these attack vectors
 - SQL injection in login
@@ -277,6 +279,7 @@ async def authenticated_user(client: AsyncClient, test_user):
 ```
 
 ### 3. Data Integrity
+
 ```python
 # Ensure data consistency
 - Profile updates are atomic
@@ -288,6 +291,7 @@ async def authenticated_user(client: AsyncClient, test_user):
 ## Test Execution
 
 ### Local Development
+
 ```bash
 # Frontend
 npm test              # Run once
@@ -302,6 +306,7 @@ pytest -k "test_allergen"  # Specific tests
 ```
 
 ### CI/CD Pipeline
+
 ```yaml
 # .github/workflows/test.yml
 test:
@@ -311,13 +316,13 @@ test:
         cd frontend
         npm ci
         npm run test:coverage
-        
+
     - name: Backend Tests
       run: |
         cd backend
         uv sync
         uv run pytest --cov=app --cov-report=xml
-        
+
     - name: E2E Tests
       run: |
         npm run test:e2e
@@ -326,18 +331,21 @@ test:
 ## Test Reports
 
 ### Coverage Reports
+
 - Frontend: `frontend/coverage/`
 - Backend: `backend/htmlcov/`
 - Combined: Uploaded to CodeCov
 
 ### Test Results
+
 - JUnit XML format for CI
 - HTML reports for developers
 - Slack notifications for failures
 
 ---
 
-**Remember**: 
+**Remember**:
+
 - Test the unhappy paths
 - Test edge cases
 - Test security vulnerabilities

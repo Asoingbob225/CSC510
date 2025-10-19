@@ -7,17 +7,18 @@
 
 ## 🚨 Critical Issues (Fix First)
 
-| Issue | Description | Task ID |
-|-------|-------------|---------|
+| Issue                                                   | Description                              | Task ID   |
+| ------------------------------------------------------- | ---------------------------------------- | --------- |
 | [#41](https://github.com/Asoingbob225/CSC510/issues/41) | Password validation doesn't match FR-001 | FE-S1-001 |
-| [#42](https://github.com/Asoingbob225/CSC510/issues/42) | Email verification flow missing | BE-S1-002 |
-| [#43](https://github.com/Asoingbob225/CSC510/issues/43) | User registration API missing | BE-S1-001 |
+| [#42](https://github.com/Asoingbob225/CSC510/issues/42) | Email verification flow missing          | BE-S1-002 |
+| [#43](https://github.com/Asoingbob225/CSC510/issues/43) | User registration API missing            | BE-S1-001 |
 
 ---
 
 ## Frontend Tasks
 
 ### FE-S1-001: Fix Password Validation ⚠️
+
 **Status**: 🔴 Not Started  
 **Estimate**: 2 hours  
 **Dependencies**: None
@@ -35,6 +36,7 @@ password: z
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Password requires 8+ characters
 - [ ] Password requires uppercase, lowercase, number, special char
 - [ ] Error messages are clear
@@ -43,16 +45,19 @@ password: z
 ---
 
 ### FE-S1-002: Email Verification UI
+
 **Status**: 🔴 Not Started  
 **Estimate**: 4 hours  
 **Dependencies**: BE-S1-002
 
 **Files to Create**:
+
 1. `frontend/src/pages/EmailVerification.tsx`
 2. `frontend/src/pages/VerificationSuccess.tsx`
 3. `frontend/src/components/ResendEmail.tsx`
 
 **Key Features**:
+
 - Show pending verification message
 - Resend email button (rate limited)
 - Success page after verification
@@ -61,31 +66,34 @@ password: z
 ---
 
 ### FE-S1-003: Health Profile Form 🏥
+
 **Status**: 🔴 Not Started  
 **Estimate**: 8 hours  
 **Dependencies**: BE-S1-003
 
 **Files to Create**:
+
 1. `frontend/src/pages/HealthProfile.tsx`
 2. `frontend/src/components/AllergyInput.tsx`
 3. `frontend/src/components/AllergySeverityWarning.tsx`
 
 **Critical Requirements**:
+
 ```typescript
 // Allergen severity levels
 enum AllergySeverity {
-  MILD = "MILD",
-  MODERATE = "MODERATE", 
-  SEVERE = "SEVERE",
-  LIFE_THREATENING = "LIFE_THREATENING"
+  MILD = 'MILD',
+  MODERATE = 'MODERATE',
+  SEVERE = 'SEVERE',
+  LIFE_THREATENING = 'LIFE_THREATENING',
 }
 
 // Visual warnings based on severity
 const severityStyles = {
-  MILD: "bg-yellow-100 border-yellow-500",
-  MODERATE: "bg-orange-100 border-orange-500",
-  SEVERE: "bg-red-100 border-red-500",
-  LIFE_THREATENING: "bg-red-600 text-white animate-pulse"
+  MILD: 'bg-yellow-100 border-yellow-500',
+  MODERATE: 'bg-orange-100 border-orange-500',
+  SEVERE: 'bg-red-100 border-red-500',
+  LIFE_THREATENING: 'bg-red-600 text-white animate-pulse',
 };
 ```
 
@@ -94,17 +102,20 @@ const severityStyles = {
 ## Backend Tasks
 
 ### BE-S1-001: User Registration API ⚠️
+
 **Status**: 🔴 Not Started  
 **Estimate**: 4 hours  
 **Dependencies**: BE-S1-004
 
 **Files to Create**:
+
 1. `backend/api/auth.py`
 2. `backend/models/user.py`
 3. `backend/schemas/user.py`
 4. `backend/services/auth.py`
 
 **Endpoint Specification**:
+
 ```python
 @router.post("/auth/register", response_model=UserResponse, status_code=201)
 async def register(
@@ -121,15 +132,18 @@ async def register(
 ---
 
 ### BE-S1-002: Email Verification System
+
 **Status**: 🔴 Not Started  
 **Estimate**: 6 hours  
 **Dependencies**: BE-S1-001
 
 **Files to Create**:
+
 1. `backend/services/email.py`
 2. `backend/utils/tokens.py`
 
 **Key Features**:
+
 ```python
 # Token generation
 def generate_verification_token() -> str:
@@ -144,17 +158,20 @@ def send_verification_email(email: str, token: str):
 ---
 
 ### BE-S1-003: Health Profile CRUD 🏥
+
 **Status**: 🔴 Not Started  
 **Estimate**: 8 hours  
 **Dependencies**: BE-S1-001
 
 **Files to Create**:
+
 1. `backend/api/health.py`
 2. `backend/models/health.py`
 3. `backend/schemas/health.py`
 4. `backend/services/health.py`
 
 **Critical Validation**:
+
 ```python
 APPROVED_ALLERGENS = [
     "Peanuts", "Tree Nuts", "Milk", "Eggs",
@@ -171,16 +188,19 @@ def validate_allergen(name: str) -> bool:
 ---
 
 ### BE-S1-004: Database Setup
+
 **Status**: 🔴 Not Started  
 **Estimate**: 4 hours  
 **Dependencies**: None
 
 **Files to Create**:
+
 1. `backend/alembic.ini`
 2. `backend/alembic/env.py`
 3. `backend/core/database.py`
 
 **Initial Migration**:
+
 ```bash
 # Commands to run
 alembic init alembic
@@ -192,18 +212,19 @@ alembic upgrade head
 
 ## Task Assignment
 
-| Developer | Focus Area | Tasks |
-|-----------|-----------|-------|
-| Dev 1 | Frontend Auth | FE-S1-001, FE-S1-002 |
-| Dev 2 | Backend Auth | BE-S1-001, BE-S1-002 |
-| Dev 3 | Health Profile | FE-S1-003, BE-S1-003 |
-| Dev 4 | Infrastructure | BE-S1-004 |
+| Developer | Focus Area     | Tasks                |
+| --------- | -------------- | -------------------- |
+| Dev 1     | Frontend Auth  | FE-S1-001, FE-S1-002 |
+| Dev 2     | Backend Auth   | BE-S1-001, BE-S1-002 |
+| Dev 3     | Health Profile | FE-S1-003, BE-S1-003 |
+| Dev 4     | Infrastructure | BE-S1-004            |
 
 ---
 
 ## Definition of Done
 
 ### For ALL Tasks:
+
 - [ ] Code implements requirements
 - [ ] Unit tests written (80% coverage)
 - [ ] Integration tests pass
@@ -212,6 +233,7 @@ alembic upgrade head
 - [ ] PR approved by reviewer
 
 ### For Health-Related Tasks:
+
 - [ ] Allergen validation tested
 - [ ] Safety warnings prominent
 - [ ] Audit logging implemented
@@ -226,13 +248,16 @@ alembic upgrade head
 **Developer**: [NAME]
 
 **Yesterday**:
+
 - Completed [TASK-ID]: [description]
 
 **Today**:
+
 - Working on [TASK-ID]: [description]
 - Blocked by: [blocker or "None"]
 
 **Help Needed**:
+
 - [Specific help needed or "None"]
 ```
 
@@ -240,12 +265,12 @@ alembic upgrade head
 
 ## Sprint Metrics
 
-| Metric | Target | Current |
-|--------|--------|---------|
-| Tasks Completed | 8 | 0 |
-| Test Coverage | 80% | 0% |
-| PR Cycle Time | <4 hours | N/A |
-| Critical Bugs | 0 | 3 |
+| Metric          | Target   | Current |
+| --------------- | -------- | ------- |
+| Tasks Completed | 8        | 0       |
+| Test Coverage   | 80%      | 0%      |
+| PR Cycle Time   | <4 hours | N/A     |
+| Critical Bugs   | 0        | 3       |
 
 ---
 

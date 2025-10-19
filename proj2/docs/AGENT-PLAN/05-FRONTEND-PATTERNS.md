@@ -3,6 +3,7 @@
 ## Component Structure
 
 ### Basic Component Template
+
 ```typescript
 import { FC } from 'react';
 
@@ -14,12 +15,12 @@ interface ComponentNameProps {
 const ComponentName: FC<ComponentNameProps> = ({ prop1, prop2 = 0 }) => {
   // Hooks at the top
   const [state, setState] = useState<string>('');
-  
+
   // Event handlers
   const handleClick = () => {
     // Logic here
   };
-  
+
   // Render
   return (
     <div className="component-name">
@@ -32,6 +33,7 @@ export default ComponentName;
 ```
 
 ### Form Component Pattern
+
 ```typescript
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,7 +49,7 @@ const FormComponent = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
   });
-  
+
   const onSubmit = async (data: FormData) => {
     try {
       // API call
@@ -55,7 +57,7 @@ const FormComponent = () => {
       // Error handling
     }
   };
-  
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       {/* Form fields */}
@@ -67,6 +69,7 @@ const FormComponent = () => {
 ## State Management
 
 ### Local State
+
 ```typescript
 // For component-specific state
 const [isLoading, setIsLoading] = useState(false);
@@ -74,6 +77,7 @@ const [error, setError] = useState<string | null>(null);
 ```
 
 ### Global State (Context)
+
 ```typescript
 // contexts/AuthContext.tsx
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -88,6 +92,7 @@ export const useAuth = () => {
 ## API Integration
 
 ### Service Layer Pattern
+
 ```typescript
 // services/api.ts
 const API_BASE = '/api/v1';
@@ -108,13 +113,14 @@ export const api = {
 ```
 
 ### Custom Hook for API
+
 ```typescript
 // hooks/useApi.ts
-export const useApi = <T,>(apiCall: () => Promise<T>) => {
+export const useApi = <T>(apiCall: () => Promise<T>) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  
+
   const execute = async () => {
     setLoading(true);
     setError(null);
@@ -127,7 +133,7 @@ export const useApi = <T,>(apiCall: () => Promise<T>) => {
       setLoading(false);
     }
   };
-  
+
   return { data, loading, error, execute };
 };
 ```
@@ -135,6 +141,7 @@ export const useApi = <T,>(apiCall: () => Promise<T>) => {
 ## Testing Patterns
 
 ### Component Test
+
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
@@ -144,7 +151,7 @@ describe('ComponentName', () => {
     render(<ComponentName prop1="test" />);
     expect(screen.getByText('expected text')).toBeInTheDocument();
   });
-  
+
   it('should handle user interaction', async () => {
     render(<ComponentName prop1="test" />);
     fireEvent.click(screen.getByRole('button'));
@@ -158,6 +165,7 @@ describe('ComponentName', () => {
 ## Styling Patterns
 
 ### Tailwind Classes
+
 ```typescript
 // Conditional classes
 const buttonClass = cn(
@@ -176,12 +184,13 @@ const buttonClass = cn(
 ## Error Handling
 
 ### Error Boundary
+
 ```typescript
 class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
   }
-  
+
   render() {
     if (this.state.hasError) {
       return <ErrorFallback />;
@@ -192,6 +201,7 @@ class ErrorBoundary extends Component<Props, State> {
 ```
 
 ### Form Error Display
+
 ```typescript
 {form.formState.errors.field && (
   <p className="text-red-500 text-sm mt-1">
@@ -203,6 +213,7 @@ class ErrorBoundary extends Component<Props, State> {
 ## Performance Patterns
 
 ### Memoization
+
 ```typescript
 // Memoize expensive computations
 const expensiveValue = useMemo(() => {
@@ -219,6 +230,7 @@ const MemoizedComponent = memo(ExpensiveComponent);
 ```
 
 ### Code Splitting
+
 ```typescript
 // Lazy load routes
 const HealthProfile = lazy(() => import('./pages/HealthProfile'));
@@ -232,6 +244,7 @@ const HealthProfile = lazy(() => import('./pages/HealthProfile'));
 ## Accessibility
 
 ### ARIA Labels
+
 ```typescript
 <button
   aria-label="Delete allergy"
@@ -247,6 +260,7 @@ const HealthProfile = lazy(() => import('./pages/HealthProfile'));
 ```
 
 ### Keyboard Navigation
+
 ```typescript
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Enter' || e.key === ' ') {
@@ -258,7 +272,8 @@ const handleKeyDown = (e: KeyboardEvent) => {
 
 ---
 
-**Examples in codebase**: 
+**Examples in codebase**:
+
 - `SignupField.tsx` - Form handling
 - `Button.tsx` - Component pattern
 - `App.tsx` - Routing setup

@@ -38,6 +38,7 @@
 ## Service Breakdown
 
 ### Frontend Service
+
 - **Technology**: React + TypeScript + Vite
 - **Hosting**: AWS S3 + CloudFront
 - **Responsibilities**:
@@ -47,6 +48,7 @@
   - State management
 
 ### API Gateway
+
 - **Technology**: FastAPI
 - **Hosting**: AWS ECS Fargate
 - **Responsibilities**:
@@ -56,6 +58,7 @@
   - Request validation
 
 ### Auth Service
+
 - **Endpoints**: `/api/v1/auth/*`
 - **Responsibilities**:
   - User registration/login
@@ -64,6 +67,7 @@
   - Email verification
 
 ### User Service
+
 - **Endpoints**: `/api/v1/users/*`
 - **Responsibilities**:
   - Profile management
@@ -71,6 +75,7 @@
   - Account settings
 
 ### Health Service
+
 - **Endpoints**: `/api/v1/health/*`
 - **Responsibilities**:
   - Health profile CRUD
@@ -79,6 +84,7 @@
   - Audit logging
 
 ### AI Service
+
 - **Endpoints**: `/api/v1/recommendations/*`
 - **Technology**: LangChain + GPT-4
 - **Responsibilities**:
@@ -89,6 +95,7 @@
 ## Data Flow
 
 ### User Registration Flow
+
 ```
 1. User fills form → Frontend validates
 2. Frontend → POST /api/v1/auth/register
@@ -101,9 +108,10 @@
 ```
 
 ### Health Profile Creation
+
 ```
 1. User enters allergies → Frontend validates
-2. Frontend → POST /api/v1/users/{id}/health-profile  
+2. Frontend → POST /api/v1/users/{id}/health-profile
 3. Health Service → Validate allergens
 4. Health Service → Check severity
 5. Health Service → Save to DB with audit log
@@ -113,6 +121,7 @@
 ```
 
 ### AI Recommendation Flow
+
 ```
 1. User requests recommendations
 2. Frontend → GET /api/v1/recommendations
@@ -128,6 +137,7 @@
 ## Security Architecture
 
 ### Authentication Flow
+
 ```
 ┌──────────┐      ┌──────────┐      ┌──────────┐
 │  Client  │─────▶│   API    │─────▶│   Auth   │
@@ -139,6 +149,7 @@
 ```
 
 ### Security Layers
+
 1. **Network**: VPC, Security Groups
 2. **Application**: JWT, CORS, Rate Limiting
 3. **Data**: Encryption at rest/transit
@@ -147,6 +158,7 @@
 ## Database Schema
 
 ### Core Tables
+
 ```
 users
 ├── health_profiles (1:1)
@@ -166,14 +178,16 @@ recommendations
 ```
 
 ### Caching Strategy
+
 - **User Profiles**: Cache for 5 minutes
-- **Restaurant Data**: Cache for 1 hour  
+- **Restaurant Data**: Cache for 1 hour
 - **Recommendations**: Cache for 15 minutes
 - **Invalidation**: On any profile update
 
 ## Deployment Architecture
 
 ### Production Environment
+
 ```
 AWS Region (us-east-1)
 ├── VPC
@@ -189,6 +203,7 @@ AWS Region (us-east-1)
 ```
 
 ### Scaling Strategy
+
 - **Frontend**: CloudFront edge caching
 - **API**: ECS auto-scaling (2-10 tasks)
 - **Database**: RDS read replicas
@@ -197,6 +212,7 @@ AWS Region (us-east-1)
 ## Monitoring & Observability
 
 ### Metrics
+
 - **CloudWatch**: System metrics
 - **X-Ray**: Distributed tracing
 - **Custom Metrics**:
@@ -205,6 +221,7 @@ AWS Region (us-east-1)
   - Recommendation accuracy
 
 ### Alerts
+
 - **Critical**: Allergen validation failures
 - **High**: API errors > 1%
 - **Medium**: Response time > 2s
@@ -213,19 +230,22 @@ AWS Region (us-east-1)
 ## Disaster Recovery
 
 ### Backup Strategy
+
 - **Database**: Daily snapshots, 30-day retention
 - **Code**: Git with tagged releases
 - **Configs**: AWS Secrets Manager
 
 ### RTO/RPO Targets
+
 - **RTO**: 2 hours (system recovery)
 - **RPO**: 1 hour (data loss tolerance)
 
 ---
 
 **Key Decisions**:
+
 1. Microservices for scalability
-2. PostgreSQL for ACID compliance  
+2. PostgreSQL for ACID compliance
 3. Redis for performance
 4. RAG for accurate AI recommendations
 5. AWS for managed infrastructure

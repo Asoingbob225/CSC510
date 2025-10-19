@@ -5,7 +5,7 @@
 ### Starting Your Session
 
 ```
-I'm working on the Eatsential project. 
+I'm working on the Eatsential project.
 Please read /docs/AGENT-PLAN/08-SPRINT-TASKS.md
 I'll be working on task [TASK-ID]
 ```
@@ -24,6 +24,7 @@ I'll be working on task [TASK-ID]
 ### Task Execution
 
 #### Step 1: Understand the Task
+
 ```
 Please analyze task [TASK-ID] and:
 1. List all files I need to create/modify
@@ -32,6 +33,7 @@ Please analyze task [TASK-ID] and:
 ```
 
 #### Step 2: Check Existing Code
+
 ```
 Before implementing, please:
 1. Search for similar patterns in the codebase
@@ -40,6 +42,7 @@ Before implementing, please:
 ```
 
 #### Step 3: Implement
+
 ```
 Now implement [specific part] following:
 1. The project patterns
@@ -48,6 +51,7 @@ Now implement [specific part] following:
 ```
 
 #### Step 4: Test
+
 ```
 Create tests for this implementation:
 1. Unit tests for all functions
@@ -58,6 +62,7 @@ Create tests for this implementation:
 ### Code Quality Rules
 
 #### Always Include:
+
 - Type definitions (TypeScript/Python)
 - Error handling
 - Input validation
@@ -65,6 +70,7 @@ Create tests for this implementation:
 - Comments for complex logic
 
 #### Never Include:
+
 - `console.log` (use proper logging)
 - `any` type (be specific)
 - Hardcoded values (use config)
@@ -76,6 +82,7 @@ Create tests for this implementation:
 #### For ANY Health-Related Feature:
 
 1. **Validate Everything**
+
 ```python
 # Always validate health data
 if allergen not in APPROVED_ALLERGENS:
@@ -83,14 +90,16 @@ if allergen not in APPROVED_ALLERGENS:
 ```
 
 2. **Fail Safe**
+
 ```typescript
 // When uncertain, exclude
 if (!canConfirmAllergenFree) {
-  return { safe: false, reason: "Cannot verify allergen status" };
+  return { safe: false, reason: 'Cannot verify allergen status' };
 }
 ```
 
 3. **Prominent Warnings**
+
 ```typescript
 // Severe allergies need visual emphasis
 {severity === 'LIFE_THREATENING' && (
@@ -103,6 +112,7 @@ if (!canConfirmAllergenFree) {
 ### Common Patterns
 
 #### API Error Handling
+
 ```python
 try:
     result = await service_function()
@@ -117,6 +127,7 @@ except Exception as e:
 ```
 
 #### Form Validation
+
 ```typescript
 const schema = z.object({
   field: z.string().min(1, 'Required'),
@@ -129,6 +140,7 @@ const form = useForm({
 ```
 
 #### Testing Pattern
+
 ```python
 # Arrange
 test_data = {"field": "value"}
@@ -144,43 +156,50 @@ assert response.json()["success"] is True
 ### Git Workflow
 
 #### Branch Naming
+
 ```bash
 feature/[TASK-ID]-brief-description
 bugfix/[TASK-ID]-brief-description
 ```
 
 #### Commit Messages
+
 ```
 feat(scope): implement feature per TASK-ID
 
 - Add specific functionality
-- Include error handling  
+- Include error handling
 - Add comprehensive tests
 
 Resolves: TASK-ID
 ```
 
 #### PR Description
+
 ```markdown
 ## Task: [TASK-ID]
 
 ### Changes
+
 - Implemented [feature]
 - Added tests for [scenarios]
 - Updated documentation
 
 ### Testing
+
 - [ ] Unit tests pass
 - [ ] Integration tests pass
 - [ ] Manual testing completed
 
 ### Screenshots
+
 [If UI changes]
 ```
 
 ### Debugging Help
 
 #### When Stuck
+
 ```
 I'm stuck on [problem]. Can you:
 1. Explain what's happening
@@ -191,6 +210,7 @@ I'm stuck on [problem]. Can you:
 #### Common Issues
 
 **Import Errors**:
+
 ```
 Check:
 1. Is the module installed? (package.json/pyproject.toml)
@@ -199,6 +219,7 @@ Check:
 ```
 
 **Type Errors**:
+
 ```
 Check:
 1. Are all types defined?
@@ -207,6 +228,7 @@ Check:
 ```
 
 **Test Failures**:
+
 ```
 Check:
 1. Is the test data valid?
@@ -217,12 +239,14 @@ Check:
 ### Performance Considerations
 
 #### Frontend
+
 - Use React.memo for expensive components
 - Implement virtual scrolling for long lists
 - Lazy load routes and images
 - Debounce user input
 
-#### Backend  
+#### Backend
+
 - Use database indexes on searched fields
 - Implement caching for repeated queries
 - Paginate large result sets
@@ -231,8 +255,9 @@ Check:
 ### Security Checklist
 
 Before completing any task:
+
 - [ ] No SQL injection vulnerabilities
-- [ ] No XSS vulnerabilities  
+- [ ] No XSS vulnerabilities
 - [ ] All inputs validated
 - [ ] Authentication required where needed
 - [ ] Sensitive data not logged
@@ -241,6 +266,7 @@ Before completing any task:
 ### Final Checklist
 
 Before marking task complete:
+
 - [ ] Code works as expected
 - [ ] Tests pass with good coverage
 - [ ] No linting errors

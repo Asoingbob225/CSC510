@@ -58,7 +58,7 @@ async def create_user(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered"
         )
-    
+
     # Create user
     user = user_service.create_user(db, user_data)
     return user
@@ -85,7 +85,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
-    
+
     @validator('password')
     def validate_password(cls, v):
         if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])', v):
@@ -96,7 +96,7 @@ class UserResponse(UserBase):
     id: str
     email_verified: bool
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -104,7 +104,7 @@ class HealthProfileCreate(BaseModel):
     allergies: List[AllergyInput]
     dietary_restrictions: List[str]
     medical_conditions: List[str]
-    
+
     @validator('allergies')
     def validate_allergies(cls, v):
         # Validate against approved list
@@ -132,14 +132,14 @@ def create_user(db: Session, user_data: UserCreate) -> User:
         user_data.password.encode('utf-8'),
         bcrypt.gensalt()
     ).decode('utf-8')
-    
+
     # Create user instance
     user = User(
         email=user_data.email,
         username=user_data.username,
         password_hash=password_hash
     )
-    
+
     # Save to database
     try:
         db.add(user)
@@ -171,7 +171,7 @@ from ..core.database import Base
 
 class User(Base):
     __tablename__ = "users"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String(255), unique=True, nullable=False, index=True)
     username = Column(String(50), unique=True, nullable=False, index=True)
@@ -179,10 +179,10 @@ class User(Base):
     email_verified = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    
+
     # Relationships
     health_profile = relationship("HealthProfile", back_populates="user", uselist=False)
-    
+
     def __repr__(self):
         return f"<User(email='{self.email}', username='{self.username}')>"
 ```
@@ -241,10 +241,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
-    
+
     encoded_jwt = jwt.encode(
-        to_encode, 
-        settings.SECRET_KEY, 
+        to_encode,
+        settings.SECRET_KEY,
         algorithm=settings.ALGORITHM
     )
     return encoded_jwt
@@ -259,11 +259,11 @@ async def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
     try:
         payload = jwt.decode(
-            token, 
-            settings.SECRET_KEY, 
+            token,
+            settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM]
         )
         user_id: str = payload.get("sub")
@@ -271,7 +271,7 @@ async def get_current_user(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    
+
     user = get_user(db, user_id=user_id)
     if user is None:
         raise credentials_exception
@@ -308,9 +308,9 @@ async def client(test_db):
             yield db
         finally:
             db.close()
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
 
@@ -350,13 +350,13 @@ logger = logging.getLogger(__name__)
 async def log_requests(request: Request, call_next):
     """Log all requests with timing."""
     start_time = time.time()
-    
+
     # Log request
     logger.info(f"Request: {request.method} {request.url.path}")
-    
+
     # Process request
     response = await call_next(request)
-    
+
     # Log response
     process_time = time.time() - start_time
     logger.info(
@@ -364,7 +364,7 @@ async def log_requests(request: Request, call_next):
         f"- Status: {response.status_code} "
         f"- Time: {process_time:.3f}s"
     )
-    
+
     return response
 ```
 
@@ -391,6 +391,7 @@ target_metadata = Base.metadata
 
 ---
 
-**Examples in codebase**: 
+**Examples in codebase**:
+
 - `index.py` - Basic FastAPI setup
 - `tests/` - Test examples

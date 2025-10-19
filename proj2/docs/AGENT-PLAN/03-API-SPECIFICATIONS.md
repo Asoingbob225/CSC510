@@ -1,11 +1,13 @@
 # API Specifications
 
 ## Base URL
+
 ```
 /api/v1
 ```
 
 ## Response Format
+
 ```json
 // Success
 {
@@ -24,6 +26,7 @@
 ```
 
 ## Status Codes
+
 - `200` - Success (GET, PUT)
 - `201` - Created (POST)
 - `204` - Deleted (DELETE)
@@ -34,6 +37,7 @@
 - `409` - Conflict
 
 ## Authentication
+
 ```
 Authorization: Bearer <jwt_token>
 ```
@@ -41,6 +45,7 @@ Authorization: Bearer <jwt_token>
 ## Endpoints
 
 ### Auth
+
 ```
 POST   /auth/register
 POST   /auth/login
@@ -50,6 +55,7 @@ POST   /auth/verify-email/{token}
 ```
 
 ### Users
+
 ```
 GET    /users/me
 PUT    /users/me
@@ -57,6 +63,7 @@ DELETE /users/me
 ```
 
 ### Health Profile
+
 ```
 GET    /users/{id}/health-profile
 POST   /users/{id}/health-profile
@@ -65,6 +72,7 @@ DELETE /users/{id}/health-profile
 ```
 
 ## Validation Example
+
 ```python
 from pydantic import BaseModel, EmailStr
 

@@ -49,12 +49,14 @@ Agent: I'll help you write tests. Based on the testing strategy, we need unit te
 ## 💡 Pro Tips
 
 ### DO:
+
 - Always start with the task ID from `08-SPRINT-TASKS.md`
 - Reference specific pattern documents when implementing
 - Ask the agent to check existing code for similar patterns
 - Request tests alongside implementation
 
 ### DON'T:
+
 - Don't ask the agent to read all documents at once
 - Don't skip the task definition and jump to coding
 - Don't ignore the acceptance criteria
@@ -64,21 +66,25 @@ Agent: I'll help you write tests. Based on the testing strategy, we need unit te
 ### For Copy-Paste:
 
 **Frontend Developer:**
+
 ```
 Read /docs/AGENT-PLAN/08-SPRINT-TASKS.md and help me with task FE-S1-[NUMBER]. Check /docs/AGENT-PLAN/05-FRONTEND-PATTERNS.md for implementation patterns.
 ```
 
 **Backend Developer:**
+
 ```
 Read /docs/AGENT-PLAN/08-SPRINT-TASKS.md and help me with task BE-S1-[NUMBER]. Follow the patterns in /docs/AGENT-PLAN/06-BACKEND-PATTERNS.md.
 ```
 
 **Full Stack:**
+
 ```
 I'm working on both frontend and backend for [FEATURE]. Start with /docs/AGENT-PLAN/00-QUICK-START.md and then check tasks FE-S1-[NUMBER] and BE-S1-[NUMBER].
 ```
 
 **Debugging:**
+
 ```
 I have an error [ERROR MESSAGE]. Read /docs/AGENT-PLAN/09-AGENT-INSTRUCTIONS.md section on debugging and help me fix it.
 ```
