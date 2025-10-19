@@ -11,6 +11,7 @@
 ## Document Information
 
 **Related Documents:**
+
 - [SRS Master](../../2-SRS/SRS-MASTER.md)
 - [Project Charter](../../0-INITIATION/project-charter.md)
 - [Risk Management](../../1-SPP/risk-management.md)
@@ -47,16 +48,16 @@ This document describes the architecture of Eatsential MVP (Version 1.0), an AI-
 
 ### 1.3 Definitions and Acronyms
 
-| Term | Definition |
-|------|------------|
-| **RAG** | Retrieval-Augmented Generation |
-| **LLM** | Large Language Model |
-| **API** | Application Programming Interface |
-| **ML** | Machine Learning |
+| Term      | Definition                                          |
+| --------- | --------------------------------------------------- |
+| **RAG**   | Retrieval-Augmented Generation                      |
+| **LLM**   | Large Language Model                                |
+| **API**   | Application Programming Interface                   |
+| **ML**    | Machine Learning                                    |
 | **HIPAA** | Health Insurance Portability and Accountability Act |
-| **PII** | Personally Identifiable Information |
-| **CDN** | Content Delivery Network |
-| **WAF** | Web Application Firewall |
+| **PII**   | Personally Identifiable Information                 |
+| **CDN**   | Content Delivery Network                            |
+| **WAF**   | Web Application Firewall                            |
 
 ---
 
@@ -65,6 +66,7 @@ This document describes the architecture of Eatsential MVP (Version 1.0), an AI-
 ### 2.1 Architecture Framework
 
 We follow the **C4 Model** for visualizing software architecture:
+
 - **Level 1:** System Context
 - **Level 2:** Container Diagram
 - **Level 3:** Component Diagram
@@ -73,6 +75,7 @@ We follow the **C4 Model** for visualizing software architecture:
 ### 2.2 Architectural Patterns
 
 **Primary Patterns:**
+
 - **Microservices Architecture** - For scalability and independent deployment
 - **Event-Driven Architecture** - For real-time updates and decoupling
 - **RAG Pattern** - For AI-powered recommendations
@@ -101,14 +104,14 @@ We follow the **C4 Model** for visualizing software architecture:
 
 ### 3.3 Quality Attributes
 
-| Attribute | Priority | Target Metric |
-|-----------|----------|---------------|
-| **Security** | Critical | Zero breaches |
-| **Performance** | High | <200ms p95 |
-| **Scalability** | High | 10K concurrent users |
-| **Reliability** | High | 99.9% uptime |
-| **Maintainability** | Medium | <4hr fix time |
-| **Usability** | High | <5min onboarding |
+| Attribute           | Priority | Target Metric        |
+| ------------------- | -------- | -------------------- |
+| **Security**        | Critical | Zero breaches        |
+| **Performance**     | High     | <200ms p95           |
+| **Scalability**     | High     | 10K concurrent users |
+| **Reliability**     | High     | 99.9% uptime         |
+| **Maintainability** | Medium   | <4hr fix time        |
+| **Usability**       | High     | <5min onboarding     |
 
 ---
 
@@ -122,9 +125,9 @@ graph TB
         User[User<br/>Health-conscious individuals]
         Admin[Admin<br/>System administrators]
         Restaurant[Restaurant Partners<br/>Verified establishments]
-        
+
         System[Eatsential Platform<br/>AI-powered nutrition system]
-        
+
         Email[Email Service<br/>SendGrid]
         Payment[Payment Service<br/>Stripe]
         Maps[Maps Service<br/>Google Maps]
@@ -133,11 +136,11 @@ graph TB
         Storage[Cloud Storage<br/>AWS S3]
         Nutrition[Nutrition DB<br/>USDA Database]
     end
-    
+
     User -->|Uses| System
     Admin -->|Manages| System
     Restaurant -->|Provides data| System
-    
+
     System -->|Sends notifications| Email
     System -->|Processes payments| Payment
     System -->|Gets locations| Maps
@@ -150,22 +153,26 @@ graph TB
 ### 4.2 High-Level Architecture
 
 **Frontend Layer:**
+
 - React SPA with TypeScript
 - Progressive Web App (PWA)
 - Responsive design
 
 **Backend Layer:**
+
 - FastAPI (Python) microservices
 - GraphQL Federation
 - Event streaming (Kafka)
 
 **Data Layer:**
+
 - PostgreSQL (primary)
 - Redis (caching)
 - Elasticsearch (search)
 - S3 (file storage)
 
 **AI/ML Layer:**
+
 - RAG pipeline
 - LLM integration
 - Custom ML models
@@ -186,7 +193,7 @@ classDiagram
         +authenticate()
         +updateProfile()
     }
-    
+
     class HealthProfile {
         +allergies: List~Allergy~
         +conditions: List~Condition~
@@ -195,7 +202,7 @@ classDiagram
         +validate()
         +calculateNeeds()
     }
-    
+
     class Recommendation {
         +id: UUID
         +user: User
@@ -205,7 +212,7 @@ classDiagram
         +generate()
         +personalize()
     }
-    
+
     class Meal {
         +id: UUID
         +name: string
@@ -215,7 +222,7 @@ classDiagram
         +restaurant: Restaurant
         +validate()
     }
-    
+
     class AIEngine {
         +model: LLMModel
         +rag: RAGPipeline
@@ -223,7 +230,7 @@ classDiagram
         +validate()
         +explain()
     }
-    
+
     User "1" --> "1" HealthProfile
     User "1" --> "*" Recommendation
     Recommendation "1" --> "*" Meal
@@ -241,22 +248,22 @@ sequenceDiagram
     participant AI as AI Engine
     participant Val as Validation Service
     participant DB as Database
-    
+
     U->>API: Request recommendations
     API->>Auth: Validate token
     Auth-->>API: Token valid
-    
+
     API->>Prof: Get user profile
     Prof->>DB: Query profile
     DB-->>Prof: Profile data
     Prof-->>API: Complete profile
-    
+
     API->>AI: Generate recommendations
     AI->>AI: RAG processing
     AI->>Val: Validate safety
     Val-->>AI: Safety confirmed
     AI-->>API: Recommendations
-    
+
     API-->>U: Personalized meals
 ```
 
@@ -310,12 +317,12 @@ graph TB
         WebApp[Web Application<br/>React SPA]
         MobileApp[Mobile App<br/>React Native]
     end
-    
+
     subgraph "API Layer"
         Gateway[API Gateway<br/>Kong]
         GraphQL[GraphQL Server<br/>Apollo Federation]
     end
-    
+
     subgraph "Microservices"
         AuthSvc[Auth Service<br/>FastAPI + Auth0]
         ProfileSvc[Profile Service<br/>FastAPI]
@@ -323,14 +330,14 @@ graph TB
         RestSvc[Restaurant Service<br/>FastAPI]
         NotifSvc[Notification Service<br/>FastAPI]
     end
-    
+
     subgraph "AI/ML Layer"
         RAG[RAG Engine<br/>LangChain]
         LLM[LLM Service<br/>OpenAI/Claude]
         MLModels[ML Models<br/>TensorFlow]
         Validator[Safety Validator<br/>Rule Engine]
     end
-    
+
     subgraph "Data Layer"
         Postgres[(PostgreSQL<br/>Primary DB)]
         Redis[(Redis<br/>Cache)]
@@ -338,7 +345,7 @@ graph TB
         S3[(S3<br/>File Storage)]
         Kafka[Kafka<br/>Event Stream]
     end
-    
+
     WebApp --> Gateway
     MobileApp --> Gateway
     Gateway --> GraphQL
@@ -346,18 +353,18 @@ graph TB
     GraphQL --> ProfileSvc
     GraphQL --> RecSvc
     GraphQL --> RestSvc
-    
+
     RecSvc --> RAG
     RAG --> LLM
     RAG --> MLModels
     RecSvc --> Validator
-    
+
     AuthSvc --> Postgres
     ProfileSvc --> Postgres
     RestSvc --> Postgres
     RecSvc --> Redis
     RestSvc --> Elastic
-    
+
     NotifSvc --> Kafka
     RecSvc --> Kafka
 ```
@@ -370,7 +377,7 @@ graph TB
         API[REST API<br/>FastAPI]
         Controller[Recommendation Controller]
         Engine[AI Engine]
-        
+
         subgraph "Core Components"
             ProfileMgr[Profile Manager]
             MealMatcher[Meal Matcher]
@@ -378,21 +385,21 @@ graph TB
             Personalizer[Personalizer]
             Explainer[Explanation Generator]
         end
-        
+
         subgraph "AI Components"
             RAGProc[RAG Processor]
             LLMClient[LLM Client]
             MLPredictor[ML Predictor]
             PromptMgr[Prompt Manager]
         end
-        
+
         subgraph "Data Access"
             ProfileRepo[Profile Repository]
             MealRepo[Meal Repository]
             CacheRepo[Cache Repository]
         end
     end
-    
+
     API --> Controller
     Controller --> Engine
     Engine --> ProfileMgr
@@ -400,12 +407,12 @@ graph TB
     Engine --> SafetyCheck
     Engine --> Personalizer
     Engine --> Explainer
-    
+
     MealMatcher --> RAGProc
     Personalizer --> MLPredictor
     Explainer --> LLMClient
     RAGProc --> PromptMgr
-    
+
     ProfileMgr --> ProfileRepo
     MealMatcher --> MealRepo
     Engine --> CacheRepo
@@ -422,23 +429,23 @@ erDiagram
     USER ||--o{ HEALTH_PROFILE : has
     USER ||--o{ PREFERENCE : has
     USER ||--o{ RECOMMENDATION : receives
-    
+
     HEALTH_PROFILE ||--o{ ALLERGY : contains
     HEALTH_PROFILE ||--o{ HEALTH_CONDITION : contains
     HEALTH_PROFILE ||--o{ WELLNESS_GOAL : contains
     HEALTH_PROFILE ||--o{ BIOMETRIC_DATA : tracks
-    
+
     RECOMMENDATION ||--o{ RECOMMENDED_MEAL : includes
     RECOMMENDED_MEAL }o--|| MEAL : references
-    
+
     MEAL ||--o{ MEAL_INGREDIENT : contains
     MEAL_INGREDIENT }o--|| INGREDIENT : uses
     INGREDIENT ||--o{ ALLERGEN : may_contain
-    
+
     MEAL }o--|| RESTAURANT : served_by
     RESTAURANT ||--o{ RESTAURANT_HOURS : has
     RESTAURANT ||--o{ CUISINE_TYPE : offers
-    
+
     USER {
         uuid id PK
         string email UK
@@ -448,7 +455,7 @@ erDiagram
         boolean is_active
         string role
     }
-    
+
     HEALTH_PROFILE {
         uuid id PK
         uuid user_id FK
@@ -460,7 +467,7 @@ erDiagram
         string activity_level
         json dietary_restrictions
     }
-    
+
     MEAL {
         uuid id PK
         string name
@@ -485,58 +492,58 @@ flowchart LR
         NutrDB[Nutrition Database]
         IoT[Wearable Devices]
     end
-    
+
     subgraph "Ingestion Layer"
         APIGateway[API Gateway]
         ETL[ETL Pipeline]
         Stream[Stream Processor]
     end
-    
+
     subgraph "Processing Layer"
         Validate[Validation Service]
         Transform[Transformation Service]
         Enrich[Enrichment Service]
     end
-    
+
     subgraph "Storage Layer"
         subgraph "Hot Data"
             Cache[Redis Cache]
             Primary[PostgreSQL]
         end
-        
+
         subgraph "Warm Data"
             Search[Elasticsearch]
             Analytics[ClickHouse]
         end
-        
+
         subgraph "Cold Data"
             Archive[S3 Archive]
         end
     end
-    
+
     subgraph "Serving Layer"
         QueryAPI[Query API]
         MLServing[ML Serving]
         ReportEngine[Report Engine]
     end
-    
+
     UserInput --> APIGateway
     RestAPI --> ETL
     NutrDB --> ETL
     IoT --> Stream
-    
+
     APIGateway --> Validate
     ETL --> Transform
     Stream --> Enrich
-    
+
     Validate --> Primary
     Transform --> Primary
     Enrich --> Cache
-    
+
     Primary --> Search
     Primary --> Analytics
     Analytics --> Archive
-    
+
     Cache --> QueryAPI
     Primary --> QueryAPI
     Search --> MLServing
@@ -546,12 +553,14 @@ flowchart LR
 ### 7.3 Data Governance
 
 **Data Classification:**
+
 - **Critical:** Health data, allergen info (encrypted, audited)
 - **Sensitive:** PII, payment info (encrypted, restricted)
 - **Internal:** Analytics, logs (pseudonymized)
 - **Public:** Restaurant info, general nutrition
 
 **Data Retention:**
+
 - Active user data: Indefinite
 - Inactive user data: 7 years
 - Logs: 90 days
@@ -570,52 +579,52 @@ graph TB
         WAF[Web Application Firewall]
         DDoS[DDoS Protection]
     end
-    
+
     subgraph "Network Security"
         VPC[VPC Network]
         SG[Security Groups]
         NACLs[Network ACLs]
         VPN[VPN Gateway]
     end
-    
+
     subgraph "Application Security"
         AuthN[Authentication<br/>OAuth2/JWT]
         AuthZ[Authorization<br/>RBAC]
         Encryption[Encryption<br/>TLS 1.3]
         InputVal[Input Validation]
     end
-    
+
     subgraph "Data Security"
         EncRest[Encryption at Rest<br/>AES-256]
         EncTransit[Encryption in Transit<br/>TLS]
         KeyMgmt[Key Management<br/>AWS KMS]
         Backup[Encrypted Backups]
     end
-    
+
     subgraph "Monitoring"
         SIEM[SIEM System]
         IDS[Intrusion Detection]
         Audit[Audit Logging]
         Compliance[Compliance Scanning]
     end
-    
+
     Internet --> CDN
     CDN --> WAF
     WAF --> DDoS
     DDoS --> VPC
-    
+
     VPC --> SG
     SG --> NACLs
-    
+
     App[Application] --> AuthN
     AuthN --> AuthZ
     AuthZ --> Encryption
     Encryption --> InputVal
-    
+
     InputVal --> EncTransit
     EncTransit --> EncRest
     EncRest --> KeyMgmt
-    
+
     All --> SIEM
     SIEM --> IDS
     IDS --> Audit
@@ -625,6 +634,7 @@ graph TB
 ### 8.2 Authentication & Authorization
 
 **Authentication Flow:**
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -632,7 +642,7 @@ sequenceDiagram
     participant Gateway
     participant AuthService
     participant Database
-    
+
     User->>Frontend: Login request
     Frontend->>Gateway: POST /auth/login
     Gateway->>AuthService: Validate credentials
@@ -646,20 +656,21 @@ sequenceDiagram
 ```
 
 **Authorization Model:**
+
 - **RBAC** with fine-grained permissions
 - **Resource-based** access control
 - **Attribute-based** policies for complex rules
 
 ### 8.3 Threat Model
 
-| Threat | Impact | Mitigation |
-|--------|--------|------------|
-| **SQL Injection** | High | Parameterized queries, ORMs |
-| **XSS** | Medium | Content Security Policy, sanitization |
-| **CSRF** | Medium | CSRF tokens, SameSite cookies |
-| **Data Breach** | Critical | Encryption, access controls |
-| **DDoS** | High | CloudFlare, rate limiting |
-| **API Abuse** | Medium | Rate limiting, API keys |
+| Threat            | Impact   | Mitigation                            |
+| ----------------- | -------- | ------------------------------------- |
+| **SQL Injection** | High     | Parameterized queries, ORMs           |
+| **XSS**           | Medium   | Content Security Policy, sanitization |
+| **CSRF**          | Medium   | CSRF tokens, SameSite cookies         |
+| **Data Breach**   | Critical | Encryption, access controls           |
+| **DDoS**          | High     | CloudFlare, rate limiting             |
+| **API Abuse**     | Medium   | Rate limiting, API keys               |
 
 ---
 
@@ -675,41 +686,41 @@ graph LR
         Embed[Embedding Service]
         VectorDB[(Vector Database<br/>Pinecone)]
     end
-    
+
     subgraph "Query Processing"
         Query[User Query]
         QEmbed[Query Embedding]
         Retrieve[Retriever]
         Rerank[Reranker]
     end
-    
+
     subgraph "Generation"
         Context[Context Builder]
         Prompt[Prompt Template]
         LLM[LLM Service]
         Validate[Response Validator]
     end
-    
+
     subgraph "Output"
         Format[Formatter]
         Safety[Safety Check]
         Response[Final Response]
     end
-    
+
     Docs --> Chunk
     Chunk --> Embed
     Embed --> VectorDB
-    
+
     Query --> QEmbed
     QEmbed --> Retrieve
     Retrieve --> VectorDB
     VectorDB --> Rerank
-    
+
     Rerank --> Context
     Context --> Prompt
     Prompt --> LLM
     LLM --> Validate
-    
+
     Validate --> Format
     Format --> Safety
     Safety --> Response
@@ -723,33 +734,33 @@ graph TB
         UserFeatures[User Features<br/>Demographics, Health]
         MealFeatures[Meal Features<br/>Nutrition, Ingredients]
         ContextFeatures[Context Features<br/>Time, Location]
-        
+
         FeatureStore[(Feature Store<br/>Feast)]
     end
-    
+
     subgraph "Model Training"
         DataPipeline[Data Pipeline]
         Training[Training Service<br/>Kubeflow]
         Evaluation[Model Evaluation]
         Registry[Model Registry<br/>MLflow]
     end
-    
+
     subgraph "Model Serving"
         Predictor[Prediction Service<br/>TensorFlow Serving]
         Cache[Prediction Cache]
         Monitor[Model Monitor]
         ABTest[A/B Testing]
     end
-    
+
     UserFeatures --> FeatureStore
     MealFeatures --> FeatureStore
     ContextFeatures --> FeatureStore
-    
+
     FeatureStore --> DataPipeline
     DataPipeline --> Training
     Training --> Evaluation
     Evaluation --> Registry
-    
+
     Registry --> Predictor
     Predictor --> Cache
     Predictor --> Monitor
@@ -790,7 +801,7 @@ graph TB
                     ALB[Application Load Balancer]
                     NAT[NAT Gateway]
                 end
-                
+
                 subgraph "Private Subnet 1"
                     subgraph "EKS Cluster"
                         Frontend[Frontend Pods]
@@ -798,7 +809,7 @@ graph TB
                         Workers[Worker Pods]
                     end
                 end
-                
+
                 subgraph "Private Subnet 2"
                     subgraph "Data Tier"
                         RDS[(RDS PostgreSQL<br/>Multi-AZ)]
@@ -808,7 +819,7 @@ graph TB
                 end
             end
         end
-        
+
         subgraph "Global Services"
             CloudFront[CloudFront CDN]
             Route53[Route53 DNS]
@@ -816,7 +827,7 @@ graph TB
             Secrets[Secrets Manager]
         end
     end
-    
+
     Internet --> CloudFront
     CloudFront --> ALB
     ALB --> Frontend
@@ -835,7 +846,7 @@ namespaces:
   - eatsential-prod
   - eatsential-staging
   - eatsential-dev
-  
+
 # Key Deployments
 deployments:
   frontend:
@@ -847,31 +858,31 @@ deployments:
       limits:
         cpu: 1000m
         memory: 1Gi
-        
+
   backend-services:
     - name: auth-service
       replicas: 2
       autoscaling: true
-      
+
     - name: profile-service
       replicas: 3
       autoscaling: true
-      
+
     - name: recommendation-service
       replicas: 5
       autoscaling: true
-      gpu: true  # For ML inference
-      
+      gpu: true # For ML inference
+
     - name: restaurant-service
       replicas: 3
       autoscaling: true
-      
+
 # Ingress Configuration
 ingress:
   class: nginx
   tls: true
   cert-manager: letsencrypt
-  
+
 # Service Mesh
 serviceMesh:
   provider: istio
@@ -889,32 +900,32 @@ graph LR
         Dev[Developer]
         LocalTest[Local Tests]
     end
-    
+
     subgraph "CI Pipeline"
         GitHub[GitHub]
         Actions[GitHub Actions]
-        
+
         subgraph "Build Stage"
             Lint[Linting]
             UnitTest[Unit Tests]
             Build[Docker Build]
             Scan[Security Scan]
         end
-        
+
         subgraph "Test Stage"
             IntTest[Integration Tests]
             E2ETest[E2E Tests]
             PerfTest[Performance Tests]
         end
     end
-    
+
     subgraph "CD Pipeline"
         subgraph "Staging"
             StageHelm[Helm Deploy]
             StageTest[Smoke Tests]
             StageApprove[Manual Approval]
         end
-        
+
         subgraph "Production"
             ProdHelm[Helm Deploy]
             ProdCanary[Canary Deploy]
@@ -922,24 +933,24 @@ graph LR
             ProdRollback[Auto Rollback]
         end
     end
-    
+
     Dev --> LocalTest
     LocalTest --> GitHub
     GitHub --> Actions
-    
+
     Actions --> Lint
     Lint --> UnitTest
     UnitTest --> Build
     Build --> Scan
-    
+
     Scan --> IntTest
     IntTest --> E2ETest
     E2ETest --> PerfTest
-    
+
     PerfTest --> StageHelm
     StageHelm --> StageTest
     StageTest --> StageApprove
-    
+
     StageApprove --> ProdHelm
     ProdHelm --> ProdCanary
     ProdCanary --> ProdMonitor
@@ -952,29 +963,32 @@ graph LR
 
 ### 11.1 Performance Targets
 
-| Metric | Target | Current Design Capability |
-|--------|--------|-------------------------|
-| **API Response Time** | <200ms p95 | 150ms (with caching) |
-| **Recommendation Generation** | <1s | 800ms (with RAG) |
-| **Concurrent Users** | 10,000 | 15,000 |
-| **Requests/Second** | 5,000 | 7,500 |
-| **Database Queries** | <50ms | 30ms (with indexing) |
-| **Cache Hit Rate** | >80% | 85% (Redis) |
+| Metric                        | Target     | Current Design Capability |
+| ----------------------------- | ---------- | ------------------------- |
+| **API Response Time**         | <200ms p95 | 150ms (with caching)      |
+| **Recommendation Generation** | <1s        | 800ms (with RAG)          |
+| **Concurrent Users**          | 10,000     | 15,000                    |
+| **Requests/Second**           | 5,000      | 7,500                     |
+| **Database Queries**          | <50ms      | 30ms (with indexing)      |
+| **Cache Hit Rate**            | >80%       | 85% (Redis)               |
 
 ### 11.2 Scalability Strategy
 
 **Horizontal Scaling:**
+
 - Kubernetes HPA for automatic pod scaling
 - Database read replicas
 - Elasticsearch cluster expansion
 - CDN for static assets
 
 **Vertical Scaling:**
+
 - GPU nodes for ML inference
 - High-memory nodes for caching
 - Optimized instance types
 
 **Data Partitioning:**
+
 - User data sharded by user_id
 - Time-series data partitioned by date
 - Geographic sharding for restaurants
@@ -987,7 +1001,7 @@ graph TB
         CDN[CDN Cache<br/>Static assets]
         AppCache[Application Cache<br/>Redis]
         DBCache[Database Cache<br/>Query cache]
-        
+
         subgraph "Cache Types"
             UserCache[User Profiles<br/>TTL: 1hr]
             MealCache[Meal Data<br/>TTL: 24hr]
@@ -995,7 +1009,7 @@ graph TB
             SearchCache[Search Results<br/>TTL: 5min]
         end
     end
-    
+
     Request --> CDN
     CDN --> AppCache
     AppCache --> UserCache
@@ -1013,47 +1027,52 @@ graph TB
 ### 12.1 Key Design Decisions (ADRs)
 
 #### ADR-001: Microservices Architecture
+
 **Status:** Accepted  
 **Context:** Need for independent scaling and deployment  
 **Decision:** Adopt microservices with API Gateway  
-**Consequences:** Higher complexity, better scalability  
+**Consequences:** Higher complexity, better scalability
 
 #### ADR-002: RAG for Recommendations
+
 **Status:** Accepted  
 **Context:** Need accurate, explainable AI recommendations  
 **Decision:** Implement RAG pipeline with vector database  
-**Consequences:** Better accuracy, higher infrastructure cost  
+**Consequences:** Better accuracy, higher infrastructure cost
 
 #### ADR-003: Event-Driven Communication
+
 **Status:** Accepted  
 **Context:** Need for real-time updates and decoupling  
 **Decision:** Use Kafka for event streaming  
-**Consequences:** Eventual consistency, better scalability  
+**Consequences:** Eventual consistency, better scalability
 
 #### ADR-004: PostgreSQL as Primary Database
+
 **Status:** Accepted  
 **Context:** Need for ACID compliance and complex queries  
 **Decision:** PostgreSQL with read replicas  
-**Consequences:** Strong consistency, vertical scaling limits  
+**Consequences:** Strong consistency, vertical scaling limits
 
 ### 12.2 Technology Stack Summary
 
-| Layer | Technology | Justification |
-|-------|------------|---------------|
-| **Frontend** | React + TypeScript | Type safety, ecosystem |
-| **Mobile** | React Native | Code reuse, performance |
-| **API** | FastAPI | Performance, async support |
-| **Gateway** | Kong | Features, extensibility |
-| **Database** | PostgreSQL | ACID, JSON support |
-| **Cache** | Redis | Performance, features |
-| **Search** | Elasticsearch | Full-text search, analytics |
-| **ML** | TensorFlow + PyTorch | Flexibility, ecosystem |
-| **LLM** | OpenAI/Claude | Capability, reliability |
-| **Infrastructure** | AWS + Kubernetes | Scalability, managed services |
+| Layer              | Technology           | Justification                 |
+| ------------------ | -------------------- | ----------------------------- |
+| **Frontend**       | React + TypeScript   | Type safety, ecosystem        |
+| **Mobile**         | React Native         | Code reuse, performance       |
+| **API**            | FastAPI              | Performance, async support    |
+| **Gateway**        | Kong                 | Features, extensibility       |
+| **Database**       | PostgreSQL           | ACID, JSON support            |
+| **Cache**          | Redis                | Performance, features         |
+| **Search**         | Elasticsearch        | Full-text search, analytics   |
+| **ML**             | TensorFlow + PyTorch | Flexibility, ecosystem        |
+| **LLM**            | OpenAI/Claude        | Capability, reliability       |
+| **Infrastructure** | AWS + Kubernetes     | Scalability, managed services |
 
 ### 12.3 Future Considerations
 
 **Phase 2 Enhancements:**
+
 - GraphQL federation for better API flexibility
 - Service mesh (Istio) for advanced traffic management
 - Multi-region deployment for global scale
@@ -1087,15 +1106,15 @@ class RecommendationResponse(BaseModel):
 
 class RecommendationService:
     async def get_recommendations(
-        self, 
+        self,
         request: RecommendationRequest
     ) -> RecommendationResponse:
         """Generate personalized meal recommendations"""
         pass
-        
+
     async def validate_safety(
-        self, 
-        user_id: str, 
+        self,
+        user_id: str,
         meal_id: str
     ) -> SafetyValidation:
         """Validate meal safety for user"""
@@ -1111,23 +1130,23 @@ CREATE TABLE health_profiles (
     user_id UUID NOT NULL REFERENCES users(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- Medical information (encrypted)
     allergies JSONB NOT NULL DEFAULT '[]',
     medical_conditions JSONB NOT NULL DEFAULT '[]',
     medications JSONB NOT NULL DEFAULT '[]',
-    
+
     -- Biometric data
     birth_date DATE,
     biological_sex VARCHAR(10),
     height_cm DECIMAL(5,2),
     weight_kg DECIMAL(5,2),
     activity_level VARCHAR(20),
-    
+
     -- Preferences and goals
     dietary_preferences JSONB NOT NULL DEFAULT '{}',
     wellness_goals JSONB NOT NULL DEFAULT '[]',
-    
+
     -- Constraints
     CONSTRAINT valid_height CHECK (height_cm > 0 AND height_cm < 300),
     CONSTRAINT valid_weight CHECK (weight_kg > 0 AND weight_kg < 500)
@@ -1141,17 +1160,20 @@ CREATE INDEX idx_health_profiles_allergies ON health_profiles USING GIN(allergie
 ### Appendix C: Monitoring & Observability
 
 **Key Metrics:**
+
 - Request rate and latency (Prometheus)
 - Error rates and types (Sentry)
 - Resource utilization (DataDog)
 - Business metrics (Custom dashboards)
 
 **Distributed Tracing:**
+
 - Jaeger for request tracing
 - Correlation IDs across services
 - Performance bottleneck identification
 
 **Logging Strategy:**
+
 - Structured JSON logs
 - Centralized in ELK stack
 - Log levels: ERROR, WARN, INFO, DEBUG

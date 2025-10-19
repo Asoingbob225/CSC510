@@ -10,12 +10,14 @@
 ## 📊 Overall Progress Summary
 
 ### Development Environment
+
 - ✅ **Frontend**: React + TypeScript + Vite (Running on port 5174)
 - ✅ **Backend**: FastAPI + Python (Running on port 8000)
 - ✅ **Package Managers**: Bun (frontend) + uv (backend)
 - ⚠️ **Architecture Issues**: Some compatibility issues with Bun workspaces on ARM64
 
 ### Documentation Status
+
 - **11 of 45 documents completed** (24%)
 - Critical documents ready: Risk Management, SAD, Requirements, Test Strategy
 - Ready to begin implementation based on comprehensive documentation
@@ -27,6 +29,7 @@
 ### Frontend Implementation
 
 #### ✅ Completed Features
+
 1. **Welcome/Landing Page** (`/`)
    - Beautiful modern UI with Tailwind CSS
    - Responsive design
@@ -53,10 +56,12 @@
    - Component tests for SignupField
 
 #### 🔄 In Progress
+
 - Login page implementation
 - API integration for signup
 
 #### 📝 TODO (Based on Requirements)
+
 - Health Profile creation (FR-016 to FR-020)
 - Allergy input with safety validation (FR-016)
 - Dashboard/Home page
@@ -67,15 +72,18 @@
 ### Backend Implementation
 
 #### ✅ Completed Features
+
 1. **Basic API Structure**
    - FastAPI application setup
    - `/api` health check endpoint
    - Test infrastructure with pytest
 
 #### 🔄 In Progress
+
 - None currently active
 
 #### 📝 TODO (Critical Path)
+
 1. **Authentication Service** (FR-001 to FR-005)
    - User registration endpoint
    - Login with JWT
@@ -103,6 +111,7 @@
 ## 🎯 Sprint 1 Priorities (Next 2 Weeks)
 
 ### Week 1 Goals
+
 1. **Backend Authentication**
    - [ ] Create user registration API (`POST /api/auth/register`)
    - [ ] Create login API (`POST /api/auth/login`)
@@ -122,6 +131,7 @@
    - [ ] Initial schema
 
 ### Week 2 Goals
+
 1. **Health Profile Management**
    - [ ] Profile creation API
    - [ ] Allergy input UI (CRITICAL)
@@ -152,15 +162,18 @@
 ## 📈 Metrics
 
 ### Code Coverage
+
 - Frontend: 0% (Need to set up coverage reporting)
 - Backend: 0% (Need to set up coverage reporting)
 
 ### Requirements Implementation
+
 - Functional Requirements: 0/75 (0%)
 - Non-functional Requirements: 0/30 (0%)
 - Use Cases: 0/23 (0%)
 
 ### Test Status
+
 - Unit Tests Written: 4 (SignupField)
 - Unit Tests Passing: 4/4 (100%)
 - Integration Tests: 0
@@ -171,17 +184,20 @@
 ## 🔗 Quick Links
 
 ### Development
+
 - Frontend: http://localhost:5174
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
 
 ### Documentation
+
 - [Requirements](./2-SRS/3-specific-requirements/3.1-functional-requirements.md)
 - [Architecture](./3-DESIGN/3.1-SAD/SAD-MASTER.md)
 - [Risk Management](./1-SPP/risk-management.md)
 - [Test Strategy](./5-STP/test-traceability-matrix.md)
 
 ### Commands
+
 ```bash
 # Start both servers
 cd /Users/joezhou/Documents/CSC510/proj2
