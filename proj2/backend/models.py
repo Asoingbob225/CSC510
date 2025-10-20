@@ -1,36 +1,63 @@
-"""
-Database models for the application.
-"""
+"""User model and related database schema definitions."""
 
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from sqlalchemy.sql import func
-from database import Base
+import re
+from datetime import datetime
+
+from pydantic import BaseModel, EmailStr, constr, validator
+from sqlalchemy import Boolean, Column, DateTime, String
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
-class User(Base):
-    """
-    User model for the application.
-    """
+class UserDB(Base):
+    """SQLAlchemy model for user database table"""
 
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, index=True, nullable=False)
-    email = Column(String(100), unique=True, index=True, nullable=False)
-    full_name = Column(String(100), nullable=True)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    id = Column(String, primary_key=True)
+    email = Column(String, unique=True, nullable=False, index=True)
+    username = Column(String(20), unique=True, nullable=False, index=True)
+    password_hash = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    email_verified = Column(Boolean, default=False)
+    verification_token = Column(String, nullable=True)
+    verification_token_expires = Column(DateTime, nullable=True)
 
 
-class ExampleTable(Base):
-    """
-    Example table to demonstrate the migration system.
-    """
+class UserCreate(BaseModel):
+    """Pydantic model for user registration request"""
 
-    __tablename__ = "example_table"
+    username: constr(min_length=3, max_length=20)  # type: ignore
+    email: EmailStr
+    password: constr(min_length=8, max_length=48)  # type: ignore
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False)
-    description = Column(String(500), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    @validator("password")
+    def password_validation(self, v):
+        """Validate password meets all requirements"""
+        if len(v) < 8 or len(v) > 48:
+            raise ValueError("between 8 and 48 characters")
+        if not any(c.isupper() for c in v):
+            raise ValueError("at least one uppercase letter")
+        if not any(c.islower() for c in v):
+            raise ValueError("at least one lowercase letter")
+        if not any(c.isdigit() for c in v):
+            raise ValueError("at least one number")
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', v):
+            raise ValueError("at least one special character")
+        return v
+
+
+class UserResponse(BaseModel):
+    """Pydantic model for user response"""
+
+    id: str
+    username: str
+    email: str
+    message: str = "Verification email sent"
+
+    class Config:
+        """Pydantic config"""
+
+        from_attributes = True

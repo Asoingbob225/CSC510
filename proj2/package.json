@@ -19,7 +19,7 @@
     "format-check": "bun run prettier . --check",
     "format": "bun run prettier . --write",
     "dev:backend": "cd backend && uv run fastapi dev index.py",
-    "dev:frontend": "bun --filter frontend dev",
+    "dev:frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"bun dev:backend\" \"bun dev:frontend\""
   },
   "peerDependencies": {
