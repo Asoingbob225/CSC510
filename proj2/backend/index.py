@@ -15,11 +15,21 @@ def read_root():
 def get_users(db: Session = Depends(get_db)):
     """Get all users from the database."""
     users = db.query(User).all()
-    return {"users": [{"id": user.id, "username": user.username, "email": user.email} for user in users]}
+    return {
+        "users": [
+            {"id": user.id, "username": user.username, "email": user.email}
+            for user in users
+        ]
+    }
 
 
 @app.get("/api/example")
 def get_examples(db: Session = Depends(get_db)):
     """Get all example records from the database."""
     examples = db.query(ExampleTable).all()
-    return {"examples": [{"id": ex.id, "name": ex.name, "description": ex.description} for ex in examples]}
+    return {
+        "examples": [
+            {"id": ex.id, "name": ex.name, "description": ex.description}
+            for ex in examples
+        ]
+    }

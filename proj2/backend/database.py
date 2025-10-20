@@ -1,6 +1,7 @@
 """
 Database configuration and connection management.
 """
+
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,7 +18,7 @@ DATABASE_NAME = os.getenv("DATABASE_NAME", "proj2.db")
 # Create SQLAlchemy engine
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
 )
 
 # Create SessionLocal class
@@ -44,7 +45,7 @@ def create_database():
     """
     # Import models to ensure they are registered with Base
     import models  # noqa: F401
-    
+
     # Create all tables defined in models
     Base.metadata.create_all(bind=engine)
     print(f"Database created successfully at: {DATABASE_NAME}")

@@ -11,6 +11,7 @@ class User(Base):
     """
     User model for the application.
     """
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -26,6 +27,7 @@ class ExampleTable(Base):
     """
     Example table to demonstrate the migration system.
     """
+
     __tablename__ = "example_table"
 
     id = Column(Integer, primary_key=True, index=True)
