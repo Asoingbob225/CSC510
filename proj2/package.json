@@ -16,8 +16,13 @@
     "prettier-plugin-tailwindcss": "^0.7.0"
   },
   "scripts": {
-    "format-check": "bun run prettier . --check",
-    "format": "bun run prettier . --write",
+    "prepare": "bun run lint-fix && bun run format",
+    "format": "concurrently \"bun format:backend\" \"bun format:frontend\"",
+    "format:backend": "cd backend && uv run ruff format .",
+    "format:frontend": "cd frontend && bun run prettier . --write",
+    "lint-fix": "concurrently \"bun lint-fix:backend\" \"bun lint-fix:frontend\"",
+    "lint-fix:backend": "cd backend && uv run ruff check . --fix",
+    "lint-fix:frontend": "cd frontend && bun run lint --fix",
     "dev:backend": "cd backend && uv run fastapi dev index.py",
     "dev:frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"bun dev:backend\" \"bun dev:frontend\""
