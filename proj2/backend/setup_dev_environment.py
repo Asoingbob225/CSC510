@@ -12,7 +12,6 @@ Usage:
 import os
 import sys
 import subprocess
-from pathlib import Path
 
 
 def run_command(command, description):

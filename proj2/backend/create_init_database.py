@@ -16,7 +16,7 @@ from pathlib import Path
 # Add the current directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from database import create_database, get_database_path
+from database import get_database_path
 from dotenv import load_dotenv
 
 

@@ -19,6 +19,7 @@ pip install -e .
 Follow the detailed [Database Setup Guide](DATABASE_SETUP.md) for initial configuration.
 
 Quick setup:
+
 ```bash
 # Copy environment configuration
 cp env.example .env
@@ -45,6 +46,7 @@ The API will be available at `http://localhost:8000`
 ## API Documentation
 
 Once the server is running, visit:
+
 - **Swagger UI**: `http://localhost:8000/docs`
 - **ReDoc**: `http://localhost:8000/redoc`
 
@@ -55,6 +57,7 @@ Once the server is running, visit:
 When you modify database models:
 
 1. Create a migration:
+
    ```bash
    alembic revision --autogenerate -m "Description of changes"
    ```

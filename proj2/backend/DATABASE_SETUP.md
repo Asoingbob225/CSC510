@@ -5,6 +5,7 @@ This guide explains how to set up and manage the database for the proj2 backend 
 ## Overview
 
 The application uses SQLite as the database with Alembic for migrations. This setup ensures:
+
 - Consistent database schema across all environments
 - Version-controlled database changes
 - Easy collaboration between team members
@@ -51,6 +52,7 @@ python create_init_database.py
 ```
 
 This will:
+
 - Create the SQLite database file
 - Set up the initial schema
 - Provide guidance for next steps
@@ -78,6 +80,7 @@ alembic upgrade head
 When you modify models in `models.py`:
 
 1. Create a new migration:
+
    ```bash
    alembic revision --autogenerate -m "Description of changes"
    ```
@@ -146,11 +149,13 @@ python create_init_database.py
 If migrations fail:
 
 1. Check the migration status:
+
    ```bash
    alembic current
    ```
 
 2. If needed, downgrade to a previous version:
+
    ```bash
    alembic downgrade -1
    ```
