@@ -3,7 +3,10 @@
 import os
 
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
+
+Base = declarative_base()
 
 # Get database URL from environment variable, default to SQLite
 DATABASE_URL = os.getenv(
@@ -24,7 +27,7 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_db() -> Session:
+def get_db() -> Session:  # type: ignore
     """Get database session
 
     Yields:
