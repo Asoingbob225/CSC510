@@ -10,7 +10,6 @@ from sqlalchemy.pool import StaticPool
 
 from src.eatsential.database import Base, get_db
 from src.eatsential.index import app
-from src.eatsential.models import UserDB
 
 # Create in-memory SQLite database for testing
 SQLALCHEMY_DATABASE_URL = "sqlite://"
@@ -34,7 +33,6 @@ def override_get_db():
 
 app.dependency_overrides[get_db] = override_get_db
 
-import sys
 from unittest.mock import AsyncMock, patch
 
 

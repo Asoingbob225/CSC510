@@ -3,6 +3,7 @@ Test for the /api endpoint of FastAPI backend.
 """
 
 from fastapi.testclient import TestClient
+
 from src.eatsential.index import app
 
 client = TestClient(app)

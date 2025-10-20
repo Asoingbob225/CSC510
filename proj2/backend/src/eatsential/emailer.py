@@ -4,6 +4,7 @@ Email service implementation using SMTP.
 
 import os
 from email.message import EmailMessage
+
 import aiosmtplib
 
 SENDER = os.getenv("EMAIL_SENDER", "Eatsential <noreply@eatsential.com>")

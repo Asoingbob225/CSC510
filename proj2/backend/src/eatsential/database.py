@@ -3,9 +3,9 @@ Database connection and session management.
 """
 
 import os
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from .models import Base
+from sqlalchemy.orm import Session, sessionmaker
 
 # Get database URL from environment variable, default to SQLite
 DATABASE_URL = os.getenv(

@@ -3,7 +3,7 @@ Email service implementation using AWS SES.
 """
 
 import os
-from typing import Optional
+
 import boto3
 from botocore.exceptions import ClientError
 
@@ -47,7 +47,7 @@ async def send_verification_email(email: str, token: str) -> bool:
     verification_url = f"{os.getenv('FRONTEND_URL')}/verify-email?token={token}"
 
     try:
-        response = ses_client.send_email(
+        ses_client.send_email(
             Source=SENDER,
             Destination={"ToAddresses": [email]},
             Message={

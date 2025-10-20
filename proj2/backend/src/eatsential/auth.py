@@ -2,15 +2,16 @@
 Authentication related functionality.
 """
 
-from datetime import datetime, timedelta
 import uuid
-from typing import Optional
-from fastapi import HTTPException, Depends, Request
+from datetime import datetime, timedelta
+
+from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from .models import UserDB, UserCreate, AccountStatus
+
 from .emailer import send_verification_email
+from .models import AccountStatus, UserCreate, UserDB
 
 # Password hashing configuration
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
@@ -125,7 +126,7 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
 
         return db_user
 
-    except Exception as e:
+    except Exception:
         db.rollback()
         raise HTTPException(
             status_code=500,

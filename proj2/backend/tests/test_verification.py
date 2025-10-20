@@ -2,10 +2,10 @@
 Tests for email verification functionality
 """
 
-from datetime import datetime, timedelta
 import uuid
-import pytest
-from src.eatsential.models import UserDB, AccountStatus
+from datetime import datetime, timedelta
+
+from src.eatsential.models import AccountStatus, UserDB
 
 
 def test_verify_email_success(client, db):

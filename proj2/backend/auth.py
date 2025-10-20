@@ -2,15 +2,16 @@
 Authentication related functionality.
 """
 
-from datetime import datetime, timedelta
 import uuid
-from typing import Optional
-from fastapi import HTTPException, Depends
+from datetime import datetime, timedelta
+
+from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from .models import UserDB, UserCreate
+
 from .emailer import send_verification_email
+from .models import UserCreate, UserDB
 
 # Password hashing configuration
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")

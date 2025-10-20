@@ -1,13 +1,15 @@
-from datetime import datetime, timedelta
 import uuid
-from fastapi import FastAPI, Depends, HTTPException
+from datetime import datetime, timedelta
+
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from .models import UserCreate, UserResponse, UserDB, AccountStatus, EmailRequest
+
 from .auth import create_user
 from .database import get_db
 from .emailer import send_verification_email
 from .middleware.rate_limit import RateLimitMiddleware
+from .models import AccountStatus, EmailRequest, UserCreate, UserDB, UserResponse
 
 app = FastAPI()
 
@@ -129,9 +131,7 @@ async def register_user(
     Raises:
         HTTPException: If registration fails
     """
-    # Get client IP for rate limiting (handled by middleware)
-    client_ip = request.client.host
-
+    # Rate limiting is handled by middleware
     try:
         # Input sanitization is handled by Pydantic model
 
@@ -143,9 +143,9 @@ async def register_user(
             id=user.id,
             username=user.username,
             email=user.email,
-            message="Registration successful. Please check your email to verify your account.",
+            message="Registration successful. Please check your email to verify your account."
         )
-    except HTTPException as e:
+    except HTTPException:
         # Re-raise HTTP exceptions (like duplicate email)
         raise
     except Exception as e:

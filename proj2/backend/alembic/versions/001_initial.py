@@ -4,8 +4,9 @@ Revision ID: 001_initial
 Create Date: 2025-10-19 10:00:00.000000
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 
 def upgrade() -> None:

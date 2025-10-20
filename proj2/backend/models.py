@@ -3,9 +3,9 @@ User model and related database schema definitions.
 """
 
 from datetime import datetime
-from typing import Optional
+
 from pydantic import BaseModel, EmailStr, constr
-from sqlalchemy import Column, String, DateTime, Boolean
+from sqlalchemy import Boolean, Column, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -30,6 +30,7 @@ class UserDB(Base):
 
 
 import re
+
 from pydantic import validator
 
 

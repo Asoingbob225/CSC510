@@ -2,11 +2,12 @@
 Rate limiting middleware implementation.
 """
 
+import os
 import time
 from typing import Dict, Tuple
-from fastapi import Request, HTTPException
+
+from fastapi import HTTPException, Request
 from starlette.middleware.base import BaseHTTPMiddleware
-import os
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):

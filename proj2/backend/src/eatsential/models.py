@@ -4,10 +4,9 @@ User model and related database schema definitions.
 
 import re
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, EmailStr, constr, field_validator, validator
-from email_validator import validate_email, EmailNotValidError
-from sqlalchemy import Column, String, DateTime, Boolean
+
+from pydantic import BaseModel, EmailStr, constr, field_validator
+from sqlalchemy import Boolean, Column, DateTime, String
 from sqlalchemy.orm import DeclarativeBase
 
 

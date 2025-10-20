@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from .models import UserCreate, UserResponse
+
 from .auth import create_user
 from .database import get_db
 from .middleware.rate_limit import RateLimitMiddleware
+from .models import UserCreate, UserResponse
 
 app = FastAPI()
 
@@ -50,7 +51,7 @@ async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
         return UserResponse(id=user.id, username=user.username, email=user.email)
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500, detail="An error occurred during registration"
         )
