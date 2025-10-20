@@ -13,7 +13,6 @@ load_dotenv()
 # Add the backend directory to Python path
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-# Import models
 from models import Base
 
 # this is the Alembic Config object

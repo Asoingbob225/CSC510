@@ -1,5 +1,7 @@
 """Tests for authentication functionality"""
 
+from unittest.mock import AsyncMock, patch
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -30,8 +32,6 @@ def override_get_db():
 
 
 app.dependency_overrides[get_db] = override_get_db
-
-from unittest.mock import AsyncMock, patch
 
 
 @pytest.fixture

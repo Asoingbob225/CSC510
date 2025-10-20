@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timedelta
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -114,9 +114,6 @@ async def resend_verification(
     await send_verification_email(user.email, user.verification_token)
 
     return {"message": "Verification email sent"}
-
-
-from fastapi import Request
 
 
 @app.post("/api/auth/register", response_model=UserResponse)

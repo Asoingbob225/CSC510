@@ -1,8 +1,9 @@
 """User model and related database schema definitions."""
 
+import re
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, constr
+from pydantic import BaseModel, EmailStr, constr, validator
 from sqlalchemy import Boolean, Column, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -25,9 +26,7 @@ class UserDB(Base):
     verification_token_expires = Column(DateTime, nullable=True)
 
 
-import re
 
-from pydantic import validator
 
 
 class UserCreate(BaseModel):
