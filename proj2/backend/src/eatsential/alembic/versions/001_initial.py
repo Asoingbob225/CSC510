@@ -10,6 +10,10 @@ from alembic import op
 
 
 def upgrade() -> None:
+    """Upgrade database to this revision.
+
+    Creates the users table with required columns and indexes.
+    """
     # Create users table
     op.create_table(
         "users",
@@ -31,6 +35,10 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """Downgrade database by removing changes from upgrade.
+
+    Drops all indexes and tables created in upgrade.
+    """
     # Drop indexes
     op.drop_index(op.f("ix_users_username"), table_name="users")
     op.drop_index(op.f("ix_users_email"), table_name="users")

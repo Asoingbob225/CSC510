@@ -2,13 +2,12 @@
 
 import re
 from datetime import datetime
+from enum import Enum
 
 from pydantic import BaseModel, EmailStr, constr, field_validator
 from sqlalchemy import Boolean, Column, DateTime, String
+
 from .database import Base
-
-
-from enum import Enum
 
 
 class AccountStatus(str, Enum):

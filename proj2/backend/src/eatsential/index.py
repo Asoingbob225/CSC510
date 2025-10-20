@@ -158,7 +158,7 @@ async def register_user(
         raise
     except Exception as e:
         # Log the error (in production, use proper logging)
-        print(f"Registration error: {str(e)}")
+        print(f"Registration error: {e!s}")
         raise HTTPException(
             status_code=500,
             detail="An error occurred during registration. Please try again later.",

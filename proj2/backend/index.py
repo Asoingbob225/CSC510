@@ -31,8 +31,11 @@ def read_root():
     return {"status": "healthy", "message": "API server is running"}
 
 
+# Create a dependency
+get_db_dependency = Depends(get_db)
+
 @app.post("/api/auth/register", response_model=UserResponse)
-async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
+async def register_user(user_data: UserCreate, db: Session = get_db_dependency):
     """Register a new user
 
     Args:
