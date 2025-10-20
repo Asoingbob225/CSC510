@@ -31,7 +31,7 @@ def db():
     Base.metadata.drop_all(bind=engine)
     # Create all tables
     Base.metadata.create_all(bind=engine)
-    
+
     db = TestingSessionLocal()
     try:
         yield db

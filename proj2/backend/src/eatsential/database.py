@@ -11,6 +11,7 @@ class Base(DeclarativeBase):
 
     pass
 
+
 # Get database URL from environment variable, default to SQLite
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
