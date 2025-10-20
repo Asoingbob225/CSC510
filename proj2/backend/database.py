@@ -57,5 +57,6 @@ def get_database_path():
     """
     if DATABASE_URL.startswith("sqlite:///"):
         db_path = DATABASE_URL.replace("sqlite:///", "")
+        db_path = os.path.normpath(db_path)
         return os.path.abspath(db_path)
     return DATABASE_URL
