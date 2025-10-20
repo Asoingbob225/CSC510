@@ -12,7 +12,7 @@ parent_dir = os.path.dirname(os.path.dirname(__file__))
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from models import Base  # noqa: E402
+from models import Base
 
 # Load environment variables
 load_dotenv()

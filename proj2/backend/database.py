@@ -1,12 +1,10 @@
-"""
-Database configuration and connection management.
-"""
+"""Database configuration and connection management."""
 
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Load environment variables
 load_dotenv()
@@ -29,9 +27,7 @@ Base = declarative_base()
 
 
 def get_db():
-    """
-    Dependency to get database session.
-    """
+    """Dependency to get database session."""
     db = SessionLocal()
     try:
         yield db
@@ -40,9 +36,7 @@ def get_db():
 
 
 def create_database():
-    """
-    Create the database file and tables.
-    """
+    """Create the database file and tables."""
     # Import models to ensure they are registered with Base
     import models  # noqa: F401
 
@@ -52,9 +46,7 @@ def create_database():
 
 
 def get_database_path():
-    """
-    Get the full path to the database file.
-    """
+    """Get the full path to the database file."""
     if DATABASE_URL.startswith("sqlite:///"):
         db_path = DATABASE_URL.replace("sqlite:///", "")
         db_path = os.path.normpath(db_path)

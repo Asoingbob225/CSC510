@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Initial database setup script.
+"""Initial database setup script.
 
 This script creates the initial SQLite database file and sets up the basic schema.
 Run this script once when setting up your development environment.
@@ -16,14 +15,13 @@ from pathlib import Path
 # Add the current directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from database import get_database_path
 from dotenv import load_dotenv
+
+from database import get_database_path
 
 
 def main():
-    """
-    Main function to initialize the database.
-    """
+    """Main function to initialize the database."""
     print("Initializing database...")
 
     # Load environment variables

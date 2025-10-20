@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Development environment setup script.
+"""Development environment setup script.
 
 This script sets up the complete development environment for the proj2 backend.
 Run this script when setting up your development environment for the first time.
@@ -10,8 +9,8 @@ Usage:
 """
 
 import os
-import sys
 import subprocess
+import sys
 
 
 def run_command(command, description):
