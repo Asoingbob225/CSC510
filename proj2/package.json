@@ -16,7 +16,7 @@
     "prettier-plugin-tailwindcss": "^0.7.0"
   },
   "scripts": {
-    "prepare": "bun run lint-fix && bun run format",
+    "check-fl": "bun run lint-fix && bun run format",
     "format": "concurrently \"bun format:backend\" \"bun format:frontend\"",
     "format:backend": "cd backend && uv run ruff format .",
     "format:frontend": "cd frontend && bun run prettier . --write",
