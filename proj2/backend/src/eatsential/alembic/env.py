@@ -7,13 +7,15 @@ from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
+# Add the backend directory to Python path
+parent_dir = os.path.dirname(os.path.dirname(__file__))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+from models import Base  # noqa: E402
+
 # Load environment variables
 load_dotenv()
-
-# Add the backend directory to Python path
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
-from models import Base
 
 # this is the Alembic Config object
 config = context.config
