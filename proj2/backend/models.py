@@ -26,9 +26,6 @@ class UserDB(Base):
     verification_token_expires = Column(DateTime, nullable=True)
 
 
-
-
-
 class UserCreate(BaseModel):
     """Pydantic model for user registration request"""
 
