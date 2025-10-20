@@ -17,7 +17,7 @@ from pathlib import Path
 
 def run_command(command, description):
     """Run a command and handle errors."""
-    print(f"🔄 {description}...")
+    print(f"[RUNNING] {description}...")
     try:
         result = subprocess.run(
             command, shell=True, check=True, capture_output=True, text=True
