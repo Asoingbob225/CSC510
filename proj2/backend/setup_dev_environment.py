@@ -17,8 +17,8 @@ def run_command(command, description):
     """Run a command and handle errors."""
     print(f"[RUNNING] {description}...")
     try:
-        result = subprocess.run(
-            command, shell=True, check=True, capture_output=True, text=True
+        result = subprocess.run(  # noqa: S603
+            command, check=True, capture_output=True, text=True, shell=False
         )
         print(f"✅ {description} completed successfully!")
         if result.stdout:
@@ -31,24 +31,28 @@ def run_command(command, description):
 
 
 def main():
-    """Main setup function."""
+    """Set up the development environment."""
     print("🚀 Setting up proj2 backend development environment...")
     print("=" * 60)
 
     # Check if we're in the right directory
     if not os.path.exists("pyproject.toml"):
         print(
-            "❌ Error: pyproject.toml not found. Please run this script from the backend directory."
+            "❌ Error: pyproject.toml not found. "
+            "Please run this script from the backend directory."
         )
         sys.exit(1)
 
     # Step 1: Install dependencies
     print("\n📦 Step 1: Installing dependencies")
-    if not run_command("uv sync", "Installing dependencies with uv"):
+    if not run_command(["uv", "sync"], "Installing dependencies with uv"):
         print("   Trying with pip...")
-        if not run_command("pip install -e .", "Installing dependencies with pip"):
+        if not run_command(
+            ["pip", "install", "-e", "."], "Installing dependencies with pip"
+        ):
             print(
-                "❌ Failed to install dependencies. Please check your Python environment."
+                "❌ Failed to install dependencies. "
+                "Please check your Python environment."
             )
             sys.exit(1)
 
@@ -56,9 +60,12 @@ def main():
     print("\n🔧 Step 2: Setting up environment configuration")
     if not os.path.exists(".env"):
         if os.path.exists("env.example"):
-            run_command("cp env.example .env", "Copying environment configuration")
+            run_command(
+                ["cp", "env.example", ".env"], "Copying environment configuration"
+            )
             print(
-                "   ✅ Environment file created. You can edit .env to customize settings."
+                "   ✅ Environment file created. "
+                "You can edit .env to customize settings."
             )
         else:
             print("   ⚠️  No env.example found. Creating basic .env file...")
@@ -72,13 +79,17 @@ def main():
 
     # Step 3: Initialize database
     print("\n🗄️  Step 3: Setting up database")
-    if not run_command("python create_init_database.py", "Creating initial database"):
+    if not run_command(
+        ["python", "create_init_database.py"], "Creating initial database"
+    ):
         print("❌ Failed to create database. Please check the error messages above.")
         sys.exit(1)
 
     # Step 4: Apply migrations
     print("\n🔄 Step 4: Applying database migrations")
-    if not run_command("alembic upgrade head", "Applying database migrations"):
+    if not run_command(
+        ["./.venv/bin/alembic", "upgrade", "head"], "Applying database migrations"
+    ):
         print("❌ Failed to apply migrations. Please check the error messages above.")
         sys.exit(1)
 
@@ -91,7 +102,7 @@ def main():
 
     # Check migration status
     result = subprocess.run(
-        "alembic current", shell=True, capture_output=True, text=True
+        ["./.venv/bin/alembic", "current"], capture_output=True, text=True
     )
     if result.returncode == 0:
         print("   ✅ Database migrations applied successfully")

@@ -21,7 +21,7 @@ from database import get_database_path
 
 
 def main():
-    """Main function to initialize the database."""
+    """Initialize the database."""
     print("Initializing database...")
 
     # Load environment variables
