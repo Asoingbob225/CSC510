@@ -35,7 +35,6 @@ def read_root():
 get_db_dependency = Depends(get_db)
 
 
-
 @app.post("/api/auth/register", response_model=UserResponse)
 async def register_user(user_data: UserCreate, db: Session = get_db_dependency):
     """Register a new user
