@@ -1,5 +1,4 @@
-"""Email service implementation using AWS SES.
-"""
+"""Email service implementation using AWS SES."""
 
 import os
 

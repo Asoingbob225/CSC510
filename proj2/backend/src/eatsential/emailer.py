@@ -1,5 +1,4 @@
-"""Email service implementation using SMTP.
-"""
+"""Email service implementation using SMTP."""
 
 import os
 from email.message import EmailMessage

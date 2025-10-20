@@ -1,5 +1,4 @@
-"""Rate limiting middleware implementation.
-"""
+"""Rate limiting middleware implementation."""
 
 import os
 import time
@@ -8,8 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Rate limiting middleware to prevent abuse
-    """
+    """Rate limiting middleware to prevent abuse"""
 
     def __init__(self, app):
         super().__init__(app)
@@ -18,8 +16,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.window = 60  # 1 minute window
 
     async def dispatch(self, request: Request, call_next):
-        """Process each request and apply rate limiting
-        """
+        """Process each request and apply rate limiting"""
         # Skip rate limiting if in test mode
         if os.getenv("TEST_MODE") == "true":
             response = await call_next(request)

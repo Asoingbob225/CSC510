@@ -1,5 +1,4 @@
-"""Database connection and session management.
-"""
+"""Database connection and session management."""
 
 import os
 

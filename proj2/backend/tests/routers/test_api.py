@@ -1,5 +1,4 @@
-"""Test for the /api endpoint of FastAPI backend.
-"""
+"""Test for the /api endpoint of FastAPI backend."""
 
 from fastapi.testclient import TestClient
 

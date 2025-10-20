@@ -51,7 +51,7 @@ async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
         return UserResponse(id=user.id, username=user.username, email=user.email)
     except HTTPException:
         raise
-        except Exception as e:
-            raise HTTPException(
-                status_code=500, detail="An error occurred during registration"
-            ) from e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail="An error occurred during registration"
+        ) from e

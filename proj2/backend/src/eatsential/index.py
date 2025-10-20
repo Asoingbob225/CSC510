@@ -151,15 +151,15 @@ async def register_user(
             id=user.id,
             username=user.username,
             email=user.email,
-            message="Success! Please check your email for verification instructions."
+            message="Success! Please check your email for verification instructions.",
         )
     except HTTPException:
         # Re-raise HTTP exceptions (like duplicate email)
         raise
     except Exception as e:
-                    # Log the error (in production, use proper logging)
-            print(f"Registration error: {str(e)}")
-            raise HTTPException(
-                status_code=500,
-                detail="An error occurred during registration. Please try again later.",
-            ) from e
+        # Log the error (in production, use proper logging)
+        print(f"Registration error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="An error occurred during registration. Please try again later.",
+        ) from e

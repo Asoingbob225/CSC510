@@ -1,5 +1,4 @@
-"""Eatsential backend package
-"""
+"""Eatsential backend package"""
 
 from .index import app as app
 

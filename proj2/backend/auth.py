@@ -1,5 +1,4 @@
-"""Authentication related functionality.
-"""
+"""Authentication related functionality."""
 
 import uuid
 from datetime import datetime, timedelta
@@ -20,14 +19,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_password_hash(password: str) -> str:
-    """Hash a password using Argon2
-    """
+    """Hash a password using Argon2"""
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against its hash
-    """
+    """Verify a password against its hash"""
     return pwd_context.verify(plain_password, hashed_password)
 
 
