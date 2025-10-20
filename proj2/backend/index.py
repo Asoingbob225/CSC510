@@ -33,8 +33,7 @@ def read_root():
 
 @app.post("/api/auth/register", response_model=UserResponse)
 async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
-    """
-    Register a new user
+    """Register a new user
 
     Args:
         user_data: User registration data
@@ -45,13 +44,14 @@ async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
 
     Raises:
         HTTPException: If registration fails
+
     """
     try:
         user = await create_user(db, user_data)
         return UserResponse(id=user.id, username=user.username, email=user.email)
     except HTTPException:
         raise
-    except Exception:
-        raise HTTPException(
-            status_code=500, detail="An error occurred during registration"
-        )
+        except Exception as e:
+            raise HTTPException(
+                status_code=500, detail="An error occurred during registration"
+            ) from e

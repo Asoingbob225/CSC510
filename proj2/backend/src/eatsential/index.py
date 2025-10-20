@@ -36,9 +36,11 @@ def read_root():
 
 
 @app.get("/api/auth/verify-email/{token}")
-async def verify_email(token: str, db: Session = Depends(get_db)):
-    """
-    Verify user's email address
+async def verify_email(
+    token: str,
+    db: Session = Depends(get_db),  # noqa: B008
+):
+    """Verify user's email address
 
     Args:
         token: Email verification token
@@ -49,6 +51,7 @@ async def verify_email(token: str, db: Session = Depends(get_db)):
 
     Raises:
         HTTPException: If token is invalid or expired
+
     """
     # Find user by verification token
     user = (
@@ -77,9 +80,11 @@ async def verify_email(token: str, db: Session = Depends(get_db)):
 
 
 @app.post("/api/auth/resend-verification")
-async def resend_verification(email_data: EmailRequest, db: Session = Depends(get_db)):
-    """
-    Resend verification email
+async def resend_verification(
+    email_data: EmailRequest,
+    db: Session = Depends(get_db),  # noqa: B008
+):
+    """Resend verification email
 
     Args:
         email_data: Email request body
@@ -90,6 +95,7 @@ async def resend_verification(email_data: EmailRequest, db: Session = Depends(ge
 
     Raises:
         HTTPException: If user not found or already verified
+
     """
     user = db.query(UserDB).filter(UserDB.email == email_data.email).first()
 
@@ -115,10 +121,11 @@ from fastapi import Request
 
 @app.post("/api/auth/register", response_model=UserResponse)
 async def register_user(
-    request: Request, user_data: UserCreate, db: Session = Depends(get_db)
+    request: Request,
+    user_data: UserCreate,
+    db: Session = Depends(get_db),  # noqa: B008
 ):
-    """
-    Register a new user
+    """Register a new user
 
     Args:
         request: FastAPI request object
@@ -130,6 +137,7 @@ async def register_user(
 
     Raises:
         HTTPException: If registration fails
+
     """
     # Rate limiting is handled by middleware
     try:
@@ -143,15 +151,15 @@ async def register_user(
             id=user.id,
             username=user.username,
             email=user.email,
-            message="Registration successful. Please check your email to verify your account."
+            message="Success! Please check your email for verification instructions."
         )
     except HTTPException:
         # Re-raise HTTP exceptions (like duplicate email)
         raise
     except Exception as e:
-        # Log the error (in production, use proper logging)
-        print(f"Registration error: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail="An error occurred during registration. Please try again later.",
-        )
+                    # Log the error (in production, use proper logging)
+            print(f"Registration error: {str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail="An error occurred during registration. Please try again later.",
+            ) from e

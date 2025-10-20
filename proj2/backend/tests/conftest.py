@@ -1,5 +1,4 @@
-"""
-Test configuration and fixtures
+"""Test configuration and fixtures
 """
 
 import os
@@ -28,8 +27,7 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 @pytest.fixture(scope="function")
 def db():
-    """
-    Create a fresh database for each test function
+    """Create a fresh database for each test function
     """
     Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
@@ -42,8 +40,7 @@ def db():
 
 @pytest.fixture(scope="function")
 def client(db):
-    """
-    Create a test client using the test database
+    """Create a test client using the test database
     """
 
     def override_get_db():
@@ -60,8 +57,7 @@ def client(db):
 
 @pytest.fixture(scope="function")
 def test_smtp_server(monkeypatch):
-    """
-    Mock SMTP server for email testing
+    """Mock SMTP server for email testing
     """
     sent_emails = []
 

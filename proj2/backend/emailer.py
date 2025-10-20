@@ -1,5 +1,4 @@
-"""
-Email service implementation using AWS SES.
+"""Email service implementation using AWS SES.
 """
 
 import os
@@ -31,8 +30,7 @@ The Eatsential Team
 
 
 async def send_verification_email(email: str, token: str) -> bool:
-    """
-    Send verification email using AWS SES
+    """Send verification email using AWS SES
 
     Args:
         email: Recipient email address
@@ -43,6 +41,7 @@ async def send_verification_email(email: str, token: str) -> bool:
 
     Raises:
         ClientError: If email sending fails
+
     """
     verification_url = f"{os.getenv('FRONTEND_URL')}/verify-email?token={token}"
 
@@ -62,7 +61,7 @@ async def send_verification_email(email: str, token: str) -> bool:
             },
         )
     except ClientError as e:
-        print(f"Failed to send email: {str(e)}")
+        print(f"Failed to send email: {e!s}")
         return False
 
     return True

@@ -1,5 +1,4 @@
-"""
-Email service implementation using SMTP.
+"""Email service implementation using SMTP.
 """
 
 import os
@@ -28,8 +27,7 @@ The Eatsential Team
 
 
 async def send_verification_email(email: str, token: str) -> bool:
-    """
-    Send verification email using SMTP
+    """Send verification email using SMTP
 
     Args:
         email: Recipient email address
@@ -40,6 +38,7 @@ async def send_verification_email(email: str, token: str) -> bool:
 
     Raises:
         SMTPException: If email sending fails
+
     """
     verification_url = f"{os.getenv('FRONTEND_URL')}/verify-email?token={token}"
 
@@ -60,5 +59,5 @@ async def send_verification_email(email: str, token: str) -> bool:
         )
         return True
     except Exception as e:
-        print(f"Failed to send email: {str(e)}")
+        print(f"Failed to send email: {e!s}")
         return False

@@ -1,5 +1,4 @@
-"""
-User model and related database schema definitions.
+"""User model and related database schema definitions.
 """
 
 from datetime import datetime
@@ -12,8 +11,7 @@ Base = declarative_base()
 
 
 class UserDB(Base):
-    """
-    SQLAlchemy model for user database table
+    """SQLAlchemy model for user database table
     """
 
     __tablename__ = "users"
@@ -35,8 +33,7 @@ from pydantic import validator
 
 
 class UserCreate(BaseModel):
-    """
-    Pydantic model for user registration request
+    """Pydantic model for user registration request
     """
 
     username: constr(min_length=3, max_length=20)  # type: ignore
@@ -44,7 +41,7 @@ class UserCreate(BaseModel):
     password: constr(min_length=8, max_length=48)  # type: ignore
 
     @validator("password")
-    def password_validation(cls, v):
+    def password_validation(self, v):
         """Validate password meets all requirements"""
         if len(v) < 8 or len(v) > 48:
             raise ValueError("between 8 and 48 characters")
@@ -60,8 +57,7 @@ class UserCreate(BaseModel):
 
 
 class UserResponse(BaseModel):
-    """
-    Pydantic model for user response
+    """Pydantic model for user response
     """
 
     id: str

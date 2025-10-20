@@ -1,29 +1,24 @@
-"""
-Rate limiting middleware implementation.
+"""Rate limiting middleware implementation.
 """
 
 import os
 import time
-from typing import Dict, Tuple
-
 from fastapi import HTTPException, Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """
-    Rate limiting middleware to prevent abuse
+    """Rate limiting middleware to prevent abuse
     """
 
     def __init__(self, app):
         super().__init__(app)
-        self.requests: Dict[str, Tuple[int, float]] = {}
+        self.requests: dict[str, tuple[int, float]] = {}
         self.rate_limit = int(os.getenv("RATE_LIMIT_PER_MINUTE", "5"))
         self.window = 60  # 1 minute window
 
     async def dispatch(self, request: Request, call_next):
-        """
-        Process each request and apply rate limiting
+        """Process each request and apply rate limiting
         """
         # Skip rate limiting if in test mode
         if os.getenv("TEST_MODE") == "true":

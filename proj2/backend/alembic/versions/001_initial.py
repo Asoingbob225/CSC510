@@ -10,6 +10,7 @@ from alembic import op
 
 
 def upgrade() -> None:
+    """Create initial database schema."""
     # Create users table
     op.create_table(
         "users",
@@ -31,6 +32,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """Revert the initial database schema creation."""
     # Drop indexes
     op.drop_index(op.f("ix_users_username"), table_name="users")
     op.drop_index(op.f("ix_users_email"), table_name="users")

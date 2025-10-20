@@ -1,5 +1,4 @@
-"""
-Authentication related functionality.
+"""Authentication related functionality.
 """
 
 import uuid
@@ -21,22 +20,19 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_password_hash(password: str) -> str:
-    """
-    Hash a password using Argon2
+    """Hash a password using Argon2
     """
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Verify a password against its hash
+    """Verify a password against its hash
     """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 async def create_user(db: Session, user_data: UserCreate) -> UserDB:
-    """
-    Create a new user in the database with enhanced validation
+    """Create a new user in the database with enhanced validation
 
     Args:
         db: Database session
@@ -47,6 +43,7 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
 
     Raises:
         HTTPException: If validation fails or user already exists
+
     """
     # Email validation is already done by Pydantic EmailStr
 
@@ -126,9 +123,9 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
 
         return db_user
 
-    except Exception:
-        db.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail="An error occurred during registration. Please try again later.",
-        )
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="An error occurred during registration. Please try again later.",
+            ) from e

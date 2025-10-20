@@ -1,5 +1,4 @@
-"""
-Tests for the main FastAPI application.
+"""Tests for the main FastAPI application.
 Tests application initialization and basic functionality.
 """
 

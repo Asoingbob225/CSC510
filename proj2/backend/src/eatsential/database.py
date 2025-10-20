@@ -1,5 +1,4 @@
-"""
-Database connection and session management.
+"""Database connection and session management.
 """
 
 import os
@@ -27,11 +26,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db() -> Session:
-    """
-    Get database session
+    """Get database session
 
     Yields:
         Database session
+
     """
     db = SessionLocal()
     try:

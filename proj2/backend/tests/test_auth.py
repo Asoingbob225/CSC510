@@ -1,5 +1,4 @@
-"""
-Tests for authentication functionality
+"""Tests for authentication functionality
 """
 
 import pytest

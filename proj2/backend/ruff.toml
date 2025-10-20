@@ -32,9 +32,33 @@ indent-width = 4
 target-version = "py39"
 
 [lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-select = ["E", "F", "W", "I"]
-ignore = ["E402"]  # Module imports not at top of file
+# Enable a comprehensive set of rules
+select = [
+    "E",   # pycodestyle errors
+    "F",   # Pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "S",   # flake8-bandit
+    "N",   # pep8-naming
+    "Q",   # flake8-quotes
+    "RUF", # Ruff-specific rules
+]
+# Ignore some checks that conflict with our style or are too strict
+ignore = [
+    "E402",  # Module imports not at top of file
+    "D100",  # Missing docstring in public module
+    "D104",  # Missing docstring in public package
+    "D107",  # Missing docstring in __init__
+    "S101",  # Use of assert in tests
+    "S106",  # Hardcoded test passwords
+    "D400",  # First line should end with period
+    "D415",  # First line should end with period
+    "D200",  # One-line docstring should fit on one line
+    "D205",  # 1 blank line required between summary line and description
+]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

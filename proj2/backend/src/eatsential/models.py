@@ -1,5 +1,4 @@
-"""
-User model and related database schema definitions.
+"""User model and related database schema definitions.
 """
 
 import re
@@ -28,8 +27,7 @@ class AccountStatus(str, Enum):
 
 
 class UserDB(Base):
-    """
-    SQLAlchemy model for user database table
+    """SQLAlchemy model for user database table
     """
 
     __tablename__ = "users"
@@ -57,8 +55,7 @@ RESERVED_USERNAMES = {
 
 
 class UserCreate(BaseModel):
-    """
-    Pydantic model for user registration request
+    """Pydantic model for user registration request
     """
 
     username: constr(pattern=r"^[a-zA-Z0-9_-]+$", min_length=3, max_length=20)  # type: ignore
@@ -101,16 +98,14 @@ class UserCreate(BaseModel):
 
 
 class EmailRequest(BaseModel):
-    """
-    Pydantic model for email request body
+    """Pydantic model for email request body
     """
 
     email: EmailStr
 
 
 class UserResponse(BaseModel):
-    """
-    Pydantic model for user response
+    """Pydantic model for user response
     """
 
     id: str

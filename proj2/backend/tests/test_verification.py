@@ -1,5 +1,4 @@
-"""
-Tests for email verification functionality
+"""Tests for email verification functionality
 """
 
 import uuid
