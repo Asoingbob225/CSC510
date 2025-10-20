@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from .auth import create_user
 from .database import get_db
 from .middleware.rate_limit import RateLimitMiddleware
-from .models import UserCreate, UserResponse
+from .models import User, UserCreate, UserResponse
 
 app = FastAPI()
 
@@ -28,7 +28,22 @@ app.add_middleware(
 @app.get("/api")
 def read_root():
     """Health check endpoint"""
-    return {"status": "healthy", "message": "API server is running"}
+    return {"The server is running": "Hello World"}
+
+
+get_db_dependency = Depends(get_db)
+
+
+@app.get("/api/users")
+def get_users(db: Session = get_db_dependency):
+    """Get all users from the database."""
+    users = db.query(User).all()
+    return {
+        "users": [
+            {"id": user.id, "username": user.username, "email": user.email}
+            for user in users
+        ]
+    }
 
 
 # Create a dependency

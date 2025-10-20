@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.9"
-      - name: "Run Ruff Linter and Formatter Check"
+      - name: "Run Ruff Formatter Check"
         uses: astral-sh/ruff-action@v3
         with:
           src: proj2/backend
@@ -45,7 +45,7 @@ jobs:
 
       - name: "Check frontend formatting"
         run: |
-          bun run format
+          bun run format:frontend
           git diff --quiet || ( \
             echo "Error: Code is not formatted correctly. See the diff below for details."; \
             git diff; \
