@@ -3,10 +3,13 @@
 import os
 
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """Base class for all database models."""
+
+    pass
 
 # Get database URL from environment variable, default to SQLite
 DATABASE_URL = os.getenv(

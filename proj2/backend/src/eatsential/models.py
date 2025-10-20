@@ -5,13 +5,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, constr, field_validator
 from sqlalchemy import Boolean, Column, DateTime, String
-from sqlalchemy.orm import DeclarativeBase
-
-
-class Base(DeclarativeBase):
-    """Base class for all models"""
-
-    pass
+from .database import Base
 
 
 from enum import Enum
