@@ -3,7 +3,7 @@ Tests for the main FastAPI application.
 Tests application initialization and basic functionality.
 """
 
-from index import app
+from src.eatsential.index import app
 
 
 def test_app_import():
