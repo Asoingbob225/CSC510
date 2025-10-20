@@ -1,6 +1,7 @@
 """
 User model and related database schema definitions.
 """
+
 import re
 from datetime import datetime
 from typing import Optional
@@ -9,24 +10,29 @@ from email_validator import validate_email, EmailNotValidError
 from sqlalchemy import Column, String, DateTime, Boolean
 from sqlalchemy.orm import DeclarativeBase
 
+
 class Base(DeclarativeBase):
     """Base class for all models"""
-    pass
 
+    pass
 
 
 from enum import Enum
 
+
 class AccountStatus(str, Enum):
     """User account status"""
+
     PENDING = "pending"
     VERIFIED = "verified"
     SUSPENDED = "suspended"
+
 
 class UserDB(Base):
     """
     SQLAlchemy model for user database table
     """
+
     __tablename__ = "users"
 
     id = Column(String, primary_key=True)
@@ -40,26 +46,43 @@ class UserDB(Base):
     verification_token = Column(String, nullable=True)
     verification_token_expires = Column(DateTime, nullable=True)
 
-RESERVED_USERNAMES = {"admin", "administrator", "support", "system", "root", "superuser"}
+
+RESERVED_USERNAMES = {
+    "admin",
+    "administrator",
+    "support",
+    "system",
+    "root",
+    "superuser",
+}
+
 
 class UserCreate(BaseModel):
     """
     Pydantic model for user registration request
     """
-    username: constr(pattern=r'^[a-zA-Z0-9_-]+$', min_length=3, max_length=20)  # type: ignore
+
+    username: constr(pattern=r"^[a-zA-Z0-9_-]+$", min_length=3, max_length=20)  # type: ignore
     email: EmailStr
     password: str
 
-    @field_validator('username')
+    @field_validator("username")
     @classmethod
     def username_reserved_validation(cls, value: str) -> str:
         """Validate username is not reserved"""
-        reserved_usernames = {'admin', 'root', 'system', 'support', 'help', 'administrator'}
+        reserved_usernames = {
+            "admin",
+            "root",
+            "system",
+            "support",
+            "help",
+            "administrator",
+        }
         if value.lower() in reserved_usernames:
             raise ValueError("this username is reserved")
         return value
 
-    @field_validator('password')
+    @field_validator("password")
     @classmethod
     def password_validation(cls, value: str) -> str:
         """Validate password meets all requirements"""
@@ -77,16 +100,20 @@ class UserCreate(BaseModel):
             raise ValueError("password must contain at least one special character")
         return value
 
+
 class EmailRequest(BaseModel):
     """
     Pydantic model for email request body
     """
+
     email: EmailStr
+
 
 class UserResponse(BaseModel):
     """
     Pydantic model for user response
     """
+
     id: str
     username: str
     email: str
@@ -94,4 +121,5 @@ class UserResponse(BaseModel):
 
     class Config:
         """Pydantic config"""
+
         from_attributes = True

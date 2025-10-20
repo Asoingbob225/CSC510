@@ -1,6 +1,7 @@
 """
 Email service implementation using SMTP.
 """
+
 import os
 from email.message import EmailMessage
 import aiosmtplib
@@ -24,28 +25,29 @@ Best regards,
 The Eatsential Team
 """
 
+
 async def send_verification_email(email: str, token: str) -> bool:
     """
     Send verification email using SMTP
-    
+
     Args:
         email: Recipient email address
         token: Verification token
-        
+
     Returns:
         True if email was sent successfully
-        
+
     Raises:
         SMTPException: If email sending fails
     """
     verification_url = f"{os.getenv('FRONTEND_URL')}/verify-email?token={token}"
-    
+
     message = EmailMessage()
     message["From"] = SENDER
     message["To"] = email
     message["Subject"] = "Please verify your Eatsential email address"
     message.set_content(VERIFICATION_TEMPLATE.format(verification_url=verification_url))
-    
+
     try:
         await aiosmtplib.send(
             message,
@@ -53,7 +55,7 @@ async def send_verification_email(email: str, token: str) -> bool:
             port=SMTP_PORT,
             username=SMTP_USER or None,
             password=SMTP_PASSWORD or None,
-            use_tls=bool(SMTP_USER and SMTP_PASSWORD)
+            use_tls=bool(SMTP_USER and SMTP_PASSWORD),
         )
         return True
     except Exception as e:

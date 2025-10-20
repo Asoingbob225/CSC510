@@ -16,47 +16,41 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",  # Frontend development server
-        "https://eatsential.com"  # Production frontend
+        "https://eatsential.com",  # Production frontend
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+
 @app.get("/api")
 def read_root():
     """Health check endpoint"""
     return {"status": "healthy", "message": "API server is running"}
 
+
 @app.post("/api/auth/register", response_model=UserResponse)
-async def register_user(
-    user_data: UserCreate,
-    db: Session = Depends(get_db)
-):
+async def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user
-    
+
     Args:
         user_data: User registration data
         db: Database session
-        
+
     Returns:
         UserResponse with success message
-        
+
     Raises:
         HTTPException: If registration fails
     """
     try:
         user = await create_user(db, user_data)
-        return UserResponse(
-            id=user.id,
-            username=user.username,
-            email=user.email
-        )
+        return UserResponse(id=user.id, username=user.username, email=user.email)
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail="An error occurred during registration"
+            status_code=500, detail="An error occurred during registration"
         )

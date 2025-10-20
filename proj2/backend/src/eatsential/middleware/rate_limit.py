@@ -1,16 +1,19 @@
 """
 Rate limiting middleware implementation.
 """
+
 import time
 from typing import Dict, Tuple
 from fastapi import Request, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 import os
 
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     """
     Rate limiting middleware to prevent abuse
     """
+
     def __init__(self, app):
         super().__init__(app)
         self.requests: Dict[str, Tuple[int, float]] = {}
@@ -30,20 +33,20 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if request.url.path == "/api/auth/register":
             client_ip = request.client.host
             now = time.time()
-            
+
             # Clean up old entries
             self._cleanup_old_requests(now)
-            
+
             # Check if client has exceeded rate limit
             if self._is_rate_limited(client_ip, now):
                 raise HTTPException(
                     status_code=429,
-                    detail="Too many registration attempts. Please try again later."
+                    detail="Too many registration attempts. Please try again later.",
                 )
-            
+
             # Update request count for client
             self._update_request_count(client_ip, now)
-        
+
         response = await call_next(request)
         return response
 

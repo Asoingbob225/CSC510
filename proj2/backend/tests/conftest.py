@@ -1,6 +1,7 @@
 """
 Test configuration and fixtures
 """
+
 import os
 
 # Set test mode to disable rate limiting
@@ -24,6 +25,7 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 @pytest.fixture(scope="function")
 def db():
     """
@@ -37,11 +39,13 @@ def db():
         db.close()
         Base.metadata.drop_all(bind=engine)
 
+
 @pytest.fixture(scope="function")
 def client(db):
     """
     Create a test client using the test database
     """
+
     def override_get_db():
         try:
             yield db
@@ -53,20 +57,20 @@ def client(db):
         yield test_client
     app.dependency_overrides.clear()
 
+
 @pytest.fixture(scope="function")
 def test_smtp_server(monkeypatch):
     """
     Mock SMTP server for email testing
     """
     sent_emails = []
-    
+
     async def mock_send_email(*args, **kwargs):
         sent_emails.append((args, kwargs))
         return True
-    
+
     monkeypatch.setattr(
-        "src.eatsential.emailer.send_verification_email",
-        mock_send_email
+        "src.eatsential.emailer.send_verification_email", mock_send_email
     )
-    
+
     return sent_emails

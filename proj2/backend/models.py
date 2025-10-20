@@ -1,6 +1,7 @@
 """
 User model and related database schema definitions.
 """
+
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr, constr
@@ -9,10 +10,12 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class UserDB(Base):
     """
     SQLAlchemy model for user database table
     """
+
     __tablename__ = "users"
 
     id = Column(String, primary_key=True)
@@ -25,18 +28,21 @@ class UserDB(Base):
     verification_token = Column(String, nullable=True)
     verification_token_expires = Column(DateTime, nullable=True)
 
+
 import re
 from pydantic import validator
+
 
 class UserCreate(BaseModel):
     """
     Pydantic model for user registration request
     """
+
     username: constr(min_length=3, max_length=20)  # type: ignore
     email: EmailStr
     password: constr(min_length=8, max_length=48)  # type: ignore
 
-    @validator('password')
+    @validator("password")
     def password_validation(cls, v):
         """Validate password meets all requirements"""
         if len(v) < 8 or len(v) > 48:
@@ -51,10 +57,12 @@ class UserCreate(BaseModel):
             raise ValueError("at least one special character")
         return v
 
+
 class UserResponse(BaseModel):
     """
     Pydantic model for user response
     """
+
     id: str
     username: str
     email: str
@@ -62,4 +70,5 @@ class UserResponse(BaseModel):
 
     class Config:
         """Pydantic config"""
+
         from_attributes = True
