@@ -9,7 +9,8 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from .emailer import send_verification_email
-from .models import AccountStatus, UserCreate, UserDB
+from .models import AccountStatus, UserDB
+from .schemas import UserCreate
 
 # Password hashing configuration
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")

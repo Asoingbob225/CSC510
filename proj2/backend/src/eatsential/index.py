@@ -9,7 +9,8 @@ from .auth import create_user
 from .database import get_db
 from .emailer import send_verification_email
 from .middleware.rate_limit import RateLimitMiddleware
-from .models import AccountStatus, EmailRequest, UserCreate, UserDB, UserResponse
+from .models import AccountStatus, UserDB
+from .schemas import EmailRequest, UserCreate, UserResponse
 
 app = FastAPI()
 
@@ -106,12 +107,13 @@ async def resend_verification(
         raise HTTPException(status_code=400, detail="Email already verified")
 
     # Generate new verification token
-    user.verification_token = str(uuid.uuid4())
+    verification_token = str(uuid.uuid4())
+    user.verification_token = verification_token
     user.verification_token_expires = datetime.utcnow() + timedelta(hours=24)
     db.commit()
 
     # Send new verification email
-    await send_verification_email(user.email, user.verification_token)
+    await send_verification_email(user.email, verification_token)
 
     return {"message": "Verification email sent"}
 
