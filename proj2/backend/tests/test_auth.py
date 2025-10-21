@@ -123,6 +123,7 @@ def test_register_reserved_username(client):
         },
     )
     assert response.status_code == 422
+    # Pydantic validation errors return array format
     errors = response.json()["detail"]
     assert any("reserved" in error["msg"].lower() for error in errors)
 
