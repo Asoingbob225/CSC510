@@ -65,3 +65,14 @@ class UserResponse(BaseModel):
     username: str
     email: str
     message: str = "Verification email sent"
+
+
+# --- Common Schemas ---
+
+
+class MessageResponse(BaseModel):
+    """Generic message response schema"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    message: str

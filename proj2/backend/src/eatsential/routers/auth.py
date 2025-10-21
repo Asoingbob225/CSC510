@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..schemas import EmailRequest, UserCreate, UserResponse
+from ..schemas import EmailRequest, MessageResponse, UserCreate, UserResponse
 from ..services.user_service import (
     create_user,
     resend_verification_email,
@@ -65,7 +65,7 @@ async def register_user(
         ) from e
 
 
-@router.get("/verify-email/{token}")
+@router.get("/verify-email/{token}", response_model=MessageResponse)
 async def verify_email(token: str, db: SessionDep):
     """Verify user's email address
 
@@ -83,7 +83,7 @@ async def verify_email(token: str, db: SessionDep):
     return await verify_user_email(db, token)
 
 
-@router.post("/resend-verification")
+@router.post("/resend-verification", response_model=MessageResponse, status_code=201)
 async def resend_verification(
     email_data: EmailRequest,
     db: SessionDep,
