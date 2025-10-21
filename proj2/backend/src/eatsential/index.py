@@ -120,7 +120,6 @@ async def resend_verification(
 
 @app.post("/api/auth/register", response_model=UserResponse)
 async def register_user(
-    request: Request,
     user_data: UserCreate,
     db: Session = Depends(get_db),  # noqa: B008
 ):

@@ -3,7 +3,7 @@
 import os
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 
 class Base(DeclarativeBase):
@@ -31,7 +31,7 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_db() -> Session:  # type: ignore
+def get_db():  # type: ignore
     """Get database session
 
     Yields:
@@ -43,3 +43,17 @@ def get_db() -> Session:  # type: ignore
         yield db
     finally:
         db.close()
+
+
+def get_database_path() -> str:
+    """Get the full path to the database file.
+
+    Returns:
+        Full path to the database file or the DATABASE_URL if not SQLite
+
+    """
+    if DATABASE_URL.startswith("sqlite:///"):
+        db_path = DATABASE_URL.replace("sqlite:///", "")
+        db_path = os.path.normpath(db_path)
+        return os.path.abspath(db_path)
+    return DATABASE_URL

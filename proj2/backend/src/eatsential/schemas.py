@@ -3,14 +3,14 @@
 import re
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, EmailStr, constr, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class UserCreate(BaseModel):
     """Pydantic model for user registration request"""
 
     username: Annotated[
-        str, constr(pattern=r"^[a-zA-Z0-9_-]+$", min_length=3, max_length=20)
+        str, Field(min_length=3, max_length=20, pattern=r"^[a-zA-Z0-9_-]+$")
     ]
     email: EmailStr
     password: str

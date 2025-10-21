@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from models import Base
+
+from ..database import Base
 
 # Add the backend directory to Python path
 parent_dir = os.path.dirname(os.path.dirname(__file__))
