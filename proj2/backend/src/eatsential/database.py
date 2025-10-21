@@ -2,6 +2,7 @@
 
 import os
 
+import dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
@@ -11,6 +12,9 @@ class Base(DeclarativeBase):
 
     pass
 
+
+# Load environment variables from .env file
+dotenv.load_dotenv()
 
 # Get database URL from environment variable, default to SQLite
 DATABASE_URL = os.getenv(

@@ -8,6 +8,12 @@ import sqlalchemy as sa
 
 from alembic import op
 
+# revision identifiers, used by Alembic.
+revision = "001_initial"
+down_revision = None
+branch_labels = None
+depends_on = None
+
 
 def upgrade() -> None:
     """Create initial database schema."""
@@ -20,7 +26,10 @@ def upgrade() -> None:
         sa.Column("password_hash", sa.String(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
-        sa.Column("email_verified", sa.Boolean(), nullable=False, default=False),
+        sa.Column(
+            "account_status", sa.String(), nullable=False, server_default="pending"
+        ),
+        sa.Column("email_verified", sa.Boolean(), nullable=False, server_default="0"),
         sa.Column("verification_token", sa.String(), nullable=True),
         sa.Column("verification_token_expires", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
