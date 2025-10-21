@@ -1,6 +1,6 @@
 """SQLAlchemy ORM models for database tables."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
@@ -8,6 +8,11 @@ from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .database import Base
+
+
+def utcnow():
+    """Return current UTC time as timezone-aware datetime."""
+    return datetime.now(timezone.utc)
 
 
 class AccountStatus(str, Enum):
@@ -30,10 +35,10 @@ class UserDB(Base):
     )
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow, nullable=False
+        DateTime, default=utcnow, nullable=False
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
     )
     account_status: Mapped[str] = mapped_column(
         String, nullable=False, default=AccountStatus.PENDING

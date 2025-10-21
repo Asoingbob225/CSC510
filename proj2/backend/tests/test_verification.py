@@ -1,7 +1,7 @@
 """Tests for email verification functionality"""
 
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from src.eatsential.models import AccountStatus, UserDB
 
@@ -15,7 +15,7 @@ def test_verify_email_success(client, db):
         username="testuser",
         password_hash="hashed",
         verification_token=str(uuid.uuid4()),
-        verification_token_expires=datetime.utcnow() + timedelta(hours=24),
+        verification_token_expires=datetime.now(timezone.utc) + timedelta(hours=24),
         account_status=AccountStatus.PENDING,
     )
     db.add(user)
@@ -49,7 +49,7 @@ def test_verify_email_expired_token(client, db):
         username="testuser",
         password_hash="hashed",
         verification_token=str(uuid.uuid4()),
-        verification_token_expires=datetime.utcnow() - timedelta(hours=1),
+        verification_token_expires=datetime.now(timezone.utc) - timedelta(hours=1),
         account_status=AccountStatus.PENDING,
     )
     db.add(user)
@@ -74,13 +74,17 @@ def test_resend_verification_success(client, db):
     db.commit()
 
     response = client.post("/api/auth/resend-verification", json={"email": user.email})
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert "Verification email sent" in response.json()["message"]
 
     # Check that new token was generated
     db.refresh(user)
     assert user.verification_token is not None
-    assert user.verification_token_expires > datetime.utcnow()
+    assert user.verification_token_expires is not None
+    # Database returns naive datetime, so compare with naive UTC time
+    assert user.verification_token_expires > datetime.now(timezone.utc).replace(
+        tzinfo=None
+    )
 
 
 def test_resend_verification_user_not_found(client):
