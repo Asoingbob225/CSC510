@@ -27,20 +27,7 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
 
     """
     # Email validation is already done by Pydantic EmailStr
-
-    # Check for reserved usernames
-    reserved_usernames = {"admin", "root", "system", "support", "help", "administrator"}
-    if user_data.username.lower() in reserved_usernames:
-        raise HTTPException(
-            status_code=422,
-            detail=[
-                {
-                    "loc": ["body", "username"],
-                    "msg": "This username is reserved",
-                    "type": "value_error",
-                }
-            ],
-        )
+    # Username reserved validation is already done by Pydantic field_validator
 
     # Check if email exists (case-insensitive)
     email_str = str(user_data.email)
