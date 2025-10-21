@@ -1,5 +1,7 @@
 """Authentication router for email verification and related endpoints."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -16,11 +18,13 @@ router = APIRouter(
     tags=["authentication"],
 )
 
+SessionDep = Annotated[Session, Depends(get_db)]
+
 
 @router.post("/register", response_model=UserResponse, status_code=201)
 async def register_user(
     user_data: UserCreate,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: SessionDep,
 ):
     """Register a new user
 
@@ -62,10 +66,7 @@ async def register_user(
 
 
 @router.get("/verify-email/{token}")
-async def verify_email(
-    token: str,
-    db: Session = Depends(get_db),  # noqa: B008
-):
+async def verify_email(token: str, db: SessionDep):
     """Verify user's email address
 
     Args:
@@ -85,7 +86,7 @@ async def verify_email(
 @router.post("/resend-verification")
 async def resend_verification(
     email_data: EmailRequest,
-    db: Session = Depends(get_db),  # noqa: B008
+    db: SessionDep,
 ):
     """Resend verification email
 
