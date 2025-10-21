@@ -5,12 +5,12 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from .auth import create_user
 from .database import get_db
 from .emailer import send_verification_email
 from .middleware.rate_limit import RateLimitMiddleware
 from .models import AccountStatus, UserDB
-from .schemas import EmailRequest, UserCreate, UserResponse
+from .routers import users
+from .schemas import EmailRequest
 
 app = FastAPI()
 
@@ -28,6 +28,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(users.router)
 
 
 @app.get("/api")
@@ -116,48 +118,3 @@ async def resend_verification(
     await send_verification_email(user.email, verification_token)
 
     return {"message": "Verification email sent"}
-
-
-@app.post("/api/auth/register", response_model=UserResponse)
-async def register_user(
-    user_data: UserCreate,
-    db: Session = Depends(get_db),  # noqa: B008
-):
-    """Register a new user
-
-    Args:
-        request: FastAPI request object
-        user_data: User registration data
-        db: Database session
-
-    Returns:
-        UserResponse with success message
-
-    Raises:
-        HTTPException: If registration fails
-
-    """
-    # Rate limiting is handled by middleware
-    try:
-        # Input sanitization is handled by Pydantic model
-
-        # Create user and send verification email
-        user = await create_user(db, user_data)
-
-        # Return success response
-        return UserResponse(
-            id=user.id,
-            username=user.username,
-            email=user.email,
-            message="Success! Please check your email for verification instructions.",
-        )
-    except HTTPException:
-        # Re-raise HTTP exceptions (like duplicate email)
-        raise
-    except Exception as e:
-        # Log the error (in production, use proper logging)
-        print(f"Registration error: {e!s}")
-        raise HTTPException(
-            status_code=500,
-            detail="An error occurred during registration. Please try again later.",
-        ) from e
