@@ -24,11 +24,13 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 def override_get_db():
     """Override database session for testing"""
+    db = None
     try:
         db = TestingSessionLocal()
         yield db
     finally:
-        db.close()
+        if db is not None:
+            db.close()
 
 
 app.dependency_overrides[get_db] = override_get_db
@@ -38,7 +40,8 @@ app.dependency_overrides[get_db] = override_get_db
 def mock_send_email():
     """Mock email sending for tests"""
     with patch(
-        "src.eatsential.auth.send_verification_email", new_callable=AsyncMock
+        "src.eatsential.services.user_service.send_verification_email",
+        new_callable=AsyncMock,
     ) as mock:
         mock.return_value = True
         yield mock
@@ -73,7 +76,7 @@ def test_register_user_success(client, mock_send_email):
         print(f"Response status: {response.status_code}")
         print(f"Response content: {response.content}")
         test_count += 1
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert "id" in data
         assert data["username"].startswith("testuser")
@@ -93,7 +96,7 @@ def test_register_duplicate_email(client, mock_send_email):
             "password": "StrongPass123!",
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
 
     # Try to create second user with same email (different case)
     response = client.post(
