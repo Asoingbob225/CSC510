@@ -6,6 +6,13 @@ from typing import Annotated
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
+class UserBase(BaseModel):
+    """Pydantic model for general user information"""
+
+    username: str
+    email: str
+
+
 class UserCreate(BaseModel):
     """Pydantic model for user registration request"""
 
@@ -50,21 +57,25 @@ class UserCreate(BaseModel):
         return value
 
 
+class UserLogin(BaseModel):
+    """Pydantic model for user login request"""
+
+    email: EmailStr
+    password: str
+
+
+class UserResponse(UserBase):
+    """Pydantic model for user response"""
+
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    message: str
+
+
 class EmailRequest(BaseModel):
     """Pydantic model for email request body"""
 
     email: EmailStr
-
-
-class UserResponse(BaseModel):
-    """Pydantic model for user response"""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: str
-    username: str
-    email: str
-    message: str = "Verification email sent"
 
 
 # --- Common Schemas ---

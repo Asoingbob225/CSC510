@@ -6,9 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..schemas import EmailRequest, MessageResponse, UserCreate, UserResponse
+from ..schemas import EmailRequest, MessageResponse, UserCreate, UserLogin, UserResponse
 from ..services.user_service import (
     create_user,
+    login_user_service,
     resend_verification_email,
     verify_user_email,
 )
@@ -62,6 +63,49 @@ async def register_user(
         raise HTTPException(
             status_code=500,
             detail="An error occurred during registration. Please try again later.",
+        ) from e
+
+
+@router.post("/login", response_model=UserResponse)
+async def login_user(
+    user_data: UserLogin,
+    db: SessionDep,
+):
+    """Login a user
+
+    Args:
+        user_data: User login data
+        db: Database session
+
+    Returns:
+        UserResponse with success message
+
+    Raises:
+        HTTPException: If login fails
+
+    """
+    try:
+        # Input sanitization is handled by Pydantic model
+
+        # Authenticate user
+        user = await login_user_service(db, user_data)
+
+        # Return success response
+        return UserResponse(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            message="Login successful",
+        )
+    except HTTPException:
+        # Re-raise HTTP exceptions (like invalid credentials)
+        raise
+    except Exception as e:
+        # Log the error (in production, use proper logging)
+        print(f"Login error: {e!s}")
+        raise HTTPException(
+            status_code=500,
+            detail="An error occurred during login. Please try again later.",
         ) from e
 
 

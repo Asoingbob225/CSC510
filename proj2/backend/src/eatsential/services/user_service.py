@@ -6,10 +6,10 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from ..auth_util import get_password_hash
+from ..auth_util import get_password_hash, verify_password
 from ..emailer import send_verification_email
 from ..models import AccountStatus, UserDB
-from ..schemas import UserCreate
+from ..schemas import UserCreate, UserLogin
 
 
 async def create_user(db: Session, user_data: UserCreate) -> UserDB:
@@ -97,6 +97,37 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
             status_code=500,
             detail="An error occurred during registration. Please try again later.",
         ) from e
+
+
+async def login_user_service(db: Session, user_data: UserLogin) -> UserDB:
+    """Login a user
+
+    Args:
+        db: Database session
+        user_data: User login data
+
+    Returns:
+        Logged in user object
+
+    Raises:
+        HTTPException: If login fails
+
+    """
+    # Find user by email (case-insensitive)
+    email_str = str(user_data.email)
+    user = db.query(UserDB).filter(UserDB.email.ilike(email_str)).first()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email")
+
+    # Verify password
+    if not verify_password(user_data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid password")
+
+    if not user.email_verified:
+        raise HTTPException(status_code=403, detail="Email not verified")
+
+    return user
 
 
 async def verify_user_email(db: Session, token: str) -> dict:
