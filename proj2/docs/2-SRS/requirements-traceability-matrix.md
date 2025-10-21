@@ -83,7 +83,7 @@ graph LR
 
 | Req ID      | Requirement        | Use Case | Design Component | Code Module     | Test Cases       | Status        |
 | ----------- | ------------------ | -------- | ---------------- | --------------- | ---------------- | ------------- |
-| **FR-001**  | User Registration  | UC-001   | Auth Service     | `auth.register` | TC-001 to TC-005 | ⚡ UI Partial |
+| **FR-001**  | User Registration  | UC-001   | Auth Service     | `auth.register`, `SignupField.tsx` | TC-001 to TC-005, `test_auth.py` | ✅ Complete |
 | **FR-002**  | Multi-Factor Auth  | UC-002   | Auth Service     | `auth.mfa`      | TC-006 to TC-008 | ○             |
 | **FR-003**  | Social Login       | UC-001   | Auth Service     | `auth.oauth`    | TC-009 to TC-012 | ○             |
 | **FR-004**  | Password Recovery  | UC-003   | Auth Service     | `auth.recovery` | TC-013 to TC-015 | ○             |
@@ -267,13 +267,13 @@ graph LR
 
 | Category               | Total Reqs | Designed | Implemented | Tested | Coverage % |
 | ---------------------- | ---------- | -------- | ----------- | ------ | ---------- |
-| **Authentication**     | 15         | 15       | 1           | 4      | 7%         |
+| **Authentication**     | 15         | 15       | 5           | 10     | 33%        |
 | **Health Profile**     | 20         | 20       | 0           | 0      | 0%         |
 | **AI/Recommendations** | 25         | 25       | 0           | 0      | 0%         |
 | **Restaurant**         | 20         | 15       | 0           | 0      | 0%         |
 | **Planning**           | 15         | 10       | 0           | 0      | 0%         |
 | **Non-Functional**     | 30         | 30       | 0           | 0      | 0%         |
-| **TOTAL**              | **125**    | **115**  | **1**       | **4**  | **0.8%**   |
+| **TOTAL**              | **125**    | **115**  | **5**       | **10** | **4%**     |
 
 ### 7.2 Critical Requirements Status
 
@@ -281,7 +281,7 @@ graph LR
 
 | Requirement              | Status         | Blocker      | Target Date |
 | ------------------------ | -------------- | ------------ | ----------- |
-| FR-001 (Registration)    | ⚡ In Progress | None         | Week 2      |
+| FR-001 (Registration)    | ✅ Complete    | None         | Completed   |
 | FR-016 (Allergy Input)   | ⚡ In Progress | UI Design    | Week 2      |
 | FR-032 (Allergy Filter)  | ⚡ In Progress | Safety Rules | Week 3      |
 | FR-031 (Recommendations) | ⚡ In Progress | RAG Setup    | Week 3      |
