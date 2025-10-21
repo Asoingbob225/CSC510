@@ -11,8 +11,8 @@ from .database import Base
 
 
 def utcnow():
-    """Return current UTC time as timezone-aware datetime."""
-    return datetime.now(timezone.utc)
+    """Return current UTC time as naive datetime (UTC)."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class AccountStatus(str, Enum):

@@ -71,7 +71,7 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
 
     # Generate secure verification token
     verification_token = str(uuid.uuid4())
-    token_expiry = datetime.now(timezone.utc) + timedelta(hours=24)
+    token_expiry = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=24)
 
     # Create user object
     db_user = UserDB(
@@ -127,11 +127,12 @@ async def verify_user_email(db: Session, token: str) -> dict:
 
     """
     # Find user by verification token
+    current_time = datetime.now(timezone.utc).replace(tzinfo=None)
     user = (
         db.query(UserDB)
         .filter(
             UserDB.verification_token == token,
-            UserDB.verification_token_expires > datetime.now(timezone.utc),
+            UserDB.verification_token_expires > current_time,
         )
         .first()
     )
@@ -177,7 +178,9 @@ async def resend_verification_email(db: Session, email: str) -> dict:
     # Generate new verification token
     verification_token = str(uuid.uuid4())
     user.verification_token = verification_token
-    user.verification_token_expires = datetime.now(timezone.utc) + timedelta(hours=24)
+    user.verification_token_expires = datetime.now(timezone.utc).replace(
+        tzinfo=None
+    ) + timedelta(hours=24)
     db.commit()
 
     # Send new verification email
