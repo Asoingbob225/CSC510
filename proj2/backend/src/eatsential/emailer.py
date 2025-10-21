@@ -4,6 +4,9 @@ import os
 from email.message import EmailMessage
 
 import aiosmtplib
+import dotenv
+
+dotenv.load_dotenv()
 
 SENDER = os.getenv("EMAIL_SENDER", "Eatsential <noreply@eatsential.com>")
 SMTP_HOST = os.getenv("SMTP_HOST", "localhost")

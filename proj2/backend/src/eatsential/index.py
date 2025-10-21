@@ -1,16 +1,8 @@
-import uuid
-from datetime import datetime, timedelta
-
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
 
-from .database import get_db
-from .emailer import send_verification_email
 from .middleware.rate_limit import RateLimitMiddleware
-from .models import AccountStatus, UserDB
-from .routers import users
-from .schemas import EmailRequest
+from .routers import auth, users
 
 app = FastAPI()
 
@@ -29,92 +21,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register routers
 app.include_router(users.router)
+app.include_router(auth.router, prefix="/api")
 
 
 @app.get("/api")
 def read_root():
     """Health check endpoint"""
     return {"The server is running": "Hello World"}
-
-
-@app.get("/api/auth/verify-email/{token}")
-async def verify_email(
-    token: str,
-    db: Session = Depends(get_db),  # noqa: B008
-):
-    """Verify user's email address
-
-    Args:
-        token: Email verification token
-        db: Database session
-
-    Returns:
-        Success message if verification succeeds
-
-    Raises:
-        HTTPException: If token is invalid or expired
-
-    """
-    # Find user by verification token
-    user = (
-        db.query(UserDB)
-        .filter(
-            UserDB.verification_token == token,
-            UserDB.verification_token_expires > datetime.utcnow(),
-        )
-        .first()
-    )
-
-    if not user:
-        raise HTTPException(
-            status_code=400, detail="Invalid or expired verification token"
-        )
-
-    # Update user status
-    user.email_verified = True
-    user.account_status = AccountStatus.VERIFIED
-    user.verification_token = None
-    user.verification_token_expires = None
-
-    db.commit()
-
-    return {"message": "Email verified successfully"}
-
-
-@app.post("/api/auth/resend-verification")
-async def resend_verification(
-    email_data: EmailRequest,
-    db: Session = Depends(get_db),  # noqa: B008
-):
-    """Resend verification email
-
-    Args:
-        email_data: Email request body
-        db: Database session
-
-    Returns:
-        Success message if email was sent
-
-    Raises:
-        HTTPException: If user not found or already verified
-
-    """
-    user = db.query(UserDB).filter(UserDB.email == email_data.email).first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    if user.email_verified:
-        raise HTTPException(status_code=400, detail="Email already verified")
-
-    # Generate new verification token
-    verification_token = str(uuid.uuid4())
-    user.verification_token = verification_token
-    user.verification_token_expires = datetime.utcnow() + timedelta(hours=24)
-    db.commit()
-
-    # Send new verification email
-    await send_verification_email(user.email, verification_token)
-
-    return {"message": "Verification email sent"}

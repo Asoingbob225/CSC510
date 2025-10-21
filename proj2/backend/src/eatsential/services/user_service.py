@@ -1,32 +1,15 @@
-"""Authentication related functionality."""
+"""User service containing user-related business logic."""
 
 import uuid
 from datetime import datetime, timedelta
 
 from fastapi import HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from .emailer import send_verification_email
-from .models import AccountStatus, UserDB
-from .schemas import UserCreate
-
-# Password hashing configuration
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-
-# OAuth2 configuration
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-def get_password_hash(password: str) -> str:
-    """Hash a password using Argon2"""
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against its hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+from ..auth_util import get_password_hash
+from ..emailer import send_verification_email
+from ..models import AccountStatus, UserDB
+from ..schemas import UserCreate
 
 
 async def create_user(db: Session, user_data: UserCreate) -> UserDB:
@@ -127,3 +110,77 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
             status_code=500,
             detail="An error occurred during registration. Please try again later.",
         ) from e
+
+
+async def verify_user_email(db: Session, token: str) -> dict:
+    """Verify user's email address
+
+    Args:
+        db: Database session
+        token: Email verification token
+
+    Returns:
+        Success message dictionary
+
+    Raises:
+        HTTPException: If token is invalid or expired
+
+    """
+    # Find user by verification token
+    user = (
+        db.query(UserDB)
+        .filter(
+            UserDB.verification_token == token,
+            UserDB.verification_token_expires > datetime.utcnow(),
+        )
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=400, detail="Invalid or expired verification token"
+        )
+
+    # Update user status
+    user.email_verified = True
+    user.account_status = AccountStatus.VERIFIED
+    user.verification_token = None
+    user.verification_token_expires = None
+
+    db.commit()
+
+    return {"message": "Email verified successfully"}
+
+
+async def resend_verification_email(db: Session, email: str) -> dict:
+    """Resend verification email to user
+
+    Args:
+        db: Database session
+        email: User's email address
+
+    Returns:
+        Success message dictionary
+
+    Raises:
+        HTTPException: If user not found or already verified
+
+    """
+    user = db.query(UserDB).filter(UserDB.email == email).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.email_verified:
+        raise HTTPException(status_code=400, detail="Email already verified")
+
+    # Generate new verification token
+    verification_token = str(uuid.uuid4())
+    user.verification_token = verification_token
+    user.verification_token_expires = datetime.utcnow() + timedelta(hours=24)
+    db.commit()
+
+    # Send new verification email
+    await send_verification_email(user.email, verification_token)
+
+    return {"message": "Verification email sent"}
