@@ -20,29 +20,55 @@
 
 ## Frontend Testing
 
-### Unit Tests (Vitest)
+### Unit Tests (Vitest) - Current Implementation
 
 ```typescript
-// Component test
-describe('AllergyInput', () => {
-  it('should validate allergen against approved list', () => {
-    render(<AllergyInput />);
+// From SignupField.test.tsx
+describe('SignupField', () => {
+  it('renders all form fields', () => {
+    render(<SignupField />);
 
-    // Try invalid allergen
-    const input = screen.getByRole('combobox');
-    fireEvent.change(input, { target: { value: 'InvalidAllergen' } });
-
-    expect(screen.getByText(/not a recognized allergen/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
-  it('should show severity warning for life-threatening allergies', () => {
-    render(<AllergyInput />);
+  it('validates password requirements', async () => {
+    render(<SignupField />);
 
-    // Select peanut allergy with life-threatening severity
-    selectAllergy('Peanuts', 'LIFE_THREATENING');
+    const passwordInput = screen.getByLabelText(/password/i);
 
-    expect(screen.getByRole('alert')).toHaveClass('bg-red-600');
-    expect(screen.getByText(/life-threatening/i)).toBeInTheDocument();
+    // Test weak password
+    await userEvent.type(passwordInput, 'weak');
+    await userEvent.tab();
+
+    expect(screen.getByText(/password must be at least 8 characters/i)).toBeInTheDocument();
+  });
+
+  it('shows success message on successful registration', async () => {
+    // Mock successful API response
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        id: '123',
+        username: 'testuser',
+        email: 'test@example.com',
+        message: 'Success!'
+      }),
+    });
+
+    render(<SignupField />);
+
+    // Fill form
+    await userEvent.type(screen.getByLabelText(/username/i), 'testuser');
+    await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
+    await userEvent.type(screen.getByLabelText(/password/i), 'TestPass123!');
+
+    // Submit
+    await userEvent.click(screen.getByRole('button', { name: /sign up/i }));
+
+    // Verify navigation
+    expect(mockNavigate).toHaveBeenCalledWith('/verify-email');
   });
 });
 ```
@@ -52,52 +78,69 @@ describe('AllergyInput', () => {
 ```typescript
 // API integration test
 describe('User Registration Flow', () => {
-  it('should register user and redirect to email verification', async () => {
+  it('should register user and show email verification message', async () => {
     // Mock API
     server.use(
-      rest.post('/api/v1/auth/register', (req, res, ctx) => {
-        return res(ctx.status(201), ctx.json({ success: true }));
+      rest.post('/api/auth/register', (req, res, ctx) => {
+        return res(ctx.status(201), ctx.json({
+          id: '123',
+          username: 'testuser',
+          email: 'test@example.com',
+          message: 'Success! Please check your email for verification instructions.'
+        }));
       })
     );
 
     // Test flow
     render(<App />);
 
+    // Navigate to signup
+    await userEvent.click(screen.getByText(/sign up/i));
+
     // Fill form
+    await userEvent.type(screen.getByLabelText(/username/i), 'testuser');
     await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
     await userEvent.type(screen.getByLabelText(/password/i), 'TestPass123!');
-    await userEvent.click(screen.getByRole('button', { name: /register/i }));
+    await userEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
-    // Verify redirect
+    // Verify redirect to verification page
     await waitFor(() => {
-      expect(screen.getByText(/verify your email/i)).toBeInTheDocument();
+      expect(window.location.pathname).toBe('/verify-email');
     });
   });
 });
 ```
 
-### E2E Tests (Playwright)
+### E2E Tests (Playwright) - Current Flows
 
 ```typescript
-test('complete health profile setup', async ({ page }) => {
+test('complete user registration and email verification', async ({ page }) => {
   // Register user
   await page.goto('/signup');
+  await page.fill('[name="username"]', 'testuser');
   await page.fill('[name="email"]', 'test@example.com');
   await page.fill('[name="password"]', 'TestPass123!');
   await page.click('button[type="submit"]');
 
-  // Complete health profile
-  await page.goto('/health-profile');
+  // Should redirect to email verification page
+  await expect(page).toHaveURL('/verify-email');
+  await expect(page.locator('h1')).toContainText('Verify Your Email');
 
-  // Add severe peanut allergy
-  await page.click('[aria-label="Add allergy"]');
-  await page.selectOption('[name="allergy"]', 'peanuts');
-  await page.selectOption('[name="severity"]', 'SEVERE');
+  // Simulate clicking verification link
+  const verificationToken = 'test-token-123';
+  await page.goto(`/verify-email?token=${verificationToken}`);
 
-  // Verify warning appears
-  await expect(page.locator('.allergy-warning')).toContainText('Severe Peanut Allergy');
+  // Should show success message
+  await expect(page.locator('.success-message')).toContainText('Email verified successfully!');
 
-  // Save profile
+  // Should redirect to dashboard after delay
+  await page.waitForTimeout(3000);
+  await expect(page).toHaveURL('/dashboard');
+});
+
+// Future test: Health profile setup
+test.skip('complete health profile setup', async ({ page }) => {
+  // To be implemented when health profile feature is ready
   await page.click('button:has-text("Save Profile")');
   await expect(page).toHaveURL('/dashboard');
 });

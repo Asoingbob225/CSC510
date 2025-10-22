@@ -1,82 +1,151 @@
 # Database Design
 
-## Core Tables
+## Current Implementation
 
-### users
+### Database Configuration
 
-```sql
-id              UUID PRIMARY KEY
-email           VARCHAR(255) UNIQUE NOT NULL
-username        VARCHAR(50) UNIQUE NOT NULL
-password_hash   VARCHAR(255) NOT NULL
-email_verified  BOOLEAN DEFAULT FALSE
-created_at      TIMESTAMP DEFAULT NOW()
-updated_at      TIMESTAMP DEFAULT NOW()
-```
-
-### health_profiles
-
-```sql
-id          UUID PRIMARY KEY
-user_id     UUID REFERENCES users(id) UNIQUE
-created_at  TIMESTAMP DEFAULT NOW()
-updated_at  TIMESTAMP DEFAULT NOW()
-```
-
-### allergies (Master List)
-
-```sql
-id       UUID PRIMARY KEY
-name     VARCHAR(100) UNIQUE NOT NULL
-category VARCHAR(50)
-```
-
-### user_allergies
-
-```sql
-user_id     UUID REFERENCES users(id)
-allergy_id  UUID REFERENCES allergies(id)
-severity    ENUM('MILD','MODERATE','SEVERE','LIFE_THREATENING')
-notes       TEXT
-PRIMARY KEY (user_id, allergy_id)
-```
-
-## SQLAlchemy Models
+**Development**: SQLite
 
 ```python
-from sqlalchemy import Column, String, Boolean, ForeignKey, Enum
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+DATABASE_URL = "sqlite:///./development.db"
+```
+
+**Production**: PostgreSQL
+
+```python
+DATABASE_URL = "postgresql://user:password@host/database"
+```
+
+### Current Tables
+
+#### users
+
+```sql
+-- SQLite/PostgreSQL compatible schema
+CREATE TABLE users (
+    id VARCHAR(36) PRIMARY KEY,  -- UUID as string
+    username VARCHAR(20) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    is_email_verified BOOLEAN DEFAULT FALSE,
+    verification_token VARCHAR(255),
+    verification_token_expires TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_verification_token ON users(verification_token);
+```
+
+### SQLAlchemy Model (Actual Implementation)
+
+```python
+from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy.sql import func
+from .database import Base
 import uuid
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    email = Column(String(255), unique=True, nullable=False)
-    username = Column(String(50), unique=True, nullable=False)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    username = Column(String(20), unique=True, nullable=False, index=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
-    email_verified = Column(Boolean, default=False)
-
-    # Relationships
-    health_profile = relationship("HealthProfile", back_populates="user", uselist=False)
+    is_email_verified = Column(Boolean, default=False, nullable=False)
+    verification_token = Column(String(255), nullable=True, index=True)
+    verification_token_expires = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 ```
 
-## Common Queries
+### Common Database Operations
+
+#### User Creation
 
 ```python
-# Get user with health profile
-user = db.query(User).options(
-    joinedload(User.health_profile)
-).filter(User.id == user_id).first()
-
-# Get user allergies
-allergies = db.query(UserAllergy).filter(
-    UserAllergy.user_id == user_id,
-    UserAllergy.severity.in_(['SEVERE', 'LIFE_THREATENING'])
-).all()
+# In user_service.py
+new_user = User(
+    username=user_data.username,
+    email=user_data.email.lower(),
+    password_hash=get_password_hash(user_data.password),
+    verification_token=generate_verification_token(),
+    verification_token_expires=datetime.utcnow() + timedelta(hours=24)
+)
+db.add(new_user)
+db.commit()
 ```
+
+#### Find User by Email
+
+```python
+user = db.query(User).filter(User.email == email.lower()).first()
+```
+
+#### Verify Email Token
+
+```python
+user = db.query(User).filter(
+    User.verification_token == token,
+    User.verification_token_expires > datetime.utcnow()
+).first()
+```
+
+### Database Migrations
+
+Using Alembic for migrations:
+
+```bash
+# Create a new migration
+cd backend
+alembic revision --autogenerate -m "Add users table"
+
+# Apply migrations
+alembic upgrade head
+
+# Rollback
+alembic downgrade -1
+```
+
+### Future Tables (Planned)
+
+#### health_profiles
+
+- User health information
+- Linked to users table via foreign key
+
+#### user_allergies
+
+- Many-to-many relationship
+- Severity levels: MILD, MODERATE, SEVERE, LIFE_THREATENING
+
+#### dietary_restrictions
+
+- User dietary preferences
+- Categories: vegetarian, vegan, kosher, halal, etc.
+
+#### restaurants
+
+- Restaurant information
+- Location data
+
+#### menu_items
+
+- Restaurant menu items
+- Ingredient lists
+
+#### recommendations
+
+- AI-generated meal suggestions
+- Safety scores based on user allergies
 
 ---
 
-**Migration**: Use Alembic (`alembic revision -m "message"`)
+**See actual implementation**:
+
+- Models: `backend/src/eatsential/models.py`
+- Database config: `backend/src/eatsential/database.py`
+- Migrations: `backend/alembic/versions/`

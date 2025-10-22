@@ -525,7 +525,7 @@ Eatsential is a **new, independent web-based platform** that integrates with ext
 
 ## 4. System Models
 
-**See:** [📄 4-system-models.md](./4-system-models.md)
+**See:** [📄 4-system-models.md](./4-system-features/4-system-models.md)
 
 Includes:
 

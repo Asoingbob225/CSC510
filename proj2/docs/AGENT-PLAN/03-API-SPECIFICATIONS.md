@@ -3,85 +3,180 @@
 ## Base URL
 
 ```
-/api/v1
+Development: http://localhost:8000/api
+Production: https://api.eatsential.com/api
 ```
 
-## Response Format
+## Current Endpoints
+
+### Health Check
+
+```
+GET /api
+```
+
+Response:
 
 ```json
-// Success
 {
-  "success": true,
-  "data": { ... }
-}
-
-// Error
-{
-  "success": false,
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Human readable message"
-  }
+  "The server is running": "Hello World"
 }
 ```
 
-## Status Codes
+### Authentication
 
-- `200` - Success (GET, PUT)
-- `201` - Created (POST)
-- `204` - Deleted (DELETE)
-- `400` - Bad Request
-- `401` - Unauthorized
-- `403` - Forbidden
-- `404` - Not Found
-- `409` - Conflict
-
-## Authentication
+#### Register User
 
 ```
-Authorization: Bearer <jwt_token>
+POST /api/auth/register
 ```
 
-## Endpoints
+Request Body:
 
-### Auth
-
-```
-POST   /auth/register
-POST   /auth/login
-POST   /auth/refresh
-POST   /auth/logout
-POST   /auth/verify-email/{token}
+```json
+{
+  "username": "string", // 3-20 characters
+  "email": "user@example.com",
+  "password": "string" // 8-48 chars, must include upper, lower, number, special
+}
 ```
 
-### Users
+Response (201):
+
+```json
+{
+  "id": "uuid",
+  "username": "string",
+  "email": "user@example.com",
+  "message": "Success! Please check your email for verification instructions."
+}
+```
+
+Error Response (400):
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "password"],
+      "msg": "password must contain at least one uppercase letter",
+      "type": "value_error"
+    }
+  ]
+}
+```
+
+#### Verify Email
 
 ```
-GET    /users/me
-PUT    /users/me
-DELETE /users/me
+GET /api/auth/verify-email/{token}
 ```
+
+Response (200):
+
+```json
+{
+  "message": "Email verified successfully! You can now log in."
+}
+```
+
+Error Response (400):
+
+```json
+{
+  "detail": "Invalid or expired verification token"
+}
+```
+
+#### Resend Verification
+
+```
+POST /api/auth/resend-verification
+```
+
+Request Body:
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+Response (201):
+
+```json
+{
+  "message": "Verification email sent! Please check your inbox."
+}
+```
+
+## Common Response Formats
+
+### Validation Error (422)
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "field_name"],
+      "msg": "error message",
+      "type": "error_type"
+    }
+  ]
+}
+```
+
+### Server Error (500)
+
+```json
+{
+  "detail": "An error occurred during registration. Please try again later."
+}
+```
+
+## Rate Limiting
+
+- **Limit**: 100 requests per minute per IP
+- **Headers**:
+  - `X-RateLimit-Limit`: 100
+  - `X-RateLimit-Remaining`: Number of requests remaining
+  - `X-RateLimit-Reset`: Unix timestamp when limit resets
+
+## CORS Configuration
+
+Allowed Origins:
+
+- `http://localhost:5173` (development)
+- `https://eatsential.com` (production)
+
+## Planned Endpoints (Not Yet Implemented)
+
+### Authentication
+
+- `POST /api/auth/login` - User login with JWT
+- `POST /api/auth/refresh` - Refresh JWT token
+- `POST /api/auth/logout` - Logout and invalidate token
+
+### User Management
+
+- `GET /api/users/me` - Get current user profile
+- `PUT /api/users/me` - Update user profile
+- `DELETE /api/users/me` - Delete user account
 
 ### Health Profile
 
-```
-GET    /users/{id}/health-profile
-POST   /users/{id}/health-profile
-PUT    /users/{id}/health-profile
-DELETE /users/{id}/health-profile
-```
+- `GET /api/health-profile` - Get user's health profile
+- `POST /api/health-profile` - Create health profile
+- `PUT /api/health-profile` - Update health profile
 
-## Validation Example
+### Recommendations
 
-```python
-from pydantic import BaseModel, EmailStr
-
-class UserRegister(BaseModel):
-    email: EmailStr
-    username: str = Field(min_length=3, max_length=20)
-    password: str = Field(min_length=8, pattern=r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])")
-```
+- `GET /api/recommendations` - Get meal recommendations
+- `POST /api/recommendations/feedback` - Submit feedback
 
 ---
 
-**See existing code**: `backend/index.py`
+**See existing code**:
+
+- Backend: `src/eatsential/routers/auth.py`
+- Schemas: `src/eatsential/schemas.py`

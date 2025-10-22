@@ -1,239 +1,285 @@
 # Architecture Overview
 
-## System Architecture
+## Current System Architecture (MVP)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Users (Web/Mobile)                    │
+│                     Users (Web Browser)                      │
 └─────────────────────────────┬───────────────────────────────┘
                               │
 ┌─────────────────────────────┴───────────────────────────────┐
 │                    Frontend (React SPA)                      │
-│                  Hosted on CloudFront/S3                     │
+│               Development: Vite Dev Server                   │
+│               Production: Static Hosting                     │
 └─────────────────────────────┬───────────────────────────────┘
                               │
 ┌─────────────────────────────┴───────────────────────────────┐
-│                   API Gateway (FastAPI)                      │
-│                        /api/v1/*                             │
-└──────┬──────────┬──────────┬──────────┬────────────────────┘
-       │          │          │          │
-┌──────┴────┐ ┌──┴────┐ ┌──┴────┐ ┌──┴────┐
-│   Auth    │ │ User  │ │Health │ │  AI   │
-│  Service  │ │Service│ │Service│ │Service│
-└─────┬─────┘ └───┬───┘ └───┬───┘ └───┬───┘
-      │           │         │         │
-      └───────────┴─────────┴─────────┘
-                  │
-         ┌────────┴────────┐
-         │   PostgreSQL    │
-         │   (Primary DB)  │
-         └────────┬────────┘
-                  │
-         ┌────────┴────────┐
-         │     Redis       │
-         │   (Cache)       │
-         └─────────────────┘
+│                  FastAPI Monolithic Backend                  │
+│                         /api/*                               │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Routers: auth.py, users.py                         │   │
+│  ├─────────────────────────────────────────────────────┤   │
+│  │  Services: user_service.py                          │   │
+│  ├─────────────────────────────────────────────────────┤   │
+│  │  Middleware: rate_limit.py, CORS                    │   │
+│  ├─────────────────────────────────────────────────────┤   │
+│  │  Models: SQLAlchemy ORM                             │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+                    ┌─────────┴──────────┐
+                    │   PostgreSQL       │
+                    │  (Production DB)    │
+                    │    or SQLite       │
+                    │  (Development)     │
+                    └────────────────────┘
 ```
 
-## Service Breakdown
+## Future Architecture (Planned)
 
-### Frontend Service
+The system is designed to evolve into a microservices architecture as it scales:
+
+- Separate services for Auth, User, Health, AI
+- Redis caching layer
+- API Gateway for routing
+- Container orchestration with Kubernetes
+
+## Current Implementation
+
+### Frontend Application
 
 - **Technology**: React + TypeScript + Vite
-- **Hosting**: AWS S3 + CloudFront
-- **Responsibilities**:
-  - User interface
-  - Form validation
-  - API communication
-  - State management
+- **Development**: Vite dev server on port 5173
+- **Key Components**:
+  - `SignupField.tsx` - User registration form with validation
+  - `VerifyEmail.tsx` - Email verification flow
+  - `Dashboard.tsx` - User dashboard
+- **State Management**: React hooks (useState, useEffect)
+- **Form Handling**: React Hook Form + Zod validation
+- **API Communication**: Fetch API with `/api` proxy
 
-### API Gateway
+### Backend Application (Monolithic)
 
-- **Technology**: FastAPI
-- **Hosting**: AWS ECS Fargate
-- **Responsibilities**:
-  - Request routing
-  - Authentication
-  - Rate limiting
-  - Request validation
+- **Technology**: FastAPI + Python 3.11+
+- **Development**: Uvicorn server on port 8000
+- **Application Structure**:
 
-### Auth Service
+#### Routers Layer
 
-- **Endpoints**: `/api/v1/auth/*`
-- **Responsibilities**:
-  - User registration/login
-  - JWT token management
-  - Password hashing
-  - Email verification
+- **`/api/auth/*`** - Authentication endpoints
+  - `POST /api/auth/register` - User registration
+  - `GET /api/auth/verify-email/{token}` - Email verification
+  - `POST /api/auth/resend-verification` - Resend verification email
 
-### User Service
+#### Service Layer
 
-- **Endpoints**: `/api/v1/users/*`
-- **Responsibilities**:
-  - Profile management
-  - User preferences
-  - Account settings
+- **`user_service.py`** - Business logic for user operations
+  - User creation with password hashing
+  - Email verification token generation
+  - User verification logic
 
-### Health Service
+#### Data Layer
 
-- **Endpoints**: `/api/v1/health/*`
-- **Responsibilities**:
-  - Health profile CRUD
-  - Allergen validation
-  - Medical data management
-  - Audit logging
+- **`models.py`** - SQLAlchemy models
+  - User model with authentication fields
+- **`schemas.py`** - Pydantic schemas for validation
+  - UserCreate, UserResponse, EmailRequest
 
-### AI Service
+#### Middleware
 
-- **Endpoints**: `/api/v1/recommendations/*`
-- **Technology**: LangChain + GPT-4
-- **Responsibilities**:
-  - Meal recommendations
-  - Restaurant matching
-  - Nutritional analysis
+- **Rate Limiting** - 100 requests/minute per IP
+- **CORS** - Configured for frontend origins
 
-## Data Flow
+### Database
+
+- **Development**: SQLite (file-based)
+- **Production**: PostgreSQL
+- **Migrations**: Alembic
+- **Current Tables**:
+  ```sql
+  users
+  ├── id (UUID, PK)
+  ├── username (String, unique)
+  ├── email (String, unique)
+  ├── password_hash (String)
+  ├── is_email_verified (Boolean)
+  ├── verification_token (String)
+  ├── verification_token_expires (DateTime)
+  ├── created_at (DateTime)
+  └── updated_at (DateTime)
+  ```
+
+### Planned Services (Not Yet Implemented)
+
+- **Health Profile Service** - User health data management
+- **AI Recommendation Service** - LLM-powered meal suggestions
+- **Restaurant Service** - Restaurant and menu data
+
+## Data Flow (Current Implementation)
 
 ### User Registration Flow
 
 ```
-1. User fills form → Frontend validates
-2. Frontend → POST /api/v1/auth/register
-3. Auth Service → Validate uniqueness
-4. Auth Service → Hash password
-5. Auth Service → Save to DB
-6. Auth Service → Send verification email
-7. Auth Service → Return success
-8. Frontend → Show verification pending
+1. User fills form → Frontend validates with Zod
+2. Frontend → POST /api/auth/register
+3. FastAPI → Validate with Pydantic schemas
+4. user_service → Check if email/username exists
+5. user_service → Hash password with bcrypt
+6. user_service → Generate verification token
+7. user_service → Save user to database
+8. user_service → Send verification email
+9. FastAPI → Return UserResponse
+10. Frontend → Navigate to verification page
 ```
 
-### Health Profile Creation
+### Email Verification Flow
 
 ```
-1. User enters allergies → Frontend validates
-2. Frontend → POST /api/v1/users/{id}/health-profile
-3. Health Service → Validate allergens
-4. Health Service → Check severity
-5. Health Service → Save to DB with audit log
-6. Health Service → Invalidate cache
-7. Health Service → Return profile
-8. Frontend → Show success with warnings
+1. User clicks verification link in email
+2. Frontend → Navigate to /verify-email?token=xxx
+3. VerifyEmail component → GET /api/auth/verify-email/{token}
+4. FastAPI → Extract token from URL
+5. user_service → Find user by token
+6. user_service → Check token expiry
+7. user_service → Update is_email_verified = True
+8. user_service → Clear verification token
+9. FastAPI → Return success message
+10. Frontend → Show success and redirect to dashboard
 ```
 
-### AI Recommendation Flow
+### Future Flows (Not Yet Implemented)
 
-```
-1. User requests recommendations
-2. Frontend → GET /api/v1/recommendations
-3. AI Service → Fetch user health profile
-4. AI Service → Query restaurant data
-5. AI Service → Process through RAG
-6. AI Service → Filter by allergies
-7. AI Service → Rank by preferences
-8. AI Service → Return recommendations
-9. Frontend → Display with safety badges
-```
+- Health Profile Creation
+- AI-Powered Recommendations
+- Restaurant Discovery
+- Meal Planning
 
-## Security Architecture
+## Security Implementation (Current)
 
-### Authentication Flow
+### Authentication Method
 
-```
-┌──────────┐      ┌──────────┐      ┌──────────┐
-│  Client  │─────▶│   API    │─────▶│   Auth   │
-│          │◀─────│ Gateway  │◀─────│ Service  │
-└──────────┘      └──────────┘      └──────────┘
-     │                  │                  │
-     │   JWT Token      │    Validate      │
-     └──────────────────┴──────────────────┘
-```
+- **Current**: Email verification tokens (no JWT yet)
+- **Password Security**: bcrypt hashing with salt
+- **Session Management**: TBD (JWT planned)
 
-### Security Layers
+### Security Measures
 
-1. **Network**: VPC, Security Groups
-2. **Application**: JWT, CORS, Rate Limiting
-3. **Data**: Encryption at rest/transit
-4. **Audit**: All health data changes logged
+1. **Application Layer**:
+   - Password complexity validation (8+ chars, upper/lower/number/special)
+   - Rate limiting (100 requests/minute per IP)
+   - CORS configured for frontend origin
+   - Input sanitization via Pydantic
+
+2. **Data Security**:
+   - Passwords hashed with bcrypt
+   - Verification tokens expire after 24 hours
+   - Sensitive data excluded from API responses
+
+### Planned Security Enhancements
+
+- JWT token authentication
+- OAuth2 integration
+- Two-factor authentication
+- API key management for external integrations
 
 ## Database Schema
 
-### Core Tables
+### Current Tables
+
+**users** table:
+
+- `id` - UUID primary key
+- `username` - Unique, 3-20 characters
+- `email` - Unique, valid email format
+- `password_hash` - Bcrypt hashed password
+- `is_email_verified` - Boolean, default False
+- `verification_token` - String, nullable
+- `verification_token_expires` - DateTime, nullable
+- `created_at` - DateTime, auto-generated
+- `updated_at` - DateTime, auto-updated
+
+### Planned Tables (Not Yet Implemented)
+
+- `health_profiles` - User health data
+- `user_allergies` - Allergen information
+- `dietary_restrictions` - Diet preferences
+- `restaurants` - Restaurant data
+- `menu_items` - Restaurant menus
+- `recommendations` - AI-generated suggestions
+
+## Development Setup
+
+### Local Development
 
 ```
-users
-├── health_profiles (1:1)
-├── user_allergies (1:N)
-├── dietary_restrictions (1:N)
-└── meal_preferences (1:N)
-
-restaurants
-├── restaurant_menus (1:N)
-├── menu_items (1:N)
-└── item_ingredients (1:N)
-
-recommendations
-├── user_id (FK)
-├── restaurant_id (FK)
-└── safety_score
+Local Machine
+├── Frontend (http://localhost:5173)
+│   └── Vite Dev Server
+├── Backend (http://localhost:8000)
+│   └── Uvicorn Server
+└── Database
+    └── SQLite (development.db)
 ```
 
-### Caching Strategy
+### Development Commands
 
-- **User Profiles**: Cache for 5 minutes
-- **Restaurant Data**: Cache for 1 hour
-- **Recommendations**: Cache for 15 minutes
-- **Invalidation**: On any profile update
+```bash
+# Terminal 1 - Frontend
+cd frontend
+npm run dev
 
-## Deployment Architecture
+# Terminal 2 - Backend
+cd backend
+uv run fastapi dev src/eatsential/index.py
 
-### Production Environment
-
-```
-AWS Region (us-east-1)
-├── VPC
-│   ├── Public Subnets
-│   │   ├── ALB
-│   │   └── NAT Gateway
-│   └── Private Subnets
-│       ├── ECS Fargate Services
-│       ├── RDS PostgreSQL
-│       └── ElastiCache Redis
-├── S3 + CloudFront (Frontend)
-└── Route 53 (DNS)
+# Database Migrations
+cd backend
+alembic upgrade head
 ```
 
-### Scaling Strategy
+### Future Production Deployment
 
-- **Frontend**: CloudFront edge caching
-- **API**: ECS auto-scaling (2-10 tasks)
-- **Database**: RDS read replicas
-- **Cache**: Redis cluster mode
+- Frontend: Static hosting (Vercel/Netlify/S3+CloudFront)
+- Backend: Container deployment (AWS ECS/Google Cloud Run)
+- Database: Managed PostgreSQL (AWS RDS/Supabase)
 
-## Monitoring & Observability
+## Current Development Tools
 
-### Metrics
+### Testing
 
-- **CloudWatch**: System metrics
-- **X-Ray**: Distributed tracing
-- **Custom Metrics**:
-  - API response times
-  - Allergen check failures
-  - Recommendation accuracy
+- **Frontend**: Vitest + React Testing Library
+- **Backend**: Pytest + pytest-asyncio
+- **API Testing**: FastAPI TestClient
 
-### Alerts
+### Code Quality
 
-- **Critical**: Allergen validation failures
-- **High**: API errors > 1%
-- **Medium**: Response time > 2s
-- **Low**: Cache hit rate < 80%
+- **Linting**: ESLint (frontend), Ruff (backend)
+- **Formatting**: Prettier (frontend), Black (backend)
+- **Type Checking**: TypeScript (frontend), mypy (backend)
 
-## Disaster Recovery
+### CI/CD (GitHub Actions)
 
-### Backup Strategy
+- **On Push**: Linting, formatting checks
+- **On PR**: Full test suite, coverage reports
+- **On Merge**: Deploy to staging (planned)
 
-- **Database**: Daily snapshots, 30-day retention
-- **Code**: Git with tagged releases
-- **Configs**: AWS Secrets Manager
+## Environment Variables
+
+### Backend (.env)
+
+```
+DATABASE_URL=sqlite:///./development.db
+SECRET_KEY=your-secret-key
+EMAIL_PROVIDER=console  # or smtp/ses
+SMTP_HOST=localhost
+SMTP_PORT=1025
+```
+
+### Frontend (.env)
+
+```
+VITE_API_URL=http://localhost:8000
+```
 
 ### RTO/RPO Targets
 
