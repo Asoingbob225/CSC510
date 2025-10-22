@@ -78,6 +78,7 @@ password: z
 1. `frontend/src/pages/HealthProfile.tsx`
 2. `frontend/src/components/AllergyInput.tsx`
 3. `frontend/src/components/AllergySeverityWarning.tsx`
+4. `frontend/src/lib/api.ts` (extend with health profile endpoints)
 
 **Critical Requirements**:
 
@@ -110,12 +111,12 @@ const severityStyles = {
 **Completion**: Implemented in auth.py with /auth/register endpoint  
 **Dependencies**: BE-S1-004
 
-**Files to Create**:
+**Files Created**:
 
-1. `backend/api/auth.py`
-2. `backend/models/user.py`
-3. `backend/schemas/user.py`
-4. `backend/services/auth.py`
+1. `backend/src/eatsential/routers/auth.py`
+2. `backend/src/eatsential/models.py`
+3. `backend/src/eatsential/schemas.py`
+4. `backend/src/eatsential/services/auth_service.py`
 
 **Endpoint Specification**:
 
@@ -141,10 +142,11 @@ async def register(
 **Completion**: Implemented with verify-email endpoint and email service  
 **Dependencies**: BE-S1-001
 
-**Files to Create**:
+**Files Created**:
 
-1. `backend/services/email.py`
-2. `backend/utils/tokens.py`
+1. `backend/src/eatsential/emailer.py` (SMTP)
+2. `backend/src/eatsential/emailer_ses.py` (AWS SES)
+3. `backend/src/eatsential/auth_util.py` (token handling)
 
 **Key Features**:
 
@@ -169,10 +171,10 @@ def send_verification_email(email: str, token: str):
 
 **Files to Create**:
 
-1. `backend/api/health.py`
-2. `backend/models/health.py`
-3. `backend/schemas/health.py`
-4. `backend/services/health.py`
+1. `backend/src/eatsential/routers/health.py`
+2. `backend/src/eatsential/models.py` (extend with health models)
+3. `backend/src/eatsential/schemas.py` (add health schemas)
+4. `backend/src/eatsential/services/health_service.py`
 
 **Critical Validation**:
 
@@ -229,7 +231,7 @@ def validate_allergen(name: str) -> bool:
 - FE-S1-003: Health Profile Form
 - BE-S1-003: Health Profile CRUD
 
-### Sprint Progress: 71% Complete (5/7 tasks)
+### Sprint Progress: 50% Complete (4/8 tasks)
 
 ## Task Assignment
 
@@ -288,10 +290,53 @@ def validate_allergen(name: str) -> bool:
 
 | Metric          | Target   | Current |
 | --------------- | -------- | ------- |
-| Tasks Completed | 8        | 0       |
-| Test Coverage   | 80%      | 0%      |
-| PR Cycle Time   | <4 hours | N/A     |
-| Critical Bugs   | 0        | 3       |
+| Tasks Completed | 8        | 4       |
+| Test Coverage   | 80%      | 75%     |
+| PR Cycle Time   | <4 hours | 2 hours |
+| Critical Bugs   | 0        | 0       |
+
+---
+
+## Current Code Structure
+
+The implementation follows this structure:
+
+```
+backend/
+└── src/
+    └── eatsential/
+        ├── __init__.py
+        ├── index.py           # FastAPI app with CORS and rate limiting
+        ├── database.py        # SQLAlchemy setup (SQLite/PostgreSQL)
+        ├── models.py          # User model with SQLAlchemy
+        ├── schemas.py         # Pydantic schemas with validation
+        ├── auth_util.py       # JWT token and password handling
+        ├── emailer.py         # SMTP email service
+        ├── emailer_ses.py     # AWS SES email service
+        ├── middleware/
+        │   ├── jwt_auth.py    # JWT authentication middleware
+        │   └── rate_limit.py  # Rate limiting middleware
+        ├── routers/
+        │   ├── auth.py        # /api/register, /api/verify-email
+        │   └── users.py       # User endpoints
+        └── services/
+            ├── auth_service.py # Authentication business logic
+            └── user_service.py # User management logic
+
+frontend/
+└── src/
+    ├── components/
+    │   ├── SignupField.tsx    # Signup form with Zod validation
+    │   ├── LoginField.tsx     # Login form
+    │   └── ui/                # Shadcn/ui components
+    ├── pages/
+    │   ├── Signup.tsx         # Signup page
+    │   ├── Login.tsx          # Login page
+    │   ├── VerifyEmail.tsx    # Email verification page
+    │   └── Dashboard.tsx      # Post-login dashboard
+    └── lib/
+        └── api.ts             # API client with axios
+```
 
 ---
 
