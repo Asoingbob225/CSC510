@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..database import get_db
+from ..db.database import get_db
 from ..schemas import (
     EmailRequest,
     LoginResponse,

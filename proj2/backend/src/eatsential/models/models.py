@@ -7,7 +7,7 @@ from typing import Optional
 from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .database import Base
+from ..db.database import Base
 
 
 def utcnow():

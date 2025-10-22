@@ -6,9 +6,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from ..auth_util import verify_token
-from ..database import get_db
+from ..db.database import get_db
 from ..models import UserDB
+from ..utils.auth_util import verify_token
 
 # HTTP Bearer authentication scheme
 bearer_scheme = HTTPBearer()

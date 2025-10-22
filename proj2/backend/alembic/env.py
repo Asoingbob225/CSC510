@@ -10,7 +10,8 @@ from alembic import context
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Import our database configuration and models
-from src.eatsential.database import DATABASE_URL, Base
+from src.eatsential.db.database import DATABASE_URL, Base
+from src.eatsential.models import UserDB  # noqa: F401 - needed for Base.metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
