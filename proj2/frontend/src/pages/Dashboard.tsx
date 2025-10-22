@@ -19,9 +19,8 @@ function Dashboard() {
       }
 
       try {
-        // Call verification endpoint to check if token is valid
-        // Assumes backend has a /auth/verify endpoint
-        await apiClient.get('/auth/verify');
+        // Call user endpoint to check if token is valid
+        await apiClient.get('/users/me');
         setIsVerifying(false);
       } catch {
         // Token is invalid, clear and redirect

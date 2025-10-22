@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 # Register routers
-app.include_router(users.router)
+app.include_router(users.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 
 
