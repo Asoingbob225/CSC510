@@ -9,10 +9,13 @@
 
 ## Backend
 
-- **FastAPI** + **Python 3.9**
-- **PostgreSQL** + **SQLAlchemy**
+- **FastAPI** + **Python 3.11+**
+- **PostgreSQL** (production) / **SQLite** (development)
+- **SQLAlchemy 2.0** ORM
 - **Alembic** for migrations
-- **Pytest** for testing
+- **Pytest** + **pytest-asyncio** for testing
+- **passlib[bcrypt]** for password hashing
+- **python-jose** for JWT tokens
 
 ## Key Libraries
 
@@ -42,21 +45,33 @@ bcrypt = "^4.2.0"
 ```
 frontend/
 ├── src/
-│   ├── components/   # Reusable UI
-│   ├── pages/       # Route pages
-│   ├── hooks/       # Custom hooks
-│   └── services/    # API calls
+│   ├── components/
+│   │   ├── ui/          # Base UI components (button, input, etc.)
+│   │   └── *.tsx        # Feature components (SignupField, etc.)
+│   ├── pages/           # Route pages (Welcome, Signup, VerifyEmail, Dashboard)
+│   ├── lib/             # Utilities (utils.ts)
+│   └── assets/          # Images and static files
 │
 backend/
-├── api/         # Endpoints
-├── models/      # Database
-├── services/    # Business logic
-└── tests/       # Tests
+├── src/
+│   └── eatsential/
+│       ├── routers/     # API endpoints (auth.py, users.py)
+│       ├── services/    # Business logic (user_service.py)
+│       ├── middleware/  # Middleware (rate_limit.py)
+│       ├── models.py    # SQLAlchemy models
+│       ├── schemas.py   # Pydantic schemas
+│       ├── database.py  # Database configuration
+│       ├── auth_util.py # Authentication utilities
+│       ├── emailer.py   # Email service
+│       └── index.py     # FastAPI app entry point
+├── alembic/             # Database migrations
+└── tests/               # Test files
 ```
 
 ---
 
 **Need examples?** Check existing code:
 
-- Frontend: `SignupField.tsx`
-- Backend: `index.py`
+- Frontend: `src/components/SignupField.tsx`, `src/pages/VerifyEmail.tsx`
+- Backend: `src/eatsential/routers/auth.py`, `src/eatsential/services/user_service.py`
+- Database: `src/eatsential/models.py`, `src/eatsential/schemas.py`

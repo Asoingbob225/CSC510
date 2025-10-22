@@ -32,36 +32,67 @@ const ComponentName: FC<ComponentNameProps> = ({ prop1, prop2 = 0 }) => {
 export default ComponentName;
 ```
 
-### Form Component Pattern
+### Form Component Pattern (Actual Implementation)
 
 ```typescript
+// Example from SignupField.tsx
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
-const schema = z.object({
-  field: z.string().min(1, 'Required'),
+const signupSchema = z.object({
+  username: z
+    .string()
+    .min(3, { message: 'Username must be at least 3 characters' })
+    .max(20, { message: 'Username must be at most 20 characters' }),
+  email: z.email({ message: 'Invalid email address' }),
+  password: z
+    .string()
+    .min(8, { message: 'Password must be at least 8 characters' })
+    .max(48, { message: 'Password must be at most 48 characters' })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      { message: 'Password must contain uppercase, lowercase, number and special character' }
+    ),
 });
 
-type FormData = z.infer<typeof schema>;
+type SignupFormData = z.infer<typeof signupSchema>;
 
-const FormComponent = () => {
-  const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+const SignupField = () => {
+  const form = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+    },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: SignupFormData) => {
     try {
-      // API call
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Registration failed');
+      }
+
+      // Navigate to verification page
     } catch (error) {
       // Error handling
     }
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      {/* Form fields */}
-    </form>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Form fields using shadcn/ui components */}
+      </form>
+    </Form>
   );
 };
 ```
@@ -76,17 +107,16 @@ const [isLoading, setIsLoading] = useState(false);
 const [error, setError] = useState<string | null>(null);
 ```
 
-### Global State (Context)
+### Global State (Planned)
 
 ```typescript
-// contexts/AuthContext.tsx
-const AuthContext = createContext<AuthContextType | null>(null);
+// Currently using local state only
+// AuthContext planned for future implementation
+// For now, authentication state is managed per-component
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
-  return context;
-};
+// Example from current implementation:
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
 ```
 
 ## API Integration
@@ -94,9 +124,10 @@ export const useAuth = () => {
 ### Service Layer Pattern
 
 ```typescript
-// services/api.ts
-const API_BASE = '/api/v1';
+// Current API pattern (no separate service layer yet)
+const API_BASE = '/api';
 
+// Direct fetch calls in components
 export const api = {
   auth: {
     register: async (data: RegisterData) => {
@@ -112,30 +143,37 @@ export const api = {
 };
 ```
 
-### Custom Hook for API
+### API Error Handling Pattern
 
 ```typescript
-// hooks/useApi.ts
-export const useApi = <T>(apiCall: () => Promise<T>) => {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+// Example from VerifyEmail.tsx
+useEffect(() => {
+  const verifyEmail = async () => {
+    if (!token) {
+      setError('Invalid verification link');
+      return;
+    }
 
-  const execute = async () => {
-    setLoading(true);
-    setError(null);
+    setIsLoading(true);
     try {
-      const result = await apiCall();
-      setData(result);
+      const response = await fetch(`/api/auth/verify-email/${token}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsVerified(true);
+        setMessage(data.message || 'Email verified successfully!');
+      } else {
+        setError(data.detail || 'Verification failed');
+      }
     } catch (err) {
-      setError(err as Error);
+      setError('Network error. Please try again.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  return { data, loading, error, execute };
-};
+  verifyEmail();
+}, [token]);
 ```
 
 ## Testing Patterns
@@ -200,14 +238,23 @@ class ErrorBoundary extends Component<Props, State> {
 }
 ```
 
-### Form Error Display
+### Form Error Display (Actual Implementation)
 
 ```typescript
-{form.formState.errors.field && (
-  <p className="text-red-500 text-sm mt-1">
-    {form.formState.errors.field.message}
-  </p>
-)}
+// From SignupField.tsx using shadcn/ui FormMessage
+<FormField
+  control={form.control}
+  name="password"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Password</FormLabel>
+      <FormControl>
+        <Input type="password" {...field} />
+      </FormControl>
+      <FormMessage />  {/* Automatically displays field errors */}
+    </FormItem>
+  )}
+/>
 ```
 
 ## Performance Patterns

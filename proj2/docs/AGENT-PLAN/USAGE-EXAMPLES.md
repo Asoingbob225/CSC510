@@ -17,7 +17,7 @@ You: Yes, please analyze the current code and show me what needs to be changed.
 ```
 You: I'm implementing the user registration API for Eatsential. Read /docs/AGENT-PLAN/08-SPRINT-TASKS.md and find task BE-S1-001.
 
-Agent: I found task BE-S1-001. It requires creating the /api/v1/auth/register endpoint with email validation, password hashing, and proper error handling. Should I start by creating the necessary files?
+Agent: I found task BE-S1-001. It requires creating the /api/auth/register endpoint with email validation, password hashing, and proper error handling. Should I start by creating the necessary files?
 
 You: Yes, and make sure to follow the patterns in /docs/AGENT-PLAN/06-BACKEND-PATTERNS.md
 ```

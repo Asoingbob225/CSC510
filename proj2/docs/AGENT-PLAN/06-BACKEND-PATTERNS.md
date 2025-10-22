@@ -1,35 +1,36 @@
 # Backend Patterns
 
-## Project Structure
+## Project Structure (Actual Implementation)
 
 ```
 backend/
-├── api/
+├── src/
+│   └── eatsential/
+│       ├── __init__.py
+│       ├── index.py           # FastAPI app entry point
+│       ├── routers/
+│       │   ├── __init__.py
+│       │   ├── auth.py        # Authentication endpoints
+│       │   └── users.py       # User endpoints (placeholder)
+│       ├── services/
+│       │   ├── __init__.py
+│       │   └── user_service.py # User business logic
+│       ├── middleware/
+│       │   ├── __init__.py
+│       │   └── rate_limit.py  # Rate limiting middleware
+│       ├── models.py          # SQLAlchemy models
+│       ├── schemas.py         # Pydantic schemas
+│       ├── database.py        # Database configuration
+│       ├── auth_util.py       # Authentication utilities
+│       └── emailer.py         # Email service
+├── alembic/                   # Database migrations
+├── tests/
 │   ├── __init__.py
-│   ├── auth.py        # Auth endpoints
-│   ├── users.py       # User endpoints
-│   └── health.py      # Health profile endpoints
-├── models/
-│   ├── __init__.py
-│   ├── user.py        # SQLAlchemy models
-│   └── health.py
-├── schemas/
-│   ├── __init__.py
-│   ├── user.py        # Pydantic schemas
-│   └── health.py
-├── services/
-│   ├── __init__.py
-│   ├── auth.py        # Business logic
-│   └── health.py
-├── utils/
-│   ├── __init__.py
-│   ├── security.py    # Password hashing, JWT
-│   └── validators.py  # Custom validators
-├── core/
-│   ├── __init__.py
-│   ├── config.py      # Settings
-│   └── database.py    # DB connection
-└── main.py            # FastAPI app
+│   ├── test_index.py
+│   └── routers/
+│       └── test_api.py
+├── pyproject.toml             # Project dependencies
+└── README.md
 ```
 
 ## API Endpoint Pattern
@@ -44,31 +45,46 @@ from ..schemas import user as user_schemas
 from ..services import user as user_service
 from ..utils.security import get_current_user
 
-router = APIRouter(prefix="/api/v1/users", tags=["users"])
+# From auth.py
+router = APIRouter(prefix="/auth", tags=["authentication"])
 
-@router.post("/", response_model=user_schemas.UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_user(
-    user_data: user_schemas.UserCreate,
-    db: Session = Depends(get_db)
+SessionDep = Annotated[Session, Depends(get_db)]
+
+@router.post("/register", response_model=UserResponse, status_code=201)
+async def register_user(
+    user_data: UserCreate,
+    db: SessionDep,
 ):
-    """Create a new user."""
-    # Check if user exists
-    if user_service.get_user_by_email(db, user_data.email):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Email already registered"
+    """Register a new user
+
+    Args:
+        user_data: User registration data
+        db: Database session
+
+    Returns:
+        UserResponse with success message
+
+    Raises:
+        HTTPException: If registration fails
+    """
+    try:
+        # Create user and send verification email
+        user = await create_user(db, user_data)
+
+        return UserResponse(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            message="Success! Please check your email for verification instructions.",
         )
-
-    # Create user
-    user = user_service.create_user(db, user_data)
-    return user
-
-@router.get("/me", response_model=user_schemas.UserResponse)
-async def get_current_user_info(
-    current_user: User = Depends(get_current_user)
-):
-    """Get current user information."""
-    return current_user
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Registration error: {e!s}")
+        raise HTTPException(
+            status_code=500,
+            detail="An error occurred during registration. Please try again later.",
+        ) from e
 ```
 
 ## Pydantic Schemas
@@ -79,112 +95,149 @@ from typing import Optional, List
 from datetime import datetime
 import re
 
-class UserBase(BaseModel):
+# From schemas.py
+class UserCreate(BaseModel):
+    """Schema for user registration"""
+    username: str = Field(..., min_length=3, max_length=20)
     email: EmailStr
-    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=8, max_length=48)
 
-class UserCreate(UserBase):
-    password: str = Field(..., min_length=8)
+    @field_validator("password")
+    @classmethod
+    def password_validation(cls, value: str) -> str:
+        """Validate password meets all requirements"""
+        if len(value) < 8:
+            raise ValueError("string should have at least 8 characters")
+        if len(value) > 48:
+            raise ValueError("string should have at most 48 characters")
+        if not any(c.isupper() for c in value):
+            raise ValueError("password must contain at least one uppercase letter")
+        if not any(c.islower() for c in value):
+            raise ValueError("password must contain at least one lowercase letter")
+        if not any(c.isdigit() for c in value):
+            raise ValueError("password must contain at least one number")
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
+            raise ValueError("password must contain at least one special character")
+        return value
 
-    @validator('password')
-    def validate_password(cls, v):
-        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])', v):
-            raise ValueError('Password must contain uppercase, lowercase, number and special character')
-        return v
-
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
+    """Response schema for user operations"""
     id: str
-    email_verified: bool
-    created_at: datetime
+    username: str
+    email: str
+    message: str = "Operation completed successfully"
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+class EmailRequest(BaseModel):
+    """Request schema for email operations"""
+    email: EmailStr
 
-class HealthProfileCreate(BaseModel):
-    allergies: List[AllergyInput]
-    dietary_restrictions: List[str]
-    medical_conditions: List[str]
-
-    @validator('allergies')
-    def validate_allergies(cls, v):
-        # Validate against approved list
-        for allergy in v:
-            if allergy.name not in APPROVED_ALLERGENS:
-                raise ValueError(f"Invalid allergen: {allergy.name}")
-        return v
+class MessageResponse(BaseModel):
+    """Generic message response"""
+    message: str
 ```
 
-## Service Layer Pattern
+## Service Layer Pattern (Actual Implementation)
 
 ```python
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
+# From user_service.py
+from datetime import datetime, timedelta
 from typing import Optional
-import bcrypt
+from uuid import uuid4
 
-from ..models.user import User
-from ..schemas.user import UserCreate
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
 
-def create_user(db: Session, user_data: UserCreate) -> User:
-    """Create a new user with hashed password."""
-    # Hash password
-    password_hash = bcrypt.hashpw(
-        user_data.password.encode('utf-8'),
-        bcrypt.gensalt()
-    ).decode('utf-8')
+from ..auth_util import get_password_hash, verify_password
+from ..emailer import email_service
+from ..models import User
+from ..schemas import UserCreate
 
-    # Create user instance
-    user = User(
-        email=user_data.email,
+async def create_user(db: Session, user_data: UserCreate) -> User:
+    """Create a new user with email verification"""
+    # Check if user exists
+    existing_user = db.query(User).filter(
+        (User.email == user_data.email.lower()) |
+        (User.username == user_data.username)
+    ).first()
+
+    if existing_user:
+        if existing_user.email == user_data.email.lower():
+            raise HTTPException(status_code=400, detail="Email already registered")
+        else:
+            raise HTTPException(status_code=400, detail="Username already taken")
+
+    # Create user with verification token
+    verification_token = str(uuid4())
+    new_user = User(
         username=user_data.username,
-        password_hash=password_hash
+        email=user_data.email.lower(),
+        password_hash=get_password_hash(user_data.password),
+        verification_token=verification_token,
+        verification_token_expires=datetime.utcnow() + timedelta(hours=24),
     )
 
-    # Save to database
-    try:
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return user
-    except IntegrityError:
-        db.rollback()
-        raise ValueError("User already exists")
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against its hash."""
-    return bcrypt.checkpw(
-        plain_password.encode('utf-8'),
-        hashed_password.encode('utf-8')
+    # Send verification email
+    await email_service.send_verification_email(
+        new_user.email,
+        new_user.username,
+        verification_token,
     )
+
+    return new_user
+
+async def verify_user_email(db: Session, token: str) -> dict:
+    """Verify user's email with token"""
+    user = db.query(User).filter(
+        User.verification_token == token,
+        User.verification_token_expires > datetime.utcnow(),
+    ).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired verification token",
+        )
+
+    user.is_email_verified = True
+    user.verification_token = None
+    user.verification_token_expires = None
+
+    db.commit()
+
+    return {"message": "Email verified successfully! You can now log in."}
 ```
 
-## Database Models
+## Database Models (Actual Implementation)
 
 ```python
-from sqlalchemy import Column, String, Boolean, ForeignKey, Enum, DateTime
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+# From models.py
+from sqlalchemy import Boolean, Column, DateTime, String
 from sqlalchemy.sql import func
+
+from .database import Base
 import uuid
 
-from ..core.database import Base
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    username = Column(String(20), unique=True, nullable=False, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
-    username = Column(String(50), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
-    email_verified = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-
-    # Relationships
-    health_profile = relationship("HealthProfile", back_populates="user", uselist=False)
+    is_email_verified = Column(Boolean, default=False, nullable=False)
+    verification_token = Column(String(255), nullable=True, index=True)
+    verification_token_expires = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     def __repr__(self):
-        return f"<User(email='{self.email}', username='{self.username}')>"
+        return f"<User(username='{self.username}', email='{self.email}')>"
 ```
 
 ## Error Handling
@@ -225,57 +278,79 @@ def handle_service_error(error: Exception) -> HTTPException:
         )
 ```
 
-## Authentication & Security
+## Authentication & Security (Current Implementation)
 
 ```python
+# From auth_util.py
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def get_password_hash(password: str) -> str:
+    """Hash a password using bcrypt"""
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a password against its hash"""
+    return pwd_context.verify(plain_password, hashed_password)
+
+# JWT authentication planned but not yet implemented
+# Current authentication relies on email verification tokens
+```
+
+## Middleware Pattern
+
+```python
+# From middleware/rate_limit.py
+from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Optional
-from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from typing import Callable
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+from fastapi import Request, Response
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    """Create JWT access token."""
-    to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
-    to_encode.update({"exp": expire})
 
-    encoded_jwt = jwt.encode(
-        to_encode,
-        settings.SECRET_KEY,
-        algorithm=settings.ALGORITHM
-    )
-    return encoded_jwt
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, calls: int = 100, period: timedelta = timedelta(minutes=1)):
+        super().__init__(app)
+        self.calls = calls
+        self.period = period
+        self.clients = defaultdict(list)
 
-async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-) -> User:
-    """Get current authenticated user."""
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        client_ip = request.client.host
+        now = datetime.now()
 
-    try:
-        payload = jwt.decode(
-            token,
-            settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM]
-        )
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
+        # Clean old entries
+        self.clients[client_ip] = [
+            timestamp for timestamp in self.clients[client_ip]
+            if now - timestamp < self.period
+        ]
 
-    user = get_user(db, user_id=user_id)
-    if user is None:
-        raise credentials_exception
-    return user
+        # Check rate limit
+        if len(self.clients[client_ip]) >= self.calls:
+            return JSONResponse(
+                status_code=429,
+                content={"detail": "Rate limit exceeded"},
+                headers={
+                    "X-RateLimit-Limit": str(self.calls),
+                    "X-RateLimit-Remaining": "0",
+                    "X-RateLimit-Reset": str(int((now + self.period).timestamp()))
+                }
+            )
+
+        # Track request
+        self.clients[client_ip].append(now)
+
+        # Process request
+        response = await call_next(request)
+
+        # Add rate limit headers
+        response.headers["X-RateLimit-Limit"] = str(self.calls)
+        response.headers["X-RateLimit-Remaining"] = str(self.calls - len(self.clients[client_ip]))
+
+        return response
 ```
 
 ## Testing Patterns
@@ -315,10 +390,10 @@ async def client(test_db):
         yield ac
 
 @pytest.mark.asyncio
-async def test_create_user(client: AsyncClient):
-    """Test user creation endpoint."""
+async def test_register_user(client: AsyncClient):
+    """Test user registration endpoint."""
     response = await client.post(
-        "/api/v1/users/",
+        "/api/auth/register",
         json={
             "email": "test@example.com",
             "username": "testuser",
@@ -328,7 +403,9 @@ async def test_create_user(client: AsyncClient):
     assert response.status_code == 201
     data = response.json()
     assert data["email"] == "test@example.com"
+    assert data["username"] == "testuser"
     assert "password" not in data
+    assert "message" in data
 ```
 
 ## Logging & Monitoring

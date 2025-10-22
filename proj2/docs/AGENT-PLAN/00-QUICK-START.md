@@ -30,14 +30,16 @@ npm test                      # Run tests
 ### Backend
 
 ```bash
-cd backend && uv run fastapi dev  # Start dev
-uv run pytest                     # Run tests
+cd backend && uv run fastapi dev src/eatsential/index.py  # Start dev
+uv run pytest                                              # Run tests
 ```
 
 ## 🎯 Current Sprint Focus
 
 **Sprint 1**: User Authentication & Health Profile  
-**Critical Issues**: #41, #42, #43 (See GitHub)
+**Status**: 71% Complete (5/7 tasks)  
+**Critical Issues**: ✅ Resolved (#41, #42, #43)  
+**Remaining**: Health Profile Features (FE-S1-003, BE-S1-003)
 
 ---
 
