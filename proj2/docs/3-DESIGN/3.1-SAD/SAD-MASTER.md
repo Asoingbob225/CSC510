@@ -269,13 +269,16 @@ eatsential/
 ├── backend/                 # FastAPI application
 │   ├── src/
 │   │   └── eatsential/
-│   │       ├── routers/    # API endpoints
+│   │       ├── __init__.py
+│   │       ├── index.py    # FastAPI app
+│   │       ├── db/         # Database configuration
+│   │       ├── core/       # Core configurations and dependencies
+│   │       ├── models/     # SQLAlchemy models
+│   │       ├── schemas/    # Pydantic schemas
 │   │       ├── services/   # Business logic
+│   │       ├── utils/      # Utility functions
 │   │       ├── middleware/ # Request processing
-│   │       ├── models.py   # SQLAlchemy models
-│   │       ├── schemas.py  # Pydantic schemas
-│   │       ├── database.py # DB configuration
-│   │       └── index.py    # FastAPI app
+│   │       └── routers/    # API endpoints
 │   ├── alembic/            # Database migrations
 │   └── tests/              # Unit and integration tests
 │

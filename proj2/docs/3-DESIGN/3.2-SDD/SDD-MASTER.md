@@ -163,15 +163,23 @@ FastAPI Application
 │   ├── auth.py
 │   └── users.py
 ├── Services (Business Layer)
-│   └── user_service.py
+│   ├── user_service.py
+│   ├── health_service.py
+│   └── emailer.py
 ├── Models (Data Layer)
 │   └── models.py
+├── Schemas (Data Layer)
+│   └── schemas.py
+├── Core (Application Core)
+│   ├── config.py
+│   └── dependencies.py
+├── DB (Database Configuration)
+│   └── database.py
+├── Utils (Utility Functions)
+│   └── auth_util.py
 ├── Middleware
 │   └── rate_limit.py
-└── Utilities
-    ├── auth_util.py
-    ├── emailer.py
-    └── database.py
+└── index.py
 ```
 
 ---
