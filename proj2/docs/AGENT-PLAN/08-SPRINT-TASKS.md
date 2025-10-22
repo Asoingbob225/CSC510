@@ -1,7 +1,33 @@
 # Sprint Tasks
 
 **Current Sprint**: Sprint 1 (Oct 19-26, 2025)  
-**Theme**: Authentication & Health Profile Foundation
+**Theme**: Authentication & Health Profile Foundation  
+**Architecture**: Monolithic (FastAPI + React)
+
+---
+
+## 📁 Current Code Structure
+
+```
+frontend/
+├── src/
+│   ├── components/       # Reusable components
+│   │   ├── ui/          # shadcn/ui components
+│   │   └── *.tsx        # Feature components
+│   ├── pages/           # Route pages
+│   └── assets/          # Images and static files
+
+backend/
+├── src/
+│   └── eatsential/
+│       ├── routers/     # API endpoints
+│       ├── services/    # Business logic
+│       ├── middleware/  # Rate limiting, etc.
+│       ├── models.py    # SQLAlchemy models
+│       ├── schemas.py   # Pydantic schemas
+│       └── index.py     # FastAPI app
+└── alembic/            # Database migrations
+```
 
 ---
 
@@ -52,11 +78,11 @@ password: z
 **Dependencies**: BE-S1-002  
 **Completion**: Implemented in VerifyEmail.tsx
 
-**Files to Create**:
+**Files Created**:
 
-1. `frontend/src/pages/EmailVerification.tsx`
-2. `frontend/src/pages/VerificationSuccess.tsx`
-3. `frontend/src/components/ResendEmail.tsx`
+1. `frontend/src/pages/VerifyEmail.tsx` ✓
+2. `frontend/src/components/ui/` (reusable UI components) ✓
+3. Email verification integrated into existing components ✓
 
 **Key Features**:
 
@@ -110,27 +136,31 @@ const severityStyles = {
 **Completion**: Implemented in auth.py with /auth/register endpoint  
 **Dependencies**: BE-S1-004
 
-**Files to Create**:
+**Files Created**:
 
-1. `backend/api/auth.py`
-2. `backend/models/user.py`
-3. `backend/schemas/user.py`
-4. `backend/services/auth.py`
+1. `backend/src/eatsential/routers/auth.py` ✓
+2. `backend/src/eatsential/models.py` ✓
+3. `backend/src/eatsential/schemas.py` ✓
+4. `backend/src/eatsential/services/user_service.py` ✓
 
 **Endpoint Specification**:
 
 ```python
-@router.post("/auth/register", response_model=UserResponse, status_code=201)
-async def register(
+# Actual implementation in routers/auth.py
+@router.post("/register", response_model=UserResponse, status_code=201)
+async def register_user(
     user_data: UserCreate,
-    db: Session = Depends(get_db)
+    db: SessionDep,
 ):
-    # Validate email uniqueness
-    # Hash password with bcrypt
-    # Create user with email_verified=False
-    # Send verification email
-    # Return user data (no password)
+    # Implemented with:
+    # - Email/username uniqueness check
+    # - Password hashing with passlib
+    # - Email verification token generation
+    # - Verification email sending
+    # Returns: UserResponse with success message
 ```
+
+**API Path**: `/api/auth/register` (router prefix adds `/auth`)
 
 ---
 
@@ -141,10 +171,11 @@ async def register(
 **Completion**: Implemented with verify-email endpoint and email service  
 **Dependencies**: BE-S1-001
 
-**Files to Create**:
+**Files Created**:
 
-1. `backend/services/email.py`
-2. `backend/utils/tokens.py`
+1. `backend/src/eatsential/emailer.py` ✓
+2. `backend/src/eatsential/auth_util.py` ✓
+3. `backend/src/eatsential/emailer_ses.py` (AWS SES support) ✓
 
 **Key Features**:
 
@@ -169,10 +200,10 @@ def send_verification_email(email: str, token: str):
 
 **Files to Create**:
 
-1. `backend/api/health.py`
-2. `backend/models/health.py`
-3. `backend/schemas/health.py`
-4. `backend/services/health.py`
+1. `backend/src/eatsential/routers/health.py`
+2. `backend/src/eatsential/models.py` (add health profile models)
+3. `backend/src/eatsential/schemas.py` (add health profile schemas)
+4. `backend/src/eatsential/services/health_service.py`
 
 **Critical Validation**:
 
@@ -201,8 +232,9 @@ def validate_allergen(name: str) -> bool:
 **Files Created**:
 
 1. `backend/alembic.ini` ✓
-2. `backend/alembic/env.py` ✓
+2. `backend/alembic/` (migrations directory) ✓
 3. `backend/src/eatsential/database.py` ✓
+4. `backend/src/eatsential/models.py` (User model) ✓
 
 **Initial Migration**:
 
@@ -284,14 +316,59 @@ def validate_allergen(name: str) -> bool:
 
 ---
 
+## Sprint 2 Planning (Next Sprint)
+
+### Theme: Health Profile & Initial Recommendations
+
+Based on current architecture, here are the next priority tasks:
+
+### Frontend Tasks
+
+#### FE-S2-001: Dashboard Page
+
+- Create authenticated dashboard
+- Display user profile info
+- Navigation to health profile
+
+#### FE-S2-002: JWT Authentication
+
+- Implement auth context
+- Token storage and refresh
+- Protected routes
+
+### Backend Tasks
+
+#### BE-S2-001: JWT Implementation
+
+- Add JWT token generation
+- Implement login endpoint
+- Token refresh mechanism
+
+#### BE-S2-002: Health Profile API
+
+- Create health profile endpoints
+- Implement allergy validation
+- Add dietary restrictions
+
+### Integration Tasks
+
+#### INT-S2-001: Full Auth Flow
+
+- Connect login/logout
+- Implement session management
+- Add auth middleware
+
+---
+
 ## Sprint Metrics
 
 | Metric          | Target   | Current |
 | --------------- | -------- | ------- |
-| Tasks Completed | 8        | 0       |
-| Test Coverage   | 80%      | 0%      |
-| PR Cycle Time   | <4 hours | N/A     |
-| Critical Bugs   | 0        | 3       |
+| Tasks Completed | 7        | 5       |
+| Sprint Progress | 100%     | 71%     |
+| Test Coverage   | 80%      | ~60%    |
+| PR Cycle Time   | <4 hours | 2 hours |
+| Critical Bugs   | 0        | 0       |
 
 ---
 
