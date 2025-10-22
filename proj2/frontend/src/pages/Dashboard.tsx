@@ -1,13 +1,51 @@
 import { useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import apiClient, { getAuthToken, clearAuthToken } from '@/lib/api';
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [isVerifying, setIsVerifying] = useState(true);
+
+  // Verify if token is valid
+  useEffect(() => {
+    const verifyToken = async () => {
+      const token = getAuthToken();
+
+      // If no token, redirect to home page
+      if (!token) {
+        navigate('/404-not-found');
+        return;
+      }
+
+      try {
+        // Call user endpoint to check if token is valid
+        await apiClient.get('/users/me');
+        setIsVerifying(false);
+      } catch {
+        // Token is invalid, clear and redirect
+        navigate('/404-not-found');
+      }
+    };
+
+    verifyToken();
+  }, [navigate]);
 
   const handleLogout = () => {
-    // TODO: Implement logout logic
+    clearAuthToken();
     navigate('/');
   };
+
+  // Show loading state while verifying
+  if (isVerifying) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="mb-4 text-lg text-gray-600">Verifying...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

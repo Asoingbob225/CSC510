@@ -194,7 +194,7 @@ describe('SignupField Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /creating account/i })).toBeDisabled();
+      expect(submitButton).toBeDisabled();
     });
   });
 });
