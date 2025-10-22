@@ -275,7 +275,7 @@ def test_login_success(client, mock_send_email):
     # Check JWT token fields
     assert "access_token" in data
     assert "token_type" in data
-    assert data["token_type"] == "bearer"
+    assert data["token_type"] == "bearer"  # noqa: S105
     assert isinstance(data["access_token"], str)
     assert len(data["access_token"]) > 0
 
