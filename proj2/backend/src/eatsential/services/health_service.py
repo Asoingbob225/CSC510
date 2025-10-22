@@ -289,6 +289,18 @@ class HealthProfileService:
         if not allergen:
             raise ValueError("Allergen not found")
 
+        # Prevent duplicate allergy entries for the same health profile
+        existing_allergy = (
+            self.db.query(UserAllergyDB)
+            .filter(
+                UserAllergyDB.health_profile_id == health_profile.id,
+                UserAllergyDB.allergen_id == allergy_data.allergen_id,
+            )
+            .first()
+        )
+        if existing_allergy:
+            raise ValueError("This allergy already exists for this user")
+
         # Create new allergy
         user_allergy = UserAllergyDB(
             id=str(uuid4()),
@@ -397,6 +409,18 @@ class HealthProfileService:
             raise ValueError("Health profile not found. Please create one first.")
 
         # Create new dietary preference
+        existing_preference = (
+            self.db.query(DietaryPreferenceDB)
+            .filter(
+                DietaryPreferenceDB.health_profile_id == health_profile.id,
+                DietaryPreferenceDB.preference_type == preference_data.preference_type,
+                DietaryPreferenceDB.preference_name == preference_data.preference_name,
+            )
+            .first()
+        )
+        if existing_preference:
+            raise ValueError("This dietary preference already exists for this user")
+
         dietary_preference = DietaryPreferenceDB(
             id=str(uuid4()),
             health_profile_id=health_profile.id,

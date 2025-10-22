@@ -1,5 +1,29 @@
 """SQLAlchemy ORM models for database tables."""
 
-from .models import AccountStatus, UserDB, utcnow
+from .models import (
+    AccountStatus,
+    ActivityLevel,
+    AllergenDB,
+    AllergySeverity,
+    DietaryPreferenceDB,
+    HealthProfileDB,
+    PreferenceReason,
+    PreferenceType,
+    UserAllergyDB,
+    UserDB,
+    utcnow,
+)
 
-__all__ = ["AccountStatus", "UserDB", "utcnow"]
+__all__ = [
+    "AccountStatus",
+    "ActivityLevel",
+    "AllergenDB",
+    "AllergySeverity",
+    "DietaryPreferenceDB",
+    "HealthProfileDB",
+    "PreferenceReason",
+    "PreferenceType",
+    "UserAllergyDB",
+    "UserDB",
+    "utcnow",
+]
