@@ -21,7 +21,7 @@ graph TB
         AI[AI Engine]
         DB[(Database)]
     end
-    
+
     subgraph "External Systems"
         Email[Email Services]
         Restaurant[Restaurant APIs]
@@ -30,17 +30,17 @@ graph TB
         Payment[Payment Processors]
         Health[Health Data APIs]
     end
-    
+
     subgraph "Users"
         EndUser[End Users]
         RestPartner[Restaurant Partners]
         Admin[Administrators]
     end
-    
+
     EndUser --> WebApp
     RestPartner --> API
     Admin --> WebApp
-    
+
     API --> Email
     API --> Restaurant
     AI --> Nutrition
@@ -52,24 +52,28 @@ graph TB
 ### 2.1.2 Product Evolution
 
 **Phase 1: MVP (Current)**
+
 - User authentication and profiles
 - Basic health profile management
 - Manual meal recommendations
 - Limited restaurant database
 
 **Phase 2: AI Integration (3-6 months)**
+
 - LLM-powered recommendations
 - RAG pipeline implementation
 - Expanded restaurant partnerships
 - Nutritional analysis
 
 **Phase 3: Full Platform (6-12 months)**
+
 - Mobile applications
 - Wearable device integration
 - Meal planning and tracking
 - Social features
 
 **Phase 4: Ecosystem (12+ months)**
+
 - Healthcare provider integration
 - Insurance partnerships
 - Grocery delivery integration
@@ -105,25 +109,25 @@ graph LR
         Login[Authentication]
         Profile[Profile Management]
     end
-    
+
     subgraph "Health Management"
         Health[Health Profile]
         Allergy[Allergy Tracking]
         Goals[Wellness Goals]
     end
-    
+
     subgraph "Recommendations"
         Suggest[Meal Suggestions]
         Filter[Dietary Filtering]
         Explain[Explanations]
     end
-    
+
     subgraph "Restaurant Services"
         Search[Restaurant Search]
         Menu[Menu Browsing]
         Location[Location Services]
     end
-    
+
     Register --> Health
     Health --> Suggest
     Suggest --> Search
@@ -131,14 +135,14 @@ graph LR
 
 ### 2.2.2 Function Summary
 
-| Function Category | Primary Functions | Status |
-|-------------------|-------------------|--------|
-| **Account Management** | Registration, Login, Password Reset, Profile Updates | ✅ Implemented |
-| **Health Profile** | Allergies, Conditions, Medications, Biometrics | ⏳ In Progress |
-| **Meal Recommendations** | AI Suggestions, Filtering, Explanations | 📅 Planned |
-| **Restaurant Discovery** | Search, Browse, Filter by Diet | 📅 Planned |
-| **Meal Planning** | Weekly Plans, Shopping Lists, Tracking | 🔮 Future |
-| **Social Features** | Sharing, Reviews, Community | 🔮 Future |
+| Function Category        | Primary Functions                                    | Status         |
+| ------------------------ | ---------------------------------------------------- | -------------- |
+| **Account Management**   | Registration, Login, Password Reset, Profile Updates | ✅ Implemented |
+| **Health Profile**       | Allergies, Conditions, Medications, Biometrics       | ⏳ In Progress |
+| **Meal Recommendations** | AI Suggestions, Filtering, Explanations              | 📅 Planned     |
+| **Restaurant Discovery** | Search, Browse, Filter by Diet                       | 📅 Planned     |
+| **Meal Planning**        | Weekly Plans, Shopping Lists, Tracking               | 🔮 Future      |
+| **Social Features**      | Sharing, Reviews, Community                          | 🔮 Future      |
 
 ### 2.2.3 User Workflows
 
@@ -190,11 +194,11 @@ graph LR
 
 ### 2.3.3 User Expertise Levels
 
-| Level | Characteristics | Design Implications |
-|-------|-----------------|---------------------|
-| **Novice** | Limited nutrition knowledge, basic tech skills | Simple UI, educational content, guided flows |
-| **Intermediate** | Some nutrition awareness, comfortable with apps | Balanced features, optional complexity |
-| **Expert** | Deep nutrition knowledge, power user | Advanced features, customization, data export |
+| Level            | Characteristics                                 | Design Implications                           |
+| ---------------- | ----------------------------------------------- | --------------------------------------------- |
+| **Novice**       | Limited nutrition knowledge, basic tech skills  | Simple UI, educational content, guided flows  |
+| **Intermediate** | Some nutrition awareness, comfortable with apps | Balanced features, optional complexity        |
+| **Expert**       | Deep nutrition knowledge, power user            | Advanced features, customization, data export |
 
 ## 2.4 Constraints
 
@@ -293,28 +297,28 @@ graph TD
         DB[Database Service]
         Host[Cloud Hosting]
     end
-    
+
     subgraph "Important Dependencies"
         Restaurant[Restaurant Data]
         Nutrition[Nutrition API]
         Maps[Mapping Service]
         AI[LLM Service]
     end
-    
+
     subgraph "Nice-to-Have Dependencies"
         Analytics[Analytics Platform]
         Monitor[Monitoring Tools]
         CDN[Content Delivery]
         Backup[Backup Service]
     end
-    
+
     Eatsential[Eatsential Platform]
-    
+
     Auth --> Eatsential
     Email --> Eatsential
     DB --> Eatsential
     Host --> Eatsential
-    
+
     Restaurant -.-> Eatsential
     Nutrition -.-> Eatsential
     Maps -.-> Eatsential
@@ -323,19 +327,20 @@ graph TD
 
 ### 2.5.3 Dependency Risks
 
-| Dependency | Risk Level | Impact | Mitigation Strategy |
-|------------|------------|---------|-------------------|
-| Cloud Hosting | High | System unavailable | Multi-region deployment, failover |
-| Email Service | Medium | No user verification | Multiple provider support |
-| Restaurant Data | High | Limited recommendations | Build own database |
-| LLM Service | Medium | No AI features | Fallback algorithms |
-| Payment Processing | Low | No revenue | Multiple processors |
+| Dependency         | Risk Level | Impact                  | Mitigation Strategy               |
+| ------------------ | ---------- | ----------------------- | --------------------------------- |
+| Cloud Hosting      | High       | System unavailable      | Multi-region deployment, failover |
+| Email Service      | Medium     | No user verification    | Multiple provider support         |
+| Restaurant Data    | High       | Limited recommendations | Build own database                |
+| LLM Service        | Medium     | No AI features          | Fallback algorithms               |
+| Payment Processing | Low        | No revenue              | Multiple processors               |
 
 ## 2.6 Apportioning of Requirements
 
 ### 2.6.1 Release Planning
 
 **MVP Release (Sprint 1-2)**
+
 - User registration and authentication ✅
 - Basic profile management ⏳
 - Email verification ✅
@@ -343,6 +348,7 @@ graph TD
 - Basic UI/UX framework ✅
 
 **Release 1.0 (Sprint 3-4)**
+
 - Complete health profile
 - Allergy management
 - Basic recommendations
@@ -350,6 +356,7 @@ graph TD
 - Location services
 
 **Release 2.0 (Sprint 5-8)**
+
 - AI-powered recommendations
 - Meal planning features
 - Advanced filtering
@@ -357,6 +364,7 @@ graph TD
 - Mobile optimization
 
 **Future Releases**
+
 - Mobile applications
 - Social features
 - Healthcare integration

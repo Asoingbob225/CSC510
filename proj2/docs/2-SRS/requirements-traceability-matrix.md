@@ -81,15 +81,15 @@ graph LR
 
 ### 3.1 Authentication & User Management
 
-| Req ID      | Requirement        | Use Case | Design Component | Code Module     | Test Cases       | Status        |
-| ----------- | ------------------ | -------- | ---------------- | --------------- | ---------------- | ------------- |
+| Req ID      | Requirement        | Use Case | Design Component | Code Module                        | Test Cases                       | Status      |
+| ----------- | ------------------ | -------- | ---------------- | ---------------------------------- | -------------------------------- | ----------- |
 | **FR-001**  | User Registration  | UC-001   | Auth Service     | `auth.register`, `SignupField.tsx` | TC-001 to TC-005, `test_auth.py` | ✅ Complete |
-| **FR-002**  | Multi-Factor Auth  | UC-002   | Auth Service     | `auth.mfa`      | TC-006 to TC-008 | ○             |
-| **FR-003**  | Social Login       | UC-001   | Auth Service     | `auth.oauth`    | TC-009 to TC-012 | ○             |
-| **FR-004**  | Password Recovery  | UC-003   | Auth Service     | `auth.recovery` | TC-013 to TC-015 | ○             |
-| **FR-005**  | Session Management | UC-004   | Auth Service     | `auth.session`  | TC-016 to TC-018 | ○             |
-| **NFR-001** | <2s Login Time     | -        | API Gateway      | `gateway.auth`  | PT-001           | ○             |
-| **NFR-002** | OWASP Compliance   | -        | Auth Service     | `auth.security` | ST-001 to ST-005 | ○             |
+| **FR-002**  | Multi-Factor Auth  | UC-002   | Auth Service     | `auth.mfa`                         | TC-006 to TC-008                 | ○           |
+| **FR-003**  | Social Login       | UC-001   | Auth Service     | `auth.oauth`                       | TC-009 to TC-012                 | ○           |
+| **FR-004**  | Password Recovery  | UC-003   | Auth Service     | `auth.recovery`                    | TC-013 to TC-015                 | ○           |
+| **FR-005**  | Session Management | UC-004   | Auth Service     | `auth.session`                     | TC-016 to TC-018                 | ○           |
+| **NFR-001** | <2s Login Time     | -        | API Gateway      | `gateway.auth`                     | PT-001                           | ○           |
+| **NFR-002** | OWASP Compliance   | -        | Auth Service     | `auth.security`                    | ST-001 to ST-005                 | ○           |
 
 ### 3.2 Health Profile Management
 

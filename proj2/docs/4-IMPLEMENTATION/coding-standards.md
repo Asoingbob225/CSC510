@@ -28,6 +28,7 @@
 ### 1.1 Purpose
 
 This document establishes coding standards for the Eatsential project to ensure:
+
 - Code consistency across the team
 - Maintainability and readability
 - Reduced bugs and technical debt
@@ -37,6 +38,7 @@ This document establishes coding standards for the Eatsential project to ensure:
 ### 1.2 Scope
 
 These standards apply to all code written for the Eatsential project, including:
+
 - Backend Python code (FastAPI)
 - Frontend TypeScript/JavaScript code (React)
 - Database schemas and queries
@@ -63,12 +65,14 @@ These standards apply to all code written for the Eatsential project, including:
 ### 2.2 Naming Conventions
 
 #### General Rules
+
 - Use descriptive, meaningful names
 - Avoid abbreviations except well-known ones
 - Be consistent with naming patterns
 - Use searchable names
 
 #### Examples
+
 ```python
 # Bad
 def calc(x, y):
@@ -92,6 +96,7 @@ def calculate_total_with_tax(price: float, tax_amount: float) -> float:
 ### 3.1 Style Guide
 
 We follow **PEP 8** with these specifications:
+
 - **Line length**: 88 characters (Black formatter default)
 - **Indentation**: 4 spaces
 - **Imports**: Sorted with `isort`
@@ -177,15 +182,15 @@ async def create_user(
 ) -> UserResponse:
     """
     Create a new user.
-    
+
     Args:
         user_data: User creation data
         db: Database session
         current_user: Currently authenticated user
-        
+
     Returns:
         Created user details
-        
+
     Raises:
         HTTPException: If user already exists
     """
@@ -229,9 +234,9 @@ async def get_user_profile(user_id: str) -> UserProfile:
     # Parallel async calls when possible
     user_task = get_user(user_id)
     health_task = get_health_profile(user_id)
-    
+
     user, health = await asyncio.gather(user_task, health_task)
-    
+
     return UserProfile(user=user, health=health)
 
 # Don't use async for CPU-bound operations
@@ -246,6 +251,7 @@ def calculate_nutrition(meals: List[Meal]) -> NutritionSummary:
 ### 4.1 Style Guide
 
 We follow the **Airbnb JavaScript Style Guide** with TypeScript additions:
+
 - **Semicolons**: Always use semicolons
 - **Quotes**: Single quotes for strings
 - **Indentation**: 2 spaces
@@ -308,10 +314,14 @@ const [count, setCount] = useState(0); // Type inferred as number
 
 // Avoid 'any' type
 // Bad
-const processData = (data: any) => { /* ... */ };
+const processData = (data: any) => {
+  /* ... */
+};
 
 // Good
-const processData = <T extends Record<string, unknown>>(data: T) => { /* ... */ };
+const processData = <T extends Record<string, unknown>>(data: T) => {
+  /* ... */
+};
 
 // Use union types for multiple possibilities
 type Status = 'idle' | 'loading' | 'success' | 'error';
@@ -359,21 +369,21 @@ export function UserCard({ user, onEdit, className }: UserCardProps) {
   // 1. Hooks
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
-  
+
   // 2. Derived state
   const fullName = `${user.firstName} ${user.lastName}`;
-  
+
   // 3. Event handlers
   const handleEdit = () => {
     setIsEditing(true);
     onEdit?.(user);
   };
-  
+
   // 4. Effects
   useEffect(() => {
     // Effect logic
   }, [user.id]);
-  
+
   // 5. Render
   return (
     <div className={className}>
@@ -392,7 +402,7 @@ function useUserProfile(userId: string) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -405,21 +415,21 @@ function useUserProfile(userId: string) {
         setLoading(false);
       }
     };
-    
+
     fetchProfile();
   }, [userId]);
-  
+
   return { profile, loading, error };
 }
 
 // Use early returns for conditional rendering
 function UserDashboard() {
   const { user } = useAuth();
-  
+
   if (!user) {
     return <Navigate to="/login" />;
   }
-  
+
   return <DashboardContent user={user} />;
 }
 ```
@@ -567,13 +577,13 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_created_at ON users(created_at DESC);
 
 -- Foreign keys: fk_table_column_reference
-ALTER TABLE user_allergies 
-ADD CONSTRAINT fk_user_allergies_user_id 
+ALTER TABLE user_allergies
+ADD CONSTRAINT fk_user_allergies_user_id
 FOREIGN KEY (user_id) REFERENCES users(id);
 
 -- Constraints: constraint_table_description
-ALTER TABLE users 
-ADD CONSTRAINT constraint_users_email_format 
+ALTER TABLE users
+ADD CONSTRAINT constraint_users_email_format
 CHECK (email ~ '^[^@]+@[^@]+\.[^@]+$');
 ```
 
@@ -629,14 +639,14 @@ def upgrade():
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
         sa.UniqueConstraint('user_id', 'allergen_name')
     )
-    
+
     # Create indexes
     op.create_index('idx_user_allergies_user_id', 'user_allergies', ['user_id'])
 
 def downgrade():
     # Drop indexes first
     op.drop_index('idx_user_allergies_user_id', 'user_allergies')
-    
+
     # Drop table
     op.drop_table('user_allergies')
 ```
@@ -646,6 +656,7 @@ def downgrade():
 ### 8.1 Code Documentation
 
 #### Python Docstrings
+
 ```python
 def calculate_meal_nutrition(
     meal: Meal,
@@ -654,25 +665,25 @@ def calculate_meal_nutrition(
 ) -> NutritionInfo:
     """
     Calculate nutritional information for a meal.
-    
+
     This function computes the total nutritional content of a meal,
     adjusting for portion size and user-specific requirements.
-    
+
     Args:
         meal: The meal to analyze
         portion_size: Multiplier for portion (default: 1.0 = standard serving)
         user_profile: Optional user profile for personalized calculations
-        
+
     Returns:
         NutritionInfo object containing:
             - Macronutrients (calories, protein, carbs, fat)
             - Micronutrients (vitamins, minerals)
             - Allergen warnings
-            
+
     Raises:
         ValueError: If portion_size is negative
         MealNotFoundError: If meal data is incomplete
-        
+
     Example:
         >>> meal = get_meal("salad_001")
         >>> nutrition = calculate_meal_nutrition(meal, portion_size=1.5)
@@ -681,20 +692,21 @@ def calculate_meal_nutrition(
     """
     if portion_size < 0:
         raise ValueError("Portion size cannot be negative")
-    
+
     # Implementation
     pass
 ```
 
 #### TypeScript JSDoc
-```typescript
+
+````typescript
 /**
  * Calculate the age of a user from their birth date
- * 
+ *
  * @param birthDate - User's date of birth
  * @returns Age in years
  * @throws {Error} If birth date is in the future
- * 
+ *
  * @example
  * ```typescript
  * const age = calculateAge(new Date('1990-01-01'));
@@ -706,21 +718,22 @@ export function calculateAge(birthDate: Date): number {
   if (birthDate > today) {
     throw new Error('Birth date cannot be in the future');
   }
-  
+
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  
+
   return age;
 }
-```
+````
 
 ### 8.2 README Standards
 
 Every directory should have a README.md explaining:
+
 - Purpose of the directory
 - Structure and organization
 - How to use/run the code
@@ -734,16 +747,17 @@ This module handles all user-related operations including registration,
 authentication, and profile management.
 
 ## Structure
+```
 
-```
 user-service/
-├── __init__.py
-├── models.py       # SQLAlchemy models
-├── schemas.py      # Pydantic schemas
-├── service.py      # Business logic
-├── router.py       # FastAPI routes
-└── tests/          # Unit tests
-```
+├── **init**.py
+├── models.py # SQLAlchemy models
+├── schemas.py # Pydantic schemas
+├── service.py # Business logic
+├── router.py # FastAPI routes
+└── tests/ # Unit tests
+
+````
 
 ## Usage
 
@@ -752,13 +766,14 @@ from user_service import UserService
 
 service = UserService(db_session)
 user = await service.create_user(user_data)
-```
+````
 
 ## Testing
 
 ```bash
 pytest user-service/tests/
 ```
+
 ```
 
 ## 9. Testing Standards
@@ -766,14 +781,16 @@ pytest user-service/tests/
 ### 9.1 Test Organization
 
 ```
+
 tests/
-├── unit/           # Unit tests
-├── integration/    # Integration tests
-├── e2e/           # End-to-end tests
-├── fixtures/      # Test data
-├── mocks/         # Mock objects
-└── utils/         # Test utilities
-```
+├── unit/ # Unit tests
+├── integration/ # Integration tests
+├── e2e/ # End-to-end tests
+├── fixtures/ # Test data
+├── mocks/ # Mock objects
+└── utils/ # Test utilities
+
+````
 
 ### 9.2 Test Naming
 
@@ -783,7 +800,7 @@ class TestUserService:
     def test_create_user_with_valid_data_succeeds(self):
         """Test that creating a user with valid data succeeds."""
         pass
-    
+
     def test_create_user_with_duplicate_email_raises_error(self):
         """Test that creating a user with duplicate email raises error."""
         pass
@@ -793,18 +810,18 @@ describe('UserProfile Component', () => {
   it('should render user information correctly', () => {
     // Test implementation
   });
-  
+
   it('should handle edit button click', () => {
     // Test implementation
   });
-  
+
   describe('when user is not verified', () => {
     it('should show verification warning', () => {
       // Test implementation
     });
   });
 });
-```
+````
 
 ### 9.3 Test Structure
 
@@ -817,14 +834,14 @@ def test_user_registration():
         "email": "test@example.com",
         "password": "SecurePass123!"
     }
-    
+
     # Act
     response = client.post("/api/auth/register", json=user_data)
-    
+
     # Assert
     assert response.status_code == 201
     assert response.json()["email"] == user_data["email"]
-    
+
     # Verify side effects
     user = db.query(User).filter_by(email=user_data["email"]).first()
     assert user is not None
@@ -899,24 +916,29 @@ instead of flat JSON. Update clients accordingly.
 
 ```markdown
 ## Description
+
 Brief description of what this PR does
 
 ## Type of Change
+
 - [ ] Bug fix (non-breaking change)
 - [ ] New feature (non-breaking change)
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Changes Made
+
 - List specific changes
 - Include file paths if helpful
 
 ## Testing
+
 - [ ] Unit tests pass
 - [ ] Integration tests pass
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -926,9 +948,11 @@ Brief description of what this PR does
 - [ ] All tests passing
 
 ## Screenshots (if applicable)
+
 Add screenshots for UI changes
 
 ## Related Issues
+
 Closes #123
 ```
 
@@ -966,6 +990,7 @@ Closes #123
 **Next Review:** Quarterly
 
 **Enforcement Tools:**
+
 - Python: Black, isort, pylint, mypy
 - TypeScript: ESLint, Prettier
 - Pre-commit hooks configured

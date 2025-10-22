@@ -73,28 +73,28 @@ graph TB
         Integration[Integration Tests<br/>20% Coverage]
         E2E[E2E Tests<br/>10% Coverage]
     end
-    
+
     subgraph "Test Types"
         Functional[Functional Testing]
         Security[Security Testing]
         Performance[Performance Testing]
         Usability[Usability Testing]
     end
-    
+
     subgraph "Test Automation"
         CI[Continuous Integration]
         Auto[Automated Tests]
         Manual[Manual Tests]
     end
-    
+
     Unit --> Integration
     Integration --> E2E
-    
+
     Functional --> Auto
     Security --> Manual
     Performance --> Auto
     Usability --> Manual
-    
+
     Auto --> CI
 ```
 
@@ -117,13 +117,13 @@ graph TB
 
 ### 2.3 Test Coverage Goals
 
-| Test Level     | Coverage Target | Current Status | Priority |
-| -------------- | --------------- | -------------- | -------- |
-| Unit Tests     | 80%             | 75%            | High     |
-| Integration    | 70%             | 60%            | High     |
-| E2E Tests      | Critical Paths  | In Progress    | Medium   |
-| Security       | OWASP Top 10    | Planned        | High     |
-| Performance    | Load Testing    | Planned        | Medium   |
+| Test Level  | Coverage Target | Current Status | Priority |
+| ----------- | --------------- | -------------- | -------- |
+| Unit Tests  | 80%             | 75%            | High     |
+| Integration | 70%             | 60%            | High     |
+| E2E Tests   | Critical Paths  | In Progress    | Medium   |
+| Security    | OWASP Top 10    | Planned        | High     |
+| Performance | Load Testing    | Planned        | Medium   |
 
 ---
 
@@ -175,19 +175,19 @@ graph LR
         Pages[Page Tests]
         E2E[E2E Tests]
     end
-    
+
     subgraph "API Testing"
         Endpoints[Endpoint Tests]
         Integration[Integration Tests]
         Contract[Contract Tests]
     end
-    
+
     subgraph "Backend Testing"
         Services[Service Tests]
         Database[Database Tests]
         Utils[Utility Tests]
     end
-    
+
     Components --> Endpoints
     Pages --> Endpoints
     E2E --> Integration
@@ -204,16 +204,19 @@ graph LR
 **Objective:** Verify individual components work correctly in isolation
 
 **Scope:**
+
 - Frontend: React components, utilities, hooks
 - Backend: Services, utilities, validators
 - Database: Models, queries
 
 **Tools:**
+
 - Frontend: Vitest, React Testing Library
 - Backend: Pytest, pytest-asyncio
 - Mocking: Jest mocks, unittest.mock
 
 **Example Test Cases:**
+
 ```python
 # Backend Unit Test
 def test_password_hashing():
@@ -237,17 +240,20 @@ test('SignupField validates email format', () => {
 **Objective:** Verify components work together correctly
 
 **Scope:**
+
 - API endpoint integration
 - Database operations
 - Service interactions
 - External service mocks
 
 **Tools:**
+
 - Backend: FastAPI TestClient
 - Database: Test database instances
 - Mocking: Responses for external services
 
 **Example Test Cases:**
+
 ```python
 # API Integration Test
 async def test_user_registration_flow():
@@ -258,12 +264,12 @@ async def test_user_registration_flow():
         "password": "Test123!@#"
     })
     assert response.status_code == 201
-    
+
     # Verify user in database
     user = db.query(User).filter_by(email="test@example.com").first()
     assert user is not None
     assert user.is_email_verified == False
-    
+
     # Verify email was sent (mocked)
     assert mock_email_service.send_email.called
 ```
@@ -273,17 +279,20 @@ async def test_user_registration_flow():
 **Objective:** Verify the complete system meets requirements
 
 **Scope:**
+
 - End-to-end user workflows
 - Cross-browser compatibility
 - Performance requirements
 - Security requirements
 
 **Tools:**
+
 - E2E: Playwright, Cypress
 - Performance: Locust, k6
 - Security: OWASP ZAP
 
 **Test Scenarios:**
+
 1. Complete user registration and verification flow
 2. Login with various credential combinations
 3. Password reset workflow
@@ -295,12 +304,14 @@ async def test_user_registration_flow():
 **Objective:** Validate system meets business requirements
 
 **Scope:**
+
 - User acceptance criteria
 - Business workflow validation
 - Usability testing
 - Accessibility testing
 
 **Approach:**
+
 - Manual testing by QA team
 - Beta testing with selected users
 - Accessibility audit (WCAG 2.1)
@@ -331,41 +342,41 @@ async def test_user_registration_flow():
 
 **Test Matrix:**
 
-| Feature         | Positive | Negative | Boundary | Status    |
-| --------------- | -------- | -------- | -------- | --------- |
-| User Signup     | ✅       | ✅       | ✅       | Complete  |
-| Email Verify    | ✅       | ✅       | ⏳       | In Progress |
-| Password Rules  | ✅       | ✅       | ✅       | Complete  |
-| Rate Limiting   | ✅       | ✅       | ✅       | Complete  |
+| Feature        | Positive | Negative | Boundary | Status      |
+| -------------- | -------- | -------- | -------- | ----------- |
+| User Signup    | ✅       | ✅       | ✅       | Complete    |
+| Email Verify   | ✅       | ✅       | ⏳       | In Progress |
+| Password Rules | ✅       | ✅       | ✅       | Complete    |
+| Rate Limiting  | ✅       | ✅       | ✅       | Complete    |
 
 ### 5.2 Security Testing
 
 **OWASP Top 10 Coverage:**
 
-| Vulnerability           | Test Coverage | Status    |
-| ----------------------- | ------------- | --------- |
-| Injection               | SQL, NoSQL    | ✅ Tested |
-| Broken Authentication   | JWT, Sessions | ✅ Tested |
-| Sensitive Data Exposure | Encryption    | ✅ Tested |
-| XML External Entities   | N/A           | N/A       |
-| Broken Access Control   | RBAC          | ⏳ Planned |
-| Security Misconfiguration | Headers     | ✅ Tested |
-| Cross-Site Scripting    | Input sanitization | ✅ Tested |
-| Insecure Deserialization | JSON validation | ✅ Tested |
-| Using Components with Known Vulnerabilities | Dependency scan | ✅ Automated |
-| Insufficient Logging    | Audit logs    | ⏳ Planned |
+| Vulnerability                               | Test Coverage      | Status       |
+| ------------------------------------------- | ------------------ | ------------ |
+| Injection                                   | SQL, NoSQL         | ✅ Tested    |
+| Broken Authentication                       | JWT, Sessions      | ✅ Tested    |
+| Sensitive Data Exposure                     | Encryption         | ✅ Tested    |
+| XML External Entities                       | N/A                | N/A          |
+| Broken Access Control                       | RBAC               | ⏳ Planned   |
+| Security Misconfiguration                   | Headers            | ✅ Tested    |
+| Cross-Site Scripting                        | Input sanitization | ✅ Tested    |
+| Insecure Deserialization                    | JSON validation    | ✅ Tested    |
+| Using Components with Known Vulnerabilities | Dependency scan    | ✅ Automated |
+| Insufficient Logging                        | Audit logs         | ⏳ Planned   |
 
 ### 5.3 Performance Testing
 
 **Metrics and Targets:**
 
-| Metric                  | Target      | Test Method        |
-| ----------------------- | ----------- | ------------------ |
-| Page Load Time          | < 2s        | Lighthouse         |
-| API Response Time       | < 200ms p95 | Load testing       |
-| Concurrent Users        | 100         | Stress testing     |
-| Database Query Time     | < 50ms      | Query profiling    |
-| Memory Usage            | < 512MB     | Resource monitoring |
+| Metric              | Target      | Test Method         |
+| ------------------- | ----------- | ------------------- |
+| Page Load Time      | < 2s        | Lighthouse          |
+| API Response Time   | < 200ms p95 | Load testing        |
+| Concurrent Users    | 100         | Stress testing      |
+| Database Query Time | < 50ms      | Query profiling     |
+| Memory Usage        | < 512MB     | Resource monitoring |
 
 ### 5.4 Usability Testing
 
@@ -397,12 +408,12 @@ Frontend:
   - Node.js: 18.x
   - React: 18.3
   - Browsers: Chrome (latest), Firefox (latest), Safari (latest)
-  
+
 Backend:
   - Python: 3.11+
   - FastAPI: 0.115
   - Database: SQLite (development)
-  
+
 Tools:
   - Git: Version control
   - VS Code: IDE
@@ -416,7 +427,7 @@ CI/CD:
   - GitHub Actions: Automated testing
   - Docker: Containerization
   - Test Database: PostgreSQL 15
-  
+
 Test Data:
   - Fixtures: Predefined test data
   - Factories: Dynamic test data generation
@@ -430,7 +441,7 @@ Infrastructure:
   - Cloud Provider: AWS (planned)
   - Database: PostgreSQL RDS
   - Application: Docker containers
-  
+
 Configuration:
   - Environment variables
   - Feature flags
@@ -443,30 +454,30 @@ Configuration:
 
 ### 7.1 Sprint 1 (Current - Authentication)
 
-| Week | Activities                          | Deliverables              |
-| ---- | ----------------------------------- | ------------------------- |
-| 1    | Unit test development               | 80% unit test coverage    |
-| 1-2  | Integration test development        | API test suite            |
-| 2    | Security testing                    | Security test report      |
-| 2    | E2E test automation                 | Critical path automation  |
+| Week | Activities                   | Deliverables             |
+| ---- | ---------------------------- | ------------------------ |
+| 1    | Unit test development        | 80% unit test coverage   |
+| 1-2  | Integration test development | API test suite           |
+| 2    | Security testing             | Security test report     |
+| 2    | E2E test automation          | Critical path automation |
 
 ### 7.2 Sprint 2 (Health Profile)
 
-| Week | Activities                          | Deliverables              |
-| ---- | ----------------------------------- | ------------------------- |
-| 3    | Unit tests for profile features     | Profile test suite        |
-| 3-4  | Integration tests                   | API integration tests     |
-| 4    | Accessibility testing               | WCAG compliance report    |
-| 4    | Performance baseline                | Performance metrics       |
+| Week | Activities                      | Deliverables           |
+| ---- | ------------------------------- | ---------------------- |
+| 3    | Unit tests for profile features | Profile test suite     |
+| 3-4  | Integration tests               | API integration tests  |
+| 4    | Accessibility testing           | WCAG compliance report |
+| 4    | Performance baseline            | Performance metrics    |
 
 ### 7.3 Release Testing
 
-| Phase          | Duration | Activities                    |
-| -------------- | -------- | ----------------------------- |
-| Alpha Testing  | 1 week   | Internal testing              |
-| Beta Testing   | 1 week   | Limited user testing          |
-| UAT            | 3 days   | Business acceptance           |
-| Go-Live        | 1 day    | Final smoke tests             |
+| Phase         | Duration | Activities           |
+| ------------- | -------- | -------------------- |
+| Alpha Testing | 1 week   | Internal testing     |
+| Beta Testing  | 1 week   | Limited user testing |
+| UAT           | 3 days   | Business acceptance  |
+| Go-Live       | 1 day    | Final smoke tests    |
 
 ---
 
@@ -518,13 +529,13 @@ test-artifacts/
 
 ### 8.3 Metrics and KPIs
 
-| Metric                    | Target | Measurement Method        |
-| ------------------------- | ------ | ------------------------- |
-| Test Coverage             | 80%    | Coverage tools            |
-| Defect Detection Rate     | 90%    | Defects found in testing  |
-| Test Execution Rate       | 95%    | Tests run vs planned      |
-| Automation Rate           | 70%    | Automated vs manual       |
-| Defect Escape Rate        | <5%    | Production defects        |
+| Metric                | Target | Measurement Method       |
+| --------------------- | ------ | ------------------------ |
+| Test Coverage         | 80%    | Coverage tools           |
+| Defect Detection Rate | 90%    | Defects found in testing |
+| Test Execution Rate   | 95%    | Tests run vs planned     |
+| Automation Rate       | 70%    | Automated vs manual      |
+| Defect Escape Rate    | <5%    | Production defects       |
 
 ---
 
@@ -532,23 +543,23 @@ test-artifacts/
 
 ### 9.1 Testing Risks
 
-| Risk                      | Probability | Impact | Mitigation                   |
-| ------------------------- | ----------- | ------ | ---------------------------- |
-| Incomplete test coverage  | Medium      | High   | Prioritize critical paths    |
-| Environment instability   | Low         | High   | Environment monitoring       |
-| Test data issues          | Medium      | Medium | Automated data generation    |
-| Resource availability     | Medium      | High   | Cross-training team          |
-| Timeline pressure         | High        | High   | Risk-based testing approach  |
+| Risk                     | Probability | Impact | Mitigation                  |
+| ------------------------ | ----------- | ------ | --------------------------- |
+| Incomplete test coverage | Medium      | High   | Prioritize critical paths   |
+| Environment instability  | Low         | High   | Environment monitoring      |
+| Test data issues         | Medium      | Medium | Automated data generation   |
+| Resource availability    | Medium      | High   | Cross-training team         |
+| Timeline pressure        | High        | High   | Risk-based testing approach |
 
 ### 9.2 Product Risks
 
-| Risk                      | Test Strategy                        |
-| ------------------------- | ------------------------------------ |
-| Security vulnerabilities  | Automated security scanning          |
-| Performance degradation   | Continuous performance monitoring    |
-| Data integrity issues     | Database validation tests            |
-| User experience problems  | Usability testing sessions           |
-| Integration failures      | Contract testing                     |
+| Risk                     | Test Strategy                     |
+| ------------------------ | --------------------------------- |
+| Security vulnerabilities | Automated security scanning       |
+| Performance degradation  | Continuous performance monitoring |
+| Data integrity issues    | Database validation tests         |
+| User experience problems | Usability testing sessions        |
+| Integration failures     | Contract testing                  |
 
 ### 9.3 Contingency Plans
 
@@ -573,12 +584,12 @@ test-artifacts/
 
 ### 10.1 Review and Approval
 
-| Role              | Name            | Signature      | Date       |
-| ----------------- | --------------- | -------------- | ---------- |
-| QA Lead           | [Name]          | ______________ | __________ |
-| Development Lead  | [Name]          | ______________ | __________ |
-| Product Manager   | [Name]          | ______________ | __________ |
-| Project Manager   | [Name]          | ______________ | __________ |
+| Role             | Name   | Signature        | Date         |
+| ---------------- | ------ | ---------------- | ------------ |
+| QA Lead          | [Name] | ******\_\_****** | ****\_\_**** |
+| Development Lead | [Name] | ******\_\_****** | ****\_\_**** |
+| Product Manager  | [Name] | ******\_\_****** | ****\_\_**** |
+| Project Manager  | [Name] | ******\_\_****** | ****\_\_**** |
 
 ### 10.2 Distribution List
 
@@ -590,9 +601,9 @@ test-artifacts/
 
 ### 10.3 Version History
 
-| Version | Date       | Author          | Changes                    |
-| ------- | ---------- | --------------- | -------------------------- |
-| 1.0     | 2025-10-21 | QA Team         | Initial version            |
+| Version | Date       | Author  | Changes         |
+| ------- | ---------- | ------- | --------------- |
+| 1.0     | 2025-10-21 | QA Team | Initial version |
 
 ---
 
@@ -628,6 +639,7 @@ Feature: User Registration
 **Summary:** Password validation allows weak passwords
 
 **Steps to Reproduce:**
+
 1. Go to signup page
 2. Enter valid username and email
 3. Enter "password" as password

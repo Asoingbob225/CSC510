@@ -112,14 +112,14 @@ Future phases will consider migration to microservices as the system scales.
 
 ### 3.3 Quality Attributes
 
-| Attribute           | Priority | Current Target      | Future Target        |
-| ------------------- | -------- | ------------------- | -------------------- |
-| **Security**        | Critical | Secure auth         | HIPAA compliance     |
-| **Performance**     | Medium   | <500ms response     | <200ms p95           |
-| **Scalability**     | Low      | 100 concurrent      | 10K concurrent users |
-| **Reliability**     | High     | 95% uptime          | 99.9% uptime         |
-| **Maintainability** | High     | Clean code          | <4hr fix time        |
-| **Usability**       | High     | Simple UI           | <5min onboarding     |
+| Attribute           | Priority | Current Target  | Future Target        |
+| ------------------- | -------- | --------------- | -------------------- |
+| **Security**        | Critical | Secure auth     | HIPAA compliance     |
+| **Performance**     | Medium   | <500ms response | <200ms p95           |
+| **Scalability**     | Low      | 100 concurrent  | 10K concurrent users |
+| **Reliability**     | High     | 95% uptime      | 99.9% uptime         |
+| **Maintainability** | High     | Clean code      | <4hr fix time        |
+| **Usability**       | High     | Simple UI       | <5min onboarding     |
 
 ---
 
@@ -131,13 +131,13 @@ Future phases will consider migration to microservices as the system scales.
 graph TB
     subgraph "Eatsential MVP"
         User[User<br/>Web Browser]
-        
+
         System[Eatsential Platform<br/>Web Application]
-        
+
         Email[Email Service<br/>SMTP/AWS SES]
         DB[(PostgreSQL/SQLite<br/>Database)]
     end
-    
+
     User -->|HTTPS| System
     System -->|Send verification emails| Email
     System -->|Store/Retrieve data| DB
@@ -187,7 +187,7 @@ classDiagram
         +verify_email()
         +check_password()
     }
-    
+
     class AuthService {
         +register_user()
         +verify_email()
@@ -195,28 +195,28 @@ classDiagram
         +generate_jwt()
         +validate_token()
     }
-    
+
     class EmailService {
         <<interface>>
         +send_verification_email()
         +send_password_reset()
     }
-    
+
     class SMTPEmailer {
         +send_email()
     }
-    
+
     class SESEmailer {
         +send_email()
     }
-    
+
     class UserService {
         +create_user()
         +get_user()
         +update_user()
         +verify_user_email()
     }
-    
+
     AuthService --> UserService
     UserService --> User
     AuthService --> EmailService
@@ -234,7 +234,7 @@ sequenceDiagram
     participant Auth as AuthService
     participant DB as Database
     participant Email as EmailService
-    
+
     U->>F: Fill registration form
     F->>F: Validate input (Zod)
     F->>API: POST /api/auth/register
@@ -296,29 +296,29 @@ graph TB
         Services[API Services<br/>Axios/Fetch]
         State[State Management<br/>React Hooks]
     end
-    
+
     subgraph "Backend (FastAPI)"
         subgraph "API Layer"
             Routers[Routers<br/>auth.py, users.py]
             Middleware[Middleware<br/>Rate Limiting, CORS]
         end
-        
+
         subgraph "Business Layer"
             UserSvc[User Service]
             AuthUtil[Auth Utilities<br/>JWT, Password Hash]
             EmailSvc[Email Service<br/>SMTP/SES]
         end
-        
+
         subgraph "Data Layer"
             Models[SQLAlchemy Models]
             DB[Database Session]
         end
     end
-    
+
     subgraph "Database"
         PostgreSQL[(PostgreSQL)]
     end
-    
+
     Pages --> Components
     Components --> Services
     Services --> Routers
@@ -421,24 +421,24 @@ graph TB
         HTTPS[HTTPS Only]
         CSP[Content Security Policy]
     end
-    
+
     subgraph "API Security"
         RateLimit[Rate Limiting<br/>Per IP/endpoint]
         CORS[CORS Policy<br/>Whitelisted origins]
         Validation[Request Validation<br/>Pydantic]
     end
-    
+
     subgraph "Authentication"
         Password[Password Hashing<br/>Bcrypt]
         JWT[JWT Tokens<br/>Access tokens]
         EmailVerify[Email Verification<br/>Secure tokens]
     end
-    
+
     subgraph "Data Security"
         SQLInject[SQL Injection Prevention<br/>ORM/Parameterized]
         Secrets[Secrets Management<br/>Environment variables]
     end
-    
+
     Request[User Request] --> HTTPS
     HTTPS --> RateLimit
     RateLimit --> CORS
@@ -492,22 +492,22 @@ graph LR
     subgraph "Future AI Pipeline"
         UserProfile[User Profile]
         HealthData[Health Data]
-        
+
         subgraph "RAG System"
             Vectorize[Vectorization]
             VectorDB[(Vector DB)]
             Retrieval[Retrieval]
         end
-        
+
         subgraph "LLM Integration"
             Prompt[Prompt Engineering]
             LLM[LLM API]
             Response[Response Processing]
         end
-        
+
         Recommendations[Meal Recommendations]
     end
-    
+
     UserProfile --> Vectorize
     HealthData --> Vectorize
     Vectorize --> VectorDB
@@ -531,13 +531,13 @@ graph TB
             Vite[Vite Dev Server<br/>Port 5173]
             React[React App]
         end
-        
+
         subgraph "Backend Dev"
             FastAPI[FastAPI Server<br/>Port 8000]
             SQLite[(SQLite DB)]
         end
     end
-    
+
     Browser[Web Browser] --> Vite
     Vite --> React
     React --> FastAPI
@@ -553,17 +553,17 @@ graph TB
             LB[Load Balancer]
             Static[Static Hosting<br/>React Build]
         end
-        
+
         subgraph "Application Tier"
             API1[FastAPI Instance 1]
             API2[FastAPI Instance 2]
         end
-        
+
         subgraph "Data Tier"
             Postgres[(PostgreSQL<br/>Managed)]
         end
     end
-    
+
     Users[Users] --> LB
     LB --> Static
     Static --> API1
@@ -601,12 +601,12 @@ uv run fastapi dev src/eatsential/index.py
 
 ### 11.1 Current Performance
 
-| Metric               | Current Performance | Target    |
-| -------------------- | ------------------- | --------- |
-| **API Response**     | ~200-300ms          | <200ms    |
-| **Page Load**        | ~1-2s               | <1s       |
-| **Concurrent Users** | ~50-100             | 1000+     |
-| **Database Queries** | ~50-100ms           | <50ms     |
+| Metric               | Current Performance | Target |
+| -------------------- | ------------------- | ------ |
+| **API Response**     | ~200-300ms          | <200ms |
+| **Page Load**        | ~1-2s               | <1s    |
+| **Concurrent Users** | ~50-100             | 1000+  |
+| **Database Queries** | ~50-100ms           | <50ms  |
 
 ### 11.2 Optimization Strategies
 
@@ -661,17 +661,17 @@ uv run fastapi dev src/eatsential/index.py
 
 ### 12.2 Technology Stack Summary
 
-| Layer           | Technology            | Justification                        |
-| --------------- | --------------------- | ------------------------------------ |
-| **Frontend**    | React + TypeScript    | Type safety, component ecosystem     |
-| **Build Tool**  | Vite                  | Fast builds, modern features         |
-| **Styling**     | TailwindCSS           | Utility-first, rapid development     |
-| **Backend**     | FastAPI               | Performance, auto-documentation      |
-| **Database**    | PostgreSQL/SQLite     | Reliability, SQL features            |
-| **ORM**         | SQLAlchemy            | Mature, feature-rich                 |
-| **Email**       | SMTP/AWS SES          | Flexibility, reliability             |
-| **Testing**     | Pytest/Vitest         | Comprehensive testing                |
-| **Deployment**  | Docker (planned)      | Consistency, portability             |
+| Layer          | Technology         | Justification                    |
+| -------------- | ------------------ | -------------------------------- |
+| **Frontend**   | React + TypeScript | Type safety, component ecosystem |
+| **Build Tool** | Vite               | Fast builds, modern features     |
+| **Styling**    | TailwindCSS        | Utility-first, rapid development |
+| **Backend**    | FastAPI            | Performance, auto-documentation  |
+| **Database**   | PostgreSQL/SQLite  | Reliability, SQL features        |
+| **ORM**        | SQLAlchemy         | Mature, feature-rich             |
+| **Email**      | SMTP/AWS SES       | Flexibility, reliability         |
+| **Testing**    | Pytest/Vitest      | Comprehensive testing            |
+| **Deployment** | Docker (planned)   | Consistency, portability         |
 
 ### 12.3 Future Evolution
 

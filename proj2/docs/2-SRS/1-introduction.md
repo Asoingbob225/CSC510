@@ -105,41 +105,41 @@ The Eatsential platform will NOT:
 
 ### 1.3.1 Definitions
 
-| Term | Definition |
-|------|------------|
-| **User** | Any person who has registered for an Eatsential account |
-| **Health Profile** | Collection of user's health data including allergies, conditions, and goals |
-| **Meal Recommendation** | AI-generated suggestion for a specific meal that meets user's requirements |
-| **Dietary Restriction** | Any limitation on food consumption (allergies, intolerances, preferences) |
-| **Wellness Goal** | User-defined health or nutrition objective |
-| **Trusted Restaurant** | Verified restaurant partner with accurate menu data |
-| **Macronutrients** | Proteins, carbohydrates, and fats |
-| **Micronutrients** | Vitamins and minerals |
+| Term                    | Definition                                                                  |
+| ----------------------- | --------------------------------------------------------------------------- |
+| **User**                | Any person who has registered for an Eatsential account                     |
+| **Health Profile**      | Collection of user's health data including allergies, conditions, and goals |
+| **Meal Recommendation** | AI-generated suggestion for a specific meal that meets user's requirements  |
+| **Dietary Restriction** | Any limitation on food consumption (allergies, intolerances, preferences)   |
+| **Wellness Goal**       | User-defined health or nutrition objective                                  |
+| **Trusted Restaurant**  | Verified restaurant partner with accurate menu data                         |
+| **Macronutrients**      | Proteins, carbohydrates, and fats                                           |
+| **Micronutrients**      | Vitamins and minerals                                                       |
 
 ### 1.3.2 Acronyms and Abbreviations
 
-| Acronym | Expansion |
-|---------|-----------|
-| **AI** | Artificial Intelligence |
-| **API** | Application Programming Interface |
-| **CRUD** | Create, Read, Update, Delete |
-| **DB** | Database |
-| **FDA** | Food and Drug Administration |
-| **GDPR** | General Data Protection Regulation |
+| Acronym   | Expansion                                           |
+| --------- | --------------------------------------------------- |
+| **AI**    | Artificial Intelligence                             |
+| **API**   | Application Programming Interface                   |
+| **CRUD**  | Create, Read, Update, Delete                        |
+| **DB**    | Database                                            |
+| **FDA**   | Food and Drug Administration                        |
+| **GDPR**  | General Data Protection Regulation                  |
 | **HIPAA** | Health Insurance Portability and Accountability Act |
-| **JWT** | JSON Web Token |
-| **LLM** | Large Language Model |
-| **ML** | Machine Learning |
-| **MVP** | Minimum Viable Product |
-| **NFR** | Non-Functional Requirement |
-| **PII** | Personally Identifiable Information |
-| **RAG** | Retrieval-Augmented Generation |
-| **REST** | Representational State Transfer |
-| **SPA** | Single Page Application |
-| **SSL** | Secure Sockets Layer |
-| **UI** | User Interface |
-| **UX** | User Experience |
-| **WCAG** | Web Content Accessibility Guidelines |
+| **JWT**   | JSON Web Token                                      |
+| **LLM**   | Large Language Model                                |
+| **ML**    | Machine Learning                                    |
+| **MVP**   | Minimum Viable Product                              |
+| **NFR**   | Non-Functional Requirement                          |
+| **PII**   | Personally Identifiable Information                 |
+| **RAG**   | Retrieval-Augmented Generation                      |
+| **REST**  | Representational State Transfer                     |
+| **SPA**   | Single Page Application                             |
+| **SSL**   | Secure Sockets Layer                                |
+| **UI**    | User Interface                                      |
+| **UX**    | User Experience                                     |
+| **WCAG**  | Web Content Accessibility Guidelines                |
 
 ## 1.4 References
 
@@ -217,18 +217,21 @@ This SRS document is organized into the following major sections:
 ### 1.5.3 Document Conventions
 
 **Requirement Identifiers:**
+
 - **FR-XXX:** Functional Requirements (e.g., FR-001)
 - **NFR-XXX:** Non-Functional Requirements (e.g., NFR-001)
 - **IR-XXX:** Interface Requirements (e.g., IR-001)
 - **DR-XXX:** Data Requirements (e.g., DR-001)
 
 **Priority Levels:**
+
 - **Critical:** Must have for MVP, system fails without it
 - **High:** Should have for MVP, significant impact
 - **Medium:** Nice to have for MVP, moderate impact
 - **Low:** Future enhancement, minimal impact
 
 **Requirement States:**
+
 - **Drafted:** Initial requirement definition
 - **Reviewed:** Stakeholder review complete
 - **Approved:** Formally accepted

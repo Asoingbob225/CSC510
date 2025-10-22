@@ -121,11 +121,11 @@ graph TB
         Nutrition[Nutrition Database]
         AI[AI Service]
     end
-    
+
     subgraph System
         Eatsential[Eatsential System]
     end
-    
+
     User -->|Registration/Login/Requests| Eatsential
     Eatsential -->|Recommendations/Notifications| User
     Eatsential -->|Send Emails| Email
@@ -147,7 +147,7 @@ graph TB
         Data[Data Service]
         Notify[Notification Service]
     end
-    
+
     User -->|Login Credentials| Auth
     Auth -->|Auth Token| User
     User -->|Profile Data| Profile
@@ -172,7 +172,7 @@ graph LR
         Rank[Ranking Engine]
         Format[Result Formatter]
     end
-    
+
     Request[User Request] --> Validate
     Validate -->|Valid Request| Gather
     Profile[User Profile] --> Gather
@@ -205,7 +205,7 @@ classDiagram
         +updateProfile()
         +deleteAccount()
     }
-    
+
     class HealthProfile {
         -id: UUID
         -userId: UUID
@@ -218,7 +218,7 @@ classDiagram
         +updateBiometrics()
         +validate()
     }
-    
+
     class Allergy {
         -id: UUID
         -name: String
@@ -226,7 +226,7 @@ classDiagram
         -type: AllergyType
         +isSevere(): Boolean
     }
-    
+
     class Restaurant {
         -id: UUID
         -name: String
@@ -236,7 +236,7 @@ classDiagram
         +isOpen(): Boolean
         +getDistance(Location): Float
     }
-    
+
     class Meal {
         -id: UUID
         -name: String
@@ -247,7 +247,7 @@ classDiagram
         +hasAllergen(Allergy): Boolean
         +meetsGoal(Goal): Boolean
     }
-    
+
     class Recommendation {
         -id: UUID
         -userId: UUID
@@ -258,7 +258,7 @@ classDiagram
         +rank()
         +filter()
     }
-    
+
     User "1" --> "0..1" HealthProfile
     HealthProfile "1" --> "*" Allergy
     User "1" --> "*" Recommendation
@@ -279,7 +279,7 @@ classDiagram
         +calculateAge(): Integer
         +getCalorieNeeds(): Integer
     }
-    
+
     class NutritionInfo {
         -calories: Float
         -protein: Float
@@ -292,7 +292,7 @@ classDiagram
         +getMacroBreakdown(): Map
         +meetsRequirement(Requirement): Boolean
     }
-    
+
     class Location {
         -latitude: Float
         -longitude: Float
@@ -303,7 +303,7 @@ classDiagram
         +distanceTo(Location): Float
         +isNearby(Location, radius): Boolean
     }
-    
+
     class WellnessGoal {
         -type: GoalType
         -target: String
@@ -312,7 +312,7 @@ classDiagram
         +isActive(): Boolean
         +getProgress(): Float
     }
-    
+
     HealthProfile --> BiometricData
     HealthProfile --> "*" WellnessGoal
     Meal --> NutritionInfo
@@ -331,11 +331,11 @@ sequenceDiagram
     participant API as API Server
     participant DB as Database
     participant Email as Email Service
-    
+
     U->>B: Click verification link
     B->>API: GET /auth/verify-email/{token}
     API->>DB: Find user by token
-    
+
     alt Token Valid
         DB-->>API: User found
         API->>API: Check token expiry
@@ -368,12 +368,12 @@ sequenceDiagram
     participant AI as AI Engine
     participant Cache as Cache
     participant DB as Database
-    
+
     U->>F: Request recommendations
     F->>API: POST /recommendations/meals
     API->>API: Validate JWT token
     API->>Cache: Check cached recommendations
-    
+
     alt Cache Hit
         Cache-->>API: Cached results
         API-->>F: Return cached recommendations
@@ -382,19 +382,19 @@ sequenceDiagram
         Prof->>DB: Query health profile
         DB-->>Prof: Profile data
         Prof-->>API: Complete profile
-        
+
         API->>Rec: Generate recommendations
         Rec->>AI: Process with context
         AI->>AI: RAG pipeline
         AI-->>Rec: AI recommendations
-        
+
         Rec->>Rec: Apply safety filters
         Rec->>Rec: Rank results
         Rec->>Cache: Store results
         Rec-->>API: Final recommendations
         API-->>F: Return recommendations
     end
-    
+
     F->>F: Display results
     F-->>U: Show meal options
 ```
@@ -409,23 +409,23 @@ graph TB
         SignupPage[Signup Page]
         FormValidation[Form Validation]
     end
-    
+
     subgraph "API Layer"
         AuthRouter[Auth Router]
         Middleware[Validation Middleware]
     end
-    
+
     subgraph "Business Layer"
         UserService[User Service]
         EmailService[Email Service]
         Crypto[Crypto Service]
     end
-    
+
     subgraph "Data Layer"
         UserRepo[User Repository]
         Database[(Database)]
     end
-    
+
     SignupPage -->|Submit| FormValidation
     FormValidation -->|Valid Data| AuthRouter
     AuthRouter --> Middleware
@@ -450,7 +450,7 @@ graph TB
         Validator[Allergy Validator]
         Store[Data Store]
     end
-    
+
     subgraph "Flow"
         UI -->|Add Allergy| API
         API -->|Validate| Service
@@ -474,12 +474,12 @@ graph TB
         Browser[Web Browser]
         Mobile[Mobile App - Future]
     end
-    
+
     subgraph "CDN"
         Static[Static Assets]
         Images[Images]
     end
-    
+
     subgraph "Application Tier"
         LB[Load Balancer]
         Web1[Web Server 1]
@@ -487,20 +487,20 @@ graph TB
         API1[API Server 1]
         API2[API Server 2]
     end
-    
+
     subgraph "Service Tier"
         Auth[Auth Service]
         Profile[Profile Service]
         Rec[Recommendation Service]
         Cache[Redis Cache]
     end
-    
+
     subgraph "Data Tier"
         Primary[(Primary DB)]
         Replica[(Read Replica)]
         Search[Elasticsearch]
     end
-    
+
     Browser --> CDN
     Browser --> LB
     Mobile -.-> LB
@@ -525,15 +525,15 @@ graph TB
 
 ### 4.7.2 Development vs Production
 
-| Aspect | Development | Production |
-|--------|-------------|------------|
-| Database | SQLite | PostgreSQL Cluster |
-| Cache | In-memory | Redis Cluster |
-| API Servers | 1 instance | Auto-scaling group |
-| Load Balancer | None | Application LB |
-| SSL | Self-signed | Let's Encrypt |
-| Monitoring | Console logs | DataDog/CloudWatch |
-| Backups | None | Automated daily |
+| Aspect        | Development  | Production         |
+| ------------- | ------------ | ------------------ |
+| Database      | SQLite       | PostgreSQL Cluster |
+| Cache         | In-memory    | Redis Cluster      |
+| API Servers   | 1 instance   | Auto-scaling group |
+| Load Balancer | None         | Application LB     |
+| SSL           | Self-signed  | Let's Encrypt      |
+| Monitoring    | Console logs | DataDog/CloudWatch |
+| Backups       | None         | Automated daily    |
 
 ## 4.8 Security Model
 
@@ -546,13 +546,13 @@ sequenceDiagram
     participant Auth
     participant DB
     participant JWT as JWT Service
-    
+
     Client->>API: POST /auth/login
     API->>Auth: Validate credentials
     Auth->>DB: Get user by email
     DB-->>Auth: User record
     Auth->>Auth: Verify password hash
-    
+
     alt Valid Credentials
         Auth->>JWT: Generate tokens
         JWT-->>Auth: Access + Refresh tokens
@@ -564,7 +564,7 @@ sequenceDiagram
         Auth-->>API: Authentication failed
         API-->>Client: 401 Unauthorized
     end
-    
+
     Note over Client,API: Subsequent requests
     Client->>API: GET /api/resource + Bearer token
     API->>JWT: Validate token
@@ -587,7 +587,7 @@ graph TB
         Owner[Resource Owner]
         Admin[Admin Users]
     end
-    
+
     subgraph "Resources"
         RestData[Restaurant Data]
         UserProf[User Profiles]
@@ -595,7 +595,7 @@ graph TB
         Recs[Recommendations]
         Audit[Audit Logs]
     end
-    
+
     Public -->|Read Only| RestData
     Auth -->|Read| RestData
     Auth -->|Create| Recs
@@ -616,7 +616,7 @@ gantt
     title API Response Time Budget (200ms target)
     dateFormat X
     axisFormat %L
-    
+
     section Request Path
     Network Latency      :0, 20
     Load Balancer       :20, 5
@@ -640,13 +640,13 @@ graph LR
         Redis[Redis Cache<br/>Session, Profile]
         DB[DB Cache<br/>Query Cache]
     end
-    
+
     Request -->|1| Browser
     Browser -->|Miss| CDN
     CDN -->|Miss| API
     API -->|Miss| Redis
     Redis -->|Miss| DB
-    
+
     DB -->|Data| Redis
     Redis -->|Data| API
     API -->|Data| CDN

@@ -73,7 +73,7 @@ graph TB
         Forms[Form Components]
         Utils[Utilities]
     end
-    
+
     subgraph "Backend Modules"
         Routers[API Routers]
         Services[Business Services]
@@ -81,11 +81,11 @@ graph TB
         Middleware[Middleware]
         Utils2[Utilities]
     end
-    
+
     Pages --> UI
     Pages --> Forms
     Forms --> Utils
-    
+
     Routers --> Services
     Services --> Models
     Routers --> Middleware
@@ -94,20 +94,20 @@ graph TB
 
 ### 2.2 Technology Stack Details
 
-| Component          | Technology        | Version | Purpose                    |
-| ------------------ | ----------------- | ------- | -------------------------- |
-| Frontend Framework | React             | 18.3    | UI Components              |
-| Type System        | TypeScript        | 5.6     | Type Safety                |
-| Build Tool         | Vite              | 6.0     | Fast Development           |
-| Styling            | TailwindCSS       | 3.4     | Utility CSS                |
-| Form Handling      | React Hook Form   | 7.x     | Form Management            |
-| Validation         | Zod               | 3.x     | Schema Validation          |
-| Backend Framework  | FastAPI           | 0.115   | REST API                   |
-| ORM                | SQLAlchemy        | 2.0     | Database Abstraction       |
-| Validation         | Pydantic          | 2.x     | Data Validation            |
-| Authentication     | python-jose       | 3.x     | JWT Tokens                 |
-| Password Hashing   | passlib[bcrypt]   | 1.7     | Secure Passwords           |
-| Email Service      | smtp/boto3        | Latest  | Email Delivery             |
+| Component          | Technology      | Version | Purpose              |
+| ------------------ | --------------- | ------- | -------------------- |
+| Frontend Framework | React           | 18.3    | UI Components        |
+| Type System        | TypeScript      | 5.6     | Type Safety          |
+| Build Tool         | Vite            | 6.0     | Fast Development     |
+| Styling            | TailwindCSS     | 3.4     | Utility CSS          |
+| Form Handling      | React Hook Form | 7.x     | Form Management      |
+| Validation         | Zod             | 3.x     | Schema Validation    |
+| Backend Framework  | FastAPI         | 0.115   | REST API             |
+| ORM                | SQLAlchemy      | 2.0     | Database Abstraction |
+| Validation         | Pydantic        | 2.x     | Data Validation      |
+| Authentication     | python-jose     | 3.x     | JWT Tokens           |
+| Password Hashing   | passlib[bcrypt] | 1.7     | Secure Passwords     |
+| Email Service      | smtp/boto3      | Latest  | Email Delivery       |
 
 ---
 
@@ -191,18 +191,20 @@ interface SignupFieldProps {
 
 // Schema Definition
 const signupSchema = z.object({
-  username: z.string()
+  username: z
+    .string()
     .min(3, { message: 'Username must be at least 3 characters' })
     .max(20, { message: 'Username must be at most 20 characters' })
     .regex(/^[a-zA-Z0-9_-]+$/),
   email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string()
+  password: z
+    .string()
     .min(8, { message: 'Password must be at least 8 characters' })
     .max(48, { message: 'Password must be at most 48 characters' })
     .regex(/[A-Z]/, { message: 'Password must contain uppercase' })
     .regex(/[a-z]/, { message: 'Password must contain lowercase' })
     .regex(/[0-9]/, { message: 'Password must contain number' })
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: 'Password must contain special character' })
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: 'Password must contain special character' }),
 });
 
 // Component Structure
@@ -283,7 +285,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 async def create_user(db: Session, user_data: UserCreate) -> User:
     """
     Create a new user with email verification
-    
+
     Steps:
     1. Check if username/email already exists
     2. Generate verification token
@@ -294,23 +296,23 @@ async def create_user(db: Session, user_data: UserCreate) -> User:
     """
     # Check existing user
     existing = db.query(User).filter(
-        (User.email == user_data.email) | 
+        (User.email == user_data.email) |
         (User.username == user_data.username)
     ).first()
-    
+
     if existing:
         if existing.email == user_data.email:
             raise HTTPException(status_code=400, detail="Email already registered")
         else:
             raise HTTPException(status_code=400, detail="Username already taken")
-    
+
     # Generate secure token
     verification_token = secrets.urlsafe_token()
     token_expires = datetime.utcnow() + timedelta(hours=24)
-    
+
     # Hash password
     password_hash = pwd_context.hash(user_data.password)
-    
+
     # Create user
     user = User(
         username=user_data.username,
@@ -320,14 +322,14 @@ async def create_user(db: Session, user_data: UserCreate) -> User:
         verification_token_expires=token_expires,
         is_email_verified=False
     )
-    
+
     db.add(user)
     db.commit()
     db.refresh(user)
-    
+
     # Send email
     await send_verification_email(user.email, verification_token)
-    
+
     return user
 ```
 
@@ -352,7 +354,7 @@ request:
         type: string
         minLength: 3
         maxLength: 20
-        pattern: "^[a-zA-Z0-9_-]+$"
+        pattern: '^[a-zA-Z0-9_-]+$'
       email:
         type: string
         format: email
@@ -445,7 +447,7 @@ CREATE TABLE users (
     verification_token_expires TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- Constraints
     CONSTRAINT username_format CHECK (username ~ '^[a-zA-Z0-9_-]+$'),
     CONSTRAINT email_format CHECK (email ~ '^[^@]+@[^@]+\.[^@]+$')
@@ -454,7 +456,7 @@ CREATE TABLE users (
 -- Indexes for performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_verification_token ON users(verification_token) 
+CREATE INDEX idx_users_verification_token ON users(verification_token)
     WHERE verification_token IS NOT NULL;
 
 -- Updated timestamp trigger
@@ -482,7 +484,7 @@ import uuid
 
 class User(Base):
     __tablename__ = "users"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = Column(String(20), unique=True, nullable=False, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
@@ -497,11 +499,11 @@ class User(Base):
     @classmethod
     def find_by_email(cls, db: Session, email: str):
         return db.query(cls).filter(cls.email == email).first()
-    
+
     @classmethod
     def find_by_username(cls, db: Session, username: str):
         return db.query(cls).filter(cls.username == username).first()
-    
+
     @classmethod
     def find_by_verification_token(cls, db: Session, token: str):
         return db.query(cls).filter(
@@ -554,7 +556,7 @@ interface AlertProps {
   <div className="hidden md:flex w-2/5 bg-white">
     <Slogan />
   </div>
-  
+
   {/* Right side - Form */}
   <div className="flex-1 flex items-center justify-center">
     <div className="w-full max-w-md p-8">
@@ -638,7 +640,7 @@ def generate_verification_token(length: int = 32) -> str:
     Generate a cryptographically secure random token
     Time: O(n) where n is length
     Space: O(n)
-    
+
     Uses secrets module for cryptographic randomness
     """
     return secrets.token_urlsafe(length)
@@ -654,14 +656,14 @@ def generate_temp_password(length: int = 12) -> str:
         secrets.choice(string.digits),
         secrets.choice("!@#$%^&*()"),
     ]
-    
+
     # Fill the rest with random characters
     all_chars = string.ascii_letters + string.digits + "!@#$%^&*()"
     password.extend(secrets.choice(all_chars) for _ in range(length - 4))
-    
+
     # Shuffle to avoid predictable positions
     secrets.SystemRandom().shuffle(password)
-    
+
     return ''.join(password)
 ```
 
@@ -687,7 +689,7 @@ class TokenBucketRateLimiter:
         self.allowance = defaultdict(lambda: rate)
         self.last_check = defaultdict(datetime.now)
         self._lock = asyncio.Lock()
-    
+
     async def is_allowed(self, key: str) -> bool:
         """
         Check if request is allowed
@@ -698,18 +700,18 @@ class TokenBucketRateLimiter:
             now = datetime.now()
             time_passed = (now - self.last_check[key]).total_seconds()
             self.last_check[key] = now
-            
+
             # Replenish tokens based on time passed
             self.allowance[key] += time_passed * (self.rate / self.per)
-            
+
             # Cap at maximum rate
             if self.allowance[key] > self.rate:
                 self.allowance[key] = self.rate
-            
+
             # Check if request is allowed
             if self.allowance[key] < 1.0:
                 return False
-            
+
             # Deduct one token
             self.allowance[key] -= 1.0
             return True
@@ -818,7 +820,7 @@ async def domain_exception_handler(request: Request, exc: DomainError):
 async def general_exception_handler(request: Request, exc: Exception):
     # Log the error
     logger.error(f"Unhandled error: {exc}", exc_info=True)
-    
+
     return JSONResponse(
         status_code=500,
         content={
@@ -860,14 +862,14 @@ async def example_function(
 ) -> Dict[str, Any]:
     """
     Brief description of function.
-    
+
     Args:
         param1: Description of param1
         param2: Description of param2
-        
+
     Returns:
         Description of return value
-        
+
     Raises:
         ValueError: When param1 is invalid
     """
@@ -907,7 +909,7 @@ class TestUserService:
     def mock_db(self):
         """Provide mock database session"""
         return Mock()
-    
+
     @pytest.mark.asyncio
     async def test_create_user_success(self, mock_db):
         # Arrange
@@ -916,10 +918,10 @@ class TestUserService:
             email="test@example.com",
             password="Test123!@#"
         )
-        
+
         # Act
         result = await create_user(mock_db, user_data)
-        
+
         # Assert
         assert result.username == user_data.username
         assert result.email == user_data.email
@@ -936,12 +938,12 @@ describe('SignupField', () => {
   it('should validate password complexity', async () => {
     // Arrange
     render(<SignupField />);
-    
+
     // Act
     const passwordInput = screen.getByLabelText('Password');
     fireEvent.change(passwordInput, { target: { value: 'weak' } });
     fireEvent.blur(passwordInput);
-    
+
     // Assert
     await waitFor(() => {
       expect(screen.getByText(/must be at least 8 characters/i))

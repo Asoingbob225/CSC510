@@ -28,6 +28,7 @@
 ### 1.1 Purpose
 
 This document defines the Git workflow for the Eatsential project to ensure:
+
 - Consistent development practices
 - Clean project history
 - Efficient collaboration
@@ -37,6 +38,7 @@ This document defines the Git workflow for the Eatsential project to ensure:
 ### 1.2 Overview
 
 We use a modified Git Flow strategy that balances structure with agility:
+
 - **main**: Production-ready code
 - **develop**: Integration branch for features
 - **feature/**: New features and enhancements
@@ -65,10 +67,10 @@ CSC510/
 
 ### 2.2 Protected Branches
 
-| Branch | Protection Rules |
-|--------|-----------------|
-| main | - Require PR reviews (2 approvals)<br>- Pass all CI checks<br>- No direct pushes<br>- Admin override only |
-| develop | - Require PR reviews (1 approval)<br>- Pass all CI checks<br>- No force pushes |
+| Branch  | Protection Rules                                                                                          |
+| ------- | --------------------------------------------------------------------------------------------------------- |
+| main    | - Require PR reviews (2 approvals)<br>- Pass all CI checks<br>- No direct pushes<br>- Admin override only |
+| develop | - Require PR reviews (1 approval)<br>- Pass all CI checks<br>- No force pushes                            |
 
 ## 3. Branching Strategy
 
@@ -80,24 +82,24 @@ gitGraph
     branch develop
     checkout develop
     commit id: "Dev setup"
-    
+
     branch feature/user-auth
     checkout feature/user-auth
     commit id: "Add login"
     commit id: "Add register"
     checkout develop
     merge feature/user-auth
-    
+
     branch feature/health-profile
     checkout feature/health-profile
     commit id: "Add profile model"
     commit id: "Add profile UI"
     checkout develop
     merge feature/health-profile
-    
+
     checkout main
     merge develop tag: "v1.0.0"
-    
+
     branch hotfix/security-fix
     checkout hotfix/security-fix
     commit id: "Fix vulnerability"
@@ -239,17 +241,17 @@ Follow the Conventional Commits specification:
 
 ### 5.2 Types
 
-| Type | Description | Example |
-|------|-------------|---------|
-| feat | New feature | `feat(auth): add password reset flow` |
-| fix | Bug fix | `fix(api): handle null user profile` |
-| docs | Documentation | `docs(readme): update setup instructions` |
-| style | Code style | `style(frontend): fix indentation` |
-| refactor | Code refactoring | `refactor(db): optimize user queries` |
-| test | Test changes | `test(auth): add login edge cases` |
-| chore | Maintenance | `chore(deps): update React to v18.3` |
-| perf | Performance | `perf(api): add response caching` |
-| ci | CI/CD changes | `ci(github): add security scanning` |
+| Type     | Description      | Example                                   |
+| -------- | ---------------- | ----------------------------------------- |
+| feat     | New feature      | `feat(auth): add password reset flow`     |
+| fix      | Bug fix          | `fix(api): handle null user profile`      |
+| docs     | Documentation    | `docs(readme): update setup instructions` |
+| style    | Code style       | `style(frontend): fix indentation`        |
+| refactor | Code refactoring | `refactor(db): optimize user queries`     |
+| test     | Test changes     | `test(auth): add login edge cases`        |
+| chore    | Maintenance      | `chore(deps): update React to v18.3`      |
+| perf     | Performance      | `perf(api): add response caching`         |
+| ci       | CI/CD changes    | `ci(github): add security scanning`       |
 
 ### 5.3 Commit Message Examples
 
@@ -268,7 +270,7 @@ Fixes #234
 # Breaking change
 feat(api)!: change user endpoint response format
 
-BREAKING CHANGE: The /api/users endpoint now returns data in a 
+BREAKING CHANGE: The /api/users endpoint now returns data in a
 nested structure. Update all API clients to handle the new format.
 
 # Multiple changes (avoid when possible)
@@ -294,9 +296,11 @@ refactor(auth): restructure authentication module
 
 ```markdown
 ## Description
+
 Brief description of changes and why they're needed.
 
 ## Type of Change
+
 - [ ] 🐛 Bug fix (non-breaking change)
 - [ ] ✨ New feature (non-breaking change)
 - [ ] 💥 Breaking change
@@ -305,17 +309,20 @@ Brief description of changes and why they're needed.
 - [ ] 🎨 Style/UI changes
 
 ## Changes Made
+
 - Specific change 1
 - Specific change 2
 - Impact on existing features
 
 ## Testing
+
 - [ ] Unit tests pass locally
 - [ ] Integration tests pass
 - [ ] Manual testing completed
 - [ ] No console errors
 
 ## Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex logic
@@ -325,13 +332,16 @@ Brief description of changes and why they're needed.
 - [ ] All CI checks passing
 
 ## Screenshots (if UI changes)
+
 [Add screenshots or recordings]
 
 ## Related Issues
+
 Closes #123
 Related to #456
 
 ## Reviewer Notes
+
 Any specific areas that need attention during review.
 ```
 
@@ -356,7 +366,7 @@ stateDiagram-v2
     InReview --> Approved: Review passed
     Approved --> Merged: CI passes
     Merged --> [*]: PR closed
-    
+
     InReview --> Closed: Rejected
     ChangesRequested --> Closed: Abandoned
     Closed --> [*]
@@ -367,24 +377,28 @@ stateDiagram-v2
 ### 7.1 Review Checklist
 
 #### Functionality
+
 - [ ] Code does what it's supposed to do
 - [ ] Edge cases are handled
 - [ ] No regressions introduced
 - [ ] Performance impact considered
 
 #### Code Quality
+
 - [ ] Follows coding standards
 - [ ] No code duplication
 - [ ] Clear variable/function names
 - [ ] Appropriate comments
 
 #### Testing
+
 - [ ] Adequate test coverage
 - [ ] Tests are meaningful
 - [ ] Edge cases tested
 - [ ] Tests pass locally
 
 #### Security
+
 - [ ] No hardcoded secrets
 - [ ] Input validation present
 - [ ] SQL injection prevented
@@ -548,19 +562,19 @@ git branch -d hotfix/critical-security-fix
     unstage = reset HEAD --
     last = log -1 HEAD
     visual = !gitk
-    
+
     # Show pretty log
     lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-    
+
     # Show branches with last commit
     branches = for-each-ref --sort=-committerdate --format=\"%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)\" refs/remotes
-    
+
     # Amend last commit
     amend = commit --amend --no-edit
-    
+
     # Undo last commit
     undo = reset HEAD~1 --mixed
-    
+
     # Show files changed in last commit
     files = show --name-only --oneline
 ```
@@ -629,6 +643,7 @@ git stash pop
 **Next Review:** When workflow changes needed
 
 **Quick Reference Card:**
+
 ```
 feature/* → develop → release/* → main
      ↑                              ↓

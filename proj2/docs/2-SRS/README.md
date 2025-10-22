@@ -33,17 +33,21 @@ This directory contains the Software Requirements Specification (SRS) following 
 ## Document Sections
 
 ### Section 1: Introduction
+
 - Purpose and scope of the system
 - Definitions and acronyms
 - References and overview
 
 ### Section 2: Overall Description
+
 - Product perspective and functions
 - User characteristics
 - Constraints and assumptions
 
 ### Section 3: Specific Requirements
+
 This is the most detailed section, broken into subsections:
+
 - **3.1** - What the system must do (functional)
 - **3.2** - How well it must perform (non-functional)
 - **3.3** - How it interfaces with users and systems
@@ -52,7 +56,9 @@ This is the most detailed section, broken into subsections:
 - **3.6** - Data structure and management
 
 ### Section 4: System Features
+
 High-level feature descriptions organized by:
+
 - User Management
 - Health Profile Management
 - AI-Powered Recommendations
@@ -60,23 +66,25 @@ High-level feature descriptions organized by:
 - And more...
 
 ### Section 5: Appendices
+
 Supporting information including:
+
 - User personas
 - Glossary (in master)
 - Analysis models (planned)
 
 ## Status
 
-| Section | Status | Last Updated |
-|---------|--------|--------------|
-| 1. Introduction | ✅ Complete | Oct 21, 2025 |
-| 2. Overall Description | ✅ Complete | Oct 21, 2025 |
-| 3.1 Functional Requirements | ✅ Complete | Oct 19, 2025 |
-| 3.2 Non-Functional Requirements | ✅ Complete | Oct 19, 2025 |
-| 3.3 Interface Requirements | ✅ Complete | Oct 21, 2025 |
-| 3.4 Use Cases | ✅ Complete | Oct 19, 2025 |
-| 3.5 User Stories | ❌ Not Started | - |
-| 3.6 Data Requirements | ✅ Complete | Oct 21, 2025 |
-| 4. System Features | ✅ Complete | Oct 19, 2025 |
-| 5. Appendices | ✅ Complete | Oct 19, 2025 |
-| Requirements Traceability Matrix | ✅ Complete | Oct 21, 2025 |
+| Section                          | Status         | Last Updated |
+| -------------------------------- | -------------- | ------------ |
+| 1. Introduction                  | ✅ Complete    | Oct 21, 2025 |
+| 2. Overall Description           | ✅ Complete    | Oct 21, 2025 |
+| 3.1 Functional Requirements      | ✅ Complete    | Oct 19, 2025 |
+| 3.2 Non-Functional Requirements  | ✅ Complete    | Oct 19, 2025 |
+| 3.3 Interface Requirements       | ✅ Complete    | Oct 21, 2025 |
+| 3.4 Use Cases                    | ✅ Complete    | Oct 19, 2025 |
+| 3.5 User Stories                 | ❌ Not Started | -            |
+| 3.6 Data Requirements            | ✅ Complete    | Oct 21, 2025 |
+| 4. System Features               | ✅ Complete    | Oct 19, 2025 |
+| 5. Appendices                    | ✅ Complete    | Oct 19, 2025 |
+| Requirements Traceability Matrix | ✅ Complete    | Oct 21, 2025 |
