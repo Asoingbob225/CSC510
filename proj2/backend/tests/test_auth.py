@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from src.eatsential.database import Base, get_db
+from src.eatsential.db.database import Base, get_db
 from src.eatsential.index import app
 from src.eatsential.models import AccountStatus, UserDB
 

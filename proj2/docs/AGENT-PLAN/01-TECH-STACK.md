@@ -55,15 +55,30 @@ frontend/
 backend/
 ├── src/
 │   └── eatsential/
-│       ├── routers/     # API endpoints (auth.py, users.py)
-│       ├── services/    # Business logic (user_service.py)
-│       ├── middleware/  # Middleware (rate_limit.py)
-│       ├── models.py    # SQLAlchemy models
-│       ├── schemas.py   # Pydantic schemas
-│       ├── database.py  # Database configuration
-│       ├── auth_util.py # Authentication utilities
-│       ├── emailer.py   # Email service
-│       └── index.py     # FastAPI app entry point
+│       ├── __init__.py
+│       ├── index.py
+│       ├── db/
+│       │   └── database.py
+│       ├── core/
+│       │   ├── __init__.py
+│       │   ├── config.py
+│       │   └── dependencies.py
+│       ├── models/
+│       │   └── models.py
+│       ├── schemas/
+│       │   └── schemas.py
+│       ├── services/
+│       │   ├── __init__.py
+│       │   ├── auth_service.py
+│       │   ├── user_service.py
+│       │   ├── emailer.py
+│       │   └── emailer_ses.py
+│       ├── utils/
+│       │   └── auth_util.py
+│       ├── middleware/
+│       │   └── ... (existing middleware files)
+│       └── routers/
+│           └── ... (existing router files)
 ├── alembic/             # Database migrations
 └── tests/               # Test files
 ```

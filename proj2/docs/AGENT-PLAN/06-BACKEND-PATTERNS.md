@@ -8,21 +8,31 @@ backend/
 │   └── eatsential/
 │       ├── __init__.py
 │       ├── index.py           # FastAPI app entry point
-│       ├── routers/
+│       ├── db/
+│       │   └── database.py    # Database configuration
+│       ├── core/
 │       │   ├── __init__.py
-│       │   ├── auth.py        # Authentication endpoints
-│       │   └── users.py       # User endpoints (placeholder)
+│       │   ├── config.py      # Application-wide configurations
+│       │   └── dependencies.py # Dependency injection
+│       ├── models/
+│       │   └── models.py      # SQLAlchemy models
+│       ├── schemas/
+│       │   └── schemas.py     # Pydantic schemas
 │       ├── services/
 │       │   ├── __init__.py
-│       │   └── user_service.py # User business logic
+│       │   ├── auth_service.py # Authentication business logic
+│       │   ├── user_service.py # User business logic
+│       │   ├── emailer.py     # Email service abstraction
+│       │   └── emailer_ses.py # AWS SES implementation
+│       ├── utils/
+│       │   └── auth_util.py   # Authentication utilities
 │       ├── middleware/
 │       │   ├── __init__.py
 │       │   └── rate_limit.py  # Rate limiting middleware
-│       ├── models.py          # SQLAlchemy models
-│       ├── schemas.py         # Pydantic schemas
-│       ├── database.py        # Database configuration
-│       ├── auth_util.py       # Authentication utilities
-│       └── emailer.py         # Email service
+│       └── routers/
+│           ├── __init__.py
+│           ├── auth.py        # Authentication endpoints
+│           └── users.py       # User endpoints (placeholder)
 ├── alembic/                   # Database migrations
 ├── tests/
 │   ├── __init__.py

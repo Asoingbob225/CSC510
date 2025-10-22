@@ -6,10 +6,10 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from ..auth_util import create_access_token, get_password_hash, verify_password
-from ..emailer import send_verification_email
 from ..models import AccountStatus, UserDB
 from ..schemas import UserCreate, UserLogin
+from ..utils.auth_util import create_access_token, get_password_hash, verify_password
+from .emailer import send_verification_email
 
 
 async def create_user(db: Session, user_data: UserCreate) -> UserDB:

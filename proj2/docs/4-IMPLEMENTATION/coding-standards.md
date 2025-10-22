@@ -137,6 +137,10 @@ Always use type hints for function signatures:
 from typing import List, Optional, Dict, Union
 from datetime import datetime
 
+from eatsential.models.models import User
+from eatsential.schemas.user import UserCreate
+from eatsential.schemas.recommendation import Recommendation
+
 def create_user(
     username: str,
     email: str,
@@ -162,6 +166,11 @@ def get_recommendations(
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
+from eatsential.db.database import get_db
+from eatsential.schemas.user import UserCreate, UserResponse
+from eatsential.services.user_service import create_user
+from eatsential.core.dependencies import get_current_user
+
 router = APIRouter(
     prefix="/users",
     tags=["users"],
@@ -175,7 +184,7 @@ router = APIRouter(
     summary="Create a new user",
     description="Create a new user with the provided details",
 )
-async def create_user(
+async def create_user_endpoint(
     user_data: UserCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -209,6 +218,8 @@ class DomainError(Exception):
 class UserNotFoundError(DomainError):
     """Raised when user is not found."""
     pass
+
+from eatsential.services.exceptions import DomainError, UserNotFoundError
 
 # Use specific error handling
 try:
@@ -593,7 +604,9 @@ CHECK (email ~ '^[^@]+@[^@]+\.[^@]+$');
 # Use parameterized queries (SQLAlchemy handles this)
 user = db.query(User).filter(User.email == email).first()
 
-# Use joins over multiple queries
+# Use eager loading for related data
+from eatsential.models.models import User, HealthProfile
+
 query = db.query(User, HealthProfile)\
     .join(HealthProfile, User.id == HealthProfile.user_id)\
     .filter(User.is_active == True)
@@ -605,7 +618,7 @@ users = db.query(User)\
     .all()
 
 # Use indexes for frequent queries
-# Add index hint in SQLAlchemy if needed
+# Add in model: Index("idx_users_email", "email")
 query = db.query(User).with_hint(User, "USE INDEX (idx_users_email)")
 ```
 

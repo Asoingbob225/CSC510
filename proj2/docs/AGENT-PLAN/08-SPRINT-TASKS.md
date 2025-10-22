@@ -306,22 +306,31 @@ backend/
 └── src/
     └── eatsential/
         ├── __init__.py
-        ├── index.py           # FastAPI app with CORS and rate limiting
-        ├── database.py        # SQLAlchemy setup (SQLite/PostgreSQL)
-        ├── models.py          # User model with SQLAlchemy
-        ├── schemas.py         # Pydantic schemas with validation
-        ├── auth_util.py       # JWT token and password handling
-        ├── emailer.py         # SMTP email service
-        ├── emailer_ses.py     # AWS SES email service
+        ├── index.py           # FastAPI app entry point
+        ├── db/
+        │   └── database.py    # SQLAlchemy setup (SQLite/PostgreSQL)
+        ├── core/
+        │   ├── __init__.py
+        │   ├── config.py      # Application-wide configurations
+        │   └── dependencies.py # Dependency injection
+        ├── models/
+        │   └── models.py      # User model with SQLAlchemy
+        ├── schemas/
+        │   └── schemas.py     # Pydantic schemas with validation
+        ├── services/
+        │   ├── __init__.py
+        │   ├── auth_service.py # Authentication business logic
+        │   ├── user_service.py # User management logic
+        │   ├── emailer.py     # SMTP email service
+        │   └── emailer_ses.py # AWS SES email service
+        ├── utils/
+        │   └── auth_util.py   # JWT token and password handling
         ├── middleware/
         │   ├── jwt_auth.py    # JWT authentication middleware
         │   └── rate_limit.py  # Rate limiting middleware
-        ├── routers/
-        │   ├── auth.py        # /api/register, /api/verify-email
-        │   └── users.py       # User endpoints
-        └── services/
-            ├── auth_service.py # Authentication business logic
-            └── user_service.py # User management logic
+        └── routers/
+            ├── auth.py        # /api/register, /api/verify-email
+            └── users.py       # User endpoints
 
 frontend/
 └── src/
