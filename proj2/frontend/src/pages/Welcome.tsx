@@ -18,6 +18,9 @@ import {
   Sparkles,
   ChevronRight,
 } from 'lucide-react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
+import { getAuthToken } from '@/lib/api';
 
 const features = [
   {
@@ -41,6 +44,16 @@ const features = [
 ];
 
 function Welcome() {
+  const navigate = useNavigate();
+
+  // Check if already logged in, redirect to dashboard if token exists
+  useEffect(() => {
+    const token = getAuthToken();
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
+
   return (
     <div className="flex min-h-screen flex-col bg-lime-50 text-foreground">
       <header className="sticky top-0 z-50 bg-white/90 shadow-xs backdrop-blur">

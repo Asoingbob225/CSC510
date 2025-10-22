@@ -15,6 +15,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Alert, AlertTitle } from './ui/alert';
+import { setAuthToken } from '@/lib/api';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -50,6 +51,12 @@ function LoginField() {
 
       if (response.ok) {
         const result = await response.json();
+
+        // Save JWT token
+        if (result.access_token) {
+          setAuthToken(result.access_token);
+        }
+
         setSuccess(result.message || 'Login successful!');
 
         // Redirect to dashboard after 1 second
