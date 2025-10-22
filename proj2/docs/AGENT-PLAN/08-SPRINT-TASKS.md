@@ -69,35 +69,62 @@ password: z
 
 ### FE-S1-003: Health Profile Form 🏥
 
-**Status**: 🔴 Not Started  
-**Estimate**: 8 hours  
+**Status**: ⚡ In Progress (See sub-issues: [#61], [#62])
+
+**Estimate**: 8 hours
+
 **Dependencies**: BE-S1-003
+
+**Sub-issues**:
+
+- [#61] Define Health Profile Data Fields and Validation
+
+- [#62] Implement Multi-Step Health Profile Wizard UI
 
 **Files to Create**:
 
 1. `frontend/src/pages/HealthProfile.tsx`
+
 2. `frontend/src/components/AllergyInput.tsx`
+
 3. `frontend/src/components/AllergySeverityWarning.tsx`
+
 4. `frontend/src/lib/api.ts` (extend with health profile endpoints)
 
 **Critical Requirements**:
 
 ```typescript
+
 // Allergen severity levels
+
 enum AllergySeverity {
+
   MILD = 'MILD',
+
   MODERATE = 'MODERATE',
+
   SEVERE = 'SEVERE',
+
   LIFE_THREATENING = 'LIFE_THREATENING',
+
 }
 
+
+
 // Visual warnings based on severity
+
 const severityStyles = {
+
   MILD: 'bg-yellow-100 border-yellow-500',
+
   MODERATE: 'bg-orange-100 border-orange-500',
+
   SEVERE: 'bg-red-100 border-red-500',
+
   LIFE_THREATENING: 'bg-red-600 text-white animate-pulse',
+
 };
+
 ```
 
 ---
