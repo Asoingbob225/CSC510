@@ -240,7 +240,7 @@ def test_password_validation(client):
 
 
 def test_login_success(client, mock_send_email):
-    """Test successful login with valid credentials"""
+    """Test successful login with valid credentials and JWT token"""
     # First register a user
     register_data = {
         "email": "logintest@example.com",
@@ -272,6 +272,12 @@ def test_login_success(client, mock_send_email):
     assert data["username"] == "loginuser"
     assert data["email"] == "logintest@example.com"
     assert data["message"] == "Login successful"
+    # Check JWT token fields
+    assert "access_token" in data
+    assert "token_type" in data
+    assert data["token_type"] == "bearer"
+    assert isinstance(data["access_token"], str)
+    assert len(data["access_token"]) > 0
 
 
 def test_login_case_insensitive_email(client, mock_send_email):
@@ -416,3 +422,58 @@ def test_login_empty_credentials(client):
     }
     response = client.post("/api/auth/login", json=login_data)
     assert response.status_code == 422
+
+
+def test_protected_endpoint_without_token(client):
+    """Test accessing protected endpoint without JWT token"""
+    response = client.get("/users/me")
+    assert response.status_code == 403  # Forbidden without token
+
+
+def test_protected_endpoint_with_invalid_token(client):
+    """Test accessing protected endpoint with invalid JWT token"""
+    headers = {"Authorization": "Bearer invalid_token_here"}
+    response = client.get("/users/me", headers=headers)
+    assert response.status_code == 401  # Unauthorized with invalid token
+
+
+def test_protected_endpoint_with_valid_token(client, mock_send_email):
+    """Test accessing protected endpoint with valid JWT token"""
+    # First register a user
+    register_data = {
+        "email": "protectedtest@example.com",
+        "username": "protecteduser",
+        "password": "SecureP@ss123",
+    }
+    response = client.post("/api/auth/register", json=register_data)
+    assert response.status_code == 201
+
+    # Verify the user's email
+    db = TestingSessionLocal()
+    try:
+        user = (
+            db.query(UserDB).filter(UserDB.email == "protectedtest@example.com").first()
+        )
+        user.email_verified = True
+        user.account_status = AccountStatus.VERIFIED
+        db.commit()
+    finally:
+        db.close()
+
+    # Login to get token
+    login_data = {
+        "email": "protectedtest@example.com",
+        "password": "SecureP@ss123",
+    }
+    response = client.post("/api/auth/login", json=login_data)
+    assert response.status_code == 200
+    data = response.json()
+    access_token = data["access_token"]
+
+    # Access protected endpoint with token
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = client.get("/users/me", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["username"] == "protecteduser"
+    assert data["email"] == "protectedtest@example.com"

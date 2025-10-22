@@ -6,7 +6,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..schemas import EmailRequest, MessageResponse, UserCreate, UserLogin, UserResponse
+from ..schemas import (
+    EmailRequest,
+    LoginResponse,
+    MessageResponse,
+    UserCreate,
+    UserLogin,
+    UserResponse,
+)
 from ..services.user_service import (
     create_user,
     login_user_service,
@@ -66,7 +73,7 @@ async def register_user(
         ) from e
 
 
-@router.post("/login", response_model=UserResponse)
+@router.post("/login", response_model=LoginResponse)
 async def login_user(
     user_data: UserLogin,
     db: SessionDep,
@@ -78,7 +85,7 @@ async def login_user(
         db: Database session
 
     Returns:
-        UserResponse with success message
+        LoginResponse with JWT access token and user information
 
     Raises:
         HTTPException: If login fails
@@ -87,14 +94,16 @@ async def login_user(
     try:
         # Input sanitization is handled by Pydantic model
 
-        # Authenticate user
-        user = await login_user_service(db, user_data)
+        # Authenticate user and get JWT token
+        user, access_token = await login_user_service(db, user_data)
 
-        # Return success response
-        return UserResponse(
+        # Return success response with token
+        return LoginResponse(
             id=user.id,
             username=user.username,
             email=user.email,
+            access_token=access_token,
+            token_type="bearer",
             message="Login successful",
         )
     except HTTPException:

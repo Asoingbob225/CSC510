@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from ..auth_util import get_password_hash, verify_password
+from ..auth_util import create_access_token, get_password_hash, verify_password
 from ..emailer import send_verification_email
 from ..models import AccountStatus, UserDB
 from ..schemas import UserCreate, UserLogin
@@ -99,15 +99,15 @@ async def create_user(db: Session, user_data: UserCreate) -> UserDB:
         ) from e
 
 
-async def login_user_service(db: Session, user_data: UserLogin) -> UserDB:
-    """Login a user
+async def login_user_service(db: Session, user_data: UserLogin) -> tuple[UserDB, str]:
+    """Login a user and generate JWT token
 
     Args:
         db: Database session
         user_data: User login data
 
     Returns:
-        Logged in user object
+        Tuple of (logged in user object, JWT access token)
 
     Raises:
         HTTPException: If login fails
@@ -127,7 +127,10 @@ async def login_user_service(db: Session, user_data: UserLogin) -> UserDB:
     if not user.email_verified:
         raise HTTPException(status_code=403, detail="Email not verified")
 
-    return user
+    # Generate JWT token
+    access_token = create_access_token(data={"sub": user.id})
+
+    return user, access_token
 
 
 async def verify_user_email(db: Session, token: str) -> dict:

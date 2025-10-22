@@ -72,6 +72,16 @@ class UserResponse(UserBase):
     message: str
 
 
+class LoginResponse(UserBase):
+    """Pydantic model for login response with JWT token"""
+
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    access_token: str
+    token_type: str = "bearer"  # noqa: S105
+    message: str
+
+
 class EmailRequest(BaseModel):
     """Pydantic model for email request body"""
 
