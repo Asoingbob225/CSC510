@@ -16,32 +16,15 @@ import {
 } from '@/components/ui/field';
 import { Alert, AlertTitle } from './ui/alert';
 
-const signupSchema = z.object({
-  username: z
-    .string()
-    .min(3, { message: 'Username must be at least 3 characters' })
-    .max(20, { message: 'Username must be at most 20 characters' })
-    .regex(/^[a-zA-Z0-9_-]+$/, {
-      message: 'Username can only contain letters, numbers, underscores and hyphens',
-    }),
+const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
-  password: z
-    .string()
-    .min(8, { message: 'Password must be at least 8 characters' })
-    .max(48, { message: 'Password must be at most 48 characters' })
-    .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
-    .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
-    .regex(/[0-9]/, { message: 'Password must contain at least one number' })
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, {
-      message: 'Password must contain at least one special character',
-    }),
+  password: z.string().min(1, { message: 'Password is required' }),
 });
 
-function SignupField() {
-  const form = useForm<z.infer<typeof signupSchema>>({
-    resolver: zodResolver(signupSchema),
+function LoginField() {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
       email: '',
       password: '',
     },
@@ -51,13 +34,13 @@ function SignupField() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const onSubmit = async (data: z.infer<typeof signupSchema>) => {
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     setIsSubmitting(true);
     setError(null);
     setSuccess(null);
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,17 +50,17 @@ function SignupField() {
 
       if (response.ok) {
         const result = await response.json();
-        setSuccess(result.message || 'Registration successful! Please check your email.');
+        setSuccess(result.message || 'Login successful!');
 
-        // Redirect to dashboard after 2 seconds
+        // Redirect to dashboard after 1 second
         setTimeout(() => {
           navigate('/dashboard');
-        }, 2000);
+        }, 1000);
       } else {
         const errorData = await response.json();
 
         // Handle FastAPI validation error format (always array for 422 errors)
-        let errorMessage = 'Registration failed. Please try again.';
+        let errorMessage = 'Login failed. Please try again.';
 
         if (Array.isArray(errorData.detail)) {
           // Extract error messages from validation error array
@@ -101,28 +84,12 @@ function SignupField() {
 
   return (
     <div>
-      <form id="signup-form" onSubmit={form.handleSubmit(onSubmit)}>
+      <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldSet>
           <FieldGroup>
             <FieldLegend>
-              <h2 className="text-2xl font-semibold">Sign Up to Eatsential</h2>
+              <h2 className="text-2xl font-semibold">Log In to Eatsential</h2>
             </FieldLegend>
-            <Controller
-              name="username"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Username</FieldLabel>
-                  <Input
-                    aria-invalid={fieldState.invalid}
-                    type="text"
-                    placeholder="your username"
-                    {...field}
-                  />
-                  <FieldError>{fieldState.error?.message}</FieldError>
-                </Field>
-              )}
-            />
 
             <Controller
               name="email"
@@ -150,7 +117,7 @@ function SignupField() {
                   <Input
                     aria-invalid={fieldState.invalid}
                     type="password"
-                    placeholder="strong password"
+                    placeholder="your password"
                     {...field}
                   />
                   <FieldError>{fieldState.error?.message}</FieldError>
@@ -175,16 +142,16 @@ function SignupField() {
               type="submit"
               disabled={isSubmitting}
             >
-              Create Account
+              Log in
             </Button>
           </Field>
         </FieldSet>
       </form>
-      <a href="/login" className="w-fit text-sm text-gray-600 hover:underline">
-        <p className="mt-4">Already have an account? Log in</p>
+      <a href="/signup" className="w-fit text-sm text-gray-600 hover:underline">
+        <p className="mt-4">Don&apos;t have an account? Sign up</p>
       </a>
     </div>
   );
 }
 
-export default SignupField;
+export default LoginField;
