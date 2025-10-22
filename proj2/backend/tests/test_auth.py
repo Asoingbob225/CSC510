@@ -426,14 +426,14 @@ def test_login_empty_credentials(client):
 
 def test_protected_endpoint_without_token(client):
     """Test accessing protected endpoint without JWT token"""
-    response = client.get("/users/me")
+    response = client.get("/api/users/me")
     assert response.status_code == 403  # Forbidden without token
 
 
 def test_protected_endpoint_with_invalid_token(client):
     """Test accessing protected endpoint with invalid JWT token"""
     headers = {"Authorization": "Bearer invalid_token_here"}
-    response = client.get("/users/me", headers=headers)
+    response = client.get("/api/users/me", headers=headers)
     assert response.status_code == 401  # Unauthorized with invalid token
 
 
@@ -472,7 +472,7 @@ def test_protected_endpoint_with_valid_token(client, mock_send_email):
 
     # Access protected endpoint with token
     headers = {"Authorization": f"Bearer {access_token}"}
-    response = client.get("/users/me", headers=headers)
+    response = client.get("/api/users/me", headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data["username"] == "protecteduser"
