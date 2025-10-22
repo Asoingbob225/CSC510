@@ -14,7 +14,7 @@ function Dashboard() {
 
       // If no token, redirect to home page
       if (!token) {
-        navigate('/');
+        navigate('/404-not-found');
         return;
       }
 
@@ -24,8 +24,7 @@ function Dashboard() {
         setIsVerifying(false);
       } catch {
         // Token is invalid, clear and redirect
-        clearAuthToken();
-        navigate('/');
+        navigate('/404-not-found');
       }
     };
 
