@@ -3,6 +3,8 @@
 
 Welcome to the main repository for CSC510. This repo contains two major subprojects: `proj1` and `proj2`.
 
+> **⚠️ ACTION REQUIRED**: Codecov integration requires a one-time setup. See [`CODECOV_SETUP_REQUIRED.md`](CODECOV_SETUP_REQUIRED.md) for instructions.
+
 ---
 
 ## 📁 Project Structure Overview
