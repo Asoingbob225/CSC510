@@ -184,7 +184,7 @@ describe('VerifyEmail', () => {
       continueButton.click();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
   });
 
   it('navigates to signup on error button click', async () => {

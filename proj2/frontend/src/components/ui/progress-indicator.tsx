@@ -9,7 +9,7 @@ interface ProgressIndicatorProps {
 export function ProgressIndicator({ currentStep, totalSteps, steps }: ProgressIndicatorProps) {
   return (
     <div className="w-full py-4">
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
@@ -17,19 +17,19 @@ export function ProgressIndicator({ currentStep, totalSteps, steps }: ProgressIn
           const isUpcoming = stepNumber > currentStep;
 
           return (
-            <div key={index} className="flex flex-col items-center flex-1">
-              <div className="flex items-center w-full">
+            <div key={index} className="flex flex-1 flex-col items-center">
+              <div className="flex w-full items-center">
                 {index > 0 && (
                   <div
                     className={cn(
-                      'flex-1 h-0.5 transition-colors',
+                      'h-0.5 flex-1 transition-colors',
                       isCompleted ? 'bg-emerald-500' : 'bg-gray-300'
                     )}
                   />
                 )}
                 <div
                   className={cn(
-                    'flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm transition-all',
+                    'flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-all',
                     isCompleted && 'bg-emerald-500 text-white',
                     isCurrent && 'bg-emerald-500 text-white ring-4 ring-emerald-100',
                     isUpcoming && 'bg-gray-300 text-gray-600'
@@ -40,13 +40,13 @@ export function ProgressIndicator({ currentStep, totalSteps, steps }: ProgressIn
                 {index < totalSteps - 1 && (
                   <div
                     className={cn(
-                      'flex-1 h-0.5 transition-colors',
+                      'h-0.5 flex-1 transition-colors',
                       isCompleted ? 'bg-emerald-500' : 'bg-gray-300'
                     )}
                   />
                 )}
               </div>
-              <div className="text-xs mt-2 text-center max-w-[100px]">
+              <div className="mt-2 max-w-[100px] text-center text-xs">
                 <div
                   className={cn(
                     'font-medium',
@@ -61,7 +61,7 @@ export function ProgressIndicator({ currentStep, totalSteps, steps }: ProgressIn
           );
         })}
       </div>
-      <div className="text-sm text-gray-500 text-center mt-4">
+      <div className="mt-4 text-center text-sm text-gray-500">
         Step {currentStep} of {totalSteps}
       </div>
     </div>

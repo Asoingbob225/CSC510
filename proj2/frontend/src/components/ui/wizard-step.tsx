@@ -11,12 +11,7 @@ export function WizardStep({ isActive, children, className }: WizardStepProps) {
   if (!isActive) return null;
 
   return (
-    <div
-      className={cn(
-        'animate-in fade-in-50 slide-in-from-right-5 duration-300',
-        className
-      )}
-    >
+    <div className={cn('animate-in duration-300 fade-in-50 slide-in-from-right-5', className)}>
       {children}
     </div>
   );

@@ -19,7 +19,7 @@ import { healthProfileSchema } from '@/lib/healthProfileSchema';
 type HealthProfileFormData = z.infer<typeof healthProfileSchema>;
 
 interface Step3Props {
-  control: Control<HealthProfileFormData, any>;
+  control: Control<HealthProfileFormData>;
 }
 
 export function Step3Allergies({ control }: Step3Props) {
@@ -35,7 +35,7 @@ export function Step3Allergies({ control }: Step3Props) {
       <FieldGroup>
         <FieldLegend>
           <h2 className="text-2xl font-semibold">Allergies & Intolerances</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="mt-1 text-sm text-gray-600">
             Help us keep you safe by listing any food allergies or intolerances
           </p>
         </FieldLegend>
@@ -46,13 +46,13 @@ export function Step3Allergies({ control }: Step3Props) {
         </FieldDescription>
 
         {fields.length === 0 && (
-          <div className="text-sm text-gray-500 italic p-4 border border-dashed rounded-md">
-            No allergies added yet. Click "Add Allergy" to get started.
+          <div className="rounded-md border border-dashed p-4 text-sm text-gray-500 italic">
+            No allergies added yet. Click &quot;Add Allergy&quot; to get started.
           </div>
         )}
 
         {fields.map((field, index) => (
-          <div key={field.id} className="border rounded-md p-4 space-y-4">
+          <div key={field.id} className="space-y-4 rounded-md border p-4">
             <div className="flex items-start justify-between">
               <h4 className="font-medium">Allergy #{index + 1}</h4>
               <Button
@@ -60,7 +60,7 @@ export function Step3Allergies({ control }: Step3Props) {
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => remove(index)}
-                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                className="text-red-500 hover:bg-red-50 hover:text-red-700"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -105,7 +105,7 @@ export function Step3Allergies({ control }: Step3Props) {
           onClick={() => append({ allergen: '', severity: 'mild' })}
           className="w-full"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Add Allergy
         </Button>
       </FieldGroup>

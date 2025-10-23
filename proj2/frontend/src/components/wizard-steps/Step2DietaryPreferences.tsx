@@ -16,7 +16,7 @@ import { healthProfileSchema } from '@/lib/healthProfileSchema';
 type HealthProfileFormData = z.infer<typeof healthProfileSchema>;
 
 interface Step2Props {
-  control: Control<HealthProfileFormData, any>;
+  control: Control<HealthProfileFormData>;
 }
 
 const DIETARY_PREFERENCES = [
@@ -43,7 +43,7 @@ export function Step2DietaryPreferences({ control }: Step2Props) {
       <FieldGroup>
         <FieldLegend>
           <h2 className="text-2xl font-semibold">Dietary Preferences</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="mt-1 text-sm text-gray-600">
             Select your dietary preferences to get tailored meal recommendations
           </p>
         </FieldLegend>
@@ -60,11 +60,11 @@ export function Step2DietaryPreferences({ control }: Step2Props) {
               <FieldDescription>
                 Select multiple options if needed. You can change these later.
               </FieldDescription>
-              <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="mt-2 grid grid-cols-2 gap-3">
                 {DIETARY_PREFERENCES.map((pref) => (
                   <label
                     key={pref.value}
-                    className="flex items-center gap-2 p-3 border rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="flex cursor-pointer items-center gap-2 rounded-md border p-3 transition-colors hover:bg-gray-50"
                   >
                     <input
                       type="checkbox"
@@ -78,7 +78,7 @@ export function Step2DietaryPreferences({ control }: Step2Props) {
                           field.onChange(currentValue.filter((v) => v !== pref.value));
                         }
                       }}
-                      className="w-4 h-4 text-emerald-500 border-gray-300 rounded focus:ring-emerald-500"
+                      className="h-4 w-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
                     />
                     <span className="text-sm">{pref.label}</span>
                   </label>

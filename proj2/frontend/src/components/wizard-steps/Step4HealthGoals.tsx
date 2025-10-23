@@ -16,7 +16,7 @@ import { healthProfileSchema } from '@/lib/healthProfileSchema';
 type HealthProfileFormData = z.infer<typeof healthProfileSchema>;
 
 interface Step4Props {
-  control: Control<HealthProfileFormData, any>;
+  control: Control<HealthProfileFormData>;
 }
 
 const HEALTH_GOALS = [
@@ -38,7 +38,7 @@ export function Step4HealthGoals({ control }: Step4Props) {
       <FieldGroup>
         <FieldLegend>
           <h2 className="text-2xl font-semibold">Health Goals</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="mt-1 text-sm text-gray-600">
             What would you like to achieve with your nutrition plan?
           </p>
         </FieldLegend>
@@ -53,11 +53,11 @@ export function Step4HealthGoals({ control }: Step4Props) {
                 <Tooltip content="Choose one or more health goals that are important to you. We'll tailor recommendations accordingly." />
               </div>
               <FieldDescription>Select at least one goal that matters to you.</FieldDescription>
-              <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="mt-2 grid grid-cols-2 gap-3">
                 {HEALTH_GOALS.map((goal) => (
                   <label
                     key={goal.value}
-                    className="flex items-center gap-2 p-3 border rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="flex cursor-pointer items-center gap-2 rounded-md border p-3 transition-colors hover:bg-gray-50"
                   >
                     <input
                       type="checkbox"
@@ -71,7 +71,7 @@ export function Step4HealthGoals({ control }: Step4Props) {
                           field.onChange(currentValue.filter((v) => v !== goal.value));
                         }
                       }}
-                      className="w-4 h-4 text-emerald-500 border-gray-300 rounded focus:ring-emerald-500"
+                      className="h-4 w-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
                     />
                     <span className="text-sm">{goal.label}</span>
                   </label>

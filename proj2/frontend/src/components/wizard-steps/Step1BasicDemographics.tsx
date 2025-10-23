@@ -16,7 +16,7 @@ import { healthProfileSchema } from '@/lib/healthProfileSchema';
 type HealthProfileFormData = z.infer<typeof healthProfileSchema>;
 
 interface Step1Props {
-  control: Control<HealthProfileFormData, any>;
+  control: Control<HealthProfileFormData>;
 }
 
 export function Step1BasicDemographics({ control }: Step1Props) {
@@ -25,7 +25,7 @@ export function Step1BasicDemographics({ control }: Step1Props) {
       <FieldGroup>
         <FieldLegend>
           <h2 className="text-2xl font-semibold">Basic Demographics</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="mt-1 text-sm text-gray-600">
             Tell us about yourself to get personalized recommendations
           </p>
         </FieldLegend>

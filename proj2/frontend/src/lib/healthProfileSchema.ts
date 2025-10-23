@@ -25,10 +25,9 @@ export const step3Schema = z.object({
         severity: z
           .string()
           .min(1, { message: 'Please select severity' })
-          .refine(
-            (val) => ['mild', 'moderate', 'severe', 'life-threatening'].includes(val),
-            { message: 'Invalid severity level' }
-          ),
+          .refine((val) => ['mild', 'moderate', 'severe', 'life-threatening'].includes(val), {
+            message: 'Invalid severity level',
+          }),
       })
     )
     .optional(),

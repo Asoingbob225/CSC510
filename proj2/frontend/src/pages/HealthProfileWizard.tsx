@@ -149,10 +149,10 @@ export function HealthProfileWizard() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-3xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="mx-auto max-w-3xl px-4">
+        <div className="rounded-lg bg-white p-6 shadow-md">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Your Health Profile</h1>
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Create Your Health Profile</h1>
             <p className="text-gray-600">
               Complete this wizard to get personalized nutrition recommendations
             </p>
@@ -162,30 +162,30 @@ export function HealthProfileWizard() {
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8" role="form">
             <WizardStep isActive={currentStep === 1}>
-              <Step1BasicDemographics control={form.control as any} />
+              <Step1BasicDemographics control={form.control} />
             </WizardStep>
 
             <WizardStep isActive={currentStep === 2}>
-              <Step2DietaryPreferences control={form.control as any} />
+              <Step2DietaryPreferences control={form.control} />
             </WizardStep>
 
             <WizardStep isActive={currentStep === 3}>
-              <Step3Allergies control={form.control as any} />
+              <Step3Allergies control={form.control} />
             </WizardStep>
 
             <WizardStep isActive={currentStep === 4}>
-              <Step4HealthGoals control={form.control as any} />
+              <Step4HealthGoals control={form.control} />
             </WizardStep>
 
             <WizardStep isActive={currentStep === 5}>
-              <Step5MedicalInfo control={form.control as any} />
+              <Step5MedicalInfo control={form.control} />
             </WizardStep>
 
             <div className="mt-8 flex items-center justify-between border-t pt-6">
               <div>
                 {currentStep > 1 && (
                   <Button type="button" variant="outline" onClick={handlePrevious}>
-                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    <ChevronLeft className="mr-2 h-4 w-4" />
                     Previous
                   </Button>
                 )}
@@ -204,9 +204,13 @@ export function HealthProfileWizard() {
                 </Button>
 
                 {currentStep < STEPS.length ? (
-                  <Button type="button" onClick={handleNext} className="bg-emerald-500 hover:bg-emerald-600">
+                  <Button
+                    type="button"
+                    onClick={handleNext}
+                    className="bg-emerald-500 hover:bg-emerald-600"
+                  >
                     Next
-                    <ChevronRight className="h-4 w-4 ml-2" />
+                    <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
                   <Button
