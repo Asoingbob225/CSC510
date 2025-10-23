@@ -9,7 +9,6 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from ..models.models import (
     ActivityLevel,
     AllergySeverity,
-    PreferenceReason,
     PreferenceType,
 )
 
@@ -154,7 +153,7 @@ class DietaryPreferenceCreate(BaseModel):
     preference_type: PreferenceType
     preference_name: Annotated[str, Field(min_length=1, max_length=100)]
     is_strict: bool = True
-    reason: Optional[PreferenceReason] = None
+    reason: Optional[str] = None
     notes: Optional[str] = None
 
 
@@ -165,7 +164,7 @@ class DietaryPreferenceUpdate(BaseModel):
         None
     )
     is_strict: Optional[bool] = None
-    reason: Optional[PreferenceReason] = None
+    reason: Optional[str] = None
     notes: Optional[str] = None
 
 

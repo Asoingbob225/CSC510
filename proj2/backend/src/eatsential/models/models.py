@@ -86,16 +86,6 @@ class PreferenceType(str, Enum):
     PREPARATION = "preparation"
 
 
-class PreferenceReason(str, Enum):
-    """Reason for dietary preference"""
-
-    HEALTH = "health"
-    RELIGIOUS = "religious"
-    ETHICAL = "ethical"
-    PERSONAL = "personal"
-    CULTURAL = "cultural"
-
-
 class HealthProfileDB(Base):
     """SQLAlchemy model for health profile table"""
 
