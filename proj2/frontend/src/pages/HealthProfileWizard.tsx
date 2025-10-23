@@ -160,7 +160,7 @@ export function HealthProfileWizard() {
 
           <ProgressIndicator currentStep={currentStep} totalSteps={STEPS.length} steps={STEPS} />
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8" role="form">
             <WizardStep isActive={currentStep === 1}>
               <Step1BasicDemographics control={form.control as any} />
             </WizardStep>
