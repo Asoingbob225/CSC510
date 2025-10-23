@@ -1,9 +1,19 @@
 """Pydantic schemas for API request/response validation."""
 
 from .schemas import (
+    AllergenResponse,
+    DietaryPreferenceCreate,
+    DietaryPreferenceResponse,
+    DietaryPreferenceUpdate,
     EmailRequest,
+    HealthProfileCreate,
+    HealthProfileResponse,
+    HealthProfileUpdate,
     LoginResponse,
     MessageResponse,
+    UserAllergyCreate,
+    UserAllergyResponse,
+    UserAllergyUpdate,
     UserBase,
     UserCreate,
     UserLogin,
@@ -11,9 +21,19 @@ from .schemas import (
 )
 
 __all__ = [
+    "AllergenResponse",
+    "DietaryPreferenceCreate",
+    "DietaryPreferenceResponse",
+    "DietaryPreferenceUpdate",
     "EmailRequest",
+    "HealthProfileCreate",
+    "HealthProfileResponse",
+    "HealthProfileUpdate",
     "LoginResponse",
     "MessageResponse",
+    "UserAllergyCreate",
+    "UserAllergyResponse",
+    "UserAllergyUpdate",
     "UserBase",
     "UserCreate",
     "UserLogin",
