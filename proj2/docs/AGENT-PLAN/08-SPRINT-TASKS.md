@@ -488,3 +488,211 @@ async def list_users(
 | Critical Bugs   | 0        | 0       |
 
 ---
+
+# Sprint Tasks 2
+
+**Next Sprint**: Sprint 2 (Oct 27 - Nov 3, 2025)
+**Theme**: AI Recommendation Engine (v1) & Admin Completion
+
+---
+
+## 🤖 New Sprint 2 Tasks: AI Recommendation Engine
+
+These tasks are for the new AI-powered recommendation engine.
+
+| Task ID   | Issue      | Description                                                                 | Status   |
+| --------- | ---------- | --------------------------------------------------------------------------- | -------- |
+| BE-S2-004 | AI-Issue-0 | [AI] Create Restaurant DB Schema & Seed Data                                | 📝 To Do |
+| BE-S2-005 | AI-Issue-1 | [AI] Build Core Meal Recommendation API (/api/recommend/meal)               | 📝 To Do |
+| BE-S2-006 | AI-Issue-2 | [AI] Implement Restaurant Matching & RAG Indexing                           | 📝 To Do |
+| BE-S2-007 | AI-Issue-3 | [AI] Create Recommendation Feedback API (/api/recommend/feedback)           | 📝 To Do |
+| BE-S2-008 | AI-Issue-4 | [AI] Add 'explanation' field to Recommendation API (FR-071)                 | 📝 To Do |
+| BE-S2-009 | AI-Issue-7 | [AI] Implement AI Safety Layer (Allergen/Nutritional Verification) (FR-014) | 📝 To Do |
+| FE-S2-005 | AI-Issue-1 | [AI] Implement Core Recommendation UI (e.g., Carousel)                      | 📝 To Do |
+| FE-S2-006 | AI-Issue-2 | [AI] Display Matched Restaurants on Recommendation UI                       | 📝 To Do |
+| FE-S2-007 | AI-Issue-3 | [AI] Add Feedback Buttons (Like/Dislike) to Recommendation UI               | 📝 To Do |
+| FE-S2-008 | AI-Issue-4 | [AI] Display 'Why you might like this' Explanation (FR-071)                 | 📝 To Do |
+| FE-S2-009 | AI-Issue-7 | [AI] Display Nutritional Info & Allergen Warnings on UI (FR-014)            | 📝 To Do |
+
+**Note**: Advanced AI features (NLP/Image Query, Substitutions, Pairings) are deferred to Sprint 3 to focus on this core functionality.
+
+---
+
+## Frontend Tasks
+
+### FE-S2-005: [AI] Implement Core Recommendation UI 🤖
+
+**Status**: 📝 To Do  
+**Estimate**: 8 hours  
+**Dependencies**: BE-S2-005  
+**Description**: Create a new component (e.g., on the Dashboard) that calls the recommendation API and displays the results in a user-friendly list or carousel.
+
+### FE-S2-006: [AI] Display Matched Restaurants on UI
+
+**Status**: 📝 To Do  
+**Estimate**: 4 hours  
+**Dependencies**: FE-S2-005, BE-S2-006  
+**Description**: Extend the recommendation UI card to display the matched restaurant(s), location, and availability.
+
+### FE-S2-007: [AI] Add Feedback Buttons to UI
+
+**Status**: 📝 To Do  
+**Estimate**: 3 hours  
+**Dependencies**: FE-S2-005, BE-S2-007  
+**Description**: Add thumbs up/down or rating controls to each recommendation card and send the feedback to the backend API on click.
+
+### FE-S2-008: [AI] Display AI Explanation on UI (FR-071)
+
+**Status**: 📝 To Do  
+**Estimate**: 2 hours  
+**Dependencies**: FE-S2-005, BE-S2-008  
+**Description**: Add a small text section to the recommendation UI card to display the explanation string from the API (e.g., "You might like this because...").
+
+### FE-S2-009: [AI] Display Nutritional Info & Allergen Warnings (FR-014)
+
+**Status**: 📝 To Do  
+**Estimate**: 4 hours  
+**Dependencies**: FE-S2-005, BE-S2-009  
+**Description**: Render the nutritional data (calories, macros) and any critical allergen warnings returned by the AI Safety Layer. Warnings must be high-visibility.
+
+---
+
+## Backend Tasks
+
+### BE-S2-004: [AI] Create Restaurant DB Schema & Seed Data 🤖
+
+**Status**: 📝 To Do  
+**Estimate**: 4 hours  
+**Dependencies**: BE-S1-004 (✅ Complete)  
+**Description**: Define new SQLAlchemy models for Restaurant and MenuItem. Create a migration and a script to seed the DB with sample restaurant data.
+
+### BE-S2-005: [AI] Build Core Meal Recommendation API
+
+**Status**: 📝 To Do  
+**Estimate**: 10 hours  
+**Dependencies**: BE-S1-003 (✅ Complete), BE-S2-004  
+**Description**: Create /api/recommend/meal endpoint. This service must query the LLM/RAG pipeline, feeding it user profile data and contextual factors to generate suggestions.
+
+### BE-S2-006: [AI] Implement Restaurant Matching & RAG Indexing
+
+**Status**: 📝 To Do  
+**Estimate**: 6 hours  
+**Dependencies**: BE-S2-004, BE-S2-005  
+**Description**: Create a service to index restaurant data from the new DB tables into the RAG knowledge base. Enhance the recommendation API to match meals to available restaurants.
+
+### BE-S2-007: [AI] Create Recommendation Feedback API
+
+**Status**: 📝 To Do  
+**Estimate**: 4 hours  
+**Dependencies**: BE-S2-005  
+**Description**: Build the /api/recommend/feedback endpoint to capture user ratings/feedback on recommendations.
+
+### BE-S2-008: [AI] Add 'explanation' field to Recommendation API (FR-071)
+
+**Status**: 📝 To Do  
+**Estimate**: 3 hours  
+**Dependencies**: BE-S2-005  
+**Description**: Modify the LLM prompting strategy to require a user-friendly explanation field for each suggestion. Add this field to the API response model.
+
+### BE-S2-009: [AI] Implement AI Safety Layer (FR-014)
+
+**Status**: 📝 To Do  
+**Estimate**: 8 hours  
+**Dependencies**: BE-S1-003 (✅ Complete), BE-S2-005  
+**Description**: Build a mandatory verification service that processes all AI recommendations. It must cross-reference ingredients against user allergies and add nutritional/allergen data to the final response.
+
+---
+
+## Sprint Summary
+
+**All Tasks for Sprint 2 (18)**
+
+- FE-S2-001: Health Profile Form
+- FE-S2-002: Admin Panel Foundation UI
+- FE-S2-003: Data Management UI (Allergens)
+- FE-S2-004: Admin User Management UI
+- FE-S2-005: [AI] Implement Core Recommendation UI
+- FE-S2-006: [AI] Display Matched Restaurants on UI
+- FE-S2-007: [AI] Add Feedback Buttons to UI
+- FE-S2-008: [AI] Display AI Explanation on UI
+- FE-S2-009: [AI] Display Nutritional Info & Allergen Warnings
+- BE-S2-001: Admin Role & Protected Routes API
+- BE-S2-002: Data Management API (Allergens)
+- BE-S2-003: Admin User Management API
+- BE-S2-004: [AI] Create Restaurant DB Schema & Seed Data
+- BE-S2-005: [AI] Build Core Meal Recommendation API
+- BE-S2-006: [AI] Implement Restaurant Matching & RAG Indexing
+- BE-S2-007: [AI] Create Recommendation Feedback API
+- BE-S2-008: [AI] Add 'explanation' field to Recommendation API
+- BE-S2-009: [AI] Implement AI Safety Layer
+
+**Sprint Progress**: 0% Complete (0/18 tasks)
+
+---
+
+## Task Assignment
+
+| Developer | Focus Area            | Tasks                           | Status   |
+| --------- | --------------------- | ------------------------------- | -------- |
+| Dev 1     | AI Frontend           | FE-S2-005, FE-S2-006            | 📝 To Do |
+| Dev 2     | AI Backend            | BE-S2-005, BE-S2-007, BE-S2-008 | 📝 To Do |
+| Dev 3     | Health & AI Safety FE | FE-S2-001, FE-S2-009            | 📝 To Do |
+| Dev 4     | AI Backend (Data)     | BE-S2-004, BE-S2-006, BE-S2-009 | 📝 To Do |
+| Dev 5     | Admin Foundation      | FE-S2-002, BE-S2-001            | 📝 To Do |
+| Dev 6     | Admin Features        | FE-S2-003, BE-S2-002            | 📝 To Do |
+| Dev 7     | Admin User Mgmt       | FE-S2-004, FE-S2-003, FE-S2-007 | 📝 To Do |
+
+---
+
+## Definition of Done
+
+### For ALL Tasks:
+
+- [ ] Code implements requirements
+- [ ] Unit tests written (Target: 80%+)
+- [ ] Integration tests pass
+- [ ] No linting errors
+- [ ] Documentation updated
+- [ ] PR approved by reviewer
+
+### For Health-Related Tasks:
+
+- [ ] Allergen validation tested
+- [ ] Safety warnings prominent
+- [ ] Audit logging implemented
+- [ ] Error states handled
+
+---
+
+## Daily Standup Template
+
+```markdown
+**Date**: [DATE]
+**Developer**: [NAME]
+
+**Yesterday**:
+
+- Completed [TASK-ID]: [description]
+
+**Today**:
+
+- Working on [TASK-ID]: [description]
+- Blocked by: [blocker or "None"]
+
+**Help Needed**:
+
+- [Specific help needed or "None"]
+```
+
+---
+
+## Sprint Metrics
+
+| Metric          | Target   | Current |
+| --------------- | -------- | ------- |
+| Tasks Completed | 18       | 0       |
+| Test Coverage   | 80%      | -       |
+| PR Cycle Time   | <4 hours | -       |
+| Critical Bugs   | 0        | 0       |
+
+---
