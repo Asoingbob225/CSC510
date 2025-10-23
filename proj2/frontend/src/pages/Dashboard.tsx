@@ -72,6 +72,16 @@ function Dashboard() {
 
           {/* Placeholder Cards */}
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <button
+              onClick={() => navigate('/health-profile')}
+              className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 text-left shadow-sm transition-colors hover:bg-gray-50"
+            >
+              <h3 className="mb-2 text-lg font-medium text-gray-900">Health Profile</h3>
+              <p className="text-sm text-gray-600">
+                Manage your health information, allergies, and dietary preferences
+              </p>
+            </button>
+
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
               <h3 className="mb-2 text-lg font-medium text-gray-900">My Recipes</h3>
               <p className="text-sm text-gray-600">Your saved recipes will appear here</p>
