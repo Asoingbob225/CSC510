@@ -5,7 +5,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
-import HealthProfile from './pages/HealthProfile';
+import HealthProfilePage from './pages/HealthProfile';
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/health-profile" element={<HealthProfile />} />
+      <Route path="/health-profile" element={<HealthProfilePage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

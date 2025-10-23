@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import * as ReactRouter from 'react-router';
-import HealthProfile from './HealthProfile';
+import HealthProfilePage from './HealthProfile';
 import * as api from '@/lib/api';
 
 // Mock the API module
@@ -60,7 +60,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -77,7 +77,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -101,7 +101,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -122,7 +122,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -159,7 +159,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -197,7 +197,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -224,7 +224,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -255,7 +255,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 
@@ -277,7 +277,7 @@ describe('HealthProfile Component', () => {
 
     render(
       <MemoryRouter>
-        <HealthProfile />
+        <HealthProfilePage />
       </MemoryRouter>
     );
 

@@ -44,10 +44,10 @@ const healthProfileSchema = z.object({
 
 type HealthProfileFormData = z.infer<typeof healthProfileSchema>;
 
-function HealthProfile() {
+function HealthProfilePage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [profile, setProfile] = useState<HealthProfile | null>(null);
+  const [healthProfile, setHealthProfile] = useState<HealthProfile | null>(null);
   const [allergens, setAllergens] = useState<Allergen[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -88,7 +88,7 @@ function HealthProfile() {
         // Try to load existing profile
         try {
           const profileResponse = await healthProfileApi.getProfile();
-          setProfile(profileResponse.data);
+          setHealthProfile(profileResponse.data);
 
           // Populate form with existing data
           form.reset({
@@ -110,7 +110,7 @@ function HealthProfile() {
             throw profileError;
           }
           // Profile doesn't exist yet
-          setProfile(null);
+          setHealthProfile(null);
         }
       } catch (err) {
         console.error('Error loading data:', err);
@@ -135,20 +135,20 @@ function HealthProfile() {
         activity_level: data.activity_level,
       };
 
-      if (profile) {
+      if (healthProfile) {
         // Update existing profile
         const response = await healthProfileApi.updateProfile(payload);
-        setProfile(response.data);
+        setHealthProfile(response.data);
         setSuccess('Health profile updated successfully!');
       } else {
         // Create new profile
         const response = await healthProfileApi.createProfile(payload);
-        setProfile(response.data);
+        setHealthProfile(response.data);
         setSuccess('Health profile created successfully!');
       }
     } catch (err) {
       console.error('Error saving profile:', err);
-      setError('Failed to save health profile. Please try again.');
+      setError('Failed to save health healthProfile. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -164,7 +164,7 @@ function HealthProfile() {
   }) => {
     try {
       // Ensure profile exists before adding allergies
-      if (!profile) {
+      if (!healthProfile) {
         // Create profile first with current form data
         const formData = form.getValues();
         const payload = {
@@ -173,13 +173,13 @@ function HealthProfile() {
           activity_level: formData.activity_level,
         };
         const response = await healthProfileApi.createProfile(payload);
-        setProfile(response.data);
+        setHealthProfile(response.data);
       }
 
       const response = await healthProfileApi.addAllergy(data);
 
       // Update profile with new allergy
-      setProfile((prev) => {
+      setHealthProfile((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -199,7 +199,7 @@ function HealthProfile() {
       await healthProfileApi.deleteAllergy(allergyId);
 
       // Update profile by removing the allergy
-      setProfile((prev) => {
+      setHealthProfile((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -225,7 +225,7 @@ function HealthProfile() {
 
     try {
       // Ensure profile exists
-      if (!profile) {
+      if (!healthProfile) {
         const formData = form.getValues();
         const payload = {
           height_cm: typeof formData.height_cm === 'number' ? formData.height_cm : undefined,
@@ -233,7 +233,7 @@ function HealthProfile() {
           activity_level: formData.activity_level,
         };
         const response = await healthProfileApi.createProfile(payload);
-        setProfile(response.data);
+        setHealthProfile(response.data);
       }
 
       const response = await healthProfileApi.addDietaryPreference({
@@ -245,7 +245,7 @@ function HealthProfile() {
       });
 
       // Update profile with new preference
-      setProfile((prev) => {
+      setHealthProfile((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -271,7 +271,7 @@ function HealthProfile() {
       await healthProfileApi.deleteDietaryPreference(preferenceId);
 
       // Update profile by removing the preference
-      setProfile((prev) => {
+      setHealthProfile((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -421,7 +421,7 @@ function HealthProfile() {
                   disabled={isSubmitting}
                   className="w-full cursor-pointer bg-emerald-500 text-white shadow-md hover:bg-emerald-600 disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Saving...' : profile ? 'Update Profile' : 'Create Profile'}
+                  {isSubmitting ? 'Saving...' : healthProfile ? 'Update Profile' : 'Create Profile'}
                 </Button>
               </FieldSet>
             </form>
@@ -432,7 +432,7 @@ function HealthProfile() {
             <h2 className="mb-4 text-xl font-semibold text-gray-800">Allergies</h2>
             <AllergyInput
               allergens={allergens}
-              allergies={profile?.allergies || []}
+              allergies={healthProfile?.allergies || []}
               onAdd={handleAddAllergy}
               onDelete={handleDeleteAllergy}
             />
@@ -443,10 +443,10 @@ function HealthProfile() {
             <h2 className="mb-4 text-xl font-semibold text-gray-800">Dietary Preferences</h2>
 
             {/* Existing Preferences */}
-            {profile?.dietary_preferences && profile.dietary_preferences.length > 0 && (
+            {healthProfile?.dietary_preferences && healthProfile.dietary_preferences.length > 0 && (
               <div className="mb-6 space-y-2">
                 <h3 className="text-sm font-medium text-gray-700">Your Preferences</h3>
-                {profile.dietary_preferences.map((pref) => (
+                {healthProfile.dietary_preferences.map((pref) => (
                   <div
                     key={pref.id}
                     className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3"
@@ -562,4 +562,4 @@ function HealthProfile() {
   );
 }
 
-export default HealthProfile;
+export default HealthProfilePage;

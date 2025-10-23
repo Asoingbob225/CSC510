@@ -241,7 +241,9 @@ describe('AllergyInput Component', () => {
   });
 
   it('disables submit button while submitting', async () => {
-    const slowOnAdd = vi.fn(() => new Promise(() => {})); // Never resolves
+    const slowOnAdd = vi.fn(
+      () => new Promise<void>(() => {}) // Explicitly type as Promise<void>
+    );
 
     render(
       <AllergyInput
