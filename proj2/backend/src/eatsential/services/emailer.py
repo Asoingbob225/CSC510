@@ -27,6 +27,8 @@ Best regards,
 The Eatsential Team
 """
 
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+
 
 async def send_verification_email(email: str, token: str) -> bool:
     """Send verification email using SMTP
@@ -42,7 +44,7 @@ async def send_verification_email(email: str, token: str) -> bool:
         SMTPException: If email sending fails
 
     """
-    verification_url = f"{os.getenv('FRONTEND_URL')}/verify-email?token={token}"
+    verification_url = f"{FRONTEND_URL}/verify-email?token={token}"
 
     message = EmailMessage()
     message["From"] = SENDER
