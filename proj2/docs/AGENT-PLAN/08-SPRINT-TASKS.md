@@ -1,7 +1,7 @@
 # Sprint Tasks
 
 **Current Sprint**: Sprint 1 (Oct 19-26, 2025)  
-**Theme**: Authentication & Health Profile Foundation
+**Theme**: Authentication, Health Profile, & Admin Foundation
 
 ---
 
@@ -129,6 +129,69 @@ const severityStyles = {
 
 ---
 
+### FE-S1-004: Admin Panel Foundation UI
+
+**Status**: 📝 To Do
+**Estimate**: 6 hours
+**Dependencies**: BE-S1-005
+**Description**: Create the basic structure for the admin control panel. This includes setting up protected routes accessible only to admin users and building a main layout with navigation for future admin modules.
+
+**Files to Create**:
+
+1.  `frontend/src/pages/admin/AdminDashboard.tsx`
+2.  `frontend/src/components/admin/AdminLayout.tsx`
+3.  `frontend/src/components/admin/ProtectedRoute.tsx`
+
+**Key Features**:
+
+- A route group for `/admin/*` that requires admin privileges.
+- A sidebar or top navigation for admin sections.
+- A main dashboard page that can display system stats or links to management pages.
+
+---
+
+### FE-S1-005: Data Management UI (Allergens)
+
+**Status**: 📝 To Do
+**Estimate**: 6 hours
+**Dependencies**: FE-S1-004, BE-S1-006
+**Description**: Within the admin panel, build the interface for managing the central allergen database. This allows admins to add, update, and remove allergens, which will be used for user health profiles.
+
+**Files to Create**:
+
+1.  `frontend/src/pages/admin/AllergenManagement.tsx`
+2.  `frontend/src/components/admin/AllergenTable.tsx`
+3.  `frontend/src/components/admin/AllergenForm.tsx`
+
+**Key Features**:
+
+- Display all allergens in a table.
+- A form to create a new allergen.
+- Buttons to edit or delete existing allergens.
+
+---
+
+### FE-S1-006: Admin User Management UI
+
+**Status**: 📝 To Do
+**Estimate**: 7 hours
+**Dependencies**: FE-S1-004, BE-S1-007
+**Description**: Implement the user management interface in the admin panel. This will allow admins to view a list of all users, see their details, and perform administrative actions.
+
+**Files to Create**:
+
+1.  `frontend/src/pages/admin/UserManagement.tsx`
+2.  `frontend/src/components/admin/UserTable.tsx`
+3.  `frontend/src/components/admin/UserDetails.tsx`
+
+**Key Features**:
+
+- A table displaying all registered users with key information.
+- Search and pagination for the user list.
+- A details view to inspect a user's profile and activity.
+
+---
+
 ## Backend Tasks
 
 ### BE-S1-001: User Registration API ⚠️
@@ -246,6 +309,96 @@ def validate_allergen(name: str) -> bool:
 
 ---
 
+### BE-S1-005: Admin Role & Protected Routes API
+
+**Status**: 📝 To Do
+**Estimate**: 5 hours
+**Dependencies**: BE-S1-004
+**Description**: Implement the backend foundation for the admin system. This involves adding a role to the user model to distinguish admins and creating a reusable dependency to protect admin-only API endpoints.
+
+**Files to Modify/Create**:
+
+1.  `backend/src/eatsential/models/models.py` (add role to User)
+2.  `backend/src/eatsential/schemas/schemas.py` (update User schema)
+3.  `backend/src/eatsential/services/auth_service.py` (create `get_current_admin_user` dependency)
+4.  `backend/alembic/versions/` (new migration for user role)
+
+**Key Features**:
+
+- Add a `role` (e.g., 'user', 'admin') or `is_admin` boolean to the `User` model.
+- Create a FastAPI dependency that verifies the current authenticated user is an admin.
+- Generate a new database migration.
+
+---
+
+### BE-S1-006: Data Management API (Allergens)
+
+**Status**: 📝 To Do
+**Estimate**: 5 hours
+**Dependencies**: BE-S1-005
+**Description**: Create the CRUD API endpoints for managing the allergen database. These endpoints will be protected and only accessible by administrators. This will replace the hardcoded list of allergens.
+
+**Files to Create**:
+
+1.  `backend/src/eatsential/routers/admin.py`
+2.  `backend/src/eatsential/services/admin_service.py`
+3.  `backend/src/eatsential/models/models.py` (add `Allergen` model)
+4.  `backend/tests/routers/test_admin.py`
+
+**Endpoint Specification**:
+
+```python
+@router.post("/admin/allergens", response_model=Allergen, status_code=201)
+async def create_allergen(
+    allergen: AllergenCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user)
+):
+    # Logic to create an allergen
+    return new_allergen
+```
+
+**Acceptance Criteria**:
+
+- CRUD endpoints for allergens under `/admin/allergens`.
+- Endpoints are protected by the `get_current_admin_user` dependency.
+- The `validate_allergen` function in `health_service` is updated to use the new database table.
+
+---
+
+### BE-S1-007: Admin User Management API
+
+**Status**: 📝 To Do
+**Estimate**: 6 hours
+**Dependencies**: BE-S1-005
+**Description**: Create the API endpoints for administrators to manage users. This includes listing users and viewing detailed information about a specific user.
+
+**Files to Modify/Create**:
+
+1.  `backend/src/eatsential/routers/admin.py` (extend with user endpoints)
+2.  `backend/src/eatsential/services/admin_service.py` (add user management logic)
+3.  `backend/tests/routers/test_admin.py` (add tests for user management)
+
+**Endpoint Specification**:
+
+```python
+@router.get("/admin/users", response_model=list[UserResponse])
+async def list_users(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user)
+):
+    # Logic to list all users
+    return users
+```
+
+**Acceptance Criteria**:
+
+- `GET /admin/users` endpoint to list all users.
+- `GET /admin/users/{user_id}` endpoint to get a single user's details.
+- Endpoints are protected by the `get_current_admin_user` dependency.
+
+---
+
 ## Sprint Summary
 
 ### Completed Tasks ✅
@@ -260,17 +413,26 @@ def validate_allergen(name: str) -> bool:
 ### Remaining Tasks 🔴
 
 - FE-S1-003: Health Profile Form
+- FE-S1-004: Admin Panel Foundation UI
+- FE-S1-005: Data Management UI (Allergens)
+- FE-S1-006: Admin User Management UI
+- BE-S1-005: Admin Role & Protected Routes API
+- BE-S1-006: Data Management API (Allergens)
+- BE-S1-007: Admin User Management API
 
-### Sprint Progress: 75% Complete (6/8 tasks)
+### Sprint Progress: 46% Complete (6/13 tasks)
 
 ## Task Assignment
 
-| Developer | Focus Area     | Tasks                | Status         |
-| --------- | -------------- | -------------------- | -------------- |
-| Dev 1     | Frontend Auth  | FE-S1-001, FE-S1-002 | ✅ Complete    |
-| Dev 2     | Backend Auth   | BE-S1-001, BE-S1-002 | ✅ Complete    |
-| Dev 3     | Health Profile | FE-S1-003, BE-S1-003 | ✅ Complete    |
-| Dev 4     | Infrastructure | BE-S1-004            | ✅ Complete    |
+| Developer | Focus Area       | Tasks                | Status         |
+| --------- | ---------------- | -------------------- | -------------- |
+| Dev 1     | Frontend Auth    | FE-S1-001, FE-S1-002 | ✅ Complete    |
+| Dev 2     | Backend Auth     | BE-S1-001, BE-S1-002 | ✅ Complete    |
+| Dev 3     | Health Profile   | FE-S1-003, BE-S1-003 | ⚡ In Progress |
+| Dev 4     | Infrastructure   | BE-S1-004            | ✅ Complete    |
+| Dev 5     | Admin Foundation | FE-S1-004, BE-S1-005 | 📝 To Do       |
+| Dev 6     | Admin Features   | FE-S1-005, BE-S1-006 | 📝 To Do       |
+| Dev 7     | Admin User Mgmt  | FE-S1-006, BE-S1-007 | 📝 To Do       |
 
 ---
 
@@ -320,7 +482,7 @@ def validate_allergen(name: str) -> bool:
 
 | Metric          | Target   | Current |
 | --------------- | -------- | ------- |
-| Tasks Completed | 8        | 6       |
+| Tasks Completed | 13       | 6       |
 | Test Coverage   | 80%      | 88%     |
 | PR Cycle Time   | <4 hours | 2 hours |
 | Critical Bugs   | 0        | 0       |
