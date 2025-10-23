@@ -1,0 +1,29 @@
+{
+  "title": "Eatsential - Intelligent Nutrition and Wellness Platform",
+  "description": "Eatsential is an LLM-powered platform that connects users to hyper-personalized food options. The platform provides meal recommendations, recipes, and restaurant suggestions tailored to users' unique health profiles—from allergies and fitness goals to mental wellness objectives.",
+  "creators": [
+    {
+      "name": "CSC510 Group 12"
+    }
+  ],
+  "license": "AGPL-3.0",
+  "upload_type": "software",
+  "keywords": [
+    "nutrition",
+    "health",
+    "wellness",
+    "ai",
+    "llm",
+    "personalized-recommendations",
+    "food",
+    "fitness",
+    "mental-health"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Asoingbob225/CSC510",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
