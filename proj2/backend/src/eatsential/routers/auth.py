@@ -97,6 +97,9 @@ async def login_user(
         # Authenticate user and get JWT token
         user, access_token = await login_user_service(db, user_data)
 
+        # Check if user has completed wizard by verifying health profile exists
+        has_completed_wizard = user.health_profile is not None
+
         # Return success response with token
         return LoginResponse(
             id=user.id,
@@ -105,6 +108,7 @@ async def login_user(
             access_token=access_token,
             token_type="bearer",
             message="Login successful",
+            has_completed_wizard=has_completed_wizard,
         )
     except HTTPException:
         # Re-raise HTTP exceptions (like invalid credentials)

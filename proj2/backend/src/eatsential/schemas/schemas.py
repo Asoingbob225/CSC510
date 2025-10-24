@@ -87,6 +87,7 @@ class LoginResponse(UserBase):
     access_token: str
     token_type: str = "bearer"  # noqa: S105
     message: str
+    has_completed_wizard: bool
 
 
 class EmailRequest(BaseModel):
