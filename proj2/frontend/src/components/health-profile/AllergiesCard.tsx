@@ -62,6 +62,7 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [editingAllergy, setEditingAllergy] = useState<string | null>(null);
 
   const form = useForm<AllergyFormData>({
     resolver: zodResolver(allergySchema),
@@ -85,8 +86,9 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
     setIsDeleteMode(!isDeleteMode);
   };
 
-  // Open dialog and reset form
+  // Open dialog for new allergy
   const handleOpenDialog = () => {
+    setEditingAllergy(null);
     form.reset({
       allergen_id: '',
       severity: 'mild',
@@ -99,29 +101,69 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
     setIsDialogOpen(true);
   };
 
-  // Add new allergy
+  // Open dialog for editing existing allergy
+  const handleEditAllergy = (allergyId: string) => {
+    const allergy = healthProfile?.allergies?.find((a) => a.id === allergyId);
+    if (allergy) {
+      setEditingAllergy(allergyId);
+      form.reset({
+        allergen_id: allergy.allergen_id,
+        severity: allergy.severity,
+        reaction_type: allergy.reaction_type || '',
+        diagnosed_date: allergy.diagnosed_date || '',
+        notes: allergy.notes || '',
+        is_verified: allergy.is_verified || false,
+      });
+      setError(null);
+      setIsDialogOpen(true);
+    }
+  };
+
+  // Add or update allergy
   const onSubmit = async (formData: AllergyFormData) => {
     try {
       setError(null);
 
-      const data: {
-        allergen_id: string;
-        severity: AllergySeverity;
-        diagnosed_date?: string;
-        reaction_type?: string;
-        notes?: string;
-        is_verified?: boolean;
-      } = {
-        allergen_id: formData.allergen_id,
-        severity: formData.severity as AllergySeverity,
-      };
+      if (editingAllergy) {
+        // Update existing allergy
+        const data: {
+          severity?: AllergySeverity;
+          diagnosed_date?: string;
+          reaction_type?: string;
+          notes?: string;
+          is_verified?: boolean;
+        } = {
+          severity: formData.severity as AllergySeverity,
+          reaction_type: formData.reaction_type || undefined,
+          diagnosed_date: formData.diagnosed_date
+            ? formData.diagnosed_date.split('T')[0]
+            : undefined,
+          notes: formData.notes || undefined,
+          is_verified: formData.is_verified,
+        };
 
-      if (formData.reaction_type) data.reaction_type = formData.reaction_type;
-      if (formData.diagnosed_date) data.diagnosed_date = formData.diagnosed_date.split('T')[0];
-      if (formData.notes) data.notes = formData.notes;
-      if (formData.is_verified) data.is_verified = formData.is_verified;
+        await healthProfileApi.updateAllergy(editingAllergy, data);
+      } else {
+        // Add new allergy
+        const data: {
+          allergen_id: string;
+          severity: AllergySeverity;
+          diagnosed_date?: string;
+          reaction_type?: string;
+          notes?: string;
+          is_verified?: boolean;
+        } = {
+          allergen_id: formData.allergen_id,
+          severity: formData.severity as AllergySeverity,
+        };
 
-      await healthProfileApi.addAllergy(data);
+        if (formData.reaction_type) data.reaction_type = formData.reaction_type;
+        if (formData.diagnosed_date) data.diagnosed_date = formData.diagnosed_date.split('T')[0];
+        if (formData.notes) data.notes = formData.notes;
+        if (formData.is_verified) data.is_verified = formData.is_verified;
+
+        await healthProfileApi.addAllergy(data);
+      }
 
       // Reload profile to get updated allergies list
       const response = await healthProfileApi.getProfile();
@@ -129,8 +171,8 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
       setIsDialogOpen(false);
       form.reset();
     } catch (err) {
-      console.error('Error adding allergy:', err);
-      setError('Failed to add allergy. Please try again.');
+      console.error('Error saving allergy:', err);
+      setError('Failed to save allergy. Please try again.');
     }
   };
 
@@ -199,17 +241,22 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
 
               return (
                 <div key={allergy.id} className="relative">
-                  <ListItemCard
-                    title={allergenInfo?.name || 'Unknown allergen'}
-                    badges={badges}
-                    details={details}
-                    notes={allergy.notes}
-                    bgColor="bg-red-50"
-                    variant="detailed"
-                  />
+                  <div onClick={() => handleEditAllergy(allergy.id)} className="cursor-pointer">
+                    <ListItemCard
+                      title={allergenInfo?.name || 'Unknown allergen'}
+                      badges={badges}
+                      details={details}
+                      notes={allergy.notes}
+                      bgColor="bg-red-50"
+                      variant="detailed"
+                    />
+                  </div>
                   {isDeleteMode && (
                     <button
-                      onClick={() => handleDeleteAllergy(allergy.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteAllergy(allergy.id);
+                      }}
                       className="absolute top-2 right-2 rounded-full p-1 text-red-600 transition-colors hover:bg-red-100"
                       title="Delete allergy"
                     >
@@ -243,12 +290,16 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
         )}
       </InfoCard>
 
-      {/* Add Allergy Dialog */}
+      {/* Add/Edit Allergy Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Allergy</DialogTitle>
-            <DialogDescription>Add a new food allergy to your health profile.</DialogDescription>
+            <DialogTitle>{editingAllergy ? 'Edit Allergy' : 'Add Allergy'}</DialogTitle>
+            <DialogDescription>
+              {editingAllergy
+                ? 'Update your food allergy information.'
+                : 'Add a new food allergy to your health profile.'}
+            </DialogDescription>
           </DialogHeader>
 
           {error && (
@@ -265,7 +316,11 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
                     <FieldLabel>
                       Allergen <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={!!editingAllergy}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select an allergen" />
                       </SelectTrigger>
@@ -278,6 +333,11 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
                       </SelectContent>
                     </Select>
                     <FieldError>{fieldState.error?.message}</FieldError>
+                    {editingAllergy && (
+                      <p className="text-xs text-gray-500">
+                        Allergen cannot be changed when editing
+                      </p>
+                    )}
                   </Field>
                 )}
               />
@@ -407,7 +467,13 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
                 className="bg-green-500 hover:bg-green-600"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? 'Adding...' : 'Add Allergy'}
+                {form.formState.isSubmitting
+                  ? editingAllergy
+                    ? 'Updating...'
+                    : 'Adding...'
+                  : editingAllergy
+                    ? 'Update Allergy'
+                    : 'Add Allergy'}
               </Button>
             </DialogFooter>
           </form>

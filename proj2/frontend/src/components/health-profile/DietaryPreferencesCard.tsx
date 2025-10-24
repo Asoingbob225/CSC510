@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Utensils, X } from 'lucide-react';
+import { Utensils } from 'lucide-react';
 import { InfoCard, ListItemCard } from '@/components/profile';
 import { healthProfileApi, type HealthProfile, type PreferenceType } from '@/lib/api';
 
@@ -51,6 +51,7 @@ interface DietaryPreferencesCardProps {
 export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPreferencesCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingPreference, setEditingPreference] = useState<string | null>(null);
 
   // Initialize form with react-hook-form + zod
   const form = useForm<PreferenceFormData>({
@@ -64,8 +65,9 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
     },
   });
 
-  // Open dialog and reset form
+  // Open dialog for new preference
   const handleOpenDialog = () => {
+    setEditingPreference(null);
     form.reset({
       preference_type: 'diet',
       preference_name: '',
@@ -77,48 +79,70 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
     setIsDialogOpen(true);
   };
 
-  // Add new dietary preference
+  // Open dialog for editing existing preference
+  const handleEditPreference = (preferenceId: string) => {
+    const pref = healthProfile?.dietary_preferences?.find((p) => p.id === preferenceId);
+    if (pref) {
+      setEditingPreference(preferenceId);
+      form.reset({
+        preference_type: pref.preference_type,
+        preference_name: pref.preference_name,
+        is_strict: pref.is_strict || false,
+        reason: pref.reason || '',
+        notes: pref.notes || '',
+      });
+      setError(null);
+      setIsDialogOpen(true);
+    }
+  };
+
+  // Add or update dietary preference
   const onSubmit = async (formData: PreferenceFormData) => {
     try {
       setError(null);
 
-      const data: {
-        preference_type: PreferenceType;
-        preference_name: string;
-        is_strict?: boolean;
-        reason?: string;
-        notes?: string;
-      } = {
-        preference_type: formData.preference_type as PreferenceType,
-        preference_name: formData.preference_name.trim(),
-      };
+      if (editingPreference) {
+        // Update existing preference
+        const data: {
+          preference_name?: string;
+          is_strict?: boolean;
+          reason?: string;
+          notes?: string;
+        } = {
+          preference_name: formData.preference_name.trim(),
+          is_strict: formData.is_strict,
+          reason: formData.reason || undefined,
+          notes: formData.notes || undefined,
+        };
 
-      if (formData.is_strict) data.is_strict = formData.is_strict;
-      if (formData.reason) data.reason = formData.reason;
-      if (formData.notes) data.notes = formData.notes;
+        await healthProfileApi.updateDietaryPreference(editingPreference, data);
+      } else {
+        // Add new preference
+        const data: {
+          preference_type: PreferenceType;
+          preference_name: string;
+          is_strict?: boolean;
+          reason?: string;
+          notes?: string;
+        } = {
+          preference_type: formData.preference_type as PreferenceType,
+          preference_name: formData.preference_name.trim(),
+        };
 
-      await healthProfileApi.addDietaryPreference(data);
+        if (formData.is_strict) data.is_strict = formData.is_strict;
+        if (formData.reason) data.reason = formData.reason;
+        if (formData.notes) data.notes = formData.notes;
+
+        await healthProfileApi.addDietaryPreference(data);
+      }
 
       // Reload profile to get updated preferences list
       const response = await healthProfileApi.getProfile();
       onUpdate(response.data);
       setIsDialogOpen(false);
     } catch (err) {
-      console.error('Error adding dietary preference:', err);
-      setError('Failed to add dietary preference. Please try again.');
-    }
-  };
-
-  // Delete dietary preference
-  const handleDeletePreference = async (preferenceId: string) => {
-    try {
-      await healthProfileApi.deleteDietaryPreference(preferenceId);
-
-      // Reload profile to get updated preferences list
-      const response = await healthProfileApi.getProfile();
-      onUpdate(response.data);
-    } catch (err) {
-      console.error('Error deleting dietary preference:', err);
+      console.error('Error saving dietary preference:', err);
+      setError('Failed to save dietary preference. Please try again.');
     }
   };
 
@@ -155,13 +179,15 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
 
               return (
                 <div key={pref.id} className="relative">
-                  <ListItemCard
-                    title={pref.preference_name}
-                    badges={badges}
-                    details={details}
-                    notes={pref.notes}
-                    variant="compact"
-                  />
+                  <div onClick={() => handleEditPreference(pref.id)} className="cursor-pointer">
+                    <ListItemCard
+                      title={pref.preference_name}
+                      badges={badges}
+                      details={details}
+                      notes={pref.notes}
+                      variant="compact"
+                    />
+                  </div>
                 </div>
               );
             })}
@@ -188,13 +214,17 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
         )}
       </InfoCard>
 
-      {/* Add Dietary Preference Dialog */}
+      {/* Add/Edit Dietary Preference Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Dietary Preference</DialogTitle>
+            <DialogTitle>
+              {editingPreference ? 'Edit Dietary Preference' : 'Add Dietary Preference'}
+            </DialogTitle>
             <DialogDescription>
-              Add a new dietary preference or restriction to your health profile.
+              {editingPreference
+                ? 'Update your dietary preference or restriction.'
+                : 'Add a new dietary preference or restriction to your health profile.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -213,7 +243,11 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
                     <FieldLabel>
                       Preference Type <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={!!editingPreference}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select preference type" />
                       </SelectTrigger>
@@ -231,6 +265,11 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
                       </SelectContent>
                     </Select>
                     <FieldError>{fieldState.error?.message}</FieldError>
+                    {editingPreference && (
+                      <p className="text-xs text-gray-500">
+                        Preference type cannot be changed when editing
+                      </p>
+                    )}
                   </Field>
                 )}
               />
@@ -324,7 +363,13 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
                 className="bg-green-500 hover:bg-green-600"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? 'Adding...' : 'Add Preference'}
+                {form.formState.isSubmitting
+                  ? editingPreference
+                    ? 'Updating...'
+                    : 'Adding...'
+                  : editingPreference
+                    ? 'Update Preference'
+                    : 'Add Preference'}
               </Button>
             </DialogFooter>
           </form>
