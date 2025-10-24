@@ -38,6 +38,11 @@ describe('HealthProfile Component', () => {
     // Mock auth token
     vi.mocked(api.getAuthToken).mockReturnValue('mock-token');
 
+    // Mock user info API call for DashboardNavbar
+    vi.spyOn(api.default, 'get').mockResolvedValue({
+      data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
+    });
+
     // Mock allergens list
     vi.mocked(api.healthProfileApi.listAllergens).mockResolvedValue({
       data: [
@@ -106,7 +111,7 @@ describe('HealthProfile Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Health Profile')).toBeInTheDocument();
+      expect(screen.getByText('My Health Profile')).toBeInTheDocument();
     });
 
     // Check for all three cards
@@ -132,7 +137,7 @@ describe('HealthProfile Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Health Profile')).toBeInTheDocument();
+      expect(screen.getByText('My Health Profile')).toBeInTheDocument();
     });
 
     // Should show "No health profile yet" message
@@ -216,6 +221,8 @@ describe('HealthProfile Component', () => {
   });
 
   it('navigates back to dashboard when back button is clicked', async () => {
+    // Note: Navigation is now handled by DashboardNavbar, not a back button
+    // The navbar provides navigation links including Dashboard link
     vi.mocked(api.healthProfileApi.getProfile).mockResolvedValue({
       data: {
         id: 'profile-1',
@@ -234,16 +241,14 @@ describe('HealthProfile Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Health Profile')).toBeInTheDocument();
+      expect(screen.getByText('My Health Profile')).toBeInTheDocument();
     });
 
-    // Find and click the back button with ArrowLeft icon
-    const buttons = screen.getAllByRole('button');
-    const backButton = buttons.find((btn) => btn.querySelector('svg'));
-    if (backButton) {
-      backButton.click();
-      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
-    }
+    // Verify the Dashboard link is present in the navbar
+    const dashboardLinks = screen.getAllByText('Dashboard');
+    expect(dashboardLinks.length).toBeGreaterThan(0);
+    const navLink = dashboardLinks.find((el) => el.tagName === 'A');
+    expect(navLink).toHaveAttribute('href', '/dashboard');
   });
 
   it('logs out and navigates to home when logout is clicked', async () => {
