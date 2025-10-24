@@ -89,3 +89,7 @@ def test_login_success(client: TestClient, db: Session, mock_send_email: list):
     assert data["token_type"] == "bearer"  # noqa: S105
     assert isinstance(data["access_token"], str)
     assert len(data["access_token"]) > 0
+    # Check wizard completion status
+    assert "has_completed_wizard" in data
+    assert isinstance(data["has_completed_wizard"], bool)
+    assert data["has_completed_wizard"] is False  # No health profile created yet
