@@ -59,9 +59,17 @@ function LoginField() {
 
         setSuccess(result.message || 'Login successful!');
 
-        // Redirect to dashboard after 1 second
+        if (result.has_completed_wizard) {
+          // Redirect to dashboard after 1 second
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000);
+          return;
+        }
+
+        // Redirect to health profile wizard after 1 second
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/health-profile-wizard');
         }, 1000);
       } else {
         const errorData = await response.json();

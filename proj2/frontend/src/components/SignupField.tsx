@@ -69,9 +69,9 @@ function SignupField() {
         const result = await response.json();
         setSuccess(result.message || 'Registration successful! Please check your email.');
 
-        // Redirect to dashboard after 2 seconds
+        // Redirect to login after 2 seconds
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/login');
         }, 2000);
       } else {
         const errorData = await response.json();

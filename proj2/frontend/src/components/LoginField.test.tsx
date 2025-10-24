@@ -298,7 +298,7 @@ describe('LoginField Component', () => {
     // Wait for navigation to be called (setTimeout is 1000ms)
     await waitFor(
       () => {
-        expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
+        expect(mockNavigate).toHaveBeenCalledWith('/health-profile-wizard');
       },
       { timeout: 1500 }
     );

@@ -66,7 +66,7 @@ function VerifyEmail() {
   const handleContinue = () => {
     if (verificationState.status === 'success') {
       // Redirect to login or home page
-      navigate('/');
+      navigate('/login');
     } else {
       // Redirect to signup page to try again
       navigate('/signup');
