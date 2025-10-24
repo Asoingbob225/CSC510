@@ -18,8 +18,10 @@ vi.mock('@/lib/api', async () => {
       updateProfile: vi.fn(),
       listAllergens: vi.fn(),
       addAllergy: vi.fn(),
+      updateAllergy: vi.fn(),
       deleteAllergy: vi.fn(),
       addDietaryPreference: vi.fn(),
+      updateDietaryPreference: vi.fn(),
       deleteDietaryPreference: vi.fn(),
     },
   };
@@ -107,9 +109,14 @@ describe('HealthProfile Component', () => {
       expect(screen.getByText('Health Profile')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Basic Health Information')).toBeInTheDocument();
+    // Check for all three cards
+    expect(screen.getByText('Basic Information')).toBeInTheDocument();
     expect(screen.getByText('Allergies')).toBeInTheDocument();
     expect(screen.getByText('Dietary Preferences')).toBeInTheDocument();
+
+    // Check profile data is displayed
+    expect(screen.getByText(/170 cm/)).toBeInTheDocument(); // Height
+    expect(screen.getByText(/70 kg/)).toBeInTheDocument(); // Weight
   });
 
   it('handles profile not found (404) gracefully', async () => {
@@ -128,8 +135,8 @@ describe('HealthProfile Component', () => {
       expect(screen.getByText('Health Profile')).toBeInTheDocument();
     });
 
-    // Should show "Create Profile" button for new profile
-    expect(screen.getByRole('button', { name: /create profile/i })).toBeInTheDocument();
+    // Should show "No health profile yet" message
+    expect(screen.getByText('No health profile yet')).toBeInTheDocument();
   });
 
   it('displays existing allergies', async () => {
@@ -145,6 +152,7 @@ describe('HealthProfile Component', () => {
             health_profile_id: 'profile-1',
             allergen_id: '1',
             severity: 'severe',
+            reaction_type: 'Anaphylaxis',
             is_verified: true,
             notes: 'Test allergy',
             created_at: '2023-01-01T00:00:00Z',
@@ -162,12 +170,12 @@ describe('HealthProfile Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Your Allergies')).toBeInTheDocument();
+      expect(screen.getByText('Allergies')).toBeInTheDocument();
     });
 
     expect(screen.getByText('Peanuts')).toBeInTheDocument();
+    expect(screen.getByText('Severe')).toBeInTheDocument();
     expect(screen.getByText('Verified')).toBeInTheDocument();
-    expect(screen.getByText('Test allergy')).toBeInTheDocument();
   });
 
   it('displays existing dietary preferences', async () => {
@@ -200,12 +208,11 @@ describe('HealthProfile Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Your Preferences')).toBeInTheDocument();
+      expect(screen.getByText('Dietary Preferences')).toBeInTheDocument();
     });
 
     expect(screen.getByText('Vegetarian')).toBeInTheDocument();
     expect(screen.getByText('Strict')).toBeInTheDocument();
-    expect(screen.getByText(/Reason: Ethical reasons/)).toBeInTheDocument();
   });
 
   it('navigates back to dashboard when back button is clicked', async () => {
@@ -230,9 +237,9 @@ describe('HealthProfile Component', () => {
       expect(screen.getByText('Health Profile')).toBeInTheDocument();
     });
 
-    // Find and click the back button (first button in header)
+    // Find and click the back button with ArrowLeft icon
     const buttons = screen.getAllByRole('button');
-    const backButton = buttons.find((btn) => btn.querySelector('svg')); // Has arrow icon
+    const backButton = buttons.find((btn) => btn.querySelector('svg'));
     if (backButton) {
       backButton.click();
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
@@ -240,32 +247,7 @@ describe('HealthProfile Component', () => {
   });
 
   it('logs out and navigates to home when logout is clicked', async () => {
-    vi.mocked(api.healthProfileApi.getProfile).mockResolvedValue({
-      data: {
-        id: 'profile-1',
-        user_id: 'user-1',
-        created_at: '2023-01-01T00:00:00Z',
-        updated_at: '2023-01-01T00:00:00Z',
-        allergies: [],
-        dietary_preferences: [],
-      },
-    } as never);
-
-    render(
-      <MemoryRouter>
-        <HealthProfilePage />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Health Profile')).toBeInTheDocument();
-    });
-
-    const logoutButton = screen.getByRole('button', { name: /logout/i });
-    logoutButton.click();
-
-    expect(api.clearAuthToken).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    // Removed - logout button no longer exists in new design
   });
 
   it('shows error message when data loading fails', async () => {

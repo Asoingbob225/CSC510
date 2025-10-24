@@ -2,13 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, User, AlertCircle } from 'lucide-react';
-import {
-  healthProfileApi,
-  getAuthToken,
-  clearAuthToken,
-  type HealthProfile,
-  type Allergen,
-} from '@/lib/api';
+import { healthProfileApi, getAuthToken, type HealthProfile, type Allergen } from '@/lib/api';
 import { BasicInfoCard, AllergiesCard, DietaryPreferencesCard } from '@/components/health-profile';
 
 function HealthProfilePage() {
@@ -64,11 +58,6 @@ function HealthProfilePage() {
     loadData();
   }, [navigate]);
 
-  const handleLogout = () => {
-    clearAuthToken();
-    navigate('/');
-  };
-
   // Handle profile updates from child components
   const handleProfileUpdate = (updatedProfile: HealthProfile) => {
     setHealthProfile(updatedProfile);
@@ -99,12 +88,6 @@ function HealthProfilePage() {
             </Button>
             <h1 className="text-2xl font-semibold text-gray-800">Health Profile</h1>
           </div>
-          <Button
-            onClick={handleLogout}
-            className="rounded-full border-0 bg-white px-6 py-2 text-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 hover:bg-gray-50 hover:shadow-[0_12px_40px_rgb(0,0,0,0.16)]"
-          >
-            Logout
-          </Button>
         </div>
       </header>
 
