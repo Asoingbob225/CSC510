@@ -71,9 +71,7 @@ describe('HealthProfile Component', () => {
 
   it('displays loading state initially', () => {
     // Make API calls hang
-    vi.mocked(api.healthProfileApi.listAllergens).mockImplementation(
-      () => new Promise(() => {})
-    );
+    vi.mocked(api.healthProfileApi.listAllergens).mockImplementation(() => new Promise(() => {}));
 
     render(
       <MemoryRouter>
@@ -271,9 +269,7 @@ describe('HealthProfile Component', () => {
   });
 
   it('shows error message when data loading fails', async () => {
-    vi.mocked(api.healthProfileApi.listAllergens).mockRejectedValue(
-      new Error('Network error')
-    );
+    vi.mocked(api.healthProfileApi.listAllergens).mockRejectedValue(new Error('Network error'));
 
     render(
       <MemoryRouter>

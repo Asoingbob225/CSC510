@@ -5,13 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Field,
-  FieldLabel,
-  FieldSet,
-  FieldGroup,
-  FieldError,
-} from '@/components/ui/field';
+import { Field, FieldLabel, FieldSet, FieldGroup, FieldError } from '@/components/ui/field';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import AllergyInput from '@/components/AllergyInput';
 import { TriangleAlert, ArrowLeft } from 'lucide-react';
@@ -401,7 +395,7 @@ function HealthProfilePage() {
                         <select
                           {...field}
                           value={field.value || ''}
-                          className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                          className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                         >
                           <option value="">Select activity level</option>
                           <option value="sedentary">Sedentary</option>
@@ -493,7 +487,7 @@ function HealthProfilePage() {
                 <select
                   value={preferenceType}
                   onChange={(e) => setPreferenceType(e.target.value as PreferenceType)}
-                  className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                 >
                   <option value="diet">Diet</option>
                   <option value="cuisine">Cuisine</option>
@@ -543,7 +537,7 @@ function HealthProfilePage() {
                   value={preferenceNotes}
                   onChange={(e) => setPreferenceNotes(e.target.value)}
                   placeholder="Additional notes"
-                  className="min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  className="min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                   rows={3}
                 />
               </Field>

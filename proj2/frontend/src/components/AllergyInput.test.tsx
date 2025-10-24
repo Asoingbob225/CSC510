@@ -84,7 +84,7 @@ describe('AllergyInput Component', () => {
 
     // Get options from the select
     const options = Array.from(select?.querySelectorAll('option') || []);
-    
+
     // Peanuts should not be in the select options since it's already added
     const peanutOption = options.find((opt) => opt.textContent?.includes('Peanuts'));
     expect(peanutOption).toBeUndefined();
@@ -107,14 +107,14 @@ describe('AllergyInput Component', () => {
     const severityLabel = screen.getByText('Severity *');
     const severitySelect = severityLabel.parentElement?.querySelector('select');
     expect(severitySelect).toBeInTheDocument();
-    
+
     if (severitySelect) {
       fireEvent.change(severitySelect, { target: { value: 'life_threatening' } });
     }
 
     // Find inputs by type and placeholder
     const dateInput = document.querySelector('input[type="date"]');
-    
+
     if (dateInput) {
       fireEvent.change(dateInput, { target: { value: '2023-06-15' } });
     }

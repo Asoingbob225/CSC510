@@ -126,9 +126,7 @@ function AllergyInput({ allergens, allergies, onAdd, onDelete }: AllergyInputPro
                     severity={allergy.severity as AllergySeverity}
                     className="w-fit"
                   />
-                  {allergy.notes && (
-                    <p className="mt-2 text-sm text-gray-600">{allergy.notes}</p>
-                  )}
+                  {allergy.notes && <p className="mt-2 text-sm text-gray-600">{allergy.notes}</p>}
                 </div>
                 <Button
                   type="button"
@@ -155,7 +153,7 @@ function AllergyInput({ allergens, allergies, onAdd, onDelete }: AllergyInputPro
             <select
               value={selectedAllergenId}
               onChange={(e) => setSelectedAllergenId(e.target.value)}
-              className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
               required
             >
               {availableAllergens.map((allergen) => (
@@ -172,7 +170,7 @@ function AllergyInput({ allergens, allergies, onAdd, onDelete }: AllergyInputPro
             <select
               value={severity}
               onChange={(e) => setSeverity(e.target.value as AllergySeverity)}
-              className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
               required
             >
               <option value="mild">Mild</option>
@@ -212,7 +210,7 @@ function AllergyInput({ allergens, allergies, onAdd, onDelete }: AllergyInputPro
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Additional information about this allergy"
-              className="min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
               rows={3}
             />
           </Field>
