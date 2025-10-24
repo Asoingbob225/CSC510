@@ -69,7 +69,7 @@ function LoginField() {
 
         // Redirect to health profile wizard after 1 second
         setTimeout(() => {
-          navigate('/health-profile');
+          navigate('/health-profile-wizard');
         }, 1000);
       } else {
         const errorData = await response.json();

@@ -1,230 +1,210 @@
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { ProgressIndicator } from '@/components/ui/progress-indicator';
-import { WizardStep } from '@/components/ui/wizard-step';
+import { TriangleAlert } from 'lucide-react';
+import { Alert, AlertTitle } from '@/components/ui/alert';
+import { Step1ProfileForm, type ProfileFormData } from '@/components/wizard-step/Step1ProfileForm';
 import {
-  healthProfileSchema,
-  step1Schema,
-  step2Schema,
-  step3Schema,
-  step4Schema,
-  step5Schema,
-} from '@/lib/healthProfileSchema';
-import { Step1BasicDemographics } from '@/components/wizard-steps/Step1BasicDemographics';
-import { Step2DietaryPreferences } from '@/components/wizard-steps/Step2DietaryPreferences';
-import { Step3Allergies } from '@/components/wizard-steps/Step3Allergies';
-import { Step4HealthGoals } from '@/components/wizard-steps/Step4HealthGoals';
-import { Step5MedicalInfo } from '@/components/wizard-steps/Step5MedicalInfo';
+  Step2AllergiesForm,
+  type AllergiesFormData,
+} from '@/components/wizard-step/Step2AllergiesForm';
+import {
+  Step3PreferencesForm,
+  type PreferencesFormData,
+} from '@/components/wizard-step/Step3PreferencesForm';
+import { createHealthProfile, addAllergy, addDietaryPreference } from '@/lib/api';
 
-const STEPS = [
-  { title: 'Demographics', description: 'Basic information' },
-  { title: 'Diet', description: 'Preferences' },
-  { title: 'Allergies', description: 'Restrictions' },
-  { title: 'Goals', description: 'Health targets' },
-  { title: 'Medical', description: 'Health info' },
-];
-
-const STEP_SCHEMAS = [step1Schema, step2Schema, step3Schema, step4Schema, step5Schema];
-
-const STORAGE_KEY = 'healthProfileWizardData';
-
-type HealthProfileFormData = z.infer<typeof healthProfileSchema>;
-
-export function HealthProfileWizard() {
+export default function HealthProfileWizard() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<HealthProfileFormData>({
-    resolver: zodResolver(healthProfileSchema),
-    mode: 'onChange',
-    defaultValues: {
-      age: '',
-      gender: '',
-      heightFeet: '',
-      heightInches: '',
-      weight: '',
-      activityLevel: '',
-      dietaryPreferences: [],
-      cookingFrequency: '',
-      allergies: [],
-      healthGoals: [],
-      targetWeight: '',
-      timeframe: '',
-      medicalConditions: '',
-      medications: '',
-      supplements: '',
-    },
-  });
-
-  // Load saved data on mount
-  useEffect(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        form.reset(parsed.data);
-        setCurrentStep(parsed.step || 1);
-      } catch (error) {
-        console.error('Failed to load saved data:', error);
-      }
-    }
-  }, [form]);
-
-  // Save progress to localStorage
-  const saveProgress = () => {
-    setIsSaving(true);
-    const data = form.getValues();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ data, step: currentStep }));
-    setTimeout(() => setIsSaving(false), 500);
-  };
-
-  // Validate current step before proceeding
-  const validateCurrentStep = async () => {
-    const stepIndex = currentStep - 1;
-    const schema = STEP_SCHEMAS[stepIndex];
-    const allValues = form.getValues();
-
-    try {
-      await schema.parseAsync(allValues);
-      return true;
-    } catch {
-      // Trigger validation errors
-      await form.trigger();
-      return false;
-    }
-  };
-
-  const handleNext = async () => {
-    const isValid = await validateCurrentStep();
-    if (isValid && currentStep < STEPS.length) {
-      setCurrentStep((prev) => prev + 1);
-      saveProgress();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const onSubmit = async (data: HealthProfileFormData) => {
+  // Step 1: Create Health Profile (Required)
+  const handleStep1Submit = async (data: ProfileFormData) => {
     setIsSubmitting(true);
+    setError(null);
 
     try {
-      // TODO: Replace with actual API endpoint
-      const response = await fetch('/api/health-profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      const response = await createHealthProfile({
+        height_cm: data.height_cm,
+        weight_kg: data.weight_kg,
+        activity_level: data.activity_level,
       });
 
-      if (response.ok) {
-        // Clear saved data
-        localStorage.removeItem(STORAGE_KEY);
-        // Navigate to dashboard
-        navigate('/dashboard');
-      } else {
-        console.error('Failed to save health profile');
-        alert('Failed to save health profile. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error saving health profile:', error);
-      alert('An error occurred. Please try again later.');
+      // Profile created successfully, move to next step
+      console.log('Health profile created:', response.id);
+
+      // Move to next step
+      setCurrentStep(2);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to create health profile. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Step 2: Add Allergies (Optional)
+  const handleStep2Submit = async (data: AllergiesFormData) => {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Call POST /api/health/allergies for each allergy
+      for (const allergy of data.allergies) {
+        await addAllergy({
+          allergen_id: allergy.allergen_id,
+          severity: allergy.severity,
+          notes: allergy.notes,
+        });
+      }
+
+      // Move to next step
+      setCurrentStep(3);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to save allergies. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleStep2Skip = () => {
+    setCurrentStep(3);
+  };
+
+  const handleStep2Previous = () => {
+    setCurrentStep(1);
+  };
+
+  // Step 3: Add Dietary Preferences (Optional)
+  const handleStep3Submit = async (data: PreferencesFormData) => {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Call POST /api/health/dietary-preferences for each preference
+      for (const pref of data.preferences) {
+        await addDietaryPreference({
+          preference_type: pref.preference_type,
+          preference_name: pref.preference_name,
+          is_strict: pref.is_strict,
+          notes: pref.notes,
+        });
+      }
+
+      // Navigate to dashboard
+      navigate('/dashboard');
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Failed to save dietary preferences. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleStep3Skip = () => {
+    // Navigate to dashboard
+    navigate('/dashboard');
+  };
+
+  const handleStep3Previous = () => {
+    setCurrentStep(2);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="mx-auto max-w-3xl px-4">
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <div className="mb-6">
-            <h1 className="mb-2 text-3xl font-bold text-gray-900">Create Your Health Profile</h1>
-            <p className="text-gray-600">
-              Complete this wizard to get personalized nutrition recommendations
-            </p>
-          </div>
-
-          <ProgressIndicator currentStep={currentStep} totalSteps={STEPS.length} steps={STEPS} />
-
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8" role="form">
-            <WizardStep isActive={currentStep === 1}>
-              <Step1BasicDemographics control={form.control} />
-            </WizardStep>
-
-            <WizardStep isActive={currentStep === 2}>
-              <Step2DietaryPreferences control={form.control} />
-            </WizardStep>
-
-            <WizardStep isActive={currentStep === 3}>
-              <Step3Allergies control={form.control} />
-            </WizardStep>
-
-            <WizardStep isActive={currentStep === 4}>
-              <Step4HealthGoals control={form.control} />
-            </WizardStep>
-
-            <WizardStep isActive={currentStep === 5}>
-              <Step5MedicalInfo control={form.control} />
-            </WizardStep>
-
-            <div className="mt-8 flex items-center justify-between border-t pt-6">
-              <div>
-                {currentStep > 1 && (
-                  <Button type="button" variant="outline" onClick={handlePrevious}>
-                    <ChevronLeft className="mr-2 h-4 w-4" />
-                    Previous
-                  </Button>
-                )}
-              </div>
-
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={saveProgress}
-                  disabled={isSaving}
-                  className="flex items-center gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  {isSaving ? 'Saved!' : 'Save & Continue Later'}
-                </Button>
-
-                {currentStep < STEPS.length ? (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    className="bg-emerald-500 hover:bg-emerald-600"
-                  >
-                    Next
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-emerald-500 hover:bg-emerald-600"
-                  >
-                    {isSubmitting ? 'Submitting...' : 'Complete Profile'}
-                  </Button>
-                )}
-              </div>
-            </div>
-          </form>
+    <div className="flex min-h-screen items-center justify-center bg-emerald-50 p-4">
+      <div className="w-full max-w-2xl">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-900">Health Profile Setup</h1>
+          <p className="mt-2 text-gray-600">
+            Complete your health profile to get personalized nutrition recommendations
+          </p>
         </div>
+
+        {/* Step Indicator */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-1 flex-col items-center">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold ${
+                  currentStep >= 1 ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-600'
+                }`}
+              >
+                1
+              </div>
+              <span className="mt-2 text-xs font-medium text-gray-600">Profile</span>
+            </div>
+            <div
+              className={`mx-2 h-1 flex-1 ${currentStep >= 2 ? 'bg-emerald-500' : 'bg-gray-200'}`}
+            />
+            <div className="flex flex-1 flex-col items-center">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold ${
+                  currentStep >= 2 ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-600'
+                }`}
+              >
+                2
+              </div>
+              <span className="mt-2 text-xs font-medium text-gray-600">Allergies</span>
+            </div>
+            <div
+              className={`mx-2 h-1 flex-1 ${currentStep >= 3 ? 'bg-emerald-500' : 'bg-gray-200'}`}
+            />
+            <div className="flex flex-1 flex-col items-center">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold ${
+                  currentStep >= 3 ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-600'
+                }`}
+              >
+                3
+              </div>
+              <span className="mt-2 text-xs font-medium text-gray-600">Preferences</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Form Card */}
+        <div className="rounded-lg bg-white p-6 shadow-lg md:p-8">
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <TriangleAlert className="h-4 w-4" />
+              <AlertTitle>{error}</AlertTitle>
+            </Alert>
+          )}
+
+          {currentStep === 1 && (
+            <Step1ProfileForm onSubmit={handleStep1Submit} isSubmitting={isSubmitting} />
+          )}
+
+          {currentStep === 2 && (
+            <Step2AllergiesForm
+              onSubmit={handleStep2Submit}
+              onPrevious={handleStep2Previous}
+              onSkip={handleStep2Skip}
+              isSubmitting={isSubmitting}
+            />
+          )}
+
+          {currentStep === 3 && (
+            <Step3PreferencesForm
+              onSubmit={handleStep3Submit}
+              onPrevious={handleStep3Previous}
+              onSkip={handleStep3Skip}
+              isSubmitting={isSubmitting}
+            />
+          )}
+        </div>
+
+        {/* Footer Info */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Step {currentStep} of 3 • You can always update your profile later
+        </p>
       </div>
     </div>
   );
