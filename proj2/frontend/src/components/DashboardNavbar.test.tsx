@@ -30,6 +30,11 @@ describe('DashboardNavbar', () => {
       );
 
       expect(screen.getByText('Eatsential')).toBeInTheDocument();
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
     });
 
     it('renders navigation links', async () => {
@@ -46,6 +51,11 @@ describe('DashboardNavbar', () => {
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
       expect(screen.getByText('Recipes')).toBeInTheDocument();
       expect(screen.getByText('Meal Plans')).toBeInTheDocument();
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
     });
 
     it('renders user menu trigger', async () => {
@@ -160,7 +170,7 @@ describe('DashboardNavbar', () => {
       expect(true).toBe(true);
     });
 
-    it('calls clearAuthToken and navigates to home on logout (function logic)', () => {
+    it('calls clearAuthToken and navigates to home on logout (function logic)', async () => {
       const clearAuthTokenSpy = vi.spyOn(api, 'clearAuthToken').mockImplementation(() => {});
       vi.spyOn(api.default, 'get').mockResolvedValue({
         data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
@@ -172,13 +182,18 @@ describe('DashboardNavbar', () => {
         </MemoryRouter>
       );
 
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
       // Verify the component has the logout handler defined
       // The actual interaction testing should be done in E2E
       expect(clearAuthTokenSpy).not.toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it('has navigation to health profile (function logic)', () => {
+    it('has navigation to health profile (function logic)', async () => {
       vi.spyOn(api.default, 'get').mockResolvedValue({
         data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
       });
@@ -188,6 +203,11 @@ describe('DashboardNavbar', () => {
           <DashboardNavbar />
         </MemoryRouter>
       );
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
 
       // Verify the component renders without errors
       // The actual navigation testing should be done in E2E
@@ -210,6 +230,11 @@ describe('DashboardNavbar', () => {
       const dashboardLinks = screen.getAllByText('Dashboard');
       const navLink = dashboardLinks.find((el) => el.tagName === 'A');
       expect(navLink).toHaveAttribute('href', '/dashboard');
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
     });
 
     it('has correct href for Recipes link', async () => {
@@ -225,6 +250,11 @@ describe('DashboardNavbar', () => {
 
       const recipesLink = screen.getByText('Recipes');
       expect(recipesLink).toHaveAttribute('href', '#recipes');
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
     });
 
     it('has correct href for Meal Plans link', async () => {
@@ -240,6 +270,11 @@ describe('DashboardNavbar', () => {
 
       const mealPlansLink = screen.getByText('Meal Plans');
       expect(mealPlansLink).toHaveAttribute('href', '#meal-plans');
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
     });
   });
 
@@ -262,7 +297,7 @@ describe('DashboardNavbar', () => {
   });
 
   describe('Styling and Layout', () => {
-    it('has sticky positioning and backdrop blur classes', () => {
+    it('has sticky positioning and backdrop blur classes', async () => {
       vi.spyOn(api.default, 'get').mockResolvedValue({
         data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
       });
@@ -275,9 +310,14 @@ describe('DashboardNavbar', () => {
 
       const header = container.querySelector('header');
       expect(header).toHaveClass('sticky', 'top-0', 'z-50', 'backdrop-blur');
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
     });
 
-    it('renders brand link with emerald color', () => {
+    it('renders brand link with emerald color', async () => {
       vi.spyOn(api.default, 'get').mockResolvedValue({
         data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
       });
@@ -290,6 +330,11 @@ describe('DashboardNavbar', () => {
 
       const brandLink = screen.getByText('Eatsential').closest('a');
       expect(brandLink).toHaveClass('text-emerald-600');
+
+      // Wait for async state updates to complete
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
     });
   });
 });

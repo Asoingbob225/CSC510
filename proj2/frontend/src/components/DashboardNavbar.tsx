@@ -59,7 +59,10 @@ export function DashboardNavbar() {
     if (userInfo.first_name) {
       return userInfo.first_name;
     }
-    return userInfo.email.split('@')[0];
+    if (userInfo.email) {
+      return userInfo.email.split('@')[0];
+    }
+    return 'User';
   };
 
   return (

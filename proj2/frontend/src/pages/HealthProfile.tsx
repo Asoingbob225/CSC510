@@ -79,6 +79,7 @@ function HealthProfilePage() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-6 py-12">
+        <h1 className="mb-8 text-2xl font-bold text-gray-800">My Health Profile</h1>
         {error && (
           <div className="mb-6 flex items-center gap-3 rounded-3xl bg-red-50 px-6 py-4 shadow-lg">
             <AlertCircle className="size-5 text-red-600" />
