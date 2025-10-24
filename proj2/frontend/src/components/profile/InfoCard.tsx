@@ -31,12 +31,13 @@ export function InfoCard({
           <Icon className={`size-6 ${iconColor}`} />
         </div>
         <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+        <div className="grow"></div>
         {onEdit && (
           <Button
             onClick={onEdit}
             variant="ghost"
             size="sm"
-            className="absolute top-4 right-4 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-green-50 hover:text-green-600"
+            className="opacity-0 transition-opacity group-hover:opacity-100 hover:bg-green-50 hover:text-green-600"
           >
             <Edit3 className="size-4" />
           </Button>
