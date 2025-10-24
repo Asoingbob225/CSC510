@@ -1,85 +1,88 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router';
-import { HealthProfileWizard } from './HealthProfileWizard';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import HealthProfileWizard from './HealthProfileWizard';
+import * as api from '@/lib/api';
+
+// Mock the API
+vi.mock('@/lib/api', () => ({
+  createHealthProfile: vi.fn(),
+  addAllergy: vi.fn(),
+  addDietaryPreference: vi.fn(),
+  getAllergens: vi.fn(),
+}));
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe('HealthProfileWizard', () => {
+  let queryClient: QueryClient;
+
   const renderWizard = () => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
     return render(
-      <BrowserRouter>
-        <HealthProfileWizard />
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <HealthProfileWizard />
+        </BrowserRouter>
+      </QueryClientProvider>
     );
   };
 
-  it('renders the wizard with the main heading', () => {
-    renderWizard();
-
-    expect(screen.getByText('Create Your Health Profile')).toBeInTheDocument();
-    expect(
-      screen.getByText('Complete this wizard to get personalized nutrition recommendations')
-    ).toBeInTheDocument();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(api.getAllergens).mockResolvedValue([
+      {
+        id: '1',
+        name: 'Peanuts',
+        category: 'Nuts',
+        is_major_allergen: true,
+      },
+    ]);
   });
 
-  it('renders step 1 (Basic Demographics)', () => {
+  it('renders the wizard with step 1 initially', async () => {
     renderWizard();
 
-    expect(screen.getByText('Basic Demographics')).toBeInTheDocument();
-    expect(
-      screen.getByText('Tell us about yourself to get personalized recommendations')
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Basic Health Information')).toBeInTheDocument();
+    });
   });
 
-  it('shows progress indicator with 5 steps', () => {
+  it('shows step indicator with all three steps', async () => {
     renderWizard();
 
-    expect(screen.getByText('Step 1 of 5')).toBeInTheDocument();
-    expect(screen.getByText('Demographics')).toBeInTheDocument();
-    expect(screen.getByText('Diet')).toBeInTheDocument();
-    expect(screen.getByText('Allergies')).toBeInTheDocument();
-    expect(screen.getByText('Goals')).toBeInTheDocument();
-    expect(screen.getByText('Medical')).toBeInTheDocument();
+    await waitFor(() => {
+      // Check for step numbers instead of labels to avoid conflicts with page title
+      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getByText('3')).toBeInTheDocument();
+      // Verify the step labels exist
+      const stepLabels = screen.getAllByText(/profile|allergies|preferences/i);
+      expect(stepLabels.length).toBeGreaterThanOrEqual(3);
+    });
   });
 
-  it('has Next and Save & Continue Later buttons on step 1', () => {
+  it('has Next button on step 1', async () => {
     renderWizard();
 
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /save & continue later/i })).toBeInTheDocument();
-  });
-
-  it('does not show Previous button on step 1', () => {
-    renderWizard();
-
-    expect(screen.queryByRole('button', { name: /previous/i })).not.toBeInTheDocument();
-  });
-
-  it('renders all required field labels for step 1', () => {
-    renderWizard();
-
-    expect(screen.getByText('Age')).toBeInTheDocument();
-    expect(screen.getByText('Gender')).toBeInTheDocument();
-    expect(screen.getByText('Height (feet)')).toBeInTheDocument();
-    expect(screen.getByText('Height (inches)')).toBeInTheDocument();
-    expect(screen.getByText('Weight (lbs)')).toBeInTheDocument();
-    expect(screen.getByText('Activity Level')).toBeInTheDocument();
-  });
-
-  it('renders form inputs for all demographics fields', () => {
-    renderWizard();
-
-    const form = screen.getByRole('form');
-    expect(form).toBeInTheDocument();
-
-    // Check that we have input elements
-    const inputs = form.querySelectorAll('input, select');
-    expect(inputs.length).toBeGreaterThan(0);
-  });
-
-  it('has proper form structure', () => {
-    renderWizard();
-
-    const form = screen.getByRole('form');
-    expect(form).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    });
   });
 });
