@@ -6,6 +6,13 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldLegend, FieldSet, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const preferencesSchema = z.object({
   preferences: z.array(
@@ -107,16 +114,20 @@ export function Step3PreferencesForm({
             <div className="space-y-4">
               <Field>
                 <FieldLabel>Preference Type</FieldLabel>
-                <select
+                <Select
                   value={prefType}
-                  onChange={(e) => setPrefType(e.target.value as typeof prefType)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  onValueChange={(value) => setPrefType(value as typeof prefType)}
                 >
-                  <option value="diet">Diet Type</option>
-                  <option value="cuisine">Cuisine</option>
-                  <option value="ingredient">Ingredient</option>
-                  <option value="preparation">Preparation Method</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="diet">Diet Type</SelectItem>
+                    <SelectItem value="cuisine">Cuisine</SelectItem>
+                    <SelectItem value="ingredient">Ingredient</SelectItem>
+                    <SelectItem value="preparation">Preparation Method</SelectItem>
+                  </SelectContent>
+                </Select>
                 <p className="mt-1 text-xs text-gray-500">{preferenceTypeLabels[prefType]}</p>
               </Field>
 

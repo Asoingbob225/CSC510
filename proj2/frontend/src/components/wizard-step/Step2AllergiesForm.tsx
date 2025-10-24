@@ -7,6 +7,13 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldLegend, FieldSet, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { getAllergens, type AllergenResponse } from '@/lib/api';
 
 const allergiesSchema = z.object({
@@ -108,32 +115,37 @@ export function Step2AllergiesForm({
                 <div className="space-y-4">
                   <Field>
                     <FieldLabel>Select Allergen</FieldLabel>
-                    <select
-                      value={selectedAllergen}
-                      onChange={(e) => setSelectedAllergen(e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">-- Choose an allergen --</option>
-                      {allergens.map((allergen) => (
-                        <option key={allergen.id} value={allergen.id}>
-                          {allergen.name} {allergen.is_major_allergen && '⚠️'} ({allergen.category})
-                        </option>
-                      ))}
-                    </select>
+                    <Select value={selectedAllergen} onValueChange={setSelectedAllergen}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="-- Choose an allergen --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {allergens.map((allergen) => (
+                          <SelectItem key={allergen.id} value={allergen.id}>
+                            {allergen.name} {allergen.is_major_allergen && '⚠️'} (
+                            {allergen.category})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </Field>
 
                   <Field>
                     <FieldLabel>Severity</FieldLabel>
-                    <select
+                    <Select
                       value={allergySeverity}
-                      onChange={(e) => setAllergySeverity(e.target.value as typeof allergySeverity)}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      onValueChange={(value) => setAllergySeverity(value as typeof allergySeverity)}
                     >
-                      <option value="mild">Mild</option>
-                      <option value="moderate">Moderate</option>
-                      <option value="severe">Severe</option>
-                      <option value="life_threatening">Life Threatening</option>
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mild">Mild</SelectItem>
+                        <SelectItem value="moderate">Moderate</SelectItem>
+                        <SelectItem value="severe">Severe</SelectItem>
+                        <SelectItem value="life_threatening">Life Threatening</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </Field>
 
                   <Field>

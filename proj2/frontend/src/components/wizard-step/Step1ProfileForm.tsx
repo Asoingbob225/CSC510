@@ -12,6 +12,13 @@ import {
   FieldError,
   FieldLabel,
 } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const profileSchema = z.object({
   height_cm: z
@@ -97,18 +104,20 @@ export function Step1ProfileForm({ onSubmit, isSubmitting }: Step1ProfileFormPro
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Activity Level *</FieldLabel>
-                <select
-                  {...field}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="sedentary">Sedentary (little or no exercise)</option>
-                  <option value="light">Light (exercise 1-3 days/week)</option>
-                  <option value="moderate">Moderate (exercise 3-5 days/week)</option>
-                  <option value="active">Active (exercise 6-7 days/week)</option>
-                  <option value="very_active">
-                    Very Active (physical job or training twice/day)
-                  </option>
-                </select>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sedentary">Sedentary (little or no exercise)</SelectItem>
+                    <SelectItem value="light">Light (exercise 1-3 days/week)</SelectItem>
+                    <SelectItem value="moderate">Moderate (exercise 3-5 days/week)</SelectItem>
+                    <SelectItem value="active">Active (exercise 6-7 days/week)</SelectItem>
+                    <SelectItem value="very_active">
+                      Very Active (physical job or training twice/day)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
                 <FieldError>{fieldState.error?.message}</FieldError>
               </Field>
             )}
