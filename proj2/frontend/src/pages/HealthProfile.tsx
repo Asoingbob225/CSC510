@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, AlertCircle } from 'lucide-react';
+import { User, AlertCircle } from 'lucide-react';
 import { healthProfileApi, getAuthToken, type HealthProfile, type Allergen } from '@/lib/api';
 import { BasicInfoCard, AllergiesCard, DietaryPreferencesCard } from '@/components/health-profile';
+import { DashboardNavbar } from '@/components/DashboardNavbar';
 
 function HealthProfilePage() {
   const navigate = useNavigate();
@@ -75,21 +75,7 @@ function HealthProfilePage() {
 
   return (
     <div className="min-h-screen bg-emerald-50">
-      {/* Header */}
-      <header className="bg-white/80 shadow-md backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={() => navigate('/dashboard')}
-              variant="ghost"
-              className="rounded-full p-2 text-gray-600 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-            >
-              <ArrowLeft className="size-5" />
-            </Button>
-            <h1 className="text-2xl font-semibold text-gray-800">Health Profile</h1>
-          </div>
-        </div>
-      </header>
+      <DashboardNavbar />
 
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-6 py-12">
