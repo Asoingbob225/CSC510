@@ -1,5 +1,18 @@
 import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Field, FieldGroup, FieldError, FieldLabel } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
@@ -8,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Heart, X } from 'lucide-react';
 import { InfoCard, ListItemCard } from '@/components/profile';
 import {
@@ -25,6 +39,18 @@ const severityLabels: Record<string, { label: string; color: string }> = {
   life_threatening: { label: 'Life-threatening', color: 'bg-red-200 text-red-900' },
 };
 
+// Form schema
+const allergySchema = z.object({
+  allergen_id: z.string().min(1, 'Please select an allergen'),
+  severity: z.string().min(1, 'Please select severity'),
+  reaction_type: z.string().optional(),
+  diagnosed_date: z.string().optional(),
+  notes: z.string().optional(),
+  is_verified: z.boolean().optional(),
+});
+
+type AllergyFormData = z.infer<typeof allergySchema>;
+
 interface AllergiesCardProps {
   healthProfile: HealthProfile | null;
   allergens: Allergen[];
@@ -33,16 +59,20 @@ interface AllergiesCardProps {
 
 export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Form state for new allergy
-  const [allergenId, setAllergenId] = useState<string>('');
-  const [severity, setSeverity] = useState<AllergySeverity>('mild');
-  const [reactionType, setReactionType] = useState<string>('');
-  const [diagnosedDate, setDiagnosedDate] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
-  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const form = useForm<AllergyFormData>({
+    resolver: zodResolver(allergySchema),
+    defaultValues: {
+      allergen_id: '',
+      severity: 'mild',
+      reaction_type: '',
+      diagnosed_date: '',
+      notes: '',
+      is_verified: false,
+    },
+  });
 
   // Helper function to get allergen info
   const getAllergenInfo = (allergenId: string) => {
@@ -51,25 +81,21 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
 
   // Open dialog and reset form
   const handleOpenDialog = () => {
-    setAllergenId('');
-    setSeverity('mild');
-    setReactionType('');
-    setDiagnosedDate('');
-    setNotes('');
-    setIsVerified(false);
+    form.reset({
+      allergen_id: '',
+      severity: 'mild',
+      reaction_type: '',
+      diagnosed_date: '',
+      notes: '',
+      is_verified: false,
+    });
     setError(null);
     setIsDialogOpen(true);
   };
 
   // Add new allergy
-  const handleAddAllergy = async () => {
+  const onSubmit = async (formData: AllergyFormData) => {
     try {
-      if (!allergenId) {
-        setError('Please select an allergen');
-        return;
-      }
-
-      setIsLoading(true);
       setError(null);
 
       const data: {
@@ -80,14 +106,14 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
         notes?: string;
         is_verified?: boolean;
       } = {
-        allergen_id: allergenId,
-        severity: severity,
+        allergen_id: formData.allergen_id,
+        severity: formData.severity as AllergySeverity,
       };
 
-      if (reactionType) data.reaction_type = reactionType;
-      if (diagnosedDate) data.diagnosed_date = diagnosedDate;
-      if (notes) data.notes = notes;
-      if (isVerified) data.is_verified = isVerified;
+      if (formData.reaction_type) data.reaction_type = formData.reaction_type;
+      if (formData.diagnosed_date) data.diagnosed_date = formData.diagnosed_date.split('T')[0];
+      if (formData.notes) data.notes = formData.notes;
+      if (formData.is_verified) data.is_verified = formData.is_verified;
 
       await healthProfileApi.addAllergy(data);
 
@@ -95,11 +121,10 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
       const response = await healthProfileApi.getProfile();
       onUpdate(response.data);
       setIsDialogOpen(false);
+      form.reset();
     } catch (err) {
       console.error('Error adding allergy:', err);
       setError('Failed to add allergy. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -206,110 +231,162 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
             <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
           )}
 
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label htmlFor="allergen" className="text-sm font-medium">
-                Allergen <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="allergen"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={allergenId}
-                onChange={(e) => setAllergenId(e.target.value)}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FieldGroup>
+              <Controller
+                name="allergen_id"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>
+                      Allergen <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select an allergen" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {allergens.map((allergen) => (
+                          <SelectItem key={allergen.id} value={allergen.id}>
+                            {allergen.name} {allergen.category && `(${allergen.category})`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="severity"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>
+                      Severity <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select severity" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mild">Mild</SelectItem>
+                        <SelectItem value="moderate">Moderate</SelectItem>
+                        <SelectItem value="severe">Severe</SelectItem>
+                        <SelectItem value="life_threatening">Life-threatening</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="reaction_type"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Reaction Type</FieldLabel>
+                    <Input
+                      type="text"
+                      placeholder="e.g., Hives, Swelling, Difficulty breathing"
+                      {...field}
+                      value={field.value || ''}
+                      aria-invalid={fieldState.invalid}
+                    />
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="diagnosed_date"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Diagnosed Date</FieldLabel>
+                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start text-left">
+                          {field.value
+                            ? new Date(field.value).toLocaleDateString('en-US')
+                            : 'Select date'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={field.value ? new Date(field.value) : undefined}
+                          onSelect={(date) => {
+                            field.onChange(date ? date.toISOString() : '');
+                            setCalendarOpen(false);
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="notes"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Notes</FieldLabel>
+                    <textarea
+                      rows={3}
+                      placeholder="Additional information about this allergy"
+                      className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                      {...field}
+                      value={field.value || ''}
+                      aria-invalid={fieldState.invalid}
+                    />
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="is_verified"
+                control={form.control}
+                render={({ field }) => (
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="is_verified"
+                      type="checkbox"
+                      className="size-4 rounded border-gray-300 text-green-500 focus:ring-0 focus:ring-offset-0"
+                      checked={field.value || false}
+                      onChange={field.onChange}
+                    />
+                    <label htmlFor="is_verified" className="text-sm font-medium">
+                      Verified by healthcare professional
+                    </label>
+                  </div>
+                )}
+              />
+            </FieldGroup>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsDialogOpen(false)}
+                disabled={form.formState.isSubmitting}
               >
-                <option value="">Select an allergen</option>
-                {allergens.map((allergen) => (
-                  <option key={allergen.id} value={allergen.id}>
-                    {allergen.name} {allergen.category && `(${allergen.category})`}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="severity" className="text-sm font-medium">
-                Severity <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="severity"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={severity}
-                onChange={(e) => setSeverity(e.target.value as AllergySeverity)}
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-500 hover:bg-green-600"
+                disabled={form.formState.isSubmitting}
               >
-                <option value="mild">Mild</option>
-                <option value="moderate">Moderate</option>
-                <option value="severe">Severe</option>
-                <option value="life_threatening">Life-threatening</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="reaction_type" className="text-sm font-medium">
-                Reaction Type
-              </label>
-              <input
-                id="reaction_type"
-                type="text"
-                placeholder="e.g., Hives, Swelling, Difficulty breathing"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={reactionType}
-                onChange={(e) => setReactionType(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="diagnosed_date" className="text-sm font-medium">
-                Diagnosed Date
-              </label>
-              <input
-                id="diagnosed_date"
-                type="date"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={diagnosedDate}
-                onChange={(e) => setDiagnosedDate(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="notes" className="text-sm font-medium">
-                Notes
-              </label>
-              <textarea
-                id="notes"
-                rows={3}
-                placeholder="Additional information about this allergy"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                id="is_verified"
-                type="checkbox"
-                className="size-4 rounded border-gray-300 text-green-500 focus:ring-2 focus:ring-green-500/20"
-                checked={isVerified}
-                onChange={(e) => setIsVerified(e.target.checked)}
-              />
-              <label htmlFor="is_verified" className="text-sm font-medium">
-                Verified by healthcare professional
-              </label>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsDialogOpen(false)} disabled={isLoading}>
-              Cancel
-            </Button>
-            <Button
-              className="bg-green-500 hover:bg-green-600"
-              onClick={handleAddAllergy}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Adding...' : 'Add Allergy'}
-            </Button>
-          </DialogFooter>
+                {form.formState.isSubmitting ? 'Adding...' : 'Add Allergy'}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

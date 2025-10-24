@@ -1,5 +1,17 @@
 import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Field, FieldGroup, FieldError, FieldLabel } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +32,17 @@ const preferenceTypeLabels: Record<string, string> = {
   preparation: 'Preparation',
 };
 
+// Dietary preference form schema
+const preferenceSchema = z.object({
+  preference_type: z.string().min(1, 'Please select a preference type'),
+  preference_name: z.string().min(1, 'Please enter a preference name'),
+  is_strict: z.boolean().optional(),
+  reason: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+type PreferenceFormData = z.infer<typeof preferenceSchema>;
+
 interface DietaryPreferencesCardProps {
   healthProfile: HealthProfile | null;
   onUpdate: (updatedProfile: HealthProfile) => void;
@@ -27,36 +50,36 @@ interface DietaryPreferencesCardProps {
 
 export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPreferencesCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Form state for new preference
-  const [preferenceType, setPreferenceType] = useState<PreferenceType>('diet');
-  const [preferenceName, setPreferenceName] = useState<string>('');
-  const [isStrict, setIsStrict] = useState<boolean>(false);
-  const [reason, setReason] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
+  // Initialize form with react-hook-form + zod
+  const form = useForm<PreferenceFormData>({
+    resolver: zodResolver(preferenceSchema),
+    defaultValues: {
+      preference_type: 'diet',
+      preference_name: '',
+      is_strict: false,
+      reason: '',
+      notes: '',
+    },
+  });
 
   // Open dialog and reset form
   const handleOpenDialog = () => {
-    setPreferenceType('diet');
-    setPreferenceName('');
-    setIsStrict(false);
-    setReason('');
-    setNotes('');
+    form.reset({
+      preference_type: 'diet',
+      preference_name: '',
+      is_strict: false,
+      reason: '',
+      notes: '',
+    });
     setError(null);
     setIsDialogOpen(true);
   };
 
   // Add new dietary preference
-  const handleAddPreference = async () => {
+  const onSubmit = async (formData: PreferenceFormData) => {
     try {
-      if (!preferenceName.trim()) {
-        setError('Please enter a preference name');
-        return;
-      }
-
-      setIsLoading(true);
       setError(null);
 
       const data: {
@@ -66,13 +89,13 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
         reason?: string;
         notes?: string;
       } = {
-        preference_type: preferenceType,
-        preference_name: preferenceName.trim(),
+        preference_type: formData.preference_type as PreferenceType,
+        preference_name: formData.preference_name.trim(),
       };
 
-      if (isStrict) data.is_strict = isStrict;
-      if (reason) data.reason = reason;
-      if (notes) data.notes = notes;
+      if (formData.is_strict) data.is_strict = formData.is_strict;
+      if (formData.reason) data.reason = formData.reason;
+      if (formData.notes) data.notes = formData.notes;
 
       await healthProfileApi.addDietaryPreference(data);
 
@@ -83,8 +106,6 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
     } catch (err) {
       console.error('Error adding dietary preference:', err);
       setError('Failed to add dietary preference. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -173,92 +194,132 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
             <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
           )}
 
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label htmlFor="preference_type" className="text-sm font-medium">
-                Preference Type <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="preference_type"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={preferenceType}
-                onChange={(e) => setPreferenceType(e.target.value as PreferenceType)}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FieldGroup>
+              {/* Preference Type */}
+              <Controller
+                name="preference_type"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>
+                      Preference Type <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select preference type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="diet">Diet (e.g., Vegetarian, Vegan)</SelectItem>
+                        <SelectItem value="cuisine">
+                          Cuisine (e.g., Mediterranean, Asian)
+                        </SelectItem>
+                        <SelectItem value="ingredient">
+                          Ingredient (e.g., Organic, Gluten-free)
+                        </SelectItem>
+                        <SelectItem value="preparation">
+                          Preparation (e.g., Raw, Grilled)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              {/* Preference Name */}
+              <Controller
+                name="preference_name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>
+                      Preference Name <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="e.g., Vegetarian, Gluten-free, Low-sodium"
+                    />
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              {/* Reason */}
+              <Controller
+                name="reason"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Reason</FieldLabel>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="e.g., Health, Religious, Environmental"
+                    />
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              {/* Notes */}
+              <Controller
+                name="notes"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Notes</FieldLabel>
+                    <textarea
+                      {...field}
+                      rows={3}
+                      placeholder="Additional information about this preference"
+                      className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    />
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+
+              {/* Is Strict */}
+              <Controller
+                name="is_strict"
+                control={form.control}
+                render={({ field }) => (
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="is_strict"
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      className="size-4 rounded border-gray-300 text-green-500 focus:ring-0 focus:ring-offset-0"
+                    />
+                    <label htmlFor="is_strict" className="text-sm font-medium">
+                      This is a strict requirement
+                    </label>
+                  </div>
+                )}
+              />
+            </FieldGroup>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsDialogOpen(false)}
+                disabled={form.formState.isSubmitting}
               >
-                <option value="diet">Diet (e.g., Vegetarian, Vegan)</option>
-                <option value="cuisine">Cuisine (e.g., Mediterranean, Asian)</option>
-                <option value="ingredient">Ingredient (e.g., Organic, Gluten-free)</option>
-                <option value="preparation">Preparation (e.g., Raw, Grilled)</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="preference_name" className="text-sm font-medium">
-                Preference Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="preference_name"
-                type="text"
-                placeholder="e.g., Vegetarian, Gluten-free, Low-sodium"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={preferenceName}
-                onChange={(e) => setPreferenceName(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="reason" className="text-sm font-medium">
-                Reason
-              </label>
-              <input
-                id="reason"
-                type="text"
-                placeholder="e.g., Health, Religious, Environmental"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="notes" className="text-sm font-medium">
-                Notes
-              </label>
-              <textarea
-                id="notes"
-                rows={3}
-                placeholder="Additional information about this preference"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                id="is_strict"
-                type="checkbox"
-                className="size-4 rounded border-gray-300 text-green-500 focus:ring-2 focus:ring-green-500/20"
-                checked={isStrict}
-                onChange={(e) => setIsStrict(e.target.checked)}
-              />
-              <label htmlFor="is_strict" className="text-sm font-medium">
-                This is a strict requirement
-              </label>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsDialogOpen(false)} disabled={isLoading}>
-              Cancel
-            </Button>
-            <Button
-              className="bg-green-500 hover:bg-green-600"
-              onClick={handleAddPreference}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Adding...' : 'Add Preference'}
-            </Button>
-          </DialogFooter>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-500 hover:bg-green-600"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? 'Adding...' : 'Add Preference'}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

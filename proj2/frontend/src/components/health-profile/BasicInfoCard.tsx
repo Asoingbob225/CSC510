@@ -1,5 +1,17 @@
 import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Field, FieldGroup, FieldError, FieldLabel } from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -21,6 +33,15 @@ const activityLevelLabels: Record<string, string> = {
   very_active: 'Very active',
 };
 
+// Form schema
+const basicInfoSchema = z.object({
+  height_cm: z.string().optional(),
+  weight_kg: z.string().optional(),
+  activity_level: z.string().optional(),
+});
+
+type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
+
 interface BasicInfoCardProps {
   healthProfile: HealthProfile | null;
   onUpdate: (updatedProfile: HealthProfile) => void;
@@ -28,13 +49,16 @@ interface BasicInfoCardProps {
 
 export function BasicInfoCard({ healthProfile, onUpdate }: BasicInfoCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Form state
-  const [height, setHeight] = useState<string>('');
-  const [weight, setWeight] = useState<string>('');
-  const [activityLevel, setActivityLevel] = useState<string>('');
+  const form = useForm<BasicInfoFormData>({
+    resolver: zodResolver(basicInfoSchema),
+    defaultValues: {
+      height_cm: healthProfile?.height_cm?.toString() || '',
+      weight_kg: healthProfile?.weight_kg?.toString() || '',
+      activity_level: healthProfile?.activity_level || '',
+    },
+  });
 
   // Calculate BMI
   const calculateBMI = () => {
@@ -48,17 +72,18 @@ export function BasicInfoCard({ healthProfile, onUpdate }: BasicInfoCardProps) {
 
   // Open dialog and populate form
   const handleOpenDialog = () => {
-    setHeight(healthProfile?.height_cm?.toString() || '');
-    setWeight(healthProfile?.weight_kg?.toString() || '');
-    setActivityLevel(healthProfile?.activity_level || '');
+    form.reset({
+      height_cm: healthProfile?.height_cm?.toString() || '',
+      weight_kg: healthProfile?.weight_kg?.toString() || '',
+      activity_level: healthProfile?.activity_level || '',
+    });
     setError(null);
     setIsDialogOpen(true);
   };
 
   // Save changes
-  const handleSave = async () => {
+  const onSubmit = async (formData: BasicInfoFormData) => {
     try {
-      setIsLoading(true);
       setError(null);
 
       const data: {
@@ -67,9 +92,15 @@ export function BasicInfoCard({ healthProfile, onUpdate }: BasicInfoCardProps) {
         activity_level?: ActivityLevel;
       } = {};
 
-      if (height) data.height_cm = parseFloat(height);
-      if (weight) data.weight_kg = parseFloat(weight);
-      if (activityLevel) data.activity_level = activityLevel as ActivityLevel;
+      if (formData.height_cm) {
+        const height = parseFloat(formData.height_cm);
+        if (!isNaN(height) && height > 0) data.height_cm = height;
+      }
+      if (formData.weight_kg) {
+        const weight = parseFloat(formData.weight_kg);
+        if (!isNaN(weight) && weight > 0) data.weight_kg = weight;
+      }
+      if (formData.activity_level) data.activity_level = formData.activity_level as ActivityLevel;
 
       let response;
       if (healthProfile) {
@@ -85,8 +116,6 @@ export function BasicInfoCard({ healthProfile, onUpdate }: BasicInfoCardProps) {
     } catch (err) {
       console.error('Error saving basic info:', err);
       setError('Failed to save basic information. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -146,71 +175,92 @@ export function BasicInfoCard({ healthProfile, onUpdate }: BasicInfoCardProps) {
             <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
           )}
 
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="height" className="text-sm font-medium">
-                  Height (cm)
-                </label>
-                <input
-                  id="height"
-                  type="number"
-                  placeholder="170"
-                  min="0"
-                  step="0.1"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                  value={height}
-                  onChange={(e) => setHeight(e.target.value)}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FieldGroup>
+              <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  name="height_cm"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel>Height (cm)</FieldLabel>
+                      <Input
+                        type="number"
+                        placeholder="170"
+                        min="0"
+                        step="0.1"
+                        {...field}
+                        value={field.value || ''}
+                        aria-invalid={fieldState.invalid}
+                      />
+                      <FieldError>{fieldState.error?.message}</FieldError>
+                    </Field>
+                  )}
                 />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="weight" className="text-sm font-medium">
-                  Weight (kg)
-                </label>
-                <input
-                  id="weight"
-                  type="number"
-                  placeholder="70"
-                  min="0"
-                  step="0.1"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="activity" className="text-sm font-medium">
-                Activity Level
-              </label>
-              <select
-                id="activity"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none"
-                value={activityLevel}
-                onChange={(e) => setActivityLevel(e.target.value)}
-              >
-                <option value="">Select activity level</option>
-                <option value="sedentary">Sedentary</option>
-                <option value="light">Light activity</option>
-                <option value="moderate">Moderate activity</option>
-                <option value="active">Active</option>
-                <option value="very_active">Very active</option>
-              </select>
-            </div>
-          </div>
 
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsDialogOpen(false)} disabled={isLoading}>
-              Cancel
-            </Button>
-            <Button
-              className="bg-green-500 hover:bg-green-600"
-              onClick={handleSave}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </DialogFooter>
+                <Controller
+                  name="weight_kg"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel>Weight (kg)</FieldLabel>
+                      <Input
+                        type="number"
+                        placeholder="70"
+                        min="0"
+                        step="0.1"
+                        {...field}
+                        value={field.value || ''}
+                        aria-invalid={fieldState.invalid}
+                      />
+                      <FieldError>{fieldState.error?.message}</FieldError>
+                    </Field>
+                  )}
+                />
+              </div>
+
+              <Controller
+                name="activity_level"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Activity Level</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select activity level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sedentary">Sedentary</SelectItem>
+                        <SelectItem value="light">Light activity</SelectItem>
+                        <SelectItem value="moderate">Moderate activity</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="very_active">Very active</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                )}
+              />
+            </FieldGroup>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsDialogOpen(false)}
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-500 hover:bg-green-600"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>
