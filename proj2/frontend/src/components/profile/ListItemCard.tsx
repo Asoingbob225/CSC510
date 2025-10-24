@@ -24,7 +24,7 @@ export function ListItemCard({
   if (variant === 'compact') {
     return (
       <div
-        className={`flex items-center justify-between rounded-2xl ${bgColor} px-5 py-4 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] ${onClick ? 'cursor-pointer' : ''}`}
+        className={`flex items-center justify-between rounded-2xl ${bgColor} px-5 py-4 transition-all duration-300 hover:shadow-md ${onClick ? 'cursor-pointer' : ''}`}
         onClick={onClick}
       >
         <div className="flex flex-1 items-center gap-3">

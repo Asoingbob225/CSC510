@@ -124,7 +124,7 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
 
   return (
     <>
-      <InfoCard icon={Utensils} title="Dietary Preferences" onEdit={handleOpenDialog}>
+      <InfoCard icon={Utensils} title="Dietary Preferences">
         {healthProfile?.dietary_preferences && healthProfile.dietary_preferences.length > 0 ? (
           <div className="space-y-3">
             {healthProfile.dietary_preferences.map((pref) => {
@@ -154,7 +154,7 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
               }
 
               return (
-                <div key={pref.id} className="group relative">
+                <div key={pref.id} className="relative">
                   <ListItemCard
                     title={pref.preference_name}
                     badges={badges}
@@ -162,21 +162,29 @@ export function DietaryPreferencesCard({ healthProfile, onUpdate }: DietaryPrefe
                     notes={pref.notes}
                     variant="compact"
                   />
-                  <button
-                    onClick={() => handleDeletePreference(pref.id)}
-                    className="absolute top-2 right-2 rounded-full p-1 text-red-600 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-100"
-                    title="Delete preference"
-                  >
-                    <X className="size-4" />
-                  </button>
                 </div>
               );
             })}
+
+            {/* Add new item button */}
+            <button
+              onClick={handleOpenDialog}
+              className="text flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-green-300 bg-green-50/50 py-2 text-green-600 transition-colors hover:border-green-400 hover:bg-green-50"
+            >
+              <span className="font-medium">Add Preference</span>
+            </button>
           </div>
         ) : (
-          <div className="rounded-2xl bg-gray-50 p-8 text-center">
-            <p className="text-gray-500">No dietary preferences yet</p>
-          </div>
+          <button
+            onClick={handleOpenDialog}
+            className="w-full rounded-2xl border-2 border-dashed border-green-300 bg-green-50/50 p-8 text-center transition-colors hover:border-green-400 hover:bg-green-50"
+          >
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-3xl text-green-400">+</span>
+              <p className="font-medium text-green-600">Add your first preference</p>
+              <p className="text-sm text-gray-500">Click to get started</p>
+            </div>
+          </button>
         )}
       </InfoCard>
 

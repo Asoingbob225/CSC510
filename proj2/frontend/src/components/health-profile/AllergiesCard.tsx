@@ -61,6 +61,7 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
 
   const form = useForm<AllergyFormData>({
     resolver: zodResolver(allergySchema),
@@ -77,6 +78,11 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
   // Helper function to get allergen info
   const getAllergenInfo = (allergenId: string) => {
     return allergens.find((a) => a.id === allergenId);
+  };
+
+  // Toggle delete mode
+  const handleToggleDeleteMode = () => {
+    setIsDeleteMode(!isDeleteMode);
   };
 
   // Open dialog and reset form
@@ -148,7 +154,7 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
         title="Allergies"
         iconBgColor="bg-red-100"
         iconColor="text-red-600"
-        onEdit={handleOpenDialog}
+        onEdit={handleToggleDeleteMode}
       >
         {healthProfile?.allergies && healthProfile.allergies.length > 0 ? (
           <div className="space-y-3">
@@ -192,7 +198,7 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
               }
 
               return (
-                <div key={allergy.id} className="group relative">
+                <div key={allergy.id} className="relative">
                   <ListItemCard
                     title={allergenInfo?.name || 'Unknown allergen'}
                     badges={badges}
@@ -201,21 +207,39 @@ export function AllergiesCard({ healthProfile, allergens, onUpdate }: AllergiesC
                     bgColor="bg-red-50"
                     variant="detailed"
                   />
-                  <button
-                    onClick={() => handleDeleteAllergy(allergy.id)}
-                    className="absolute top-2 right-2 rounded-full p-1 text-red-600 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-100"
-                    title="Delete allergy"
-                  >
-                    <X className="size-4" />
-                  </button>
+                  {isDeleteMode && (
+                    <button
+                      onClick={() => handleDeleteAllergy(allergy.id)}
+                      className="absolute top-2 right-2 rounded-full p-1 text-red-600 transition-colors hover:bg-red-100"
+                      title="Delete allergy"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  )}
                 </div>
               );
             })}
+
+            {/* Add new item button */}
+            <button
+              onClick={handleOpenDialog}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-red-300 bg-red-50/50 p-6 text-red-600 transition-colors hover:border-red-400 hover:bg-red-50"
+            >
+              <span className="text-2xl">+</span>
+              <span className="font-medium">Add Allergy</span>
+            </button>
           </div>
         ) : (
-          <div className="rounded-2xl bg-gray-50 p-8 text-center">
-            <p className="text-gray-500">No allergies yet</p>
-          </div>
+          <button
+            onClick={handleOpenDialog}
+            className="w-full rounded-2xl border-2 border-dashed border-red-300 bg-red-50/50 p-8 text-center transition-colors hover:border-red-400 hover:bg-red-50"
+          >
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-3xl text-red-400">+</span>
+              <p className="font-medium text-red-600">Add your first allergy</p>
+              <p className="text-sm text-gray-500">Click to get started</p>
+            </div>
+          </button>
         )}
       </InfoCard>
 
