@@ -370,7 +370,10 @@ describe('AllergiesCard', () => {
     );
 
     expect(screen.getByText('Anaphylaxis')).toBeInTheDocument();
-    expect(screen.getByText(/5\/14\/2022/i)).toBeInTheDocument();
+    // Date formatting may vary by timezone, so we just check for the presence
+    // of a date field rather than the exact format
+    const expectedDate = new Date('2022-05-15').toLocaleDateString('en-US');
+    expect(screen.getByText(expectedDate)).toBeInTheDocument();
   });
 
   it('closes dialog when cancel is clicked', async () => {
