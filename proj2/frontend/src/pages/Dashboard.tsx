@@ -1,28 +1,50 @@
 import { useNavigate } from 'react-router';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { DashboardNavbar } from '@/components/DashboardNavbar';
+import apiClient, { getAuthToken } from '@/lib/api';
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [isVerifying, setIsVerifying] = useState(true);
 
-  const handleLogout = () => {
-    // TODO: Implement logout logic
-    navigate('/');
-  };
+  // Verify if token is valid
+  useEffect(() => {
+    const verifyToken = async () => {
+      const token = getAuthToken();
+
+      // If no token, redirect to home page
+      if (!token) {
+        navigate('/404-not-found');
+        return;
+      }
+
+      try {
+        // Call user endpoint to check if token is valid
+        await apiClient.get('/users/me');
+        setIsVerifying(false);
+      } catch {
+        // Token is invalid, clear and redirect
+        navigate('/404-not-found');
+      }
+    };
+
+    verifyToken();
+  }, [navigate]);
+
+  // Show loading state while verifying
+  if (isVerifying) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="mb-4 text-lg text-gray-600">Verifying...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-gray-900">Eatsential Dashboard</h1>
-          <Button
-            onClick={handleLogout}
-            className="cursor-pointer bg-gray-600 text-white shadow-md hover:bg-gray-700"
-          >
-            Logout
-          </Button>
-        </div>
-      </header>
+      <DashboardNavbar />
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -34,6 +56,16 @@ function Dashboard() {
 
           {/* Placeholder Cards */}
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <button
+              onClick={() => navigate('/health-profile')}
+              className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 text-left shadow-sm transition-colors hover:bg-gray-50"
+            >
+              <h3 className="mb-2 text-lg font-medium text-gray-900">Health Profile</h3>
+              <p className="text-sm text-gray-600">
+                Manage your health information, allergies, and dietary preferences
+              </p>
+            </button>
+
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
               <h3 className="mb-2 text-lg font-medium text-gray-900">My Recipes</h3>
               <p className="text-sm text-gray-600">Your saved recipes will appear here</p>

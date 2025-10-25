@@ -4,6 +4,7 @@
 [![Super-Linter](https://github.com/Asoingbob225/CSC510/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
 [![Formatters](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml)
 [![codecov](https://codecov.io/gh/Asoingbob225/CSC510/branch/main/graph/badge.svg)](https://codecov.io/gh/Asoingbob225/CSC510)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.17429004)
 [![Project Status: WIP](https://img.shields.io/badge/status-wip-yellow.svg)](#)
 
 **YOUR PLATE, YOUR RULES. PRECISION NUTRITION FOR BODY AND MIND.**
@@ -93,3 +94,36 @@ This project is brought to you by Group 12.
 ## License
 
 This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0) - see the [LICENSE](LICENSE) file for details.
+
+## 📚 Citation and DOI
+
+This project is registered with Zenodo for academic citation and archival purposes. If you use this project in your research or work, please cite it using the DOI badge above.
+
+### How to Complete Zenodo Registration
+
+⚠️ **Note:** The DOI badge currently shows a placeholder (`XXXXXXX`). To obtain an actual DOI, the repository owner needs to complete the following steps:
+
+1. **Connect GitHub to Zenodo:**
+   - Visit [Zenodo](https://zenodo.org/) and log in with your GitHub account
+   - Go to your Zenodo account settings and navigate to the GitHub section
+   - Find the `Asoingbob225/CSC510` repository and flip the toggle to enable it
+
+2. **Create a Release:**
+   - Go to the GitHub repository's releases page
+   - Click "Create a new release"
+   - Tag the release appropriately (e.g., `v1.0.0`, `proj2-v1.0.0`)
+   - Provide a release title and description
+   - Publish the release
+
+3. **Get Your DOI:**
+   - After publishing the release, Zenodo will automatically create a DOI
+   - Visit your Zenodo uploads page to find the new DOI
+   - The DOI will be in the format: `10.5281/zenodo.XXXXXXX` where `XXXXXXX` is your unique identifier
+
+4. **Update the Badge:**
+   - Replace `XXXXXXX` in the DOI badge at the top of this README with your actual Zenodo DOI number
+   - The badge URLs should be updated to:
+     - Badge image: `https://zenodo.org/badge/DOI/10.5281/zenodo.YOUR_DOI.svg`
+     - Badge link: `https://doi.org/10.5281/zenodo.YOUR_DOI`
+
+The `.zenodo.json` file in this directory contains metadata that Zenodo will use to properly describe your project, including title, description, authors, license, and keywords.

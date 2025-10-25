@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from dotenv import load_dotenv
 
-from src.eatsential.database import get_database_path
+from ..src.eatsential.db.database import get_database_path
 
 
 def main():

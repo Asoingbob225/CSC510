@@ -4,7 +4,6 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
   // 1. Global ignore configuration
@@ -59,7 +58,4 @@ export default [
       },
     },
   },
-
-  // 4. Prettier configuration
-  eslintConfigPrettier,
 ];

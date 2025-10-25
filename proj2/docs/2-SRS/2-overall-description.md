@@ -420,6 +420,15 @@ Backend:
   Framework: FastAPI 0.115
   ORM: SQLAlchemy 2.0
   Testing: Pytest, pytest-asyncio
+  Structure:
+    - routers/: API endpoints
+    - services/: Business logic
+    - models/: Database models
+    - schemas/: Pydantic schemas
+    - db/: Database configuration
+    - core/: Core configurations and dependencies
+    - utils/: Utility functions
+    - middleware/: Request processing
 
 Database:
   Development: SQLite

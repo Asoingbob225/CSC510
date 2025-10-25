@@ -419,10 +419,10 @@ graph TB
         UserService[User Service]
         EmailService[Email Service]
         Crypto[Crypto Service]
+        UserRepo[User Repository]
     end
 
     subgraph "Data Layer"
-        UserRepo[User Repository]
         Database[(Database)]
     end
 
@@ -433,7 +433,6 @@ graph TB
     UserService -->|Check Exists| UserRepo
     UserRepo --> Database
     UserService -->|Hash Password| Crypto
-    UserService -->|Create User| UserRepo
     UserService -->|Send Email| EmailService
     UserService -->|Response| AuthRouter
     AuthRouter -->|Success| SignupPage

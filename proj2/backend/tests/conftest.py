@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from src.eatsential.database import Base, get_db
+from src.eatsential.db.database import Base, get_db
 from src.eatsential.index import app
 
 # Create in-memory SQLite database for testing
@@ -58,16 +58,16 @@ def client(db):
 
 
 @pytest.fixture(scope="function")
-def test_smtp_server(monkeypatch):
+def mock_send_email(monkeypatch):
     """Mock SMTP server for email testing"""
     sent_emails = []
 
-    async def mock_send_email(*args, **kwargs):
+    async def mock_send(*args, **kwargs):
         sent_emails.append((args, kwargs))
         return True
 
     monkeypatch.setattr(
-        "src.eatsential.emailer.send_verification_email", mock_send_email
+        "src.eatsential.services.user_service.send_verification_email", mock_send
     )
 
     return sent_emails

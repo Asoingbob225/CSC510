@@ -146,11 +146,16 @@ proj2/
 ├── backend/                 # FastAPI application
 │   ├── src/
 │   │   └── eatsential/
-│   │       ├── routers/    # API endpoints
+│   │       ├── __init__.py
+│   │       ├── index.py
+│   │       ├── db/         # Database configuration
+│   │       ├── core/       # Core configurations and dependencies
+│   │       ├── models/     # Database models
+│   │       ├── schemas/    # Pydantic schemas
 │   │       ├── services/   # Business logic
-│   │       ├── models.py   # Database models
-│   │       ├── schemas.py  # Pydantic schemas
-│   │       └── database.py # Database config
+│   │       ├── utils/      # Utility functions
+│   │       ├── middleware/ # Request processing
+│   │       └── routers/    # API endpoints
 │   ├── alembic/            # Database migrations
 │   └── tests/              # Test files
 │
@@ -185,7 +190,9 @@ services/
 ├── __init__.py
 ├── user_service.py         # User operations
 ├── health_service.py       # Health profile operations
-└── recommendation_service.py # AI recommendations
+├── recommendation_service.py # AI recommendations
+├── emailer.py              # Email service abstraction
+└── emailer_ses.py          # AWS SES implementation
 
 # Router structure
 routers/
@@ -193,6 +200,20 @@ routers/
 ├── auth.py                # /api/auth/*
 ├── users.py               # /api/users/*
 └── health.py              # /api/health/*
+
+# Core structure
+core/
+├── __init__.py
+├── config.py              # Application configurations
+└── dependencies.py        # Dependency injection
+
+# Data structure
+db/
+└── database.py            # Database connection and session
+
+# Utility structure
+utils/
+└── auth_util.py           # Authentication utilities
 ```
 
 ---
@@ -525,6 +546,8 @@ class HealthProfile(Base):
 
 ```python
 # Use eager loading for related data
+from eatsential.models.models import User, HealthProfile
+
 def get_user_with_profile(db: Session, user_id: str) -> User:
     return db.query(User)\
         .options(joinedload(User.health_profile))\
@@ -532,6 +555,8 @@ def get_user_with_profile(db: Session, user_id: str) -> User:
         .first()
 
 # Use bulk operations
+from eatsential.models.health import UserAllergy
+
 def create_user_allergies(db: Session, user_id: str, allergies: List[str]):
     objects = [
         UserAllergy(user_id=user_id, allergy_name=allergy)
@@ -552,9 +577,7 @@ def create_user_allergies(db: Session, user_id: str, allergies: List[str]):
 
 ```python
 # Password hashing
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from eatsential.utils.auth_util import pwd_context
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -563,6 +586,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 # JWT tokens (future implementation)
+from eatsential.core.config import SECRET_KEY, ALGORITHM
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
@@ -574,6 +599,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 ```python
 # Backend: Pydantic validation
+from eatsential.schemas.health import AllergyInput
+from eatsential.services.health_service import APPROVED_ALLERGENS
+
 class AllergyInput(BaseModel):
     name: str
     severity: Literal["MILD", "MODERATE", "SEVERE", "LIFE_THREATENING"]
@@ -621,6 +649,8 @@ async def add_security_headers(request: Request, call_next):
 
 ```python
 # Never expose sensitive data
+from eatsential.schemas.user import UserResponse
+
 class UserResponse(BaseModel):
     id: str
     username: str
@@ -630,6 +660,8 @@ class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 # Audit logging for sensitive operations
+from eatsential.models.audit import AuditLog
+
 async def log_health_data_access(user_id: str, accessed_by: str, operation: str):
     audit_log = AuditLog(
         user_id=user_id,
@@ -638,8 +670,7 @@ async def log_health_data_access(user_id: str, accessed_by: str, operation: str)
         timestamp=datetime.utcnow()
     )
     db.add(audit_log)
-    await db.commit()
-```
+    await db.commit()```
 
 ---
 
@@ -685,13 +716,16 @@ engine = create_engine(
 )
 
 # Caching (future implementation)
-from functools import lru_cache
+from eatsential.services.health_service import APPROVED_ALLERGENS
 
 @lru_cache(maxsize=100)
 def get_allergen_list() -> List[str]:
     return APPROVED_ALLERGENS
 
 # Async operations
+from eatsential.services.user_service import get_user_profile
+from eatsential.services.recommendation_service import generate_recommendations
+
 async def process_recommendations(user_id: str):
     # Run independent operations concurrently
     profile_task = get_user_profile(user_id)
@@ -736,6 +770,9 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 ```python
 # Python docstrings
+from eatsential.models.health import HealthProfile
+from eatsential.schemas.health import HealthProfileCreate
+
 def create_health_profile(
     db: Session,
     user_id: str,
@@ -848,7 +885,7 @@ uv run alembic revision --autogenerate -m "Resolve conflicts"
 export PYTHONPATH="${PYTHONPATH}:${PWD}/src"
 
 # Or use uv run which handles this
-uv run python -m pytest
+uv run python -m eatsential.index
 ```
 
 **Issue: Async context errors**

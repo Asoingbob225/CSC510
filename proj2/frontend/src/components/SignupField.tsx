@@ -69,9 +69,9 @@ function SignupField() {
         const result = await response.json();
         setSuccess(result.message || 'Registration successful! Please check your email.');
 
-        // Redirect to dashboard after 2 seconds
+        // Redirect to login after 2 seconds
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/login');
         }, 2000);
       } else {
         const errorData = await response.json();
@@ -171,11 +171,11 @@ function SignupField() {
 
           <Field orientation="horizontal">
             <Button
-              className="cursor-pointer bg-emerald-500 text-white shadow-md hover:bg-emerald-500/90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full cursor-pointer bg-emerald-500 text-white shadow-md hover:bg-emerald-500/90 disabled:cursor-not-allowed disabled:opacity-50"
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Creating Account...' : 'Create Account'}
+              Create Account
             </Button>
           </Field>
         </FieldSet>
