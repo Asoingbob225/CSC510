@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from ..db.database import get_db
 from ..models import UserDB
+from ..models.models import UserRole
 from ..utils.auth_util import verify_token
 
 # HTTP Bearer authentication scheme
@@ -55,3 +56,27 @@ async def get_current_user(
         )
 
     return user
+
+
+async def get_current_admin_user(
+    current_user: Annotated[UserDB, Depends(get_current_user)],
+) -> UserDB:
+    """Dependency to get current authenticated admin user
+
+    Args:
+        current_user: Current authenticated user from JWT token
+
+    Returns:
+        Current admin user object
+
+    Raises:
+        HTTPException: If user is not an admin
+
+    """
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required",
+        )
+
+    return current_user

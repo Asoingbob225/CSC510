@@ -10,6 +10,7 @@ from ..models.models import (
     ActivityLevel,
     AllergySeverity,
     PreferenceType,
+    UserRole,
 )
 
 
@@ -18,6 +19,7 @@ class UserBase(BaseModel):
 
     username: str
     email: str
+    role: str = UserRole.USER
 
 
 class UserCreate(BaseModel):
