@@ -7,6 +7,11 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import HealthProfileWizard from './pages/HealthProfileWizard';
 import HealthProfilePage from './pages/HealthProfile';
+import AdminRoute from './components/AdminRoute';
+import AdminLayout from './components/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement';
+import AdminSettings from './pages/admin/AdminSettings';
 
 function App() {
   return (
@@ -19,6 +24,21 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/health-profile-wizard" element={<HealthProfileWizard />} />
         <Route path="/health-profile" element={<HealthProfilePage />} />
+
+        {/* Admin routes - protected */}
+        <Route
+          path="/system-manage"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

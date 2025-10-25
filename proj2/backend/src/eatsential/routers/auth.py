@@ -59,6 +59,7 @@ async def register_user(
             id=user.id,
             username=user.username,
             email=user.email,
+            role=user.role,
             message="Success! Please check your email for verification instructions.",
         )
     except HTTPException:
@@ -105,6 +106,7 @@ async def login_user(
             id=user.id,
             username=user.username,
             email=user.email,
+            role=user.role,
             access_token=access_token,
             token_type="bearer",
             message="Login successful",

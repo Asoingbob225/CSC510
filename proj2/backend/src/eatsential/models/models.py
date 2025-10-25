@@ -23,6 +23,13 @@ class AccountStatus(str, Enum):
     SUSPENDED = "suspended"
 
 
+class UserRole(str, Enum):
+    """User role for access control"""
+
+    USER = "user"
+    ADMIN = "admin"
+
+
 class UserDB(Base):
     """SQLAlchemy model for user database table"""
 
@@ -47,6 +54,9 @@ class UserDB(Base):
     verification_token: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     verification_token_expires: Mapped[Optional[datetime]] = mapped_column(
         DateTime, nullable=True
+    )
+    role: Mapped[str] = mapped_column(
+        String, nullable=False, default=UserRole.USER, index=True
     )
 
     # Relationships

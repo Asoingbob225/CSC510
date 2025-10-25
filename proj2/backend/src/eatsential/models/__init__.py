@@ -10,6 +10,7 @@ from .models import (
     PreferenceType,
     UserAllergyDB,
     UserDB,
+    UserRole,
     utcnow,
 )
 
@@ -23,5 +24,6 @@ __all__ = [
     "PreferenceType",
     "UserAllergyDB",
     "UserDB",
+    "UserRole",
     "utcnow",
 ]

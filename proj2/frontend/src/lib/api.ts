@@ -2,6 +2,7 @@ import axios from 'axios';
 
 // Token management
 export const TOKEN_KEY = 'eatsential_auth_token';
+export const USER_ROLE_KEY = 'eatsential_user_role';
 
 export const setAuthToken = (token: string) => {
   localStorage.setItem(TOKEN_KEY, token);
@@ -13,6 +14,19 @@ export const getAuthToken = (): string | null => {
 
 export const clearAuthToken = () => {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_ROLE_KEY);
+};
+
+export const setUserRole = (role: string) => {
+  localStorage.setItem(USER_ROLE_KEY, role);
+};
+
+export const getUserRole = (): string | null => {
+  return localStorage.getItem(USER_ROLE_KEY);
+};
+
+export const isAdmin = (): boolean => {
+  return getUserRole() === 'admin';
 };
 
 // Create axios instance
@@ -51,6 +65,27 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// User and Auth Types
+export type UserRole = 'user' | 'admin';
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  role: UserRole;
+}
+
+export interface LoginResponse extends User {
+  access_token: string;
+  token_type: string;
+  message: string;
+  has_completed_wizard: boolean;
+}
+
+export interface UserResponse extends User {
+  message: string;
+}
 
 // Health Profile API Types
 export type AllergySeverity = 'mild' | 'moderate' | 'severe' | 'life_threatening';
@@ -285,5 +320,11 @@ export const addDietaryPreference = async (
 // Get all allergens from database
 export const getAllergens = async (): Promise<AllergenResponse[]> => {
   const response = await apiClient.get('/health/allergens');
+  return response.data;
+};
+
+// Auth API functions
+export const getCurrentUser = async (): Promise<UserResponse> => {
+  const response = await apiClient.get('/users/me');
   return response.data;
 };
