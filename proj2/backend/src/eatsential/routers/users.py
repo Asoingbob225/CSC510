@@ -37,6 +37,7 @@ async def get_current_user_profile(current_user: CurrentUserDep):
         id=current_user.id,
         username=current_user.username,
         email=current_user.email,
+        role=current_user.role,
         message="Profile retrieved successfully",
     )
 
