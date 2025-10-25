@@ -15,7 +15,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Alert, AlertTitle } from './ui/alert';
-import { setAuthToken } from '@/lib/api';
+import { setAuthToken, setUserRole } from '@/lib/api';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -52,13 +52,25 @@ function LoginField() {
       if (response.ok) {
         const result = await response.json();
 
-        // Save JWT token
+        // Save JWT token and user role
         if (result.access_token) {
           setAuthToken(result.access_token);
+        }
+        if (result.role) {
+          setUserRole(result.role);
         }
 
         setSuccess(result.message || 'Login successful!');
 
+        // Admin users go directly to admin panel
+        if (result.role === 'admin') {
+          setTimeout(() => {
+            navigate('/system-manage');
+          }, 1000);
+          return;
+        }
+
+        // Regular users: check if they completed the wizard
         if (result.has_completed_wizard) {
           // Redirect to dashboard after 1 second
           setTimeout(() => {
@@ -67,7 +79,7 @@ function LoginField() {
           return;
         }
 
-        // Redirect to health profile wizard after 1 second
+        // New users without health profile go to wizard
         setTimeout(() => {
           navigate('/health-profile-wizard');
         }, 1000);
