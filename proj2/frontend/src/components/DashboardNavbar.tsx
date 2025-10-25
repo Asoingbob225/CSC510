@@ -14,7 +14,7 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
 import apiClient, { clearAuthToken } from '@/lib/api';
-import { User, LogOut, Heart } from 'lucide-react';
+import { User, LogOut, Heart, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -22,6 +22,7 @@ interface UserInfo {
   email: string;
   first_name?: string;
   last_name?: string;
+  role?: string;
 }
 
 export function DashboardNavbar() {
@@ -49,6 +50,12 @@ export function DashboardNavbar() {
   const handleNavigateToHealthProfile = () => {
     navigate('/health-profile');
   };
+
+  const handleNavigateToAdminDashboard = () => {
+    navigate('/system-manage');
+  };
+
+  const isAdmin = userInfo?.role === 'admin';
 
   const getUserDisplayName = () => {
     if (!userInfo) return 'User';
@@ -127,6 +134,18 @@ export function DashboardNavbar() {
                 <Heart className="mr-2 h-4 w-4" />
                 <span>Health Profile</span>
               </DropdownMenuItem>
+              {isAdmin && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleNavigateToAdminDashboard}
+                    className="cursor-pointer"
+                  >
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Dashboard</span>
+                  </DropdownMenuItem>
+                </>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
                 <LogOut className="mr-2 h-4 w-4" />
