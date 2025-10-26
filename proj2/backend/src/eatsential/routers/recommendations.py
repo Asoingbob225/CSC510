@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
-from ..models.models import UserAllergyDB, UserDB
+from ..models.models import UserDB
 from ..models.restaurant import MenuItem, Restaurant
 from ..schemas.schemas import (
     RecommendationItem,
@@ -45,12 +45,6 @@ def recommend_meal(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
-
-    # Get user's allergies for filtering
-    user_allergies = (
-        db.query(UserAllergyDB).filter(UserAllergyDB.health_profile_id == user.id).all()
-    )
-    allergen_ids = {allergy.allergen_id for allergy in user_allergies}
 
     # Get all active menu items from active restaurants
     menu_items = db.query(MenuItem).join(Restaurant).filter(Restaurant.is_active).all()
