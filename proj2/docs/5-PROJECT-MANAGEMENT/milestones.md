@@ -186,7 +186,7 @@ gantt
 
 ---
 
-### � Milestone 4: Basic Recommendation Engine (v1)
+### � Milestone 4: v0.4 - Basic Recommendation Engine (v1)
 **Status**: ⏳ Planned  
 **Theme**: Validation - Prove dual-dimension concept with simple algorithm
 
