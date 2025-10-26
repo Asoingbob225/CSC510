@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from ..models.models import (
     ActivityLevel,
     AllergySeverity,
+    MealType,
     PreferenceType,
     UserRole,
 )
@@ -294,3 +295,114 @@ class UserProfileUpdate(BaseModel):
     role: Optional[UserRole] = None
     account_status: Optional[str] = None
     email_verified: Optional[bool] = None
+
+
+# --- Meal Logging Schemas ---
+
+
+class MealFoodItemCreate(BaseModel):
+    """Schema for creating a food item in a meal"""
+
+    food_name: Annotated[str, Field(min_length=1, max_length=200)]
+    portion_size: Annotated[float, Field(gt=0)]
+    portion_unit: Annotated[str, Field(min_length=1, max_length=20)]
+    calories: Optional[float] = Field(None, ge=0)
+    protein_g: Optional[float] = Field(None, ge=0)
+    carbs_g: Optional[float] = Field(None, ge=0)
+    fat_g: Optional[float] = Field(None, ge=0)
+
+
+class MealFoodItemResponse(BaseModel):
+    """Schema for food item response"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    food_name: str
+    portion_size: float
+    portion_unit: str
+    calories: Optional[float] = None
+    protein_g: Optional[float] = None
+    carbs_g: Optional[float] = None
+    fat_g: Optional[float] = None
+    created_at: datetime
+
+
+class MealCreate(BaseModel):
+    """Schema for creating a meal log"""
+
+    meal_type: MealType
+    meal_time: datetime
+    notes: Optional[str] = Field(None, max_length=1000)
+    photo_url: Optional[str] = Field(None, max_length=500)
+    food_items: list[MealFoodItemCreate] = Field(min_length=1)
+
+    @field_validator("meal_time")
+    @classmethod
+    def validate_meal_time(cls, value: datetime) -> datetime:
+        """Validate meal time is within last 30 days"""
+        now = datetime.now()
+        days_diff = (now - value).days
+
+        if days_diff > 30:
+            raise ValueError("meal_time must be within the last 30 days")
+        if value > now:
+            raise ValueError("meal_time cannot be in the future")
+
+        return value
+
+
+class MealUpdate(BaseModel):
+    """Schema for updating a meal log"""
+
+    meal_type: Optional[MealType] = None
+    meal_time: Optional[datetime] = None
+    notes: Optional[str] = Field(None, max_length=1000)
+    photo_url: Optional[str] = Field(None, max_length=500)
+    food_items: Optional[list[MealFoodItemCreate]] = Field(None, min_length=1)
+
+    @field_validator("meal_time")
+    @classmethod
+    def validate_meal_time(cls, value: Optional[datetime]) -> Optional[datetime]:
+        """Validate meal time is within last 30 days"""
+        if value is None:
+            return value
+
+        now = datetime.now()
+        days_diff = (now - value).days
+
+        if days_diff > 30:
+            raise ValueError("meal_time must be within the last 30 days")
+        if value > now:
+            raise ValueError("meal_time cannot be in the future")
+
+        return value
+
+
+class MealResponse(BaseModel):
+    """Schema for meal log response"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    meal_type: str
+    meal_time: datetime
+    notes: Optional[str] = None
+    photo_url: Optional[str] = None
+    total_calories: Optional[float] = None
+    total_protein_g: Optional[float] = None
+    total_carbs_g: Optional[float] = None
+    total_fat_g: Optional[float] = None
+    food_items: list[MealFoodItemResponse] = []
+    created_at: datetime
+    updated_at: datetime
+
+
+class MealListResponse(BaseModel):
+    """Schema for paginated meal list response"""
+
+    meals: list[MealResponse]
+    total: int
+    page: int
+    page_size: int

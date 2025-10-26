@@ -225,3 +225,85 @@ class DietaryPreferenceDB(Base):
     health_profile: Mapped["HealthProfileDB"] = relationship(
         "HealthProfileDB", back_populates="dietary_preferences"
     )
+
+
+class MealType(str, Enum):
+    """Meal type enum"""
+
+    BREAKFAST = "breakfast"
+    LUNCH = "lunch"
+    DINNER = "dinner"
+    SNACK = "snack"
+
+
+class MealDB(Base):
+    """SQLAlchemy model for meal logs table"""
+
+    __tablename__ = "meals"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    # Meal Information
+    meal_type: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    meal_time: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    photo_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+
+    # Nutritional Summary (calculated from food items)
+    total_calories: Mapped[Optional[float]] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
+    total_protein_g: Mapped[Optional[float]] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
+    total_carbs_g: Mapped[Optional[float]] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )
+    total_fat_g: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
+
+    # Relationships
+    user: Mapped["UserDB"] = relationship("UserDB")
+    food_items: Mapped[list["MealFoodItemDB"]] = relationship(
+        "MealFoodItemDB", back_populates="meal", cascade="all, delete-orphan"
+    )
+
+
+class MealFoodItemDB(Base):
+    """SQLAlchemy model for food items in a meal"""
+
+    __tablename__ = "meal_food_items"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    meal_id: Mapped[str] = mapped_column(
+        String, ForeignKey("meals.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    # Food Information
+    food_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    portion_size: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    portion_unit: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Nutritional Information
+    calories: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
+    protein_g: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
+    carbs_g: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
+    fat_g: Mapped[Optional[float]] = mapped_column(Numeric(10, 2), nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False
+    )
+
+    # Relationships
+    meal: Mapped["MealDB"] = relationship("MealDB", back_populates="food_items")
