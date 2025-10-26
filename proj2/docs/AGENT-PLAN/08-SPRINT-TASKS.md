@@ -265,6 +265,85 @@ This document tracks development tasks across all milestones, organized by modul
 
 ---
 
+#### BE-03-001-A: Implement POST /api/meals (Assigned: lzdjohn)
+
+**Status**: 🟡 In Progress
+
+**Assignee**: @lzdjohn
+
+**Goal**: Deliver a minimal, production-ready POST endpoint to create a meal log. This task is intentionally scoped small so it can be completed without blocking others.
+
+**Acceptance Criteria**:
+- `POST /api/meals` accepts JSON payload with: `user_id`, `meal_type` (breakfast|lunch|dinner|snack), `items` (list of {food_id, portion}), and optional `timestamp` and `photo_url`.
+- Validates required fields and returns 201 with created meal object (id, timestamp, nutritional_summary).
+- Persists meal into database (basic model) and enqueues nutritional calculation job (can be a stubbed job queue for now).
+- Unit tests covering success case and at least two validation failures.
+
+**Implementation Notes / Tasks**:
+1. Add router method `create_meal` under `backend/src/eatsential/routers/meals.py`.
+2. Add minimal Pydantic schema for request/response under `backend/src/eatsential/schemas/meals.py`.
+3. Add DB model migration or simple model in `backend/src/eatsential/models.py` (compatible with current DB layer).
+4. Add a basic service `backend/src/eatsential/services/nutrition.py` with a stub `calculate_nutrition` that returns calories/macros (can be mocked in tests).
+5. Add tests under `backend/tests/test_meals.py` (pytest) for create success and validation errors.
+6. Ensure route is registered and protected (requires authenticated user) — if auth middleware not available, document in PR what auth hook to wire.
+
+**Estimated Size**: Small — aim to complete in one focused session (2-4 hours).
+
+**Notes**: I will not modify other people's branches or files unrelated to this task. All changes will be submitted via a feature branch following `feat/iss<issue-number>-short-description` naming.
+
+---
+
+## Suggested Starter Tasks for lzdjohn (AI Recommendation M4)
+
+Below are four small-to-moderate tasks from the M4 AI Recommendation milestone that are good to start with in sequence. They are ordered from easiest to slightly larger and are intentionally scoped so you can complete them one-by-one and open small PRs.
+
+1) BE-S2-004 / Issue #77 — Create Restaurant DB Schema & Seed Data (Assigned: @lzdjohn)
+
+	 - Status: 📝 To Do
+	 - Goal: Define `Restaurant` and `MenuItem` models and add a small seed script that inserts sample restaurants and menu items into the dev database.
+	 - Acceptance:
+		 - SQLAlchemy / ORM models added under `backend/src/eatsential/models/restaurant.py` (or compatible DB layer).
+		 - A seed script `backend/scripts/seed_restaurants.py` that inserts 5 restaurants with 3-5 menu items each.
+		 - Basic unit test ensuring seed script runs without errors (mock DB or use test DB).
+	 - Estimated time: 2–3 hours
+
+2) BE-S2-008 / Issue (Add explanation field) — Add `explanation` field to Recommendation API (Assigned: @lzdjohn)
+
+	 - Status: 📝 To Do
+	 - Goal: Extend the recommendation response schema to include a short human-readable `explanation` string (FR-071).
+	 - Acceptance:
+		 - API response schema updated (Pydantic / TypeScript types) to include `explanation`.
+		 - Back-end stub returns a placeholder explanation for now (e.g., "Based on your protein goal and allergy settings").
+		 - Unit test verifies `explanation` exists and is a non-empty string.
+	 - Estimated time: 1–2 hours
+
+3) BE-S2-005 / Issue #81 — Build Core Recommendation API (stub) (`POST /api/recommend/meal`) (Assigned: @lzdjohn)
+
+	 - Status: 📝 To Do
+	 - Goal: Implement a minimal, testable recommendation endpoint that accepts user context and returns a ranked list of recommended menu items (can use a naive scoring function initially).
+	 - Acceptance:
+		 - Endpoint `POST /api/recommend/meal` accepts `{user_id, constraints}` and returns list of `{menu_item_id, score, explanation}`.
+		 - Uses the seeded restaurant/menu data for lookups.
+		 - Unit tests for happy path and simple allergy filtering.
+	 - Estimated time: 3–5 hours
+
+4) FE-S2-007 / Issue — Add Feedback Buttons (Like/Dislike) to Recommendation UI (Assigned: @lzdjohn)
+
+	 - Status: 📝 To Do
+	 - Goal: Add simple like/dislike buttons to recommendation cards that POST feedback to `/api/recommend/feedback`.
+	 - Acceptance:
+		 - UI buttons added to recommendation card component (`frontend/src/components/RecommendationCard.tsx` or equivalent).
+		 - Button click sends a fetch POST to `/api/recommend/feedback` (backend stub can accept and return 200).
+		 - Basic component test or manual verification instructions included.
+	 - Estimated time: 1–2 hours
+
+Notes:
+- Work sequentially: start with 1 → 2 → 3 → 4. Each task is deliberately small so you can open focused PRs and get early reviews.
+- Naming for feature branches: `feat/iss77-restaurant-schema-lzdjohn`, `feat/issX-explanation-field-lzdjohn`, etc.
+- If you want, I can scaffold the code stubs for task 1 and 2 on this branch now (models + seed + API schema) and run quick local tests; confirm and I'll proceed.
+
+---
+
 #### BE-03-002: Goal Tracking API (v0.3)
 
 **Status**: ✅ Complete  
