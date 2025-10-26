@@ -533,6 +533,171 @@ class GoalProgressResponse(BaseModel):
     days_remaining: int
 
 
+# ============================================================================
+# Mental Wellness Schemas
+# ============================================================================
+
+
+class MoodLogCreate(BaseModel):
+    """Schema for creating a mood log"""
+
+    log_date: date
+    mood_score: int = Field(..., ge=1, le=10, description="Mood score from 1 to 10")
+    notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
+
+    @field_validator("log_date")
+    @classmethod
+    def validate_log_date(cls, v: date) -> date:
+        """Validate log date is within last 7 days"""
+        today = date.today()
+        days_diff = (today - v).days
+
+        if days_diff < 0:
+            raise ValueError("Cannot log mood for future dates")
+        if days_diff > 7:
+            raise ValueError("Cannot log mood older than 7 days")
+
+        return v
+
+
+class MoodLogUpdate(BaseModel):
+    """Schema for updating a mood log"""
+
+    mood_score: Optional[int] = Field(
+        None, ge=1, le=10, description="Mood score from 1 to 10"
+    )
+    notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
+
+
+class MoodLogResponse(BaseModel):
+    """Schema for mood log response"""
+
+    id: str
+    user_id: str
+    log_date: date
+    mood_score: int
+    notes: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class StressLogCreate(BaseModel):
+    """Schema for creating a stress log"""
+
+    log_date: date
+    stress_level: int = Field(..., ge=1, le=10, description="Stress level from 1 to 10")
+    triggers: Optional[str] = Field(
+        None, max_length=1000, description="Optional stress triggers"
+    )
+    notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
+
+    @field_validator("log_date")
+    @classmethod
+    def validate_log_date(cls, v: date) -> date:
+        """Validate log date is within last 7 days"""
+        today = date.today()
+        days_diff = (today - v).days
+
+        if days_diff < 0:
+            raise ValueError("Cannot log stress for future dates")
+        if days_diff > 7:
+            raise ValueError("Cannot log stress older than 7 days")
+
+        return v
+
+
+class StressLogUpdate(BaseModel):
+    """Schema for updating a stress log"""
+
+    stress_level: Optional[int] = Field(
+        None, ge=1, le=10, description="Stress level from 1 to 10"
+    )
+    triggers: Optional[str] = Field(
+        None, max_length=1000, description="Optional stress triggers"
+    )
+    notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
+
+
+class StressLogResponse(BaseModel):
+    """Schema for stress log response"""
+
+    id: str
+    user_id: str
+    log_date: date
+    stress_level: int
+    triggers: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class SleepLogCreate(BaseModel):
+    """Schema for creating a sleep log"""
+
+    log_date: date
+    duration_hours: float = Field(
+        ..., gt=0, le=24, description="Sleep duration in hours"
+    )
+    quality_score: int = Field(
+        ..., ge=1, le=10, description="Sleep quality from 1 to 10"
+    )
+    notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
+
+    @field_validator("log_date")
+    @classmethod
+    def validate_log_date(cls, v: date) -> date:
+        """Validate log date is within last 7 days"""
+        today = date.today()
+        days_diff = (today - v).days
+
+        if days_diff < 0:
+            raise ValueError("Cannot log sleep for future dates")
+        if days_diff > 7:
+            raise ValueError("Cannot log sleep older than 7 days")
+
+        return v
+
+
+class SleepLogUpdate(BaseModel):
+    """Schema for updating a sleep log"""
+
+    duration_hours: Optional[float] = Field(
+        None, gt=0, le=24, description="Sleep duration in hours"
+    )
+    quality_score: Optional[int] = Field(
+        None, ge=1, le=10, description="Sleep quality from 1 to 10"
+    )
+    notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
+
+
+class SleepLogResponse(BaseModel):
+    """Schema for sleep log response"""
+
+    id: str
+    user_id: str
+    log_date: date
+    duration_hours: float
+    quality_score: int
+    notes: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class WellnessLogsResponse(BaseModel):
+    """Schema for combined wellness logs response"""
+
+    mood_logs: list[MoodLogResponse] = []
+    stress_logs: list[StressLogResponse] = []
+    sleep_logs: list[SleepLogResponse] = []
+    total_count: int
+
+
 # --- Recommendation Schemas (BE-S2-008) ---
 
 

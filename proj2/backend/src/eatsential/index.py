@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .middleware.jwt_auth import JWTAuthMiddleware
 from .middleware.rate_limit import RateLimitMiddleware
-from .routers import auth, goals, health, meals, recommendations, users
+from .routers import auth, goals, health, meals, recommendations, users, wellness
 
 app = FastAPI()
 
@@ -32,6 +32,7 @@ app.include_router(health.router, prefix="/api")
 app.include_router(meals.router, prefix="/api")
 app.include_router(goals.router, prefix="/api")
 app.include_router(recommendations.router, prefix="/api")
+app.include_router(wellness.router, prefix="/api")
 
 
 @app.get("/api")
