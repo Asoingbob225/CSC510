@@ -289,6 +289,20 @@ export interface AllergenResponse {
   description?: string;
 }
 
+export interface AllergenCreate {
+  name: string;
+  category: string;
+  is_major_allergen: boolean;
+  description?: string;
+}
+
+export interface AllergenUpdate {
+  name?: string;
+  category?: string;
+  is_major_allergen?: boolean;
+  description?: string;
+}
+
 // Create health profile
 export const createHealthProfile = async (
   data: HealthProfileCreate
@@ -377,6 +391,76 @@ export const adminApi = {
   // Update user profile (admin only)
   updateUser: async (userId: string, data: UserProfileUpdate): Promise<UserDetailData> => {
     const response = await apiClient.put(`/users/admin/users/${userId}`, data);
+    return response.data;
+  },
+
+  // Allergen management (admin only)
+  getAllergens: async (): Promise<AllergenResponse[]> => {
+    const response = await apiClient.get('/health/allergens');
+    return response.data;
+  },
+
+  createAllergen: async (data: AllergenCreate): Promise<AllergenResponse> => {
+    const response = await apiClient.post('/health/admin/allergens', data);
+    return response.data;
+  },
+
+  updateAllergen: async (allergenId: string, data: AllergenUpdate): Promise<AllergenResponse> => {
+    const response = await apiClient.put(`/health/admin/allergens/${allergenId}`, data);
+    return response.data;
+  },
+
+  deleteAllergen: async (allergenId: string): Promise<void> => {
+    await apiClient.delete(`/health/admin/allergens/${allergenId}`);
+  },
+};
+
+// GitHub API types
+export interface GitHubIssue {
+  number: number;
+  title: string;
+  state: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    login: string;
+    avatar_url: string;
+  };
+  html_url: string;
+  labels: Array<{
+    name: string;
+    color: string;
+  }>;
+  pull_request?: {
+    url: string;
+  };
+}
+
+// GitHub API client (no auth needed for public repos)
+const GITHUB_REPO = 'Asoingbob225/CSC510'; // Your repo
+
+export const githubApi = {
+  getRecentIssues: async (limit = 5): Promise<GitHubIssue[]> => {
+    const response = await axios.get(`https://api.github.com/repos/${GITHUB_REPO}/issues`, {
+      params: {
+        state: 'all',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: limit,
+      },
+    });
+    return response.data;
+  },
+
+  getRecentPRs: async (limit = 5): Promise<GitHubIssue[]> => {
+    const response = await axios.get(`https://api.github.com/repos/${GITHUB_REPO}/pulls`, {
+      params: {
+        state: 'all',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: limit,
+      },
+    });
     return response.data;
   },
 };
