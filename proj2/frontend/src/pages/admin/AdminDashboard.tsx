@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Users, Settings, Activity, TrendingUp } from 'lucide-react';
+import { Users, Settings, Activity, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface StatCardProps {
@@ -103,6 +103,12 @@ export default function AdminDashboard() {
             description="View, edit, and manage user accounts and permissions"
             link="/system-manage/users"
             icon={<Users className="size-6" />}
+          />
+          <QuickLink
+            title="Allergen Management"
+            description="Manage the central allergen database for health profiles"
+            link="/system-manage/allergens"
+            icon={<AlertTriangle className="size-6" />}
           />
           <QuickLink
             title="System Settings"

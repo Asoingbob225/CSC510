@@ -289,6 +289,20 @@ export interface AllergenResponse {
   description?: string;
 }
 
+export interface AllergenCreate {
+  name: string;
+  category: string;
+  is_major_allergen: boolean;
+  description?: string;
+}
+
+export interface AllergenUpdate {
+  name?: string;
+  category?: string;
+  is_major_allergen?: boolean;
+  description?: string;
+}
+
 // Create health profile
 export const createHealthProfile = async (
   data: HealthProfileCreate
@@ -378,5 +392,25 @@ export const adminApi = {
   updateUser: async (userId: string, data: UserProfileUpdate): Promise<UserDetailData> => {
     const response = await apiClient.put(`/users/admin/users/${userId}`, data);
     return response.data;
+  },
+
+  // Allergen management (admin only)
+  getAllergens: async (): Promise<AllergenResponse[]> => {
+    const response = await apiClient.get('/health/allergens');
+    return response.data;
+  },
+
+  createAllergen: async (data: AllergenCreate): Promise<AllergenResponse> => {
+    const response = await apiClient.post('/health/admin/allergens', data);
+    return response.data;
+  },
+
+  updateAllergen: async (allergenId: string, data: AllergenUpdate): Promise<AllergenResponse> => {
+    const response = await apiClient.put(`/health/admin/allergens/${allergenId}`, data);
+    return response.data;
+  },
+
+  deleteAllergen: async (allergenId: string): Promise<void> => {
+    await apiClient.delete(`/health/admin/allergens/${allergenId}`);
   },
 };
