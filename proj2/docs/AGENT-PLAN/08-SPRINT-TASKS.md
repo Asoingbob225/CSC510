@@ -10,7 +10,8 @@
 
 This document tracks development tasks across all milestones, organized by module (Frontend, Backend, Testing, Admin). Tasks are numbered by milestone (e.g., FE-01-XXX for v0.1, BE-03-XXX for v0.3).
 
-**Purpose**: 
+**Purpose**:
+
 - Track task status and dependencies
 - Define module constraints and functional requirements
 - Link to detailed specifications (FR, UC, API Design)
@@ -22,12 +23,14 @@ This document tracks development tasks across all milestones, organized by modul
 ## ✅ Completed Milestones
 
 ### v0.1 - Auth & Profile (Issues #41-#43, #48, #50-#51, #54-#55)
+
 - ✅ User registration with email verification
 - ✅ JWT authentication
 - ✅ Basic health profile CRUD
 - ✅ Test coverage: 93% (10 tests)
 
 ### v0.2 - Health Data Management (Issues #58, #60-#63, #67-#69, #73-#74)
+
 - ✅ Complete health profile management
 - ✅ Allergy and dietary preference CRUD
 - ✅ Admin panel foundation
@@ -49,36 +52,36 @@ This document tracks development tasks across all milestones, organized by modul
 
 ### ✅ Completed Issues (v0.1 - v0.2)
 
-| Issue | Title | Milestone | Status | Closed |
-|-------|-------|-----------|--------|--------|
-| [#74](https://github.com/Asoingbob225/CSC510/issues/74) | feat(frontend): Admin User Management UI | v0.2 | ✅ Closed | Oct 26 |
-| [#73](https://github.com/Asoingbob225/CSC510/issues/73) | feat: Admin User Management | v0.2 | ✅ Closed | Oct 26 |
-| [#69](https://github.com/Asoingbob225/CSC510/issues/69) | feat(backend): Admin Role & Protected Routes API | v0.2 | ✅ Closed | Oct 25 |
-| [#68](https://github.com/Asoingbob225/CSC510/issues/68) | feat(frontend): Admin Panel Foundation UI | v0.2 | ✅ Closed | Oct 25 |
-| [#67](https://github.com/Asoingbob225/CSC510/issues/67) | feat: Admin Panel Foundation | v0.2 | ✅ Closed | Oct 25 |
-| [#63](https://github.com/Asoingbob225/CSC510/issues/63) | feat(backend): Health Profile CRUD | v0.2 | ✅ Closed | Oct 23 |
-| [#62](https://github.com/Asoingbob225/CSC510/issues/62) | subtask(frontend): Multi-Step Health Profile Wizard UI | v0.2 | ✅ Closed | Oct 24 |
-| [#61](https://github.com/Asoingbob225/CSC510/issues/61) | subtask(backend): Health Profile DB Models and Schemas | v0.2 | ✅ Closed | Oct 23 |
-| [#60](https://github.com/Asoingbob225/CSC510/issues/60) | feat(frontend): Health Profile Form | v0.2 | ✅ Closed | Oct 24 |
-| [#58](https://github.com/Asoingbob225/CSC510/issues/58) | refactor(backend): Backend structure refactor | v0.2 | ✅ Closed | Oct 22 |
-| [#55](https://github.com/Asoingbob225/CSC510/issues/55) | fix(frontend): JWT token storage | v0.1 | ✅ Closed | Oct 22 |
-| [#54](https://github.com/Asoingbob225/CSC510/issues/54) | fix(frontend): JWT login state | v0.1 | ✅ Closed | Oct 22 |
-| [#51](https://github.com/Asoingbob225/CSC510/issues/51) | feat(frontend): Frontend signup API integration | v0.1 | ✅ Closed | Oct 21 |
-| [#50](https://github.com/Asoingbob225/CSC510/issues/50) | feat(frontend): URL verification page | v0.1 | ✅ Closed | Oct 21 |
-| [#48](https://github.com/Asoingbob225/CSC510/issues/48) | refactor(backend): Backend API structure | v0.1 | ✅ Closed | Oct 21 |
-| [#43](https://github.com/Asoingbob225/CSC510/issues/43) | feat(backend): User registration API | v0.1 | ✅ Closed | Oct 20 |
-| [#42](https://github.com/Asoingbob225/CSC510/issues/42) | feat(backend): Email verification flow | v0.1 | ✅ Closed | Oct 20 |
-| [#41](https://github.com/Asoingbob225/CSC510/issues/41) | fix(frontend): Password validation | v0.1 | ✅ Closed | Oct 20 |
+| Issue                                                   | Title                                                  | Milestone | Status    | Closed |
+| ------------------------------------------------------- | ------------------------------------------------------ | --------- | --------- | ------ |
+| [#74](https://github.com/Asoingbob225/CSC510/issues/74) | feat(frontend): Admin User Management UI               | v0.2      | ✅ Closed | Oct 26 |
+| [#73](https://github.com/Asoingbob225/CSC510/issues/73) | feat: Admin User Management                            | v0.2      | ✅ Closed | Oct 26 |
+| [#69](https://github.com/Asoingbob225/CSC510/issues/69) | feat(backend): Admin Role & Protected Routes API       | v0.2      | ✅ Closed | Oct 25 |
+| [#68](https://github.com/Asoingbob225/CSC510/issues/68) | feat(frontend): Admin Panel Foundation UI              | v0.2      | ✅ Closed | Oct 25 |
+| [#67](https://github.com/Asoingbob225/CSC510/issues/67) | feat: Admin Panel Foundation                           | v0.2      | ✅ Closed | Oct 25 |
+| [#63](https://github.com/Asoingbob225/CSC510/issues/63) | feat(backend): Health Profile CRUD                     | v0.2      | ✅ Closed | Oct 23 |
+| [#62](https://github.com/Asoingbob225/CSC510/issues/62) | subtask(frontend): Multi-Step Health Profile Wizard UI | v0.2      | ✅ Closed | Oct 24 |
+| [#61](https://github.com/Asoingbob225/CSC510/issues/61) | subtask(backend): Health Profile DB Models and Schemas | v0.2      | ✅ Closed | Oct 23 |
+| [#60](https://github.com/Asoingbob225/CSC510/issues/60) | feat(frontend): Health Profile Form                    | v0.2      | ✅ Closed | Oct 24 |
+| [#58](https://github.com/Asoingbob225/CSC510/issues/58) | refactor(backend): Backend structure refactor          | v0.2      | ✅ Closed | Oct 22 |
+| [#55](https://github.com/Asoingbob225/CSC510/issues/55) | fix(frontend): JWT token storage                       | v0.1      | ✅ Closed | Oct 22 |
+| [#54](https://github.com/Asoingbob225/CSC510/issues/54) | fix(frontend): JWT login state                         | v0.1      | ✅ Closed | Oct 22 |
+| [#51](https://github.com/Asoingbob225/CSC510/issues/51) | feat(frontend): Frontend signup API integration        | v0.1      | ✅ Closed | Oct 21 |
+| [#50](https://github.com/Asoingbob225/CSC510/issues/50) | feat(frontend): URL verification page                  | v0.1      | ✅ Closed | Oct 21 |
+| [#48](https://github.com/Asoingbob225/CSC510/issues/48) | refactor(backend): Backend API structure               | v0.1      | ✅ Closed | Oct 21 |
+| [#43](https://github.com/Asoingbob225/CSC510/issues/43) | feat(backend): User registration API                   | v0.1      | ✅ Closed | Oct 20 |
+| [#42](https://github.com/Asoingbob225/CSC510/issues/42) | feat(backend): Email verification flow                 | v0.1      | ✅ Closed | Oct 20 |
+| [#41](https://github.com/Asoingbob225/CSC510/issues/41) | fix(frontend): Password validation                     | v0.1      | ✅ Closed | Oct 20 |
 
 **Summary**: 18 issues completed across v0.1 (Authentication) and v0.2 (Health Data Management)
 
 ### 🔄 Open Issues (v0.3)
 
-| Issue | Title | Priority | Assignee | Status |
-|-------|-------|----------|----------|--------|
-| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | P1 | TBD | ✅ Complete |
-| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | P1 | TBD | ✅ Complete |
-| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens | P1 | TBD | ✅ Complete |
+| Issue                                                   | Title                                                      | Priority | Assignee | Status      |
+| ------------------------------------------------------- | ---------------------------------------------------------- | -------- | -------- | ----------- |
+| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | P1       | TBD      | ✅ Complete |
+| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | P1       | TBD      | ✅ Complete |
+| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens                  | P1       | TBD      | ✅ Complete |
 
 **Summary**: 0 open issues for v0.3 Tracking System milestone
 
@@ -95,6 +98,7 @@ This document tracks development tasks across all milestones, organized by modul
 ## 📊 Task Organization
 
 ### Task Status Summary
+
 - **Total Tasks**: 21
 - **Completed (v0.1-v0.2)**: 18 tasks
 - **In Progress (v0.3)**: 3 tasks
@@ -102,6 +106,7 @@ This document tracks development tasks across all milestones, organized by modul
 - **Priority P1**: 6 tasks (important)
 
 ### Module Breakdown
+
 - **Frontend**: 6 tasks (3 completed, 3 in progress)
 - **Backend**: 8 tasks (4 completed, 4 in progress)
 - **Admin**: 5 tasks (5 completed)
@@ -121,12 +126,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Quick meal logging form (meal type, foods, portion sizes)
 - Search/autocomplete for food items
 - Photo upload capability
 - View meal history with filtering
 
 **Key Constraints**:
+
 - API endpoint: `POST /api/meals`
 - Support meal types: breakfast, lunch, dinner, snack
 - Image size limit: 5MB
@@ -144,12 +151,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Daily goal setting interface (nutrition targets, mental wellness goals)
 - Quick mood/stress/sleep logging widgets
 - Dashboard showing both physical and mental wellness data
 - Progress visualization (charts for trends)
 
 **Key Constraints**:
+
 - API endpoints: `POST /api/goals`, `POST /api/mood-logs`
 - Mood scale: 1-10
 - Stress scale: 1-10
@@ -167,12 +176,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P1
 
 **Functional Requirements**:
+
 - Admin interface for allergen database management
 - CRUD operations for allergens (name, category, severity)
 - Bulk upload/export capabilities
 - Search and filtering
 
 **Key Constraints**:
+
 - API endpoint: `/api/admin/allergens`
 - Role-based access: Admin only
 - Audit logging for all changes
@@ -191,6 +202,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Log meals with meal type, foods, portions, timestamp
 - Support photo uploads (optional)
 - Calculate nutritional values (calories, macros)
@@ -198,12 +210,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Update/delete existing meal logs
 
 **API Endpoints**:
+
 - `POST /api/meals`
 - `GET /api/meals`
 - `PUT /api/meals/{id}`
 - `DELETE /api/meals/{id}`
 
 **Key Constraints**:
+
 - Photo storage: cloud storage (S3/equivalent)
 - Nutritional calculation: integration with food database
 - Timestamp validation: must be within last 30 days
@@ -221,6 +235,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Create daily/weekly goals (nutrition targets, wellness goals)
 - Track goal progress
 - Update goal status
@@ -228,12 +243,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Calculate goal completion percentage
 
 **API Endpoints**:
+
 - `POST /api/goals`
 - `GET /api/goals`
 - `PUT /api/goals/{id}`
 - `GET /api/goals/progress`
 
 **Key Constraints**:
+
 - Goal types: nutrition (calories, protein, etc.), wellness (mood, sleep, stress)
 - Progress calculation: automatic based on logged data
 - Date validation: goals must be future-dated
@@ -251,6 +268,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Log daily mood (1-10 scale, optional notes)
 - Log stress levels (1-10 scale, triggers)
 - Log sleep duration (hours, quality 1-10)
@@ -259,12 +277,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Generate trend analysis
 
 **API Endpoints**:
+
 - `POST /api/mood-logs`
 - `POST /api/stress-logs`
 - `POST /api/sleep-logs`
 - `GET /api/wellness-logs`
 
 **Key Constraints**:
+
 - Data encryption: AES-256 for mental wellness data
 - Scale validation: 1-10 integer range
 - Timestamp: must be within last 7 days
@@ -282,6 +302,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P1
 
 **Functional Requirements**:
+
 - CRUD operations for allergen database
 - Bulk import/export allergens
 - Search allergens by name or category
@@ -289,12 +310,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Role-based access control (admin only)
 
 **API Endpoints**:
+
 - `POST /api/admin/allergens`
 - `GET /api/admin/allergens`
 - `PUT /api/admin/allergens/{id}`
 - `DELETE /api/admin/allergens/{id}`
 
 **Key Constraints**:
+
 - Admin role required (403 if not admin)
 - Audit log: track who, what, when
 - Cannot delete allergen if referenced by user profiles
@@ -314,6 +337,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Unit tests for meal logging API (CRUD operations)
 - Unit tests for goal tracking API (create, update, progress)
 - Integration tests for meal-to-nutrition calculation
@@ -321,6 +345,7 @@ This document tracks development tasks across all milestones, organized by modul
 - Frontend component tests for goal tracking UI
 
 **Key Constraints**:
+
 - Test coverage: >85% for new code
 - Mock external services (food database, cloud storage)
 - Test edge cases (invalid inputs, boundary conditions)
@@ -338,6 +363,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Unit tests for mood/stress/sleep logging APIs
 - Test data encryption for mental wellness data
 - Integration tests for trend analysis
@@ -345,6 +371,7 @@ This document tracks development tasks across all milestones, organized by modul
 - Privacy and security tests
 
 **Key Constraints**:
+
 - Test coverage: >85% for new code
 - Verify encryption is applied correctly
 - Test privacy controls (data isolation)
@@ -365,6 +392,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `frontend/src/pages`
 
 **Functional Requirements**:
+
 - Validate password strength (min 8 chars, uppercase, lowercase, number, special char)
 - Display clear error messages for validation failures
 - Real-time validation feedback as user types
@@ -380,6 +408,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `frontend/src/pages`
 
 **Functional Requirements**:
+
 - Display pending verification message after registration
 - Provide resend email button with rate limiting
 - Show verification success page after token confirmation
@@ -396,6 +425,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `frontend/src/pages`
 
 **Functional Requirements**:
+
 - Multi-step wizard for health profile creation
 - Allergy input with severity selection (MILD, MODERATE, SEVERE, LIFE_THREATENING)
 - Visual warnings based on allergy severity
@@ -414,6 +444,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/src/eatsential/routers`
 
 **Functional Requirements**:
+
 - Register new users with email validation
 - Hash passwords securely (bcrypt)
 - Generate email verification tokens
@@ -433,6 +464,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/src/eatsential/services`
 
 **Functional Requirements**:
+
 - Generate secure verification tokens
 - Send verification emails via email service
 - Validate tokens on verification endpoint
@@ -452,13 +484,15 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/src/eatsential/routers`
 
 **Functional Requirements**:
+
 - Create/update health profile (age, height, weight, activity level)
 - Manage allergies with severity levels
 - Set dietary preferences
 - Validate allergen names against approved list
 - Return complete profile data
 
-**API Endpoints**: 
+**API Endpoints**:
+
 - `POST /api/health-profile`
 - `GET /api/health-profile`
 - `PUT /api/health-profile`
@@ -475,6 +509,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/alembic`, `backend/src/eatsential/database.py`
 
 **Functional Requirements**:
+
 - Database connection management
 - Migration system setup
 - Initial schema creation (12 tables)
@@ -487,26 +522,31 @@ This document tracks development tasks across all milestones, organized by modul
 ### Admin Tasks (All Completed in v0.2)
 
 #### ADMIN-02-001: Admin Panel Foundation (v0.2)
+
 **Status**: ✅ Complete  
 **Module**: `frontend/src/pages/admin`, `backend/src/eatsential/routers/admin`  
 **Related**: Issue #67
 
 #### ADMIN-02-002: Admin Role & Protected Routes (v0.2)
+
 **Status**: ✅ Complete  
 **Module**: `backend/src/eatsential/middleware`  
 **Related**: Issue #69
 
 #### ADMIN-02-003: Admin Panel UI (v0.2)
+
 **Status**: ✅ Complete  
 **Module**: `frontend/src/pages/admin`  
 **Related**: Issue #68
 
 #### ADMIN-02-004: Admin User Management (v0.2)
+
 **Status**: ✅ Complete  
 **Module**: `backend/src/eatsential/routers/admin`  
 **Related**: Issue #73
 
 #### ADMIN-02-005: Admin User Management UI (v0.2)
+
 **Status**: ✅ Complete  
 **Module**: `frontend/src/pages/admin`  
 **Related**: Issue #74
@@ -520,12 +560,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `frontend/src/pages`
 
 **Functional Requirements**:
+
 - Display pending verification message after registration
 - Provide resend email button with rate limiting
 - Show verification success page after token confirmation
 - Handle expired token errors gracefully
 
 **Key Constraints**:
+
 - Must integrate with backend verification endpoint
 - Rate limiting: 1 resend per 60 seconds
 - Token expiry: 24 hours
@@ -541,12 +583,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `frontend/src/pages`
 
 **Functional Requirements**:
+
 - Multi-step wizard for health profile creation
 - Allergy input with severity selection (MILD, MODERATE, SEVERE, LIFE_THREATENING)
 - Visual warnings based on allergy severity
 - Dietary preference selection (vegetarian, vegan, pescatarian, etc.)
 
 **Key Constraints**:
+
 - Allergen validation against approved list
 - Severity-based UI warnings (color coding)
 - Form state persistence across steps
@@ -567,12 +611,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Quick meal logging form (meal type, foods, portion sizes)
 - Search/autocomplete for food items
 - Photo upload capability
 - View meal history with filtering
 
 **Key Constraints**:
+
 - API endpoint: `POST /api/meals`
 - Support meal types: breakfast, lunch, dinner, snack
 - Image size limit: 5MB
@@ -590,12 +636,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Daily goal setting interface (nutrition targets, mental wellness goals)
 - Quick mood/stress/sleep logging widgets
 - Dashboard showing both physical and mental wellness data
 - Progress visualization (charts for trends)
 
 **Key Constraints**:
+
 - API endpoints: `POST /api/goals`, `POST /api/mood-logs`
 - Mood scale: 1-10
 - Stress scale: 1-10
@@ -613,12 +661,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P1
 
 **Functional Requirements**:
+
 - Admin interface for allergen database management
 - CRUD operations for allergens (name, category, severity)
 - Bulk upload/export capabilities
 - Search and filtering
 
 **Key Constraints**:
+
 - API endpoint: `/api/admin/allergens`
 - Role-based access: Admin only
 - Audit logging for all changes
@@ -636,6 +686,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/src/eatsential/routers`
 
 **Functional Requirements**:
+
 - Register new users with email validation
 - Hash passwords securely (bcrypt)
 - Generate email verification tokens
@@ -645,6 +696,7 @@ This document tracks development tasks across all milestones, organized by modul
 **API Endpoint**: `POST /auth/register`
 
 **Key Constraints**:
+
 - Email must be unique
 - Password hashing: bcrypt with salt rounds = 12
 - Token expiry: 24 hours
@@ -661,6 +713,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/src/eatsential/services`
 
 **Functional Requirements**:
+
 - Generate secure verification tokens
 - Send verification emails via email service
 - Validate tokens on verification endpoint
@@ -670,6 +723,7 @@ This document tracks development tasks across all milestones, organized by modul
 **API Endpoint**: `POST /auth/verify-email`
 
 **Key Constraints**:
+
 - Token generation: secure random (32 bytes)
 - Email template: branded, mobile-responsive
 - Token storage: database with expiry timestamp
@@ -686,19 +740,22 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/src/eatsential/routers`
 
 **Functional Requirements**:
+
 - Create/update health profile (age, height, weight, activity level)
 - Manage allergies with severity levels
 - Set dietary preferences
 - Validate allergen names against approved list
 - Return complete profile data
 
-**API Endpoints**: 
+**API Endpoints**:
+
 - `POST /api/health-profile`
 - `GET /api/health-profile`
 - `PUT /api/health-profile`
 - `POST /api/allergies`
 
 **Key Constraints**:
+
 - Approved allergens list: 12 common allergens
 - Severity validation: MILD, MODERATE, SEVERE, LIFE_THREATENING
 - BMI calculation: automatic based on height/weight
@@ -715,12 +772,14 @@ This document tracks development tasks across all milestones, organized by modul
 **Module**: `backend/alembic`, `backend/src/eatsential/database.py`
 
 **Functional Requirements**:
+
 - Database connection management
 - Migration system setup
 - Initial schema creation (12 tables)
 - Development/production environment configs
 
 **Key Constraints**:
+
 - SQLite for development
 - PostgreSQL for production
 - Alembic for migrations
@@ -738,6 +797,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Log meals with meal type, foods, portions, timestamp
 - Support photo uploads (optional)
 - Calculate nutritional values (calories, macros)
@@ -745,12 +805,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Update/delete existing meal logs
 
 **API Endpoints**:
+
 - `POST /api/meals`
 - `GET /api/meals`
 - `PUT /api/meals/{id}`
 - `DELETE /api/meals/{id}`
 
 **Key Constraints**:
+
 - Photo storage: cloud storage (S3/equivalent)
 - Nutritional calculation: integration with food database
 - Timestamp validation: must be within last 30 days
@@ -768,6 +830,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Create daily/weekly goals (nutrition targets, wellness goals)
 - Track goal progress
 - Update goal status
@@ -775,12 +838,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Calculate goal completion percentage
 
 **API Endpoints**:
+
 - `POST /api/goals`
 - `GET /api/goals`
 - `PUT /api/goals/{id}`
 - `GET /api/goals/progress`
 
 **Key Constraints**:
+
 - Goal types: nutrition (calories, protein, etc.), wellness (mood, sleep, stress)
 - Progress calculation: automatic based on logged data
 - Date validation: goals must be future-dated
@@ -798,6 +863,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Log daily mood (1-10 scale, optional notes)
 - Log stress levels (1-10 scale, triggers)
 - Log sleep duration (hours, quality 1-10)
@@ -806,12 +872,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Generate trend analysis
 
 **API Endpoints**:
+
 - `POST /api/mood-logs`
 - `POST /api/stress-logs`
 - `POST /api/sleep-logs`
 - `GET /api/wellness-logs`
 
 **Key Constraints**:
+
 - Data encryption: AES-256 for mental wellness data
 - Scale validation: 1-10 integer range
 - Timestamp: must be within last 7 days
@@ -829,6 +897,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P1
 
 **Functional Requirements**:
+
 - CRUD operations for allergen database
 - Bulk import/export allergens
 - Search allergens by name or category
@@ -836,12 +905,14 @@ This document tracks development tasks across all milestones, organized by modul
 - Role-based access control (admin only)
 
 **API Endpoints**:
+
 - `POST /api/admin/allergens`
 - `GET /api/admin/allergens`
 - `PUT /api/admin/allergens/{id}`
 - `DELETE /api/admin/allergens/{id}`
 
 **Key Constraints**:
+
 - Admin role required (403 if not admin)
 - Audit log: track who, what, when
 - Cannot delete allergen if referenced by user profiles
@@ -854,22 +925,27 @@ This document tracks development tasks across all milestones, organized by modul
 ## Admin Tasks (All Completed in v0.2)
 
 ### ADMIN-02-001: Admin Panel Foundation (v0.2)
+
 **Status**: ✅ Complete  
 **Related**: Issue #67
 
 ### ADMIN-02-002: Admin Role & Protected Routes (v0.2)
+
 **Status**: ✅ Complete  
 **Related**: Issue #69
 
 ### ADMIN-02-003: Admin Panel UI (v0.2)
+
 **Status**: ✅ Complete  
 **Related**: Issue #68
 
 ### ADMIN-02-004: Admin User Management (v0.2)
+
 **Status**: ✅ Complete  
 **Related**: Issue #73
 
 ### ADMIN-02-005: Admin User Management UI (v0.2)
+
 **Status**: ✅ Complete  
 **Related**: Issue #74
 
@@ -885,6 +961,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Unit tests for meal logging API (CRUD operations)
 - Unit tests for goal tracking API (create, update, progress)
 - Integration tests for meal-to-nutrition calculation
@@ -892,6 +969,7 @@ This document tracks development tasks across all milestones, organized by modul
 - Frontend component tests for goal tracking UI
 
 **Key Constraints**:
+
 - Test coverage: >85% for new code
 - Mock external services (food database, cloud storage)
 - Test edge cases (invalid inputs, boundary conditions)
@@ -909,6 +987,7 @@ This document tracks development tasks across all milestones, organized by modul
 **Priority**: P0
 
 **Functional Requirements**:
+
 - Unit tests for mood/stress/sleep logging APIs
 - Test data encryption for mental wellness data
 - Integration tests for trend analysis
@@ -916,6 +995,7 @@ This document tracks development tasks across all milestones, organized by modul
 - Privacy and security tests
 
 **Key Constraints**:
+
 - Test coverage: >85% for new code
 - Verify encryption is applied correctly
 - Test privacy controls (data isolation)
@@ -947,13 +1027,13 @@ This document tracks development tasks across all milestones, organized by modul
 
 ## Performance Targets
 
-| Metric                  | Target   | Current (v0.2) |
-| ----------------------- | -------- | -------------- |
-| API Response Time       | <2s      | 1.2s           |
-| Test Coverage           | >85%     | 88%            |
-| Page Load Time          | <3s      | 2.5s           |
-| Database Query Time     | <500ms   | 350ms          |
-| Uptime                  | >99%     | N/A (dev)      |
+| Metric              | Target | Current (v0.2) |
+| ------------------- | ------ | -------------- |
+| API Response Time   | <2s    | 1.2s           |
+| Test Coverage       | >85%   | 88%            |
+| Page Load Time      | <3s    | 2.5s           |
+| Database Query Time | <500ms | 350ms          |
+| Uptime              | >99%   | N/A (dev)      |
 
 ---
 
