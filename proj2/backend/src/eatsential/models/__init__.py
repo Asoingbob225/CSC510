@@ -14,6 +14,8 @@ from .models import (
     utcnow,
 )
 
+from .restaurant import Restaurant, MenuItem
+
 __all__ = [
     "AccountStatus",
     "ActivityLevel",
@@ -26,4 +28,6 @@ __all__ = [
     "UserDB",
     "UserRole",
     "utcnow",
+    "Restaurant",
+    "MenuItem",
 ]
