@@ -142,7 +142,9 @@ def test_recommend_meal_empty_constraints(client, test_user, test_restaurant_dat
     assert len(data["recommendations"]) > 0
 
 
-def test_recommend_meal_limit_top_10(client, db: Session, test_user, test_restaurant_data):
+def test_recommend_meal_limit_top_10(
+    client, db: Session, test_user, test_restaurant_data
+):
     """Test that recommendations are limited to top 10."""
     # Add more menu items to test limit
     for i in range(15):
