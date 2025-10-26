@@ -50,9 +50,7 @@ def test_user_2(db: Session) -> UserDB:
 class TestCreateMeal:
     """Tests for MealService.create_meal."""
 
-    def test_create_meal_with_single_food_item(
-        self, db: Session, test_user: UserDB
-    ):
+    def test_create_meal_with_single_food_item(self, db: Session, test_user: UserDB):
         """Test creating a meal with one food item."""
         meal_data = MealCreate(
             meal_type=MealType.BREAKFAST,
@@ -84,9 +82,7 @@ class TestCreateMeal:
         assert len(meal.food_items) == 1
         assert meal.food_items[0].food_name == "Oatmeal"
 
-    def test_create_meal_with_multiple_food_items(
-        self, db: Session, test_user: UserDB
-    ):
+    def test_create_meal_with_multiple_food_items(self, db: Session, test_user: UserDB):
         """Test creating a meal with multiple food items and nutritional calculation."""
         meal_data = MealCreate(
             meal_type=MealType.LUNCH,
@@ -187,9 +183,7 @@ class TestGetMealById:
         created_meal = MealService.create_meal(db, test_user.id, meal_data)
 
         # Retrieve the meal
-        retrieved_meal = MealService.get_meal_by_id(
-            db, test_user.id, created_meal.id
-        )
+        retrieved_meal = MealService.get_meal_by_id(db, test_user.id, created_meal.id)
 
         assert retrieved_meal is not None
         assert retrieved_meal.id == created_meal.id
@@ -255,24 +249,18 @@ class TestGetUserMeals:
             MealService.create_meal(db, test_user.id, meal_data)
 
         # Get first page
-        meals, total = MealService.get_user_meals(
-            db, test_user.id, skip=0, limit=3
-        )
+        meals, total = MealService.get_user_meals(db, test_user.id, skip=0, limit=3)
 
         assert total == 5
         assert len(meals) == 3
 
         # Get second page
-        meals, total = MealService.get_user_meals(
-            db, test_user.id, skip=3, limit=3
-        )
+        meals, total = MealService.get_user_meals(db, test_user.id, skip=3, limit=3)
 
         assert total == 5
         assert len(meals) == 2
 
-    def test_get_user_meals_filter_by_meal_type(
-        self, db: Session, test_user: UserDB
-    ):
+    def test_get_user_meals_filter_by_meal_type(self, db: Session, test_user: UserDB):
         """Test filtering meals by meal type."""
         # Create meals of different types
         meal_types = [
@@ -305,9 +293,7 @@ class TestGetUserMeals:
         assert total == 2
         assert all(meal.meal_type == MealType.BREAKFAST.value for meal in meals)
 
-    def test_get_user_meals_filter_by_date_range(
-        self, db: Session, test_user: UserDB
-    ):
+    def test_get_user_meals_filter_by_date_range(self, db: Session, test_user: UserDB):
         """Test filtering meals by date range."""
         now = datetime.now()
 
@@ -372,14 +358,10 @@ class TestGetUserMeals:
             MealService.create_meal(db, test_user_2.id, meal_data)
 
         # Get meals for user 1
-        meals_user_1, total_user_1 = MealService.get_user_meals(
-            db, test_user.id
-        )
+        meals_user_1, total_user_1 = MealService.get_user_meals(db, test_user.id)
 
         # Get meals for user 2
-        meals_user_2, total_user_2 = MealService.get_user_meals(
-            db, test_user_2.id
-        )
+        meals_user_2, total_user_2 = MealService.get_user_meals(db, test_user_2.id)
 
         assert total_user_1 == 3
         assert total_user_2 == 3
@@ -390,9 +372,7 @@ class TestGetUserMeals:
 class TestUpdateMeal:
     """Tests for MealService.update_meal."""
 
-    def test_update_meal_partial_fields(
-        self, db: Session, test_user: UserDB
-    ):
+    def test_update_meal_partial_fields(self, db: Session, test_user: UserDB):
         """Test updating only some fields."""
         meal_data = MealCreate(
             meal_type=MealType.BREAKFAST,
@@ -422,9 +402,7 @@ class TestUpdateMeal:
         assert updated_meal.meal_type == MealType.BREAKFAST.value
         assert len(updated_meal.food_items) == 1
 
-    def test_update_meal_replace_food_items(
-        self, db: Session, test_user: UserDB
-    ):
+    def test_update_meal_replace_food_items(self, db: Session, test_user: UserDB):
         """Test replacing food items and recalculating nutritional totals."""
         meal_data = MealCreate(
             meal_type=MealType.LUNCH,
@@ -546,14 +524,10 @@ class TestDeleteMeal:
         assert success is True
 
         # Verify it's gone
-        deleted_meal = MealService.get_meal_by_id(
-            db, test_user.id, created_meal.id
-        )
+        deleted_meal = MealService.get_meal_by_id(db, test_user.id, created_meal.id)
         assert deleted_meal is None
 
-    def test_delete_meal_cascades_to_food_items(
-        self, db: Session, test_user: UserDB
-    ):
+    def test_delete_meal_cascades_to_food_items(self, db: Session, test_user: UserDB):
         """Test that deleting a meal also deletes its food items (CASCADE)."""
         meal_data = MealCreate(
             meal_type=MealType.DINNER,
