@@ -1,7 +1,37 @@
 # Sprint Tasks
 
-**Current Sprint**: Sprint 1 (Oct 19-26, 2025)  
-**Theme**: Authentication, Health Profile, & Admin Foundation
+**Document Version**: 2.0 (Dual-Dimension Health Platform)  
+**Last Updated**: October 26, 2025  
+**Current Milestone**: v0.3 - Tracking System (40% Complete)
+
+---
+
+## 📋 Document Overview
+
+This document tracks development tasks across all milestones, organized by module (Frontend, Backend, Testing, Admin). Tasks are numbered by milestone (e.g., FE-01-XXX for v0.1, BE-03-XXX for v0.3).
+
+**Purpose**: 
+- Track task status and dependencies
+- Define module constraints and functional requirements
+- Link to detailed specifications (FR, UC, API Design)
+
+**Focus**: Module-level organization + functional requirements (no code examples, no file paths, no time estimates)
+
+---
+
+## ✅ Completed Milestones
+
+### v0.1 - Auth & Profile (Issues #41-#43, #48, #50-#51, #54-#55)
+- ✅ User registration with email verification
+- ✅ JWT authentication
+- ✅ Basic health profile CRUD
+- ✅ Test coverage: 93% (10 tests)
+
+### v0.2 - Health Data Management (Issues #58, #60-#63, #67-#69, #73-#74)
+- ✅ Complete health profile management
+- ✅ Allergy and dietary preference CRUD
+- ✅ Admin panel foundation
+- ✅ Test coverage: 88% (34 tests)
 
 ---
 
@@ -15,632 +45,883 @@
 
 ---
 
-## Frontend Tasks
+## 📋 Issue Tracking
 
-### FE-S1-001: Fix Password Validation ⚠️
+### ✅ Completed Issues (v0.1 - v0.2)
 
-**Status**: ✅ Complete  
-**Estimate**: 2 hours  
-**Dependencies**: None  
-**Completion**: Implemented in SignupField.tsx and schemas.py
+| Issue | Title | Milestone | Status | Closed |
+|-------|-------|-----------|--------|--------|
+| [#74](https://github.com/Asoingbob225/CSC510/issues/74) | feat(frontend): Admin User Management UI | v0.2 | ✅ Closed | Oct 26 |
+| [#73](https://github.com/Asoingbob225/CSC510/issues/73) | feat: Admin User Management | v0.2 | ✅ Closed | Oct 26 |
+| [#69](https://github.com/Asoingbob225/CSC510/issues/69) | feat(backend): Admin Role & Protected Routes API | v0.2 | ✅ Closed | Oct 25 |
+| [#68](https://github.com/Asoingbob225/CSC510/issues/68) | feat(frontend): Admin Panel Foundation UI | v0.2 | ✅ Closed | Oct 25 |
+| [#67](https://github.com/Asoingbob225/CSC510/issues/67) | feat: Admin Panel Foundation | v0.2 | ✅ Closed | Oct 25 |
+| [#63](https://github.com/Asoingbob225/CSC510/issues/63) | feat(backend): Health Profile CRUD | v0.2 | ✅ Closed | Oct 23 |
+| [#62](https://github.com/Asoingbob225/CSC510/issues/62) | subtask(frontend): Multi-Step Health Profile Wizard UI | v0.2 | ✅ Closed | Oct 24 |
+| [#61](https://github.com/Asoingbob225/CSC510/issues/61) | subtask(backend): Health Profile DB Models and Schemas | v0.2 | ✅ Closed | Oct 23 |
+| [#60](https://github.com/Asoingbob225/CSC510/issues/60) | feat(frontend): Health Profile Form | v0.2 | ✅ Closed | Oct 24 |
+| [#58](https://github.com/Asoingbob225/CSC510/issues/58) | refactor(backend): Backend structure refactor | v0.2 | ✅ Closed | Oct 22 |
+| [#55](https://github.com/Asoingbob225/CSC510/issues/55) | fix(frontend): JWT token storage | v0.1 | ✅ Closed | Oct 22 |
+| [#54](https://github.com/Asoingbob225/CSC510/issues/54) | fix(frontend): JWT login state | v0.1 | ✅ Closed | Oct 22 |
+| [#51](https://github.com/Asoingbob225/CSC510/issues/51) | feat(frontend): Frontend signup API integration | v0.1 | ✅ Closed | Oct 21 |
+| [#50](https://github.com/Asoingbob225/CSC510/issues/50) | feat(frontend): URL verification page | v0.1 | ✅ Closed | Oct 21 |
+| [#48](https://github.com/Asoingbob225/CSC510/issues/48) | refactor(backend): Backend API structure | v0.1 | ✅ Closed | Oct 21 |
+| [#43](https://github.com/Asoingbob225/CSC510/issues/43) | feat(backend): User registration API | v0.1 | ✅ Closed | Oct 20 |
+| [#42](https://github.com/Asoingbob225/CSC510/issues/42) | feat(backend): Email verification flow | v0.1 | ✅ Closed | Oct 20 |
+| [#41](https://github.com/Asoingbob225/CSC510/issues/41) | fix(frontend): Password validation | v0.1 | ✅ Closed | Oct 20 |
 
-```typescript
-// Required Changes in SignupField.tsx
-password: z
-  .string()
-  .min(8, { message: 'Password must be at least 8 characters' })
-  .max(48, { message: 'Password must be at most 48 characters' })
-  .regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-    { message: 'Password must contain uppercase, lowercase, number and special character' }
-  ),
-```
+**Summary**: 18 issues completed across v0.1 (Authentication) and v0.2 (Health Data Management)
 
-**Acceptance Criteria**:
+### 🔄 Open Issues (v0.3)
 
-- [x] Password requires 8+ characters
-- [x] Password requires uppercase, lowercase, number, special char
-- [x] Error messages are clear
-- [x] All tests pass
+| Issue | Title | Priority | Assignee | Status |
+|-------|-------|----------|----------|--------|
+| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | P1 | TBD | 🟡 Open |
+| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | P1 | TBD | 🟡 Open |
+| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens | P1 | TBD | 🟡 Open |
+
+**Summary**: 3 open issues for v0.3 Tracking System milestone
 
 ---
 
-### FE-S1-002: Email Verification UI
+## 🎯 Current Milestone: v0.3 - Tracking System
+
+**Open Issues**: #70, #71, #72  
+**Status**: 40% Complete  
+**Focus**: Physical meal logging + Mental wellness tracking (goals, mood, stress, sleep)
+
+---
+
+## 📊 Task Organization
+
+### Task Status Summary
+- **Total Tasks**: 21
+- **Completed (v0.1-v0.2)**: 18 tasks
+- **In Progress (v0.3)**: 3 tasks
+- **Priority P0**: 15 tasks (critical path)
+- **Priority P1**: 6 tasks (important)
+
+### Module Breakdown
+- **Frontend**: 6 tasks (3 completed, 3 in progress)
+- **Backend**: 8 tasks (4 completed, 4 in progress)
+- **Admin**: 5 tasks (5 completed)
+- **Testing**: 2 tasks (0 completed, 2 not started)
+
+---
+
+## 🚀 Active Tasks (v0.3)
+
+### Frontend Tasks (In Progress)
+
+#### FE-03-004: Meal Logging Interface (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-03-001  
+**Module**: `frontend/src/pages`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Quick meal logging form (meal type, foods, portion sizes)
+- Search/autocomplete for food items
+- Photo upload capability
+- View meal history with filtering
+
+**Key Constraints**:
+- API endpoint: `POST /api/meals`
+- Support meal types: breakfast, lunch, dinner, snack
+- Image size limit: 5MB
+- Response time: <2s for logging
+
+**Related**: Issue #70, FR-020 (Meal Tracking)
+
+---
+
+#### FE-03-005: Goal & Mood Tracking UI (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-03-002, BE-03-003  
+**Module**: `frontend/src/pages`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Daily goal setting interface (nutrition targets, mental wellness goals)
+- Quick mood/stress/sleep logging widgets
+- Dashboard showing both physical and mental wellness data
+- Progress visualization (charts for trends)
+
+**Key Constraints**:
+- API endpoints: `POST /api/goals`, `POST /api/mood-logs`
+- Mood scale: 1-10
+- Stress scale: 1-10
+- Sleep duration: hours (decimal)
+
+**Related**: FR-025 (Goal Tracking), FR-030 (Mood Logging)
+
+---
+
+#### FE-03-006: Admin Data Management UI (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-03-003  
+**Module**: `frontend/src/pages/admin`  
+**Priority**: P1
+
+**Functional Requirements**:
+- Admin interface for allergen database management
+- CRUD operations for allergens (name, category, severity)
+- Bulk upload/export capabilities
+- Search and filtering
+
+**Key Constraints**:
+- API endpoint: `/api/admin/allergens`
+- Role-based access: Admin only
+- Audit logging for all changes
+
+**Related**: Issues #70-#72, FR-011 (Allergen Management)
+
+---
+
+### Backend Tasks (In Progress)
+
+#### BE-03-001: Meal Logging API (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-S1-003  
+**Module**: `backend/src/eatsential/routers`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Log meals with meal type, foods, portions, timestamp
+- Support photo uploads (optional)
+- Calculate nutritional values (calories, macros)
+- Query meal history with filters (date range, meal type)
+- Update/delete existing meal logs
+
+**API Endpoints**:
+- `POST /api/meals`
+- `GET /api/meals`
+- `PUT /api/meals/{id}`
+- `DELETE /api/meals/{id}`
+
+**Key Constraints**:
+- Photo storage: cloud storage (S3/equivalent)
+- Nutritional calculation: integration with food database
+- Timestamp validation: must be within last 30 days
+- Response time: <2s for POST requests
+
+**Related**: Issue #70, FR-020 (Meal Tracking), API-010
+
+---
+
+#### BE-03-002: Goal Tracking API (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-S1-003  
+**Module**: `backend/src/eatsential/routers`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Create daily/weekly goals (nutrition targets, wellness goals)
+- Track goal progress
+- Update goal status
+- Query goals by date range and type
+- Calculate goal completion percentage
+
+**API Endpoints**:
+- `POST /api/goals`
+- `GET /api/goals`
+- `PUT /api/goals/{id}`
+- `GET /api/goals/progress`
+
+**Key Constraints**:
+- Goal types: nutrition (calories, protein, etc.), wellness (mood, sleep, stress)
+- Progress calculation: automatic based on logged data
+- Date validation: goals must be future-dated
+- User isolation: users can only access own goals
+
+**Related**: FR-025 (Goal Tracking), API-012
+
+---
+
+#### BE-03-003: Mood/Stress/Sleep Logging API (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-S1-003  
+**Module**: `backend/src/eatsential/routers`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Log daily mood (1-10 scale, optional notes)
+- Log stress levels (1-10 scale, triggers)
+- Log sleep duration (hours, quality 1-10)
+- Encrypt sensitive mental wellness data
+- Query logs by date range
+- Generate trend analysis
+
+**API Endpoints**:
+- `POST /api/mood-logs`
+- `POST /api/stress-logs`
+- `POST /api/sleep-logs`
+- `GET /api/wellness-logs`
+
+**Key Constraints**:
+- Data encryption: AES-256 for mental wellness data
+- Scale validation: 1-10 integer range
+- Timestamp: must be within last 7 days
+- Privacy: highly sensitive data, strict access control
+
+**Related**: FR-030 (Mood Logging), FR-031 (Stress Logging), API-013
+
+---
+
+#### BE-03-004: Admin Allergen Management API (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-S1-001  
+**Module**: `backend/src/eatsential/routers/admin`  
+**Priority**: P1
+
+**Functional Requirements**:
+- CRUD operations for allergen database
+- Bulk import/export allergens
+- Search allergens by name or category
+- Audit logging for all changes
+- Role-based access control (admin only)
+
+**API Endpoints**:
+- `POST /api/admin/allergens`
+- `GET /api/admin/allergens`
+- `PUT /api/admin/allergens/{id}`
+- `DELETE /api/admin/allergens/{id}`
+
+**Key Constraints**:
+- Admin role required (403 if not admin)
+- Audit log: track who, what, when
+- Cannot delete allergen if referenced by user profiles
+- Bulk operations: max 100 items per request
+
+**Related**: Issues #70-#72, FR-011 (Allergen Management), API-020
+
+---
+
+### Testing Tasks (Not Started)
+
+#### TEST-03-001: Meal & Goal Tracking Tests (v0.3)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-03-001, BE-03-002, FE-03-004, FE-03-005  
+**Module**: `backend/tests`, `frontend/src/__tests__`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Unit tests for meal logging API (CRUD operations)
+- Unit tests for goal tracking API (create, update, progress)
+- Integration tests for meal-to-nutrition calculation
+- Frontend component tests for meal logging UI
+- Frontend component tests for goal tracking UI
+
+**Key Constraints**:
+- Test coverage: >85% for new code
+- Mock external services (food database, cloud storage)
+- Test edge cases (invalid inputs, boundary conditions)
+- Performance tests: API response time <2s
+
+**Related**: STP-Unit-Test-Plan, STP-Integration-Test-Plan
+
+---
+
+#### TEST-03-002: Mental Wellness Tracking Tests (v0.3)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-03-003, FE-03-005  
+**Module**: `backend/tests`, `frontend/src/__tests__`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Unit tests for mood/stress/sleep logging APIs
+- Test data encryption for mental wellness data
+- Integration tests for trend analysis
+- Frontend tests for quick log widgets
+- Privacy and security tests
+
+**Key Constraints**:
+- Test coverage: >85% for new code
+- Verify encryption is applied correctly
+- Test privacy controls (data isolation)
+- Validate scale ranges (1-10)
+
+**Related**: STP-Unit-Test-Plan, Security Test Plan
+
+---
+
+## 📦 Completed Tasks Archive (v0.1 - v0.2)
+
+### Frontend Tasks (Completed)
+
+#### FE-S1-001: Password Validation (v0.1)
 
 **Status**: ✅ Complete  
-**Estimate**: 4 hours  
+**Dependencies**: None  
+**Module**: `frontend/src/pages`
+
+**Functional Requirements**:
+- Validate password strength (min 8 chars, uppercase, lowercase, number, special char)
+- Display clear error messages for validation failures
+- Real-time validation feedback as user types
+
+**Related**: Issue #41, FR-001 (Authentication)
+
+---
+
+#### FE-S1-002: Email Verification UI (v0.1)
+
+**Status**: ✅ Complete  
 **Dependencies**: BE-S1-002  
-**Completion**: Implemented in VerifyEmail.tsx
+**Module**: `frontend/src/pages`
 
-**Files to Create**:
+**Functional Requirements**:
+- Display pending verification message after registration
+- Provide resend email button with rate limiting
+- Show verification success page after token confirmation
+- Handle expired token errors gracefully
 
-1. `frontend/src/pages/EmailVerification.tsx`
-2. `frontend/src/pages/VerificationSuccess.tsx`
-3. `frontend/src/components/ResendEmail.tsx`
-
-**Key Features**:
-
-- Show pending verification message
-- Resend email button (rate limited)
-- Success page after verification
-- Handle expired tokens
+**Related**: Issue #42, UC-002 (Email Verification)
 
 ---
 
-### FE-S1-003: Health Profile Form 🏥
-
-**Status**: ⚡ In Progress (See sub-issues: [#61], [#62])
-
-**Estimate**: 8 hours
-
-**Dependencies**: BE-S1-003
-
-**Sub-issues**:
-
-- [#61] Define Health Profile Data Fields and Validation
-
-- [#62] Implement Multi-Step Health Profile Wizard UI
-
-**Files to Create**:
-
-1. `frontend/src/pages/HealthProfile.tsx`
-
-2. `frontend/src/components/AllergyInput.tsx`
-
-3. `frontend/src/components/AllergySeverityWarning.tsx`
-
-4. `frontend/src/lib/api.ts` (extend with health profile endpoints)
-
-**Critical Requirements**:
-
-```typescript
-
-// Allergen severity levels
-
-enum AllergySeverity {
-
-  MILD = 'MILD',
-
-  MODERATE = 'MODERATE',
-
-  SEVERE = 'SEVERE',
-
-  LIFE_THREATENING = 'LIFE_THREATENING',
-
-}
-
-
-
-// Visual warnings based on severity
-
-const severityStyles = {
-
-  MILD: 'bg-yellow-100 border-yellow-500',
-
-  MODERATE: 'bg-orange-100 border-orange-500',
-
-  SEVERE: 'bg-red-100 border-red-500',
-
-  LIFE_THREATENING: 'bg-red-600 text-white animate-pulse',
-
-};
-
-```
-
----
-
-### FE-S1-004: Admin Panel Foundation UI
-
-**Status**: ✅ Complete
-**Estimate**: 6 hours
-**Dependencies**: BE-S1-005
-**Description**: Create the basic structure for the admin control panel. This includes setting up protected routes accessible only to admin users and building a main layout with navigation for future admin modules.
-
-**Files to Create**:
-
-1.  `frontend/src/pages/admin/AdminDashboard.tsx`
-2.  `frontend/src/components/admin/AdminLayout.tsx`
-3.  `frontend/src/components/admin/ProtectedRoute.tsx`
-
-**Key Features**:
-
-- A route group for `/admin/*` that requires admin privileges.
-- A sidebar or top navigation for admin sections.
-- A main dashboard page that can display system stats or links to management pages.
-
----
-
-### FE-S1-005: Data Management UI (Allergens)
-
-**Status**: 📝 To Do
-**Estimate**: 6 hours
-**Dependencies**: FE-S1-004, BE-S1-006
-**Description**: Within the admin panel, build the interface for managing the central allergen database. This allows admins to add, update, and remove allergens, which will be used for user health profiles.
-
-**Files to Create**:
-
-1.  `frontend/src/pages/admin/AllergenManagement.tsx`
-2.  `frontend/src/components/admin/AllergenTable.tsx`
-3.  `frontend/src/components/admin/AllergenForm.tsx`
-
-**Key Features**:
-
-- Display all allergens in a table.
-- A form to create a new allergen.
-- Buttons to edit or delete existing allergens.
-
----
-
-### FE-S1-006: Admin User Management UI
-
-**Status**: ✅ Complete
-**Estimate**: 7 hours
-**Dependencies**: FE-S1-004, BE-S1-007
-**Description**: Implement the user management interface in the admin panel. This will allow admins to view a list of all users, see their details, and perform administrative actions.
-
-**Files to Create**:
-
-1.  `frontend/src/pages/admin/UserManagement.tsx`
-2.  `frontend/src/components/admin/UserTable.tsx`
-3.  `frontend/src/components/admin/UserDetails.tsx`
-
-**Key Features**:
-
-- A table displaying all registered users with key information.
-- Search and pagination for the user list.
-- A details view to inspect a user's profile and activity.
-
----
-
-## Backend Tasks
-
-### BE-S1-001: User Registration API ⚠️
+#### FE-S1-003: Health Profile Form (v0.2)
 
 **Status**: ✅ Complete  
-**Estimate**: 4 hours  
-**Completion**: Implemented in auth.py with /auth/register endpoint  
-**Dependencies**: BE-S1-004
+**Dependencies**: BE-S1-003  
+**Module**: `frontend/src/pages`
 
-**Files Created**:
+**Functional Requirements**:
+- Multi-step wizard for health profile creation
+- Allergy input with severity selection (MILD, MODERATE, SEVERE, LIFE_THREATENING)
+- Visual warnings based on allergy severity
+- Dietary preference selection (vegetarian, vegan, pescatarian, etc.)
 
-1. `backend/src/eatsential/routers/auth.py`
-2. `backend/src/eatsential/models.py`
-3. `backend/src/eatsential/schemas.py`
-4. `backend/src/eatsential/services/auth_service.py`
-
-**Endpoint Specification**:
-
-```python
-@router.post("/auth/register", response_model=UserResponse, status_code=201)
-async def register(
-    user_data: UserCreate,
-    db: Session = Depends(get_db)
-):
-    # Validate email uniqueness
-    # Hash password with bcrypt
-    # Create user with email_verified=False
-    # Send verification email
-    # Return user data (no password)
-```
+**Related**: Issues #60-#62, FR-010 (Health Profile)
 
 ---
 
-### BE-S1-002: Email Verification System
+### Backend Tasks (Completed)
+
+#### BE-S1-001: User Registration API (v0.1)
 
 **Status**: ✅ Complete  
-**Estimate**: 6 hours  
-**Completion**: Implemented with verify-email endpoint and email service  
-**Dependencies**: BE-S1-001
+**Dependencies**: BE-S1-004  
+**Module**: `backend/src/eatsential/routers`
 
-**Files Created**:
+**Functional Requirements**:
+- Register new users with email validation
+- Hash passwords securely (bcrypt)
+- Generate email verification tokens
+- Send verification emails
+- Return user data without password
 
-1. `backend/src/eatsential/emailer.py` (SMTP)
-2. `backend/src/eatsential/emailer_ses.py` (AWS SES)
-3. `backend/src/eatsential/auth_util.py` (token handling)
+**API Endpoint**: `POST /auth/register`
 
-**Key Features**:
-
-```python
-# Token generation
-def generate_verification_token() -> str:
-    return secrets.token_urlsafe(32)
-
-# Email template
-def send_verification_email(email: str, token: str):
-    link = f"{FRONTEND_URL}/verify-email?token={token}"
-    # Send email with link
-```
+**Related**: Issue #43, FR-001 (Registration), API-001
 
 ---
 
-### BE-S1-003: Health Profile CRUD 🏥
-
-**Status**: ✅ Complete
-**Estimate**: 8 hours  
-**Dependencies**: BE-S1-001
-
-**Files Created**:
-
-1. `backend/src/eatsential/routers/health.py`
-2. `backend/src/eatsential/models/models.py` (extended with health models)
-3. `backend/src/eatsential/schemas/schemas.py` (added health schemas)
-4. `backend/src/eatsential/services/health_service.py`
-5. `backend/tests/health/test_profile.py`
-6. `backend/tests/health/test_allergies.py`
-7. `backend/tests/health/test_dietary_preferences.py`
-
-**Critical Validation**:
-
-```python
-APPROVED_ALLERGENS = [
-    "Peanuts", "Tree Nuts", "Milk", "Eggs",
-    "Wheat", "Soy", "Fish", "Shellfish",
-    "Sesame", "Mustard", "Celery", "Lupin"
-]
-
-def validate_allergen(name: str) -> bool:
-    if name not in APPROVED_ALLERGENS:
-        raise ValueError(f"'{name}' is not a recognized allergen")
-    return True
-```
-
----
-
-### BE-S1-004: Database Setup
+#### BE-S1-002: Email Verification System (v0.1)
 
 **Status**: ✅ Complete  
-**Estimate**: 4 hours  
+**Dependencies**: BE-S1-001  
+**Module**: `backend/src/eatsential/services`
+
+**Functional Requirements**:
+- Generate secure verification tokens
+- Send verification emails via email service
+- Validate tokens on verification endpoint
+- Mark users as verified in database
+- Handle token expiry
+
+**API Endpoint**: `POST /auth/verify-email`
+
+**Related**: Issue #42, FR-002 (Email Verification), API-002
+
+---
+
+#### BE-S1-003: Health Profile CRUD (v0.2)
+
+**Status**: ✅ Complete  
+**Dependencies**: BE-S1-001  
+**Module**: `backend/src/eatsential/routers`
+
+**Functional Requirements**:
+- Create/update health profile (age, height, weight, activity level)
+- Manage allergies with severity levels
+- Set dietary preferences
+- Validate allergen names against approved list
+- Return complete profile data
+
+**API Endpoints**: 
+- `POST /api/health-profile`
+- `GET /api/health-profile`
+- `PUT /api/health-profile`
+- `POST /api/allergies`
+
+**Related**: Issues #60-#63, FR-010 (Health Profile), API-005
+
+---
+
+#### BE-S1-004: Database Setup (v0.1)
+
+**Status**: ✅ Complete  
 **Dependencies**: None  
-**Completion**: Database configuration and migrations are set up
+**Module**: `backend/alembic`, `backend/src/eatsential/database.py`
 
-**Files Created**:
+**Functional Requirements**:
+- Database connection management
+- Migration system setup
+- Initial schema creation (12 tables)
+- Development/production environment configs
 
-1. `backend/alembic.ini` ✓
-2. `backend/alembic/env.py` ✓
-3. `backend/src/eatsential/database.py` ✓
-
-**Initial Migration**:
-
-```bash
-# Already completed
-# Users table created with proper schema
-# SQLite for development, PostgreSQL for production
-```
+**Related**: Technical Setup Documentation
 
 ---
 
-### BE-S1-005: Admin Role & Protected Routes API
+### Admin Tasks (All Completed in v0.2)
 
-**Status**: ✅ Complete
-**Estimate**: 5 hours
-**Dependencies**: BE-S1-004
-**Description**: Implement the backend foundation for the admin system. This involves adding a role to the user model to distinguish admins and creating a reusable dependency to protect admin-only API endpoints.
+#### ADMIN-02-001: Admin Panel Foundation (v0.2)
+**Status**: ✅ Complete  
+**Module**: `frontend/src/pages/admin`, `backend/src/eatsential/routers/admin`  
+**Related**: Issue #67
 
-**Files to Modify/Create**:
+#### ADMIN-02-002: Admin Role & Protected Routes (v0.2)
+**Status**: ✅ Complete  
+**Module**: `backend/src/eatsential/middleware`  
+**Related**: Issue #69
 
-1.  `backend/src/eatsential/models/models.py` (add role to User)
-2.  `backend/src/eatsential/schemas/schemas.py` (update User schema)
-3.  `backend/src/eatsential/services/auth_service.py` (create `get_current_admin_user` dependency)
-4.  `backend/alembic/versions/` (new migration for user role)
+#### ADMIN-02-003: Admin Panel UI (v0.2)
+**Status**: ✅ Complete  
+**Module**: `frontend/src/pages/admin`  
+**Related**: Issue #68
 
-**Key Features**:
+#### ADMIN-02-004: Admin User Management (v0.2)
+**Status**: ✅ Complete  
+**Module**: `backend/src/eatsential/routers/admin`  
+**Related**: Issue #73
 
-- Add a `role` (e.g., 'user', 'admin') or `is_admin` boolean to the `User` model.
-- Create a FastAPI dependency that verifies the current authenticated user is an admin.
-- Generate a new database migration.
-
----
-
-### BE-S1-006: Data Management API (Allergens)
-
-**Status**: 📝 To Do
-**Estimate**: 5 hours
-**Dependencies**: BE-S1-005
-**Description**: Create the CRUD API endpoints for managing the allergen database. These endpoints will be protected and only accessible by administrators. This will replace the hardcoded list of allergens.
-
-**Files to Create**:
-
-1.  `backend/src/eatsential/routers/admin.py`
-2.  `backend/src/eatsential/services/admin_service.py`
-3.  `backend/src/eatsential/models/models.py` (add `Allergen` model)
-4.  `backend/tests/routers/test_admin.py`
-
-**Endpoint Specification**:
-
-```python
-@router.post("/admin/allergens", response_model=Allergen, status_code=201)
-async def create_allergen(
-    allergen: AllergenCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
-):
-    # Logic to create an allergen
-    return new_allergen
-```
-
-**Acceptance Criteria**:
-
-- CRUD endpoints for allergens under `/admin/allergens`.
-- Endpoints are protected by the `get_current_admin_user` dependency.
-- The `validate_allergen` function in `health_service` is updated to use the new database table.
+#### ADMIN-02-005: Admin User Management UI (v0.2)
+**Status**: ✅ Complete  
+**Module**: `frontend/src/pages/admin`  
+**Related**: Issue #74
 
 ---
 
-### BE-S1-007: Admin User Management API
+### FE-S1-002: Email Verification UI (v0.1)
 
-**Status**: ✅ Complete
-**Estimate**: 6 hours
-**Dependencies**: BE-S1-005
-**Description**: Create the API endpoints for administrators to manage users. This includes listing users and viewing detailed information about a specific user.
+**Status**: ✅ Complete  
+**Dependencies**: BE-S1-002  
+**Module**: `frontend/src/pages`
 
-**Files to Modify/Create**:
+**Functional Requirements**:
+- Display pending verification message after registration
+- Provide resend email button with rate limiting
+- Show verification success page after token confirmation
+- Handle expired token errors gracefully
 
-1.  `backend/src/eatsential/routers/admin.py` (extend with user endpoints)
-2.  `backend/src/eatsential/services/admin_service.py` (add user management logic)
-3.  `backend/tests/routers/test_admin.py` (add tests for user management)
+**Key Constraints**:
+- Must integrate with backend verification endpoint
+- Rate limiting: 1 resend per 60 seconds
+- Token expiry: 24 hours
 
-**Endpoint Specification**:
-
-```python
-@router.get("/admin/users", response_model=list[UserResponse])
-async def list_users(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
-):
-    # Logic to list all users
-    return users
-```
-
-**Acceptance Criteria**:
-
-- `GET /admin/users` endpoint to list all users.
-- `GET /admin/users/{user_id}` endpoint to get a single user's details.
-- Endpoints are protected by the `get_current_admin_user` dependency.
+**Related**: Issue #42, UC-002 (Email Verification)
 
 ---
 
-## Sprint Summary
+### FE-S1-003: Health Profile Form (v0.2)
 
-### Completed Tasks ✅
+**Status**: ✅ Complete  
+**Dependencies**: BE-S1-003  
+**Module**: `frontend/src/pages`
 
-- FE-S1-001: Password Validation Fixed
-- FE-S1-002: Email Verification UI
-- FE-S1-004: Admin Panel Foundation UI
-- FE-S1-006: Admin User Management UI
-- BE-S1-001: User Registration API
-- BE-S1-002: Email Verification System
-- BE-S1-003: Health Profile CRUD
-- BE-S1-004: Database Setup
-- BE-S1-005: Admin Role & Protected Routes API
-- BE-S1-007: Admin User Management API
+**Functional Requirements**:
+- Multi-step wizard for health profile creation
+- Allergy input with severity selection (MILD, MODERATE, SEVERE, LIFE_THREATENING)
+- Visual warnings based on allergy severity
+- Dietary preference selection (vegetarian, vegan, pescatarian, etc.)
 
-### Remaining Tasks 🔴
+**Key Constraints**:
+- Allergen validation against approved list
+- Severity-based UI warnings (color coding)
+- Form state persistence across steps
 
-- FE-S1-003: Health Profile Form
-- FE-S1-005: Data Management UI (Allergens)
-- BE-S1-006: Data Management API (Allergens)
-
-### Sprint Progress: 77% Complete (10/13 tasks)
-
-## Task Assignment
-
-| Developer | Focus Area       | Tasks                | Status         |
-| --------- | ---------------- | -------------------- | -------------- |
-| Dev 1     | Frontend Auth    | FE-S1-001, FE-S1-002 | ✅ Complete    |
-| Dev 2     | Backend Auth     | BE-S1-001, BE-S1-02 | ✅ Complete    |
-| Dev 3     | Health Profile   | FE-S1-003, BE-S1-003 | ⚡ In Progress |
-| Dev 4     | Infrastructure   | BE-S1-004            | ✅ Complete    |
-| Dev 5     | Admin Foundation | FE-S1-004, BE-S1-005 | ✅ Complete    |
-| Dev 6     | Admin Features   | FE-S1-005, BE-S1-006 | ⚡ In Progress |
-| Dev 7     | Admin User Mgmt  | FE-S1-006, BE-S1-007 | ✅ Complete    |
+**Related**: Issues #60-#62, FR-010 (Health Profile)
 
 ---
 
-## Definition of Done
-
-### For ALL Tasks:
-
-- [x] Code implements requirements
-- [x] Unit tests written (88% coverage)
-- [x] Integration tests pass
-- [x] No linting errors
-- [x] Documentation updated
-- [x] PR approved by reviewer
-
-### For Health-Related Tasks:
-
-- [x] Allergen validation tested
-- [x] Safety warnings prominent
-- [x] Audit logging implemented
-- [x] Error states handled
+### FE-03-004: Meal Logging Interface (v0.3)
 
 ---
 
-## Daily Standup Template
+### FE-03-004: Meal Logging Interface (v0.3)
 
-```markdown
-**Date**: [DATE]
-**Developer**: [NAME]
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-03-001  
+**Module**: `frontend/src/pages`  
+**Priority**: P0
 
-**Yesterday**:
+**Functional Requirements**:
+- Quick meal logging form (meal type, foods, portion sizes)
+- Search/autocomplete for food items
+- Photo upload capability
+- View meal history with filtering
 
-- Completed [TASK-ID]: [description]
+**Key Constraints**:
+- API endpoint: `POST /api/meals`
+- Support meal types: breakfast, lunch, dinner, snack
+- Image size limit: 5MB
+- Response time: <2s for logging
 
-**Today**:
-
-- Working on [TASK-ID]: [description]
-- Blocked by: [blocker or "None"]
-
-**Help Needed**:
-
-- [Specific help needed or "None"]
-```
-
----
-
-## Sprint Metrics
-
-| Metric          | Target   | Current |
-| --------------- | -------- | ------- |
-| Tasks Completed | 13       | 10      |
-| Test Coverage   | 80%      | 88%     |
-| PR Cycle Time   | <4 hours | 2 hours |
-| Critical Bugs   | 0        | 0       |
+**Related**: Issue #70, FR-020 (Meal Tracking)
 
 ---
 
-# Sprint Tasks 2
+### FE-03-005: Goal & Mood Tracking UI (v0.3)
 
-**Next Sprint**: Sprint 2 (Oct 27 - Nov 3, 2025)
-**Theme**: AI Recommendation Engine (v1) & Admin Completion
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-03-002, BE-03-003  
+**Module**: `frontend/src/pages`  
+**Priority**: P0
 
----
+**Functional Requirements**:
+- Daily goal setting interface (nutrition targets, mental wellness goals)
+- Quick mood/stress/sleep logging widgets
+- Dashboard showing both physical and mental wellness data
+- Progress visualization (charts for trends)
 
-## 🤖 New Sprint 2 Tasks: AI Recommendation Engine
+**Key Constraints**:
+- API endpoints: `POST /api/goals`, `POST /api/mood-logs`
+- Mood scale: 1-10
+- Stress scale: 1-10
+- Sleep duration: hours (decimal)
 
-These tasks are for the new AI-powered recommendation engine.
-
-| Task ID   | Issue      | Description                                                                 | Status   |
-| --------- | ---------- | --------------------------------------------------------------------------- | -------- |
-| BE-S2-004 | AI-Issue-0 | [AI] Create Restaurant DB Schema & Seed Data                                | 📝 To Do |
-| BE-S2-005 | AI-Issue-1 | [AI] Build Core Meal Recommendation API (/api/recommend/meal)               | 📝 To Do |
-| BE-S2-006 | AI-Issue-2 | [AI] Implement Restaurant Matching & RAG Indexing                           | 📝 To Do |
-| BE-S2-007 | AI-Issue-3 | [AI] Create Recommendation Feedback API (/api/recommend/feedback)           | 📝 To Do |
-| BE-S2-008 | AI-Issue-4 | [AI] Add 'explanation' field to Recommendation API (FR-071)                 | 📝 To Do |
-| BE-S2-009 | AI-Issue-7 | [AI] Implement AI Safety Layer (Allergen/Nutritional Verification) (FR-014) | 📝 To Do |
-| FE-S2-005 | AI-Issue-1 | [AI] Implement Core Recommendation UI (e.g., Carousel)                      | 📝 To Do |
-| FE-S2-006 | AI-Issue-2 | [AI] Display Matched Restaurants on Recommendation UI                       | 📝 To Do |
-| FE-S2-007 | AI-Issue-3 | [AI] Add Feedback Buttons (Like/Dislike) to Recommendation UI               | 📝 To Do |
-| FE-S2-008 | AI-Issue-4 | [AI] Display 'Why you might like this' Explanation (FR-071)                 | 📝 To Do |
-| FE-S2-009 | AI-Issue-7 | [AI] Display Nutritional Info & Allergen Warnings on UI (FR-014)            | 📝 To Do |
-
-**Note**: Advanced AI features (NLP/Image Query, Substitutions, Pairings) are deferred to Sprint 3 to focus on this core functionality.
+**Related**: FR-025 (Goal Tracking), FR-030 (Mood Logging)
 
 ---
 
-## Frontend Tasks
+### FE-03-006: Admin Data Management UI (v0.3)
 
-### FE-S2-005: [AI] Implement Core Recommendation UI 🤖
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-03-003  
+**Module**: `frontend/src/pages/admin`  
+**Priority**: P1
 
-**Status**: 📝 To Do  
-**Estimate**: 8 hours  
-**Dependencies**: BE-S2-005  
-**Description**: Create a new component (e.g., on the Dashboard) that calls the recommendation API and displays the results in a user-friendly list or carousel.
+**Functional Requirements**:
+- Admin interface for allergen database management
+- CRUD operations for allergens (name, category, severity)
+- Bulk upload/export capabilities
+- Search and filtering
 
-### FE-S2-006: [AI] Display Matched Restaurants on UI
+**Key Constraints**:
+- API endpoint: `/api/admin/allergens`
+- Role-based access: Admin only
+- Audit logging for all changes
 
-**Status**: 📝 To Do  
-**Estimate**: 4 hours  
-**Dependencies**: FE-S2-005, BE-S2-006  
-**Description**: Extend the recommendation UI card to display the matched restaurant(s), location, and availability.
-
-### FE-S2-007: [AI] Add Feedback Buttons to UI
-
-**Status**: 📝 To Do  
-**Estimate**: 3 hours  
-**Dependencies**: FE-S2-005, BE-S2-007  
-**Description**: Add thumbs up/down or rating controls to each recommendation card and send the feedback to the backend API on click.
-
-### FE-S2-008: [AI] Display AI Explanation on UI (FR-071)
-
-**Status**: 📝 To Do  
-**Estimate**: 2 hours  
-**Dependencies**: FE-S2-005, BE-S2-008  
-**Description**: Add a small text section to the recommendation UI card to display the explanation string from the API (e.g., "You might like this because...").
-
-### FE-S2-009: [AI] Display Nutritional Info & Allergen Warnings (FR-014)
-
-**Status**: 📝 To Do  
-**Estimate**: 4 hours  
-**Dependencies**: FE-S2-005, BE-S2-009  
-**Description**: Render the nutritional data (calories, macros) and any critical allergen warnings returned by the AI Safety Layer. Warnings must be high-visibility.
+**Related**: Issues #70-#72, FR-011 (Allergen Management)
 
 ---
 
 ## Backend Tasks
 
-### BE-S2-004: [AI] Create Restaurant DB Schema & Seed Data 🤖
+### BE-S1-001: User Registration API (v0.1)
 
-**Status**: 📝 To Do  
-**Estimate**: 4 hours  
-**Dependencies**: BE-S1-004 (✅ Complete)  
-**Description**: Define new SQLAlchemy models for Restaurant and MenuItem. Create a migration and a script to seed the DB with sample restaurant data.
+**Status**: ✅ Complete  
+**Dependencies**: BE-S1-004  
+**Module**: `backend/src/eatsential/routers`
 
-### BE-S2-005: [AI] Build Core Meal Recommendation API
+**Functional Requirements**:
+- Register new users with email validation
+- Hash passwords securely (bcrypt)
+- Generate email verification tokens
+- Send verification emails
+- Return user data without password
 
-**Status**: 📝 To Do  
-**Estimate**: 10 hours  
-**Dependencies**: BE-S1-003 (✅ Complete), BE-S2-004  
-**Description**: Create /api/recommend/meal endpoint. This service must query the LLM/RAG pipeline, feeding it user profile data and contextual factors to generate suggestions.
+**API Endpoint**: `POST /auth/register`
 
-### BE-S2-006: [AI] Implement Restaurant Matching & RAG Indexing
+**Key Constraints**:
+- Email must be unique
+- Password hashing: bcrypt with salt rounds = 12
+- Token expiry: 24 hours
+- Email service: SMTP or third-party API
 
-**Status**: 📝 To Do  
-**Estimate**: 6 hours  
-**Dependencies**: BE-S2-004, BE-S2-005  
-**Description**: Create a service to index restaurant data from the new DB tables into the RAG knowledge base. Enhance the recommendation API to match meals to available restaurants.
-
-### BE-S2-007: [AI] Create Recommendation Feedback API
-
-**Status**: 📝 To Do  
-**Estimate**: 4 hours  
-**Dependencies**: BE-S2-005  
-**Description**: Build the /api/recommend/feedback endpoint to capture user ratings/feedback on recommendations.
-
-### BE-S2-008: [AI] Add 'explanation' field to Recommendation API (FR-071)
-
-**Status**: 📝 To Do  
-**Estimate**: 3 hours  
-**Dependencies**: BE-S2-005  
-**Description**: Modify the LLM prompting strategy to require a user-friendly explanation field for each suggestion. Add this field to the API response model.
-
-### BE-S2-009: [AI] Implement AI Safety Layer (FR-014)
-
-**Status**: 📝 To Do  
-**Estimate**: 8 hours  
-**Dependencies**: BE-S1-003 (✅ Complete), BE-S2-005  
-**Description**: Build a mandatory verification service that processes all AI recommendations. It must cross-reference ingredients against user allergies and add nutritional/allergen data to the final response.
+**Related**: Issue #43, FR-001 (Registration), API-001
 
 ---
 
-## Sprint Summary
+### BE-S1-002: Email Verification System (v0.1)
 
-**All Tasks for Sprint 2 (18)**
+**Status**: ✅ Complete  
+**Dependencies**: BE-S1-001  
+**Module**: `backend/src/eatsential/services`
 
-- FE-S2-001: Health Profile Form
-- FE-S2-002: Admin Panel Foundation UI
-- FE-S2-003: Data Management UI (Allergens)
-- FE-S2-004: Admin User Management UI
-- FE-S2-005: [AI] Implement Core Recommendation UI
-- FE-S2-006: [AI] Display Matched Restaurants on UI
-- FE-S2-007: [AI] Add Feedback Buttons to UI
-- FE-S2-008: [AI] Display AI Explanation on UI
-- FE-S2-009: [AI] Display Nutritional Info & Allergen Warnings
-- BE-S2-001: Admin Role & Protected Routes API
-- BE-S2-002: Data Management API (Allergens)
-- BE-S2-003: Admin User Management API
-- BE-S2-004: [AI] Create Restaurant DB Schema & Seed Data
-- BE-S2-005: [AI] Build Core Meal Recommendation API
-- BE-S2-006: [AI] Implement Restaurant Matching & RAG Indexing
-- BE-S2-007: [AI] Create Recommendation Feedback API
-- BE-S2-008: [AI] Add 'explanation' field to Recommendation API
-- BE-S2-009: [AI] Implement AI Safety Layer
+**Functional Requirements**:
+- Generate secure verification tokens
+- Send verification emails via email service
+- Validate tokens on verification endpoint
+- Mark users as verified in database
+- Handle token expiry
 
-**Sprint Progress**: 0% Complete (0/18 tasks)
+**API Endpoint**: `POST /auth/verify-email`
+
+**Key Constraints**:
+- Token generation: secure random (32 bytes)
+- Email template: branded, mobile-responsive
+- Token storage: database with expiry timestamp
+- Resend rate limit: 1 per 60 seconds
+
+**Related**: Issue #42, FR-002 (Email Verification), API-002
 
 ---
 
-## Task Assignment
+### BE-S1-003: Health Profile CRUD (v0.2)
 
-| Developer | Focus Area            | Tasks                           | Status   |
-| --------- | --------------------- | ------------------------------- | -------- |
-| Dev 1     | AI Frontend           | FE-S2-005, FE-S2-006            | 📝 To Do |
-| Dev 2     | AI Backend            | BE-S2-005, BE-S2-007, BE-S2-008 | 📝 To Do |
-| Dev 3     | Health & AI Safety FE | FE-S2-001, FE-S2-009            | 📝 To Do |
-| Dev 4     | AI Backend (Data)     | BE-S2-004, BE-S2-006, BE-S2-009 | 📝 To Do |
-| Dev 5     | Admin Foundation      | FE-S2-002, BE-S2-001            | 📝 To Do |
-| Dev 6     | Admin Features        | FE-S2-003, BE-S2-002            | 📝 To Do |
-| Dev 7     | Admin User Mgmt       | FE-S2-004, FE-S2-003, FE-S2-007 | 📝 To Do |
+**Status**: ✅ Complete  
+**Dependencies**: BE-S1-001  
+**Module**: `backend/src/eatsential/routers`
+
+**Functional Requirements**:
+- Create/update health profile (age, height, weight, activity level)
+- Manage allergies with severity levels
+- Set dietary preferences
+- Validate allergen names against approved list
+- Return complete profile data
+
+**API Endpoints**: 
+- `POST /api/health-profile`
+- `GET /api/health-profile`
+- `PUT /api/health-profile`
+- `POST /api/allergies`
+
+**Key Constraints**:
+- Approved allergens list: 12 common allergens
+- Severity validation: MILD, MODERATE, SEVERE, LIFE_THREATENING
+- BMI calculation: automatic based on height/weight
+- User must be authenticated
+
+**Related**: Issues #60-#63, FR-010 (Health Profile), API-005
+
+---
+
+### BE-S1-004: Database Setup (v0.1)
+
+**Status**: ✅ Complete  
+**Dependencies**: None  
+**Module**: `backend/alembic`, `backend/src/eatsential/database.py`
+
+**Functional Requirements**:
+- Database connection management
+- Migration system setup
+- Initial schema creation (12 tables)
+- Development/production environment configs
+
+**Key Constraints**:
+- SQLite for development
+- PostgreSQL for production
+- Alembic for migrations
+- Connection pooling configured
+
+**Related**: Technical Setup Documentation
+
+---
+
+### BE-03-001: Meal Logging API (v0.3)
+
+**Status**: � In Progress  
+**Dependencies**: BE-02-003  
+**Module**: `backend/src/eatsential/routers`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Log meals with meal type, foods, portions, timestamp
+- Support photo uploads (optional)
+- Calculate nutritional values (calories, macros)
+- Query meal history with filters (date range, meal type)
+- Update/delete existing meal logs
+
+**API Endpoints**:
+- `POST /api/meals`
+- `GET /api/meals`
+- `PUT /api/meals/{id}`
+- `DELETE /api/meals/{id}`
+
+**Key Constraints**:
+- Photo storage: cloud storage (S3/equivalent)
+- Nutritional calculation: integration with food database
+- Timestamp validation: must be within last 30 days
+- Response time: <2s for POST requests
+
+**Related**: Issue #70, FR-020 (Meal Tracking), API-010
+
+---
+
+### BE-03-002: Goal Tracking API (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-02-003  
+**Module**: `backend/src/eatsential/routers`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Create daily/weekly goals (nutrition targets, wellness goals)
+- Track goal progress
+- Update goal status
+- Query goals by date range and type
+- Calculate goal completion percentage
+
+**API Endpoints**:
+- `POST /api/goals`
+- `GET /api/goals`
+- `PUT /api/goals/{id}`
+- `GET /api/goals/progress`
+
+**Key Constraints**:
+- Goal types: nutrition (calories, protein, etc.), wellness (mood, sleep, stress)
+- Progress calculation: automatic based on logged data
+- Date validation: goals must be future-dated
+- User isolation: users can only access own goals
+
+**Related**: FR-025 (Goal Tracking), API-012
+
+---
+
+### BE-03-003: Mood/Stress/Sleep Logging API (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-02-003  
+**Module**: `backend/src/eatsential/routers`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Log daily mood (1-10 scale, optional notes)
+- Log stress levels (1-10 scale, triggers)
+- Log sleep duration (hours, quality 1-10)
+- Encrypt sensitive mental wellness data
+- Query logs by date range
+- Generate trend analysis
+
+**API Endpoints**:
+- `POST /api/mood-logs`
+- `POST /api/stress-logs`
+- `POST /api/sleep-logs`
+- `GET /api/wellness-logs`
+
+**Key Constraints**:
+- Data encryption: AES-256 for mental wellness data
+- Scale validation: 1-10 integer range
+- Timestamp: must be within last 7 days
+- Privacy: highly sensitive data, strict access control
+
+**Related**: FR-030 (Mood Logging), FR-031 (Stress Logging), API-013
+
+---
+
+### BE-03-004: Admin Allergen Management API (v0.3)
+
+**Status**: 🟡 In Progress  
+**Dependencies**: BE-01-001  
+**Module**: `backend/src/eatsential/routers/admin`  
+**Priority**: P1
+
+**Functional Requirements**:
+- CRUD operations for allergen database
+- Bulk import/export allergens
+- Search allergens by name or category
+- Audit logging for all changes
+- Role-based access control (admin only)
+
+**API Endpoints**:
+- `POST /api/admin/allergens`
+- `GET /api/admin/allergens`
+- `PUT /api/admin/allergens/{id}`
+- `DELETE /api/admin/allergens/{id}`
+
+**Key Constraints**:
+- Admin role required (403 if not admin)
+- Audit log: track who, what, when
+- Cannot delete allergen if referenced by user profiles
+- Bulk operations: max 100 items per request
+
+**Related**: Issues #70-#72, FR-011 (Allergen Management), API-020
+
+---
+
+## Admin Tasks (All Completed in v0.2)
+
+### ADMIN-02-001: Admin Panel Foundation (v0.2)
+**Status**: ✅ Complete  
+**Related**: Issue #67
+
+### ADMIN-02-002: Admin Role & Protected Routes (v0.2)
+**Status**: ✅ Complete  
+**Related**: Issue #69
+
+### ADMIN-02-003: Admin Panel UI (v0.2)
+**Status**: ✅ Complete  
+**Related**: Issue #68
+
+### ADMIN-02-004: Admin User Management (v0.2)
+**Status**: ✅ Complete  
+**Related**: Issue #73
+
+### ADMIN-02-005: Admin User Management UI (v0.2)
+**Status**: ✅ Complete  
+**Related**: Issue #74
+
+---
+
+## Testing Tasks
+
+### TEST-03-001: Meal & Goal Tracking Tests (v0.3)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-03-001, BE-03-002, FE-03-004, FE-03-005  
+**Module**: `backend/tests`, `frontend/src/__tests__`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Unit tests for meal logging API (CRUD operations)
+- Unit tests for goal tracking API (create, update, progress)
+- Integration tests for meal-to-nutrition calculation
+- Frontend component tests for meal logging UI
+- Frontend component tests for goal tracking UI
+
+**Key Constraints**:
+- Test coverage: >85% for new code
+- Mock external services (food database, cloud storage)
+- Test edge cases (invalid inputs, boundary conditions)
+- Performance tests: API response time <2s
+
+**Related**: STP-Unit-Test-Plan, STP-Integration-Test-Plan
+
+---
+
+### TEST-03-002: Mental Wellness Tracking Tests (v0.3)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-03-003, FE-03-005  
+**Module**: `backend/tests`, `frontend/src/__tests__`  
+**Priority**: P0
+
+**Functional Requirements**:
+- Unit tests for mood/stress/sleep logging APIs
+- Test data encryption for mental wellness data
+- Integration tests for trend analysis
+- Frontend tests for quick log widgets
+- Privacy and security tests
+
+**Key Constraints**:
+- Test coverage: >85% for new code
+- Verify encryption is applied correctly
+- Test privacy controls (data isolation)
+- Validate scale ranges (1-10)
+
+**Related**: STP-Unit-Test-Plan, Security Test Plan
 
 ---
 
@@ -648,51 +929,44 @@ These tasks are for the new AI-powered recommendation engine.
 
 ### For ALL Tasks:
 
-- [ ] Code implements requirements
-- [ ] Unit tests written (Target: 80%+)
+- [ ] Code implements functional requirements
+- [ ] Unit tests written (coverage >85%)
 - [ ] Integration tests pass
 - [ ] No linting errors
-- [ ] Documentation updated
+- [ ] API documentation updated
 - [ ] PR approved by reviewer
 
-### For Health-Related Tasks:
+### For Health & Wellness Tasks:
 
-- [ ] Allergen validation tested
-- [ ] Safety warnings prominent
-- [ ] Audit logging implemented
-- [ ] Error states handled
-
----
-
-## Daily Standup Template
-
-```markdown
-**Date**: [DATE]
-**Developer**: [NAME]
-
-**Yesterday**:
-
-- Completed [TASK-ID]: [description]
-
-**Today**:
-
-- Working on [TASK-ID]: [description]
-- Blocked by: [blocker or "None"]
-
-**Help Needed**:
-
-- [Specific help needed or "None"]
-```
+- [ ] Data validation tested (allergens, scales, ranges)
+- [ ] Privacy controls verified
+- [ ] Error states handled gracefully
+- [ ] Audit logging implemented (where required)
 
 ---
 
-## Sprint Metrics
+## Performance Targets
 
-| Metric          | Target   | Current |
-| --------------- | -------- | ------- |
-| Tasks Completed | 18       | 0       |
-| Test Coverage   | 80%      | -       |
-| PR Cycle Time   | <4 hours | -       |
-| Critical Bugs   | 0        | 0       |
+| Metric                  | Target   | Current (v0.2) |
+| ----------------------- | -------- | -------------- |
+| API Response Time       | <2s      | 1.2s           |
+| Test Coverage           | >85%     | 88%            |
+| Page Load Time          | <3s      | 2.5s           |
+| Database Query Time     | <500ms   | 350ms          |
+| Uptime                  | >99%     | N/A (dev)      |
 
 ---
+
+## Related Documentation
+
+- **Functional Requirements**: `docs/2-SRS/3-specific-requirements/FR.md`
+- **Use Cases**: `docs/2-SRS/3-specific-requirements/UC.md`
+- **API Design**: `docs/3-DESIGN/3.2-SDD/API-DESIGN.md`
+- **Database Schema**: `docs/3-DESIGN/3.2-SDD/DATABASE-SCHEMA.md`
+- **Milestones**: `docs/5-PROJECT-MANAGEMENT/milestones.md`
+- **Test Plans**: `docs/5-STP/` (Unit, Integration, System, Acceptance)
+
+---
+
+**Last Updated**: October 26, 2025  
+**Next Review**: End of v0.3 milestone
