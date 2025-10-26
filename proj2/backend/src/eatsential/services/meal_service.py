@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import and_, desc, func
+from sqlalchemy import and_, desc
 from sqlalchemy.orm import Session, selectinload
 
 from ..models.models import MealDB, MealFoodItemDB
@@ -25,6 +25,7 @@ class MealService:
 
         Returns:
             Created meal database object
+
         """
         # Calculate nutritional totals
         total_calories = sum(
@@ -82,6 +83,7 @@ class MealService:
 
         Returns:
             Meal database object or None if not found
+
         """
         return (
             db.query(MealDB)
@@ -113,6 +115,7 @@ class MealService:
 
         Returns:
             Tuple of (list of meals, total count)
+
         """
         # Build query
         query = db.query(MealDB).filter(MealDB.user_id == user_id)
@@ -153,6 +156,7 @@ class MealService:
 
         Returns:
             Updated meal database object or None if not found
+
         """
         db_meal = MealService.get_meal_by_id(db, user_id, meal_id)
 
@@ -224,6 +228,7 @@ class MealService:
 
         Returns:
             True if meal was deleted, False if not found
+
         """
         db_meal = MealService.get_meal_by_id(db, user_id, meal_id)
 

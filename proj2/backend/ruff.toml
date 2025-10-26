@@ -58,6 +58,8 @@ ignore = [
     "D415",  # First line should end with period
     "D200",  # One-line docstring should fit on one line
     "D205",  # 1 blank line required between summary line and description
+    "B008",  # Do not perform function calls in argument defaults (FastAPI Depends)
+    "B904",  # Use raise from within except clause
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

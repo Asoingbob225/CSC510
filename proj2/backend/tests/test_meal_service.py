@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import pytest
 from sqlalchemy.orm import Session
 
-from src.eatsential.models.models import MealDB, MealFoodItemDB, MealType, UserDB
+from src.eatsential.models.models import MealFoodItemDB, MealType, UserDB
 from src.eatsential.schemas.schemas import (
     MealCreate,
     MealFoodItemCreate,

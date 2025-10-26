@@ -7,7 +7,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
-from ..services.auth_service import get_current_user
 from ..schemas.schemas import (
     MealCreate,
     MealListResponse,
@@ -15,6 +14,7 @@ from ..schemas.schemas import (
     MealUpdate,
     UserResponse,
 )
+from ..services.auth_service import get_current_user
 from ..services.meal_service import MealService
 
 router = APIRouter(prefix="/meals", tags=["meals"])
@@ -38,6 +38,7 @@ def create_meal(
 
     Raises:
         HTTPException: If creation fails
+
     """
     try:
         meal = MealService.create_meal(db, current_user.id, meal_data)
@@ -45,7 +46,7 @@ def create_meal(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create meal: {str(e)}",
+            detail=f"Failed to create meal: {e!s}",
         )
 
 
@@ -72,6 +73,7 @@ def get_meals(
 
     Returns:
         Paginated list of meals
+
     """
     skip = (page - 1) * page_size
 
@@ -111,6 +113,7 @@ def get_meal(
 
     Raises:
         HTTPException: If meal not found
+
     """
     meal = MealService.get_meal_by_id(db, current_user.id, meal_id)
 
@@ -143,6 +146,7 @@ def update_meal(
 
     Raises:
         HTTPException: If meal not found or update fails
+
     """
     meal = MealService.update_meal(db, current_user.id, meal_id, meal_data)
 
@@ -170,6 +174,7 @@ def delete_meal(
 
     Raises:
         HTTPException: If meal not found
+
     """
     success = MealService.delete_meal(db, current_user.id, meal_id)
 
