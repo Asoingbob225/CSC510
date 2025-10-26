@@ -1,13 +1,13 @@
 """Seed script for restaurants (package-aware copy)."""
 
-from uuid import uuid4
 from typing import Optional
+from uuid import uuid4
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from ..db.database import DATABASE_URL, Base
-from ..models.restaurant import Restaurant, MenuItem
+from ..models.restaurant import MenuItem, Restaurant
 
 
 SAMPLE_RESTAURANTS = [
@@ -32,23 +32,32 @@ SAMPLE_RESTAURANTS = [
 
 
 def init_restaurants(database_url: Optional[str] = None):
+    """Initialize and seed restaurants into the configured database.
+
+    This will create tables (if missing) and insert sample restaurants when they
+    do not already exist.
+    """
     if database_url is None:
         database_url = DATABASE_URL
 
     engine = create_engine(database_url)
-    SessionLocal = sessionmaker(bind=engine)
-    db = SessionLocal()
+    session_local = sessionmaker(bind=engine)
+    db = session_local()
 
     try:
         Base.metadata.create_all(bind=engine)
 
         added = 0
         for rest in SAMPLE_RESTAURANTS:
-            existing = db.query(Restaurant).filter(Restaurant.name == rest["name"]).first()
+            existing = (
+                db.query(Restaurant).filter(Restaurant.name == rest["name"]).first()
+            )
             if existing:
                 continue
 
-            r = Restaurant(id=str(uuid4()), name=rest["name"], cuisine=rest.get("cuisine"))
+            r = Restaurant(
+                id=str(uuid4()), name=rest["name"], cuisine=rest.get("cuisine")
+            )
             db.add(r)
             db.flush()
 

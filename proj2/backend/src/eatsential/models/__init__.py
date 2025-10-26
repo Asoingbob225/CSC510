@@ -13,8 +13,7 @@ from .models import (
     UserRole,
     utcnow,
 )
-
-from .restaurant import Restaurant, MenuItem
+from .restaurant import MenuItem, Restaurant
 
 __all__ = [
     "AccountStatus",
@@ -23,11 +22,11 @@ __all__ = [
     "AllergySeverity",
     "DietaryPreferenceDB",
     "HealthProfileDB",
+    "MenuItem",
     "PreferenceType",
+    "Restaurant",
     "UserAllergyDB",
     "UserDB",
     "UserRole",
     "utcnow",
-    "Restaurant",
-    "MenuItem",
 ]
