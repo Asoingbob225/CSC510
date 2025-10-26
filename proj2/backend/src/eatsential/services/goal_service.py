@@ -31,14 +31,18 @@ class GoalService:
         db_goal = GoalDB(
             id=str(uuid.uuid4()),
             user_id=user_id,
-            goal_type=goal_data.goal_type.value,
+            goal_type=(
+                goal_data.goal_type.value
+                if hasattr(goal_data.goal_type, "value")
+                else goal_data.goal_type
+            ),
             target_type=goal_data.target_type,
             target_value=goal_data.target_value,
             current_value=0,
             start_date=goal_data.start_date,
             end_date=goal_data.end_date,
             status=GoalStatus.ACTIVE.value,
-            notes=goal_data.notes,
+            notes=goal_data.notes if hasattr(goal_data, "notes") else None,
         )
 
         db.add(db_goal)
@@ -86,8 +90,8 @@ class GoalService:
             limit: Maximum number of records to return
             goal_type: Optional goal type filter
             status: Optional status filter
-            start_date: Optional start date filter (goals starting on or after this date)
-            end_date: Optional end date filter (goals ending on or before this date)
+            start_date: Optional start date filter (starting on or after)
+            end_date: Optional end date filter (ending on or before)
 
         Returns:
             Tuple of (list of goals, total count)
