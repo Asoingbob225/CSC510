@@ -1,5 +1,6 @@
 """Health profile service for business logic and CRUD operations."""
 
+import json
 from typing import Optional
 from uuid import uuid4
 
@@ -7,7 +8,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
 from ..models.models import (
+    AllergenAuditLogDB,
     AllergenDB,
+    AuditAction,
     DietaryPreferenceDB,
     HealthProfileDB,
     UserAllergyDB,
@@ -431,11 +434,18 @@ class HealthProfileService:
 
     # Admin allergen management operations
 
-    def create_allergen(self, allergen_data: AllergenCreate) -> AllergenDB:
+    def create_allergen(
+        self,
+        allergen_data: AllergenCreate,
+        admin_user_id: Optional[str] = None,
+        admin_username: Optional[str] = None,
+    ) -> AllergenDB:
         """Create a new allergen (admin only).
 
         Args:
             allergen_data: Allergen creation data
+            admin_user_id: Optional admin user ID for audit logging
+            admin_username: Optional admin username for audit logging
 
         Returns:
             Created AllergenDB object
@@ -466,6 +476,21 @@ class HealthProfileService:
         try:
             self.db.commit()
             self.db.refresh(allergen)
+
+            # Create audit log if admin info provided
+            if admin_user_id and admin_username:
+                self._create_audit_log(
+                    action=AuditAction.CREATE,
+                    allergen_name=allergen.name,
+                    admin_user_id=admin_user_id,
+                    admin_username=admin_username,
+                    allergen_id=allergen.id,
+                    changes={
+                        "category": allergen.category,
+                        "is_major_allergen": allergen.is_major_allergen,
+                        "description": allergen.description,
+                    },
+                )
         except IntegrityError as exc:
             self.db.rollback()
             raise ValueError(f"Allergen '{allergen_data.name}' already exists") from exc
@@ -485,13 +510,19 @@ class HealthProfileService:
         return self.db.query(AllergenDB).filter(AllergenDB.id == allergen_id).first()
 
     def update_allergen(
-        self, allergen_id: str, allergen_data: AllergenUpdate
+        self,
+        allergen_id: str,
+        allergen_data: AllergenUpdate,
+        admin_user_id: Optional[str] = None,
+        admin_username: Optional[str] = None,
     ) -> AllergenDB:
         """Update an allergen (admin only).
 
         Args:
             allergen_id: The allergen's ID
             allergen_data: Allergen update data
+            admin_user_id: Optional admin user ID for audit logging
+            admin_username: Optional admin username for audit logging
 
         Returns:
             Updated AllergenDB object
@@ -503,6 +534,9 @@ class HealthProfileService:
         allergen = self.get_allergen_by_id(allergen_id)
         if not allergen:
             raise ValueError("Allergen not found")
+
+        # Track changes for audit log
+        changes = {}
 
         # Update fields if provided
         if allergen_data.name is not None:
@@ -517,29 +551,65 @@ class HealthProfileService:
             )
             if existing:
                 raise ValueError(f"Allergen name '{allergen_data.name}' already exists")
+            changes["name"] = {
+                "old": allergen.name,
+                "new": allergen_data.name.lower().strip(),
+            }
             allergen.name = allergen_data.name.lower().strip()
 
         if allergen_data.category is not None:
+            changes["category"] = {
+                "old": allergen.category,
+                "new": allergen_data.category,
+            }
             allergen.category = allergen_data.category
+
         if allergen_data.is_major_allergen is not None:
+            changes["is_major_allergen"] = {
+                "old": allergen.is_major_allergen,
+                "new": allergen_data.is_major_allergen,
+            }
             allergen.is_major_allergen = allergen_data.is_major_allergen
+
         if allergen_data.description is not None:
+            changes["description"] = {
+                "old": allergen.description,
+                "new": allergen_data.description,
+            }
             allergen.description = allergen_data.description
 
         try:
             self.db.commit()
             self.db.refresh(allergen)
+
+            # Create audit log if admin info provided and changes were made
+            if admin_user_id and admin_username and changes:
+                self._create_audit_log(
+                    action=AuditAction.UPDATE,
+                    allergen_name=allergen.name,
+                    admin_user_id=admin_user_id,
+                    admin_username=admin_username,
+                    allergen_id=allergen.id,
+                    changes=changes,
+                )
         except IntegrityError as exc:
             self.db.rollback()
             raise ValueError("Failed to update allergen") from exc
 
         return allergen
 
-    def delete_allergen(self, allergen_id: str) -> bool:
+    def delete_allergen(
+        self,
+        allergen_id: str,
+        admin_user_id: Optional[str] = None,
+        admin_username: Optional[str] = None,
+    ) -> bool:
         """Delete an allergen (admin only).
 
         Args:
             allergen_id: The allergen's ID
+            admin_user_id: Optional admin user ID for audit logging
+            admin_username: Optional admin username for audit logging
 
         Returns:
             True if deleted, False if not found
@@ -551,6 +621,9 @@ class HealthProfileService:
         allergen = self.get_allergen_by_id(allergen_id)
         if not allergen:
             return False
+
+        # Store allergen name for audit log before deletion
+        allergen_name = allergen.name
 
         # Check if allergen is in use
         user_allergy_count = (
@@ -565,6 +638,207 @@ class HealthProfileService:
             )
 
         self.db.delete(allergen)
+        self.db.commit()
+
+        # Create audit log if admin info provided
+        if admin_user_id and admin_username:
+            self._create_audit_log(
+                action=AuditAction.DELETE,
+                allergen_name=allergen_name,
+                admin_user_id=admin_user_id,
+                admin_username=admin_username,
+                allergen_id=allergen_id,
+            )
+
+        return True
+
+    # Audit log operations
+
+    def _create_audit_log(
+        self,
+        action: str,
+        allergen_name: str,
+        admin_user_id: str,
+        admin_username: str,
+        allergen_id: Optional[str] = None,
+        changes: Optional[dict] = None,
+    ) -> AllergenAuditLogDB:
+        """Create an audit log entry for allergen operations.
+
+        Args:
+            action: Action type (create, update, delete, bulk_import)
+            allergen_name: Name of the allergen
+            admin_user_id: ID of the admin user performing the action
+            admin_username: Username of the admin user
+            allergen_id: Optional allergen ID
+            changes: Optional dictionary of changes made
+
+        Returns:
+            Created AllergenAuditLogDB object
+
+        """
+        audit_log = AllergenAuditLogDB(
+            id=str(uuid4()),
+            allergen_id=allergen_id,
+            allergen_name=allergen_name,
+            action=action,
+            admin_user_id=admin_user_id,
+            admin_username=admin_username,
+            changes=json.dumps(changes) if changes else None,
+        )
+
+        self.db.add(audit_log)
+        self.db.commit()
+
+        return audit_log
+
+    def get_audit_logs(
+        self,
+        allergen_id: Optional[str] = None,
+        limit: int = 100,
+    ) -> list[AllergenAuditLogDB]:
+        """Get audit logs for allergen operations.
+
+        Args:
+            allergen_id: Optional allergen ID to filter logs
+            limit: Maximum number of logs to return
+
+        Returns:
+            List of AllergenAuditLogDB objects
+
+        """
+        query = self.db.query(AllergenAuditLogDB).order_by(
+            AllergenAuditLogDB.created_at.desc()
+        )
+
+        if allergen_id:
+            query = query.filter(AllergenAuditLogDB.allergen_id == allergen_id)
+
+        return query.limit(limit).all()
+
+    # Bulk operations
+
+    def bulk_import_allergens(
+        self,
+        allergens_data: list[AllergenCreate],
+        admin_user_id: str,
+        admin_username: str,
+    ) -> tuple[int, int, list[str]]:
+        """Bulk import allergens (admin only).
+
+        Args:
+            allergens_data: List of allergen creation data
+            admin_user_id: ID of admin user performing import
+            admin_username: Username of admin user
+
+        Returns:
+            Tuple of (success_count, failure_count, error_messages)
+
+        """
+        success_count = 0
+        failure_count = 0
+        errors = []
+
+        # Limit to 100 items per request
+        if len(allergens_data) > 100:
+            errors.append("Maximum 100 allergens can be imported at once")
+            return (0, len(allergens_data), errors)
+
+        imported_names = []
+
+        for idx, allergen_data in enumerate(allergens_data):
+            try:
+                # Check if allergen already exists
+                existing = (
+                    self.db.query(AllergenDB)
+                    .filter(AllergenDB.name == allergen_data.name.lower().strip())
+                    .first()
+                )
+                if existing:
+                    errors.append(
+                        f"Row {idx + 1}: Allergen '{allergen_data.name}' already exists"
+                    )
+                    failure_count += 1
+                    continue
+
+                # Create allergen
+                allergen = AllergenDB(
+                    id=str(uuid4()),
+                    name=allergen_data.name.lower().strip(),
+                    category=allergen_data.category,
+                    is_major_allergen=allergen_data.is_major_allergen,
+                    description=allergen_data.description,
+                )
+
+                self.db.add(allergen)
+                imported_names.append(allergen_data.name)
+                success_count += 1
+
+            except Exception as e:
+                errors.append(f"Row {idx + 1}: {e!s}")
+                failure_count += 1
+                continue
+
+        # Commit all successful imports
+        if success_count > 0:
+            try:
+                self.db.commit()
+
+                # Create audit log for bulk import
+                self._create_audit_log(
+                    action=AuditAction.BULK_IMPORT,
+                    allergen_name=f"{success_count} allergens",
+                    admin_user_id=admin_user_id,
+                    admin_username=admin_username,
+                    changes={"imported_names": imported_names},
+                )
+            except IntegrityError as exc:
+                self.db.rollback()
+                errors.append(f"Database error during commit: {exc!s}")
+                return (0, len(allergens_data), errors)
+
+        return (success_count, failure_count, errors)
+
+    def search_allergens(
+        self,
+        name: Optional[str] = None,
+        category: Optional[str] = None,
+        is_major_allergen: Optional[bool] = None,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> tuple[list[AllergenDB], int]:
+        """Search and filter allergens with pagination.
+
+        Args:
+            name: Optional name filter (partial match)
+            category: Optional category filter (exact match)
+            is_major_allergen: Optional major allergen filter
+            skip: Number of records to skip
+            limit: Maximum number of records to return
+
+        Returns:
+            Tuple of (allergen_list, total_count)
+
+        """
+        query = self.db.query(AllergenDB)
+
+        # Apply filters
+        if name:
+            query = query.filter(AllergenDB.name.ilike(f"%{name.lower()}%"))
+
+        if category:
+            query = query.filter(AllergenDB.category == category.lower())
+
+        if is_major_allergen is not None:
+            query = query.filter(AllergenDB.is_major_allergen == is_major_allergen)
+
+        # Get total count
+        total_count = query.count()
+
+        # Apply pagination and ordering
+        allergens = query.order_by(AllergenDB.name).offset(skip).limit(limit).all()
+
+        return (allergens, total_count)
         self.db.commit()
 
         return True

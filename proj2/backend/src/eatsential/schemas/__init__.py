@@ -1,6 +1,9 @@
 """Pydantic schemas for API request/response validation."""
 
 from .schemas import (
+    AllergenAuditLogResponse,
+    AllergenBulkImport,
+    AllergenBulkImportResponse,
     AllergenCreate,
     AllergenResponse,
     AllergenUpdate,
@@ -26,6 +29,9 @@ from .schemas import (
 )
 
 __all__ = [
+    "AllergenAuditLogResponse",
+    "AllergenBulkImport",
+    "AllergenBulkImportResponse",
     "AllergenCreate",
     "AllergenResponse",
     "AllergenUpdate",

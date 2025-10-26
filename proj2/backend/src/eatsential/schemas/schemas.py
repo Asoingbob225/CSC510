@@ -252,6 +252,35 @@ class AllergenResponse(BaseModel):
     description: Optional[str] = None
 
 
+class AllergenBulkImport(BaseModel):
+    """Schema for bulk allergen import"""
+
+    allergens: list[AllergenCreate]
+
+
+class AllergenBulkImportResponse(BaseModel):
+    """Schema for bulk import response"""
+
+    success_count: int
+    failure_count: int
+    errors: list[str] = []
+
+
+class AllergenAuditLogResponse(BaseModel):
+    """Schema for allergen audit log response"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    allergen_id: Optional[str]
+    allergen_name: str
+    action: str
+    admin_user_id: str
+    admin_username: str
+    changes: Optional[str]
+    created_at: datetime
+
+
 # --- Admin User Management Schemas ---
 
 

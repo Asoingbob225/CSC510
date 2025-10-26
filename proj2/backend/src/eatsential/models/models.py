@@ -225,3 +225,44 @@ class DietaryPreferenceDB(Base):
     health_profile: Mapped["HealthProfileDB"] = relationship(
         "HealthProfileDB", back_populates="dietary_preferences"
     )
+
+
+class AuditAction(str, Enum):
+    """Audit log action types"""
+
+    CREATE = "create"
+    UPDATE = "update"
+    DELETE = "delete"
+    BULK_IMPORT = "bulk_import"
+
+
+class AllergenAuditLogDB(Base):
+    """SQLAlchemy model for allergen audit log table"""
+
+    __tablename__ = "allergen_audit_logs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+
+    # What was changed
+    allergen_id: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    allergen_name: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    # Action details
+    action: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Who made the change
+    admin_user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id"), nullable=False
+    )
+    admin_username: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Change details (JSON string)
+    changes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamp
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False
+    )
+
+    # Relationships
+    admin_user: Mapped["UserDB"] = relationship("UserDB")
