@@ -4,8 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
-from ..models.models import UserDB
-from ..models.restaurant import MenuItem, Restaurant
+from ..models import MenuItem, Restaurant, UserDB
 from ..schemas.schemas import (
     RecommendationItem,
     RecommendationRequest,
