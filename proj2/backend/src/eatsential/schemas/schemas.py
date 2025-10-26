@@ -725,3 +725,20 @@ class RecommendationResponse(BaseModel):
 
     user_id: Optional[str] = None
     recommendations: list[RecommendationItem] = []
+
+
+class FeedbackRequest(BaseModel):
+    """Schema for user feedback on recommendations (FE-S2-007)."""
+
+    user_id: str
+    menu_item_id: str
+    feedback_type: str = Field(..., pattern="^(like|dislike)$")
+
+
+class FeedbackResponse(BaseModel):
+    """Schema for feedback API response."""
+
+    message: str
+    user_id: str
+    menu_item_id: str
+    feedback_type: str

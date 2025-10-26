@@ -7,6 +7,8 @@ from ..db.database import get_db
 from ..models.models import UserDB
 from ..models.restaurant import MenuItem, Restaurant
 from ..schemas.schemas import (
+    FeedbackRequest,
+    FeedbackResponse,
     RecommendationItem,
     RecommendationRequest,
     RecommendationResponse,
@@ -85,4 +87,44 @@ def recommend_meal(
     return RecommendationResponse(
         user_id=request.user_id,
         recommendations=recommendations,
+    )
+
+
+@router.post(
+    "/feedback", response_model=FeedbackResponse, status_code=status.HTTP_200_OK
+)
+def submit_feedback(
+    request: FeedbackRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Record user feedback on meal recommendations (FE-S2-007).
+
+    This is a stub implementation. Future versions will store
+    feedback in database for ML model training.
+
+    Args:
+        request: Feedback request with user_id, menu_item_id, feedback_type
+        db: Database session dependency
+
+    Returns:
+        FeedbackResponse with confirmation message
+
+    Raises:
+        HTTPException: 404 if user not found
+    """
+    # Verify user exists
+    user = db.query(UserDB).filter(UserDB.id == request.user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    # Future: Store feedback in database for ML training
+    return FeedbackResponse(
+        message="Feedback received successfully",
+        user_id=request.user_id,
+        menu_item_id=request.menu_item_id,
+        feedback_type=request.feedback_type,
     )

@@ -166,3 +166,57 @@ def test_recommend_meal_limit_top_10(
     assert response.status_code == 200
     recommendations = response.json()["recommendations"]
     assert len(recommendations) <= 10
+
+
+def test_submit_feedback_success(client, test_user, test_restaurant_data):
+    """Test successful feedback submission."""
+    menu_item = test_restaurant_data[0]["menu_items"][0]
+
+    response = client.post(
+        "/api/recommend/feedback",
+        json={
+            "user_id": test_user.id,
+            "menu_item_id": menu_item.id,
+            "feedback_type": "like",
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "Feedback received successfully"
+    assert data["user_id"] == test_user.id
+    assert data["menu_item_id"] == menu_item.id
+    assert data["feedback_type"] == "like"
+
+
+def test_submit_feedback_invalid_user(client, test_restaurant_data):
+    """Test feedback with invalid user ID."""
+    menu_item = test_restaurant_data[0]["menu_items"][0]
+
+    response = client.post(
+        "/api/recommend/feedback",
+        json={
+            "user_id": "invalid-user-id",
+            "menu_item_id": menu_item.id,
+            "feedback_type": "dislike",
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User not found"
+
+
+def test_submit_feedback_invalid_type(client, test_user, test_restaurant_data):
+    """Test feedback with invalid feedback type."""
+    menu_item = test_restaurant_data[0]["menu_items"][0]
+
+    response = client.post(
+        "/api/recommend/feedback",
+        json={
+            "user_id": test_user.id,
+            "menu_item_id": menu_item.id,
+            "feedback_type": "neutral",
+        },
+    )
+
+    assert response.status_code == 422  # Validation error
