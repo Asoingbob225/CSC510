@@ -1,0 +1,746 @@
+# 3.2 Non-Functional Requirements
+
+## Overview
+
+This document specifies the non-functional requirements for the Eatsential AI-powered precision nutrition platform. These requirements define the quality attributes, performance characteristics, security standards, and operational constraints that the system must satisfy.
+
+**Version 2.0 Update**: This document now includes Mental Wellness-specific non-functional requirements covering AI/LLM performance, mental health data privacy, and analytics accuracy.
+
+## Requirement Classification
+
+- **Priority Levels**: Critical (C), Important (I), Optional (O)
+- **Verification Method**: Testing (T), Analysis (A), Inspection (I), Demonstration (D)
+- **Metrics**: Quantifiable measurements for requirement validation
+
+## NFR Summary
+
+**Total NFRs**: 23 (19 original + 4 Mental Wellness additions)
+
+**New Mental Wellness NFRs**:
+- NFR-007A: Mental Health Data Privacy
+- NFR-020: AI/LLM Performance
+- NFR-021: AI Safety and Validation
+- NFR-022: Mental Wellness Analytics Accuracy
+- NFR-023: Data Retention and Deletion
+
+---
+
+## NFR-001: System Performance - Response Time
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall provide responsive user experience across all primary functions.
+
+**Requirements**:
+
+- User authentication: ≤2 seconds
+- Meal recommendation generation: ≤3 seconds
+- Food search and selection: ≤1 second
+- Progress visualization loading: ≤3 seconds
+- Shopping list generation: ≤5 seconds
+- Photo upload and processing: ≤10 seconds
+- **Mental wellness dashboard loading: ≤2 seconds (NEW)**
+- **Mood/stress/sleep log submission: ≤1 second (NEW)**
+- **AI Concierge first response: ≤3 seconds (NEW)**
+- **Dual-dimension meal recommendations: ≤4 seconds (NEW)**
+
+**Measurement**: 95th percentile response time under normal load conditions
+
+---
+
+## NFR-002: System Performance - Throughput
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall support concurrent user load with maintained performance.
+
+**Requirements**:
+
+- Support 10,000+ concurrent active users
+- Process 100,000+ API requests per minute
+- Handle 1,000+ simultaneous meal plan generations
+- Support 500+ concurrent AI recommendation requests
+- Maintain performance during peak usage (7-9 PM daily)
+
+**Measurement**: Sustained throughput with <5% performance degradation
+
+---
+
+## NFR-003: System Performance - Scalability
+
+**Priority**: Critical | **Verification**: Analysis  
+**Description**: System architecture shall scale horizontally to accommodate user growth.
+
+**Requirements**:
+
+- Auto-scaling capabilities for 10x user growth through horizontal scaling
+- Stateless services and architecture designed for future microservices decomposition
+- Database partitioning strategy for 1M+ user profiles
+- CDN integration for global content delivery
+- Load balancing across multiple availability zones
+
+**Measurement**: Linear scaling with resource addition
+
+**Note**: MVP may use monolithic architecture per SRS 2.4.5, provided it supports horizontal scaling and future microservices transition
+
+---
+
+## NFR-004: Availability and Reliability
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall maintain high availability with minimal downtime.
+
+**Requirements**:
+
+- 99.9% uptime SLA (≤8.76 hours downtime per year)
+- Mean Time To Recovery (MTTR) ≤30 minutes
+- Automated failover for critical services ≤2 minutes
+- Graceful degradation during partial system failures
+- Zero-downtime deployments for regular updates
+
+**Measurement**: Uptime monitoring with automated alerting
+
+---
+
+## NFR-005: Data Security - Encryption
+
+**Priority**: Critical | **Verification**: Inspection  
+**Description**: System shall protect all sensitive data with industry-standard encryption.
+
+**Requirements**:
+
+- AES-256 encryption for data at rest
+- TLS 1.3 for all data in transit
+- End-to-end encryption for health data
+- Hardware Security Module (HSM) for key management
+- Regular encryption key rotation (≤90 days)
+
+**Measurement**: Security audit compliance verification
+
+---
+
+## NFR-006: Data Security - Access Control
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall implement comprehensive access control and authentication.
+
+**Requirements**:
+
+- Multi-factor authentication support
+- Role-based access control (RBAC) with principle of least privilege
+- Session timeout after 24 hours of inactivity
+- Account lockout after 5 failed login attempts
+- Audit logging for all authentication events
+
+**Measurement**: Penetration testing and security assessment
+
+---
+
+## NFR-007: Privacy and Compliance - Health Data Protection
+
+**Priority**: Critical | **Verification**: Inspection  
+**Description**: System shall implement appropriate privacy and security measures for health-related data.
+
+**Requirements**:
+
+- Data encryption and secure storage for all user health information
+- User consent management for data collection and sharing with clear opt-in/opt-out
+- Access controls following principle of least privilege
+- Incident response procedures for potential data breaches
+- **Conditional HIPAA Compliance**: If Protected Health Information (PHI) is introduced in future releases, full HIPAA compliance will be implemented
+
+**Measurement**: Privacy audit and security assessment
+
+**Note**: Current MVP does not collect PHI as defined by HIPAA (per SRS Section 2.4.1), but implements privacy-by-design principles
+
+---
+
+## NFR-007A: Mental Health Data Privacy (NEW)
+
+**Priority**: Critical | **Verification**: Inspection  
+**Description**: System shall protect sensitive mental wellness data (mood, stress, sleep logs) with enhanced privacy controls.
+
+**Requirements**:
+
+- Mental wellness data encrypted separately from physical health data (AES-256)
+- User can delete all mental wellness logs without affecting physical health data
+- Mental wellness data never shared with third parties without explicit consent
+- Anonymized aggregation for analytics (no personally identifiable information)
+- Mental wellness insights remain on-device where possible (client-side processing)
+
+**Measurement**: Privacy impact assessment and user consent tracking
+
+**Rationale**: Mental health data is particularly sensitive and requires extra protection to encourage honest user logging.
+
+---
+
+## NFR-008: Privacy and Compliance - GDPR
+
+**Priority**: Critical | **Verification**: Inspection  
+**Description**: System shall comply with GDPR requirements for EU users.
+
+**Requirements**:
+
+- Explicit consent collection with granular controls
+- Right to data portability with standard formats
+- Right to erasure within 30 days of request
+- Privacy by design and by default implementation
+- Data Processing Impact Assessments for high-risk processing
+
+**Measurement**: GDPR compliance audit and legal review
+
+---
+
+## NFR-009: Data Integrity and Backup
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall maintain data integrity and provide comprehensive backup.
+
+**Requirements**:
+
+- Real-time data replication across geographically distributed centers
+- Point-in-time recovery capability for last 30 days
+- Automated daily backups with 99.999% durability
+- Data integrity checks with checksums and validation
+- Recovery Time Objective (RTO) ≤4 hours
+
+**Measurement**: Backup and recovery testing quarterly
+
+---
+
+## NFR-010: User Interface - Usability
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: System shall provide intuitive and efficient user interfaces.
+
+**Requirements**:
+
+- Task completion rate >90% for primary user flows
+- User satisfaction score >4.5/5.0 in usability testing
+- New user onboarding completion within 10 minutes
+- ≤3 clicks to reach any primary function
+- Contextual help and guidance throughout application
+
+**Measurement**: User experience testing and satisfaction surveys
+
+---
+
+## NFR-011: User Interface - Accessibility
+
+**Priority**: Important | **Verification**: Inspection  
+**Description**: System shall be accessible to users with disabilities.
+
+**Requirements**:
+
+- WCAG 2.1 AA compliance across all interfaces
+- Screen reader compatibility with semantic HTML
+- Keyboard navigation support for all functions
+- High contrast mode with 4.5:1 minimum contrast ratio
+- Voice input capability for meal logging
+
+**Measurement**: Accessibility audit and assistive technology testing
+
+---
+
+## NFR-012: Mobile Responsiveness
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall provide optimal experience across all device types.
+
+**Requirements**:
+
+- Responsive design supporting 320px to 2560px+ screen widths
+- Touch-friendly interface with minimum 44px target size
+- Native iOS and Android app feature parity with web platform
+- Offline functionality for core features (meal plans, shopping lists)
+- Cross-platform data synchronization within 30 seconds
+
+**Measurement**: Cross-device testing and user experience metrics
+
+---
+
+## NFR-013: Browser Compatibility
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: System shall support modern web browsers with graceful degradation.
+
+**Requirements**:
+
+- Full functionality in Chrome, Firefox, Safari, Edge (latest 2 versions)
+- Progressive Web App (PWA) capabilities
+- Graceful degradation for older browsers with core functionality
+- JavaScript disabled fallback for critical features
+- Loading performance optimization for slower connections
+
+**Measurement**: Cross-browser testing automation
+
+---
+
+## NFR-014: AI and Machine Learning - Accuracy
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: AI systems shall provide accurate and reliable recommendations.
+
+**Requirements**:
+
+- Meal recommendation relevance score >85%
+- Food photo recognition accuracy >85% for common foods
+- Nutritional calculation accuracy within 5% margin of error
+- Dietary restriction compliance >99.9% (safety critical)
+- Continuous learning improvement with user feedback
+
+**Measurement**: A/B testing and accuracy metrics monitoring
+
+---
+
+## NFR-015: AI and Machine Learning - Bias Prevention
+
+**Priority**: Critical | **Verification**: Analysis  
+**Description**: AI systems shall operate fairly without discriminatory bias.
+
+**Requirements**:
+
+- Regular bias testing across demographic groups
+- Diverse training data representing multiple populations
+- Algorithmic fairness auditing with statistical parity
+- Transparent AI decision-making with explainable recommendations
+- Bias mitigation strategies with ongoing monitoring
+
+**Measurement**: Fairness metrics and demographic parity testing
+
+---
+
+## NFR-016: AI and Machine Learning - Performance
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: AI services shall operate within performance constraints.
+
+**Requirements**:
+
+- Real-time inference latency ≤500ms for recommendations
+- Model training completion within 24 hours for updates
+- Batch processing capability for 100,000+ users nightly
+- A/B testing framework for model validation
+- Automated model deployment with rollback capability
+
+**Measurement**: ML pipeline performance monitoring
+
+---
+
+## NFR-017: Data Quality and Validation
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall maintain high data quality standards.
+
+**Requirements**:
+
+- Data validation rules preventing invalid nutritional information
+- Duplicate detection and resolution for food database entries
+- User input sanitization and validation
+- Regular data quality audits with automated reporting
+- Crowd-sourced data verification with professional review
+
+**Measurement**: Data quality metrics and error rate monitoring
+
+---
+
+## NFR-018: Third-Party Integration Reliability
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: System shall handle third-party service dependencies reliably.
+
+**Requirements**:
+
+- Graceful degradation when external APIs are unavailable
+- Circuit breaker pattern implementation for service calls
+- Retry logic with exponential backoff for transient failures
+- Fallback mechanisms for critical integrations
+- SLA monitoring and alerting for external dependencies
+
+**Measurement**: Integration uptime and failure rate monitoring
+
+---
+
+## NFR-019: Monitoring and Observability
+
+**Priority**: Important | **Verification**: Inspection  
+**Description**: System shall provide comprehensive monitoring and observability.
+
+**Requirements**:
+
+- Real-time application performance monitoring (APM)
+- Comprehensive logging with structured log formats
+- Distributed tracing for microservices interactions
+- Business metrics dashboards for key performance indicators
+- Automated alerting for system anomalies and failures
+
+**Measurement**: Mean Time To Detection (MTTD) ≤5 minutes
+
+---
+
+## NFR-020: Disaster Recovery
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: System shall provide robust disaster recovery capabilities.
+
+**Requirements**:
+
+- Multi-region deployment with automated failover
+- Recovery Point Objective (RPO) ≤1 hour for data loss
+- Recovery Time Objective (RTO) ≤4 hours for service restoration
+- Regular disaster recovery testing quarterly
+- Business continuity planning with documented procedures
+
+**Measurement**: Disaster recovery exercise validation
+
+---
+
+## NFR-021: Internationalization and Localization
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: System shall support multiple languages and regions.
+
+**Requirements**:
+
+- Initial support for English, Spanish, French, German
+- Unicode UTF-8 support for all text content
+- Regional food database integration
+- Cultural dietary preference accommodation
+- Currency and measurement unit localization
+
+**Measurement**: Localization testing and cultural validation
+
+---
+
+## NFR-022: Cost Optimization
+
+**Priority**: Important | **Verification**: Analysis  
+**Description**: System shall operate within defined cost parameters.
+
+**Requirements**:
+
+- Cloud infrastructure costs ≤$10 per active user per month
+- AI processing costs ≤$2 per user per month
+- Automated resource optimization with usage-based scaling
+- Cost monitoring and alerting for budget overruns
+- Reserved instance utilization >80% for predictable workloads
+
+**Measurement**: Monthly cost analysis and optimization reporting
+
+---
+
+## NFR-023: Development and Deployment Efficiency
+
+**Priority**: Important | **Verification**: Inspection  
+**Description**: System shall support efficient development and deployment processes.
+
+**Requirements**:
+
+- Continuous Integration/Continuous Deployment (CI/CD) pipeline
+- Automated testing with >90% code coverage
+- Feature flag deployment for controlled rollouts
+- Blue-green deployment strategy for zero-downtime updates
+- Development environment provisioning within 15 minutes
+
+**Measurement**: Deployment frequency and lead time metrics
+
+---
+
+## NFR-024: API Design and Documentation
+
+**Priority**: Important | **Verification**: Inspection  
+**Description**: System APIs shall follow best practices and provide comprehensive documentation.
+
+**Requirements**:
+
+- RESTful API design following OpenAPI 3.0 specification
+- Comprehensive API documentation with interactive examples
+- Versioning strategy with backward compatibility for 2 major versions
+- Rate limiting to prevent abuse (1000 requests/hour per user)
+- SDK availability for major programming languages
+
+**Measurement**: API adoption rate and developer satisfaction
+
+---
+
+## NFR-025: Search Performance
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: Search functionality shall provide fast and relevant results.
+
+**Requirements**:
+
+- Food search results within 500ms for queries
+- Elasticsearch-powered search with fuzzy matching
+- Search relevance scoring with user behavior feedback
+- Auto-complete suggestions within 100ms
+- Advanced filtering with multiple criteria support
+
+**Measurement**: Search response time and result relevance metrics
+
+---
+
+## NFR-026: Content Delivery and Caching
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: System shall optimize content delivery for global users.
+
+**Requirements**:
+
+- Global Content Delivery Network (CDN) with edge caching
+- Static asset caching with 99% cache hit ratio
+- Image optimization with WebP format support
+- Progressive image loading for mobile users
+- Cache invalidation strategy for dynamic content updates
+
+**Measurement**: Page load time and cache performance metrics
+
+---
+
+## NFR-027: Database Performance
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: Database systems shall provide optimal performance for application needs.
+
+**Requirements**:
+
+- Database query response time ≤100ms for 95% of queries
+- Connection pooling with automatic scaling
+- Read replica scaling for reporting workloads
+- Database indexing optimization for frequent queries
+- Regular performance tuning and optimization
+
+**Measurement**: Database performance monitoring and query analysis
+
+---
+
+## NFR-028: Security Incident Response
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: System shall have comprehensive security incident response procedures.
+
+**Requirements**:
+
+- 24/7 security monitoring with automated threat detection
+- Incident response team activation within 15 minutes
+- Automated security event correlation and analysis
+- Forensic capability with data preservation
+- Regular security incident simulation exercises
+
+**Measurement**: Incident response time and resolution effectiveness
+
+---
+
+## NFR-029: Maintenance and Support
+
+**Priority**: Important | **Verification**: Inspection  
+**Description**: System shall provide efficient maintenance and user support capabilities.
+
+**Requirements**:
+
+- Scheduled maintenance windows ≤4 hours monthly
+- Self-service support portal with searchable knowledge base
+- Multi-channel support (email, chat, phone) with SLA response times
+- Remote diagnostic capability for technical issues
+- Automated health checks and preventive maintenance
+
+**Measurement**: Support ticket resolution time and user satisfaction
+
+---
+
+## NFR-030: Environmental Sustainability
+
+**Priority**: Optional | **Verification**: Analysis  
+**Description**: System shall operate with consideration for environmental impact.
+
+**Requirements**:
+
+- Cloud provider carbon-neutral hosting commitment
+- Resource optimization to minimize computational waste
+- Sustainable software practices with efficient algorithms
+- E-waste reduction through extended hardware lifecycle
+- Carbon footprint reporting and offset programs
+
+**Measurement**: Energy usage monitoring and carbon footprint calculation
+
+---
+
+## Performance Benchmarks
+
+### Load Testing Scenarios
+
+1. **Normal Load**: 1,000 concurrent users, typical usage patterns
+2. **Peak Load**: 10,000 concurrent users, evening meal planning rush
+3. **Stress Test**: 50,000 concurrent users, system breaking point identification
+4. **Endurance Test**: 72-hour continuous operation at normal load
+
+### Performance Targets Summary
+
+| Metric              | Target     | Measurement Method                 |
+| ------------------- | ---------- | ---------------------------------- |
+| Page Load Time      | <3 seconds | Real User Monitoring (RUM)         |
+| API Response Time   | <1 second  | Application Performance Monitoring |
+| Database Query Time | <100ms     | Database monitoring tools          |
+| Mobile App Launch   | <2 seconds | Mobile analytics                   |
+| Search Response     | <500ms     | Search analytics                   |
+
+## Security Testing Requirements
+
+### Penetration Testing
+
+- **Frequency**: Quarterly professional penetration testing
+- **Scope**: All external interfaces, APIs, and web applications
+- **Standards**: OWASP Top 10, NIST Cybersecurity Framework
+- **Remediation**: Critical findings resolved within 48 hours
+
+### Security Monitoring
+
+- **SIEM Implementation**: 24/7 security event monitoring
+- **Threat Intelligence**: Integration with commercial threat feeds
+- **Vulnerability Scanning**: Weekly automated security scans
+- **Compliance Auditing**: Annual SOC 2 Type II certification
+
+## Compliance Framework
+
+### Healthcare Regulations
+
+- **HIPAA**: Not applicable to MVP (no PHI collected per SRS 2.4.1), but readiness for future compliance if PHI is introduced
+- **FDA Considerations**: Software as Medical Device (SaMD) evaluation - not applicable to wellness/nutrition platform
+- **Health Data Privacy**: General health information privacy best practices implementation
+
+### Data Protection Laws
+
+- **GDPR**: EU General Data Protection Regulation compliance
+- **CCPA**: California Consumer Privacy Act requirements
+- **State Laws**: Additional state privacy law compliance
+
+## Quality Assurance Metrics
+
+### Code Quality Standards
+
+- **Code Coverage**: Minimum 90% test coverage
+- **Code Review**: 100% peer review before merge
+- **Static Analysis**: Automated code quality scanning
+- **Documentation**: All APIs and critical functions documented
+
+### User Experience Metrics
+
+- **Net Promoter Score (NPS)**: Target >50
+- **Customer Satisfaction (CSAT)**: Target >4.5/5.0
+- **Task Success Rate**: Target >90%
+- **Time to Value**: New user first success <24 hours
+
+## Monitoring and Alerting Strategy
+
+### System Health Monitoring
+
+- **Uptime Monitoring**: External service availability checks
+- **Performance Monitoring**: Response time and throughput tracking
+- **Error Monitoring**: Real-time error detection and alerting
+- **Business Metrics**: User engagement and conversion tracking
+
+### Alert Priorities
+
+1. **Critical**: System unavailable, security incidents
+2. **High**: Performance degradation, failed deployments
+3. **Medium**: Resource utilization warnings, data quality issues
+4. **Low**: Informational alerts, scheduled maintenance notifications
+
+## Capacity Planning
+
+### Growth Projections
+
+- **Year 1**: 100,000 registered users, 10,000 DAU
+- **Year 2**: 500,000 registered users, 50,000 DAU
+- **Year 3**: 1,000,000 registered users, 100,000 DAU
+
+### Resource Scaling Strategy
+
+- **Horizontal Scaling**: Microservices with container orchestration
+- **Database Scaling**: Read replicas and sharding strategy
+- **Storage Scaling**: Object storage with intelligent tiering
+- **CDN Scaling**: Global edge cache expansion
+
+---
+
+## NFR-020: AI/LLM Performance (NEW)
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: AI Health Concierge shall provide responsive and reliable LLM-powered interactions.
+
+**Requirements**:
+
+- LLM first token response: ≤3 seconds
+- LLM complete response: ≤10 seconds for typical queries
+- Streaming response enabled (token-by-token delivery)
+- LLM API fallback to cached responses if external API fails
+- Maximum 5 retries for failed LLM requests
+
+**Measurement**: Response time monitoring and fallback activation rate
+
+**Rationale**: Users expect near-instant feedback in chat interfaces. Streaming provides perceived responsiveness.
+
+---
+
+## NFR-021: AI Safety and Validation (NEW)
+
+**Priority**: Critical | **Verification**: Testing  
+**Description**: AI recommendations shall be validated for safety and accuracy.
+
+**Requirements**:
+
+- 100% allergen detection accuracy (zero false negatives tolerated)
+- AI responses must not contain medical diagnoses or prescriptions
+- All AI meal recommendations cross-checked against user allergies
+- LLM responses validated for harmful content before delivery
+- Confidence scores provided for all AI-generated insights (minimum 70% to display)
+
+**Measurement**: Safety validation test suite and user incident reports
+
+**Rationale**: Health-critical AI requires zero-tolerance for allergen errors.
+
+---
+
+## NFR-022: Mental Wellness Analytics Accuracy (NEW)
+
+**Priority**: Important | **Verification**: Testing  
+**Description**: Pattern detection and wellness insights shall be statistically valid.
+
+**Requirements**:
+
+- Minimum 14 days of data required before pattern insights generated
+- Statistical significance threshold: p-value < 0.05 for pattern detection
+- Correlation analysis minimum sample size: 10 data points
+- Confidence score ≥70% required to display insight to user
+- False positive rate for wellness insights: <10%
+
+**Measurement**: Statistical validation testing and user feedback surveys
+
+**Rationale**: Avoid misleading users with spurious correlations from insufficient data.
+
+---
+
+## NFR-023: Data Retention and Deletion (NEW)
+
+**Priority**: Important | **Verification**: Inspection  
+**Description**: System shall support flexible data retention policies for mental wellness data.
+
+**Requirements**:
+
+- Users can delete individual mood/stress/sleep logs at any time
+- Bulk deletion option: "Delete all mental wellness data older than X days"
+- Deleted mental wellness data permanently removed within 24 hours
+- Anonymized aggregated data (no PII) retained for research (with user consent)
+- Automatic data retention policy: mood/stress logs retained 1 year, sleep logs 2 years (configurable)
+
+**Measurement**: Data deletion audit logs and retention policy compliance
+
+**Rationale**: Users may want to remove past mental health records for privacy or emotional reasons.
+
+---
+
+## Document Revision History
+
+| Version | Date       | Author           | Changes                                                                                             |
+| ------- | ---------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| 1.0     | 2025-10-18 | Development Team | Initial non-functional requirements specification                                                   |
+| 2.0     | 2025-10-25 | Development Team | Added Mental Wellness NFRs: Mental health data privacy (NFR-007A), AI performance and safety (NFR-020 to NFR-023) |
+

@@ -1,102 +1,119 @@
 # Database Design
 
-## Current Implementation
+**⚠️ Note**: This is a quick reference for AI agents. For detailed database schema and design decisions, see:
+- **Comprehensive Database Docs**: `/docs/2-DESIGN/database-design.md`
+- **Actual Schema**: `/backend/src/eatsential/models/models.py`
+- **Migrations**: `/backend/alembic/versions/`
+
+---
+
+## Current Schema (Implemented)
 
 ### Database Configuration
 
-**Development**: SQLite
+- **Development**: SQLite (`development.db`)
+- **Production**: PostgreSQL (configured via `DATABASE_URL`)
+- **ORM**: SQLAlchemy 2.0.36
+- **Migrations**: Alembic
+
+### Core Tables
+
+#### ✅ users
+
+- `id` (UUID string, PK)
+- `username` (VARCHAR(20), unique, indexed)
+- `email` (VARCHAR(255), unique, indexed, case-insensitive)
+- `password_hash` (VARCHAR, bcrypt)
+- `account_status` (ENUM: pending/verified/suspended)
+- `email_verified` (BOOLEAN)
+- `verification_token` (UUID, indexed)
+- `verification_token_expires` (TIMESTAMP)
+- `role` (ENUM: user/admin, indexed)
+- `created_at`, `updated_at` (TIMESTAMP)
+
+#### ✅ health_profiles
+
+- `id` (UUID string, PK)
+- `user_id` (FK → users.id, unique, CASCADE delete)
+- `height_cm` (NUMERIC(5,2))
+- `weight_kg` (NUMERIC(5,2))
+- `activity_level` (ENUM: sedentary/light/moderate/active/very_active)
+- `metabolic_rate` (INTEGER)
+- `created_at`, `updated_at` (TIMESTAMP)
+
+**Relationship**: One-to-one with users
+
+#### ✅ allergen_database
+
+Master allergen list:
+
+- `id` (UUID string, PK)
+- `name` (VARCHAR(100), unique)
+- `category` (VARCHAR(50))
+- `is_major_allergen` (BOOLEAN)
+- `description` (TEXT)
+- `created_at` (TIMESTAMP)
+
+#### ✅ user_allergies
+
+- `id` (UUID string, PK)
+- `health_profile_id` (FK → health_profiles.id, CASCADE delete)
+- `allergen_id` (FK → allergen_database.id)
+- `severity` (ENUM: mild/moderate/severe/life_threatening)
+- `diagnosed_date` (DATE)
+- `reaction_type` (VARCHAR(50))
+- `notes` (TEXT)
+- `is_verified` (BOOLEAN)
+- `created_at`, `updated_at` (TIMESTAMP)
+
+**Relationship**: Many-to-many between health_profiles and allergen_database
+
+#### ✅ dietary_preferences
+
+- `id` (UUID string, PK)
+- `health_profile_id` (FK → health_profiles.id, CASCADE delete)
+- `preference_type` (ENUM: diet/cuisine/ingredient/preparation)
+- `preference_name` (VARCHAR(100))
+- `is_strict` (BOOLEAN)
+- `reason` (VARCHAR(50))
+- `notes` (TEXT)
+- `created_at`, `updated_at` (TIMESTAMP)
+
+---
+
+## Quick Reference
+
+### Common Queries
 
 ```python
-DATABASE_URL = "sqlite:///./development.db"
+# Get user with health profile
+user = db.query(UserDB).filter(UserDB.id == user_id).first()
+health_profile = user.health_profile  # Relationship loaded
+
+# Get health profile with allergies and preferences
+profile = db.query(HealthProfileDB)\
+    .options(joinedload(HealthProfileDB.allergies))\
+    .options(joinedload(HealthProfileDB.dietary_preferences))\
+    .filter(HealthProfileDB.user_id == user_id)\
+    .first()
+
+# Find allergen by name
+allergen = db.query(AllergenDB)\
+    .filter(AllergenDB.name.ilike(allergen_name))\
+    .first()
 ```
 
-**Production**: PostgreSQL
+### Running Migrations
 
-```python
-DATABASE_URL = "postgresql://user:password@host/database"
+```bash
+# Apply all migrations
+cd backend
+source .venv/bin/activate
+arch -x86_64 python -m alembic upgrade head
+
+# Create new migration
+arch -x86_64 python -m alembic revision --autogenerate -m "description"
 ```
-
-### Current Tables
-
-#### users
-
-```sql
--- SQLite/PostgreSQL compatible schema
-CREATE TABLE users (
-    id VARCHAR(36) PRIMARY KEY,  -- UUID as string
-    username VARCHAR(20) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    is_email_verified BOOLEAN DEFAULT FALSE,
-    verification_token VARCHAR(255),
-    verification_token_expires TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Indexes
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_verification_token ON users(verification_token);
-```
-
-### SQLAlchemy Model (Actual Implementation)
-
-```python
-from sqlalchemy import Column, String, Boolean, DateTime
-from sqlalchemy.sql import func
-from .database import Base
-import uuid
-
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    username = Column(String(20), unique=True, nullable=False, index=True)
-    email = Column(String(255), unique=True, nullable=False, index=True)
-    password_hash = Column(String(255), nullable=False)
-    is_email_verified = Column(Boolean, default=False, nullable=False)
-    verification_token = Column(String(255), nullable=True, index=True)
-    verification_token_expires = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
-```
-
-### Common Database Operations
-
-#### User Creation
-
-```python
-# In user_service.py
-new_user = User(
-    username=user_data.username,
-    email=user_data.email.lower(),
-    password_hash=get_password_hash(user_data.password),
-    verification_token=generate_verification_token(),
-    verification_token_expires=datetime.utcnow() + timedelta(hours=24)
-)
-db.add(new_user)
-db.commit()
-```
-
-#### Find User by Email
-
-```python
-user = db.query(User).filter(User.email == email.lower()).first()
-```
-
-#### Verify Email Token
-
-```python
-user = db.query(User).filter(
-    User.verification_token == token,
-    User.verification_token_expires > datetime.utcnow()
-).first()
-```
-
-### Database Migrations
-
-Using Alembic for migrations:
 
 ```bash
 # Create a new migration
