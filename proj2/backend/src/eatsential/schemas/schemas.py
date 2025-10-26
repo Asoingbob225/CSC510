@@ -536,6 +536,13 @@ class GoalProgressResponse(BaseModel):
 # --- Recommendation Schemas (BE-S2-008) ---
 
 
+class RecommendationRequest(BaseModel):
+    """Schema for recommendation request (BE-S2-005)."""
+
+    user_id: str
+    constraints: Optional[dict] = None
+
+
 class RecommendationItem(BaseModel):
     """A single recommended menu item with score and short explanation."""
 
