@@ -55,4 +55,6 @@ class MenuItem(Base):
         DateTime, default=utcnow, nullable=False
     )
 
-    restaurant: Mapped["Restaurant"] = relationship("Restaurant", back_populates="menu_items")
+    restaurant: Mapped["Restaurant"] = relationship(
+        "Restaurant", back_populates="menu_items"
+    )

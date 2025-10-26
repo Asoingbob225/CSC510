@@ -73,11 +73,15 @@ def init_restaurants(database_url: Optional[str] = None):
 
         added = 0
         for rest in SAMPLE_RESTAURANTS:
-            existing = db.query(Restaurant).filter(Restaurant.name == rest["name"]).first()
+            existing = (
+                db.query(Restaurant).filter(Restaurant.name == rest["name"]).first()
+            )
             if existing:
                 continue
 
-            r = Restaurant(id=str(uuid4()), name=rest["name"], cuisine=rest.get("cuisine"))
+            r = Restaurant(
+                id=str(uuid4()), name=rest["name"], cuisine=rest.get("cuisine")
+            )
             db.add(r)
             db.flush()
 
