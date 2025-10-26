@@ -38,7 +38,9 @@ Instructions:
       with a summary of the changes:
 
 ```
-Closes: # (issue number)
+Closes: # (issue number 1)
+Closes: # (issue number 2)
+Closes: ... (add more as needed)
 
 ### Description of Changes
 
