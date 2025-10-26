@@ -16,7 +16,10 @@ from .schemas import (
     UserAllergyUpdate,
     UserBase,
     UserCreate,
+    UserDetailResponse,
+    UserListResponse,
     UserLogin,
+    UserProfileUpdate,
     UserResponse,
 )
 
@@ -36,6 +39,9 @@ __all__ = [
     "UserAllergyUpdate",
     "UserBase",
     "UserCreate",
+    "UserDetailResponse",
+    "UserListResponse",
     "UserLogin",
+    "UserProfileUpdate",
     "UserResponse",
 ]
