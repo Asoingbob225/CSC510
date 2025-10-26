@@ -1,6 +1,8 @@
 import { Link } from 'react-router';
 import { Users, Settings, Activity, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useQuery } from '@tanstack/react-query';
+import { adminApi } from '@/lib/api';
 
 interface StatCardProps {
   title: string;
@@ -54,6 +56,22 @@ function QuickLink({ title, description, link, icon }: QuickLinkProps) {
 }
 
 export default function AdminDashboard() {
+  // Fetch allergens data for statistics
+  const { data: allergens } = useQuery({
+    queryKey: ['allergens'],
+    queryFn: adminApi.getAllergens,
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: adminApi.getAllUsers,
+  });
+
+  // Calculate allergen statistics
+  const totalAllergens = allergens?.length ?? 0;
+  const majorAllergens = allergens?.filter((a) => a.is_major_allergen).length ?? 0;
+  const allergenCategories = new Set(allergens?.map((a) => a.category)).size;
+
   return (
     <div className="space-y-8">
       {/* Welcome section */}
@@ -68,29 +86,28 @@ export default function AdminDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Users"
-          value="1,234"
+          value={user ? user.length.toString() : '0'}
           description="Active registered users"
           icon={<Users className="size-4" />}
           trend="+12% from last month"
         />
         <StatCard
-          title="Health Profiles"
-          value="987"
-          description="Completed health profiles"
+          title="Total Allergens"
+          value={totalAllergens.toString()}
+          description="In allergen database"
+          icon={<AlertTriangle className="size-4" />}
+        />
+        <StatCard
+          title="Major Allergens"
+          value={majorAllergens.toString()}
+          description="FDA major allergens tracked"
+          icon={<AlertTriangle className="size-4" />}
+        />
+        <StatCard
+          title="Allergen Categories"
+          value={allergenCategories.toString()}
+          description="Distinct allergen categories"
           icon={<Activity className="size-4" />}
-          trend="+8% from last month"
-        />
-        <StatCard
-          title="Active Sessions"
-          value="156"
-          description="Currently logged in"
-          icon={<TrendingUp className="size-4" />}
-        />
-        <StatCard
-          title="System Status"
-          value="Healthy"
-          description="All services operational"
-          icon={<Settings className="size-4" />}
         />
       </div>
 
@@ -129,28 +146,34 @@ export default function AdminDashboard() {
       <div>
         <h2 className="mb-4 text-xl font-semibold text-gray-900">Recent Activity</h2>
         <Card>
-          <CardContent className="pt-6">
+          <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
-                  <p className="font-medium text-gray-900">New user registration</p>
-                  <p className="text-sm text-gray-600">user@example.com registered</p>
+                  <p className="font-medium text-gray-900">Allergen database updated</p>
+                  <p className="text-sm text-gray-600">
+                    {totalAllergens} allergens now available in the system
+                  </p>
                 </div>
-                <span className="text-sm text-gray-500">2 minutes ago</span>
+                <span className="text-sm text-gray-500">Just now</span>
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
-                  <p className="font-medium text-gray-900">Health profile created</p>
-                  <p className="text-sm text-gray-600">User completed health wizard</p>
+                  <p className="font-medium text-gray-900">Major allergens configured</p>
+                  <p className="text-sm text-gray-600">
+                    {majorAllergens} FDA major allergens tracked
+                  </p>
                 </div>
-                <span className="text-sm text-gray-500">15 minutes ago</span>
+                <span className="text-sm text-gray-500">5 minutes ago</span>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-gray-900">System update</p>
-                  <p className="text-sm text-gray-600">Backend services updated to v1.2.0</p>
+                  <p className="font-medium text-gray-900">Allergen categories organized</p>
+                  <p className="text-sm text-gray-600">
+                    {allergenCategories} distinct categories available
+                  </p>
                 </div>
-                <span className="text-sm text-gray-500">1 hour ago</span>
+                <span className="text-sm text-gray-500">10 minutes ago</span>
               </div>
             </div>
           </CardContent>
