@@ -72,6 +72,15 @@ class UserDB(Base):
     goals: Mapped[list["GoalDB"]] = relationship(
         "GoalDB", back_populates="user", cascade="all, delete-orphan"
     )
+    mood_logs: Mapped[list["MoodLogDB"]] = relationship(
+        "MoodLogDB", back_populates="user", cascade="all, delete-orphan"
+    )
+    stress_logs: Mapped[list["StressLogDB"]] = relationship(
+        "StressLogDB", back_populates="user", cascade="all, delete-orphan"
+    )
+    sleep_logs: Mapped[list["SleepLogDB"]] = relationship(
+        "SleepLogDB", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class ActivityLevel(str, Enum):
@@ -372,3 +381,101 @@ class GoalDB(Base):
 
     # Relationships
     user: Mapped["UserDB"] = relationship("UserDB", back_populates="goals")
+
+
+# ============================================================================
+# Mental Wellness Models
+# ============================================================================
+
+
+class MoodLogDB(Base):
+    """SQLAlchemy model for mood logging"""
+
+    __tablename__ = "mood_logs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    # Mood Data
+    log_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    mood_score: Mapped[int] = mapped_column(Numeric(2, 0), nullable=False)  # 1-10 scale
+
+    # Encrypted sensitive data (optional notes)
+    encrypted_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False, index=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
+
+    # Relationships
+    user: Mapped["UserDB"] = relationship("UserDB", back_populates="mood_logs")
+
+
+class StressLogDB(Base):
+    """SQLAlchemy model for stress logging"""
+
+    __tablename__ = "stress_logs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    # Stress Data
+    log_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    stress_level: Mapped[int] = mapped_column(
+        Numeric(2, 0), nullable=False
+    )  # 1-10 scale
+
+    # Encrypted sensitive data (triggers and notes)
+    encrypted_triggers: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    encrypted_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False, index=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
+
+    # Relationships
+    user: Mapped["UserDB"] = relationship("UserDB", back_populates="stress_logs")
+
+
+class SleepLogDB(Base):
+    """SQLAlchemy model for sleep logging"""
+
+    __tablename__ = "sleep_logs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    # Sleep Data
+    log_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    duration_hours: Mapped[float] = mapped_column(Numeric(4, 2), nullable=False)
+    quality_score: Mapped[int] = mapped_column(
+        Numeric(2, 0), nullable=False
+    )  # 1-10 scale
+
+    # Encrypted sensitive data (optional notes)
+    encrypted_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False, index=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
+
+    # Relationships
+    user: Mapped["UserDB"] = relationship("UserDB", back_populates="sleep_logs")
