@@ -222,6 +222,24 @@ class HealthProfileResponse(BaseModel):
     dietary_preferences: list[DietaryPreferenceResponse] = []
 
 
+class AllergenCreate(BaseModel):
+    """Schema for allergen creation"""
+
+    name: str
+    category: str
+    is_major_allergen: bool = False
+    description: Optional[str] = None
+
+
+class AllergenUpdate(BaseModel):
+    """Schema for allergen update"""
+
+    name: Optional[str] = None
+    category: Optional[str] = None
+    is_major_allergen: Optional[bool] = None
+    description: Optional[str] = None
+
+
 class AllergenResponse(BaseModel):
     """Schema for allergen response"""
 

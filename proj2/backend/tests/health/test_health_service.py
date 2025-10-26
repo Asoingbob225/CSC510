@@ -15,15 +15,20 @@ from src.eatsential.schemas import (
 from src.eatsential.services.health_service import HealthProfileService
 
 
-def test_get_or_create_allergen(db: Session):
-    """Test getting or creating an allergen."""
+def test_get_or_create_allergen(db: Session, milk_allergen):
+    """Test getting an existing allergen."""
     service = HealthProfileService(db)
     allergen = service.get_or_create_allergen("milk")
     assert allergen.name == "milk"
+    assert allergen.id == milk_allergen.id
 
-    # Test getting the same allergen
+    # Test getting the same allergen returns the same instance
     allergen2 = service.get_or_create_allergen("milk")
     assert allergen2.id == allergen.id
+
+    # Test that non-existent allergen raises ValueError
+    with pytest.raises(ValueError, match=r"not found in database"):
+        service.get_or_create_allergen("non_existent_allergen")
 
 
 def test_add_allergy_exception(db: Session, test_user: UserDB):

@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session
 from ..db.database import get_db
 from ..models.models import UserDB
 from ..schemas.schemas import (
+    AllergenCreate,
     AllergenResponse,
+    AllergenUpdate,
     DietaryPreferenceCreate,
     DietaryPreferenceResponse,
     DietaryPreferenceUpdate,
@@ -20,7 +22,7 @@ from ..schemas.schemas import (
     UserAllergyResponse,
     UserAllergyUpdate,
 )
-from ..services.auth_service import get_current_user
+from ..services.auth_service import get_current_admin_user, get_current_user
 from ..services.health_service import HealthProfileService
 
 router = APIRouter(
@@ -30,6 +32,7 @@ router = APIRouter(
 
 SessionDep = Annotated[Session, Depends(get_db)]
 CurrentUserDep = Annotated[UserDB, Depends(get_current_user)]
+AdminUserDep = Annotated[UserDB, Depends(get_current_admin_user)]
 
 
 # Health Profile endpoints
@@ -457,4 +460,169 @@ async def list_allergens(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while listing allergens",
+        ) from e
+
+
+@router.get("/allergens/{allergen_id}", response_model=AllergenResponse)
+async def get_allergen(
+    allergen_id: str,
+    db: SessionDep,
+):
+    """Get a specific allergen by ID.
+
+    Args:
+        allergen_id: The allergen's ID
+        db: Database session
+
+    Returns:
+        Allergen details
+
+    Raises:
+        HTTPException: If allergen not found
+
+    """
+    try:
+        service = HealthProfileService(db)
+        allergen = service.get_allergen_by_id(allergen_id)
+        if not allergen:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Allergen not found",
+            )
+        return allergen
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error fetching allergen: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while fetching the allergen",
+        ) from e
+
+
+# Admin allergen management endpoints
+
+
+@router.post("/admin/allergens", response_model=AllergenResponse, status_code=201)
+async def create_allergen(
+    allergen: AllergenCreate,
+    db: SessionDep,
+    current_user: AdminUserDep,
+):
+    """Create a new allergen (admin only).
+
+    Args:
+        allergen: Allergen creation data
+        db: Database session
+        current_user: Current authenticated admin user
+
+    Returns:
+        Created allergen
+
+    Raises:
+        HTTPException: If creation fails or allergen already exists
+
+    """
+    try:
+        service = HealthProfileService(db)
+        new_allergen = service.create_allergen(allergen)
+        return new_allergen
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        ) from e
+    except Exception as e:
+        print(f"Error creating allergen: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while creating the allergen",
+        ) from e
+
+
+@router.put("/admin/allergens/{allergen_id}", response_model=AllergenResponse)
+async def update_allergen(
+    allergen_id: str,
+    allergen: AllergenUpdate,
+    db: SessionDep,
+    current_user: AdminUserDep,
+):
+    """Update an allergen (admin only).
+
+    Args:
+        allergen_id: The allergen's ID
+        allergen: Allergen update data
+        db: Database session
+        current_user: Current authenticated admin user
+
+    Returns:
+        Updated allergen
+
+    Raises:
+        HTTPException: If allergen not found or update fails
+
+    """
+    try:
+        service = HealthProfileService(db)
+        updated_allergen = service.update_allergen(allergen_id, allergen)
+        return updated_allergen
+    except ValueError as e:
+        status_code = (
+            status.HTTP_404_NOT_FOUND
+            if "not found" in str(e).lower()
+            else status.HTTP_400_BAD_REQUEST
+        )
+        raise HTTPException(
+            status_code=status_code,
+            detail=str(e),
+        ) from e
+    except Exception as e:
+        print(f"Error updating allergen: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while updating the allergen",
+        ) from e
+
+
+@router.delete("/admin/allergens/{allergen_id}", response_model=MessageResponse)
+async def delete_allergen(
+    allergen_id: str,
+    db: SessionDep,
+    current_user: AdminUserDep,
+):
+    """Delete an allergen (admin only).
+
+    Args:
+        allergen_id: The allergen's ID
+        db: Database session
+        current_user: Current authenticated admin user
+
+    Returns:
+        Success message
+
+    Raises:
+        HTTPException: If allergen not found or still in use
+
+    """
+    try:
+        service = HealthProfileService(db)
+        deleted = service.delete_allergen(allergen_id)
+        if not deleted:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Allergen not found",
+            )
+        return MessageResponse(message="Allergen deleted successfully")
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        ) from e
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error deleting allergen: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while deleting the allergen",
         ) from e

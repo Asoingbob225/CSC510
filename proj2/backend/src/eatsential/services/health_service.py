@@ -13,6 +13,8 @@ from ..models.models import (
     UserAllergyDB,
 )
 from ..schemas.schemas import (
+    AllergenCreate,
+    AllergenUpdate,
     DietaryPreferenceCreate,
     DietaryPreferenceUpdate,
     HealthProfileCreate,
@@ -20,75 +22,6 @@ from ..schemas.schemas import (
     UserAllergyCreate,
     UserAllergyUpdate,
 )
-
-# FDA Big 9 Major Allergens + Common Food Allergens
-APPROVED_ALLERGENS = [
-    # FDA Big 9 Major Allergens
-    "milk",
-    "eggs",
-    "fish",
-    "shellfish",
-    "tree nuts",
-    "peanuts",
-    "wheat",
-    "soybeans",
-    "sesame",
-    # Specific tree nuts
-    "almonds",
-    "walnuts",
-    "cashews",
-    "pistachios",
-    "pecans",
-    "hazelnuts",
-    "macadamia nuts",
-    "brazil nuts",
-    "pine nuts",
-    # Specific shellfish
-    "shrimp",
-    "crab",
-    "lobster",
-    "clams",
-    "oysters",
-    "mussels",
-    "scallops",
-    # Specific fish
-    "salmon",
-    "tuna",
-    "cod",
-    "halibut",
-    # Other common allergens
-    "gluten",
-    "lactose",
-    "corn",
-    "soy",
-    "mustard",
-    "celery",
-    "lupin",
-    "sulfites",
-    "nitrates",
-]
-
-
-def validate_allergen(name: str) -> bool:
-    """Validate that an allergen name is in the approved list.
-
-    Args:
-        name: The allergen name to validate
-
-    Returns:
-        True if the allergen is approved
-
-    Raises:
-        ValueError: If the allergen is not in the approved list
-
-    """
-    allergen_lower = name.lower().strip()
-    if allergen_lower not in [a.lower() for a in APPROVED_ALLERGENS]:
-        raise ValueError(
-            f"Allergen '{name}' is not recognized. "
-            f"Please use one of the approved allergens."
-        )
-    return True
 
 
 class HealthProfileService:
@@ -214,7 +147,10 @@ class HealthProfileService:
         )
 
     def get_or_create_allergen(self, name: str) -> AllergenDB:
-        """Get existing allergen or create a new one.
+        """Get existing allergen by name from database.
+
+        Note: This method no longer creates allergens automatically.
+        Allergens must be managed through the admin API endpoints.
 
         Args:
             name: Allergen name
@@ -223,39 +159,16 @@ class HealthProfileService:
             AllergenDB object
 
         Raises:
-            ValueError: If allergen name is not approved
+            ValueError: If allergen is not found in the database
 
         """
-        # Validate allergen
-        validate_allergen(name)
-
         # Check if allergen exists
         allergen = self.get_allergen_by_name(name)
-        if allergen:
-            return allergen
-
-        # Create new allergen
-        allergen = AllergenDB(
-            id=str(uuid4()),
-            name=name.lower().strip(),
-            category="food",  # Default category
-            is_major_allergen=name.lower().strip()
-            in [
-                "milk",
-                "eggs",
-                "fish",
-                "shellfish",
-                "tree nuts",
-                "peanuts",
-                "wheat",
-                "soybeans",
-                "sesame",
-            ],
-        )
-
-        self.db.add(allergen)
-        self.db.commit()
-        self.db.refresh(allergen)
+        if not allergen:
+            raise ValueError(
+                f"Allergen '{name}' not found in database. "
+                f"Please contact an administrator to add this allergen."
+            )
 
         return allergen
 
@@ -515,3 +428,143 @@ class HealthProfileService:
 
         """
         return self.db.query(AllergenDB).order_by(AllergenDB.name).all()
+
+    # Admin allergen management operations
+
+    def create_allergen(self, allergen_data: AllergenCreate) -> AllergenDB:
+        """Create a new allergen (admin only).
+
+        Args:
+            allergen_data: Allergen creation data
+
+        Returns:
+            Created AllergenDB object
+
+        Raises:
+            ValueError: If allergen with same name already exists
+
+        """
+        # Check if allergen with same name exists
+        existing = (
+            self.db.query(AllergenDB)
+            .filter(AllergenDB.name == allergen_data.name.lower().strip())
+            .first()
+        )
+        if existing:
+            raise ValueError(f"Allergen '{allergen_data.name}' already exists")
+
+        # Create new allergen
+        allergen = AllergenDB(
+            id=str(uuid4()),
+            name=allergen_data.name.lower().strip(),
+            category=allergen_data.category,
+            is_major_allergen=allergen_data.is_major_allergen,
+            description=allergen_data.description,
+        )
+
+        self.db.add(allergen)
+        try:
+            self.db.commit()
+            self.db.refresh(allergen)
+        except IntegrityError as exc:
+            self.db.rollback()
+            raise ValueError(f"Allergen '{allergen_data.name}' already exists") from exc
+
+        return allergen
+
+    def get_allergen_by_id(self, allergen_id: str) -> Optional[AllergenDB]:
+        """Get allergen by ID.
+
+        Args:
+            allergen_id: The allergen's ID
+
+        Returns:
+            AllergenDB object or None if not found
+
+        """
+        return self.db.query(AllergenDB).filter(AllergenDB.id == allergen_id).first()
+
+    def update_allergen(
+        self, allergen_id: str, allergen_data: AllergenUpdate
+    ) -> AllergenDB:
+        """Update an allergen (admin only).
+
+        Args:
+            allergen_id: The allergen's ID
+            allergen_data: Allergen update data
+
+        Returns:
+            Updated AllergenDB object
+
+        Raises:
+            ValueError: If allergen not found or name already exists
+
+        """
+        allergen = self.get_allergen_by_id(allergen_id)
+        if not allergen:
+            raise ValueError("Allergen not found")
+
+        # Update fields if provided
+        if allergen_data.name is not None:
+            # Check if new name is already taken by another allergen
+            existing = (
+                self.db.query(AllergenDB)
+                .filter(
+                    AllergenDB.name == allergen_data.name.lower().strip(),
+                    AllergenDB.id != allergen_id,
+                )
+                .first()
+            )
+            if existing:
+                raise ValueError(f"Allergen name '{allergen_data.name}' already exists")
+            allergen.name = allergen_data.name.lower().strip()
+
+        if allergen_data.category is not None:
+            allergen.category = allergen_data.category
+        if allergen_data.is_major_allergen is not None:
+            allergen.is_major_allergen = allergen_data.is_major_allergen
+        if allergen_data.description is not None:
+            allergen.description = allergen_data.description
+
+        try:
+            self.db.commit()
+            self.db.refresh(allergen)
+        except IntegrityError as exc:
+            self.db.rollback()
+            raise ValueError("Failed to update allergen") from exc
+
+        return allergen
+
+    def delete_allergen(self, allergen_id: str) -> bool:
+        """Delete an allergen (admin only).
+
+        Args:
+            allergen_id: The allergen's ID
+
+        Returns:
+            True if deleted, False if not found
+
+        Raises:
+            ValueError: If allergen is still in use by users
+
+        """
+        allergen = self.get_allergen_by_id(allergen_id)
+        if not allergen:
+            return False
+
+        # Check if allergen is in use
+        user_allergy_count = (
+            self.db.query(UserAllergyDB)
+            .filter(UserAllergyDB.allergen_id == allergen_id)
+            .count()
+        )
+        if user_allergy_count > 0:
+            raise ValueError(
+                f"Cannot delete allergen '{allergen.name}' as it is currently "
+                f"used by {user_allergy_count} user(s)"
+            )
+
+        self.db.delete(allergen)
+        self.db.commit()
+
+        return True
