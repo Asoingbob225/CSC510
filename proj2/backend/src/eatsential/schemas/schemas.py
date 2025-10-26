@@ -696,3 +696,25 @@ class WellnessLogsResponse(BaseModel):
     stress_logs: list[StressLogResponse] = []
     sleep_logs: list[SleepLogResponse] = []
     total_count: int
+
+
+# --- Recommendation Schemas (BE-S2-008) ---
+
+
+class RecommendationItem(BaseModel):
+    """A single recommended menu item with score and short explanation."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    menu_item_id: str
+    score: float
+    explanation: str
+
+
+class RecommendationResponse(BaseModel):
+    """Schema for recommendation API responses (list of RecommendationItem)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    user_id: Optional[str] = None
+    recommendations: list[RecommendationItem] = []
