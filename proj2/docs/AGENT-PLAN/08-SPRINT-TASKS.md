@@ -131,7 +131,7 @@ const severityStyles = {
 
 ### FE-S1-004: Admin Panel Foundation UI
 
-**Status**: 📝 To Do
+**Status**: ✅ Complete
 **Estimate**: 6 hours
 **Dependencies**: BE-S1-005
 **Description**: Create the basic structure for the admin control panel. This includes setting up protected routes accessible only to admin users and building a main layout with navigation for future admin modules.
@@ -173,7 +173,7 @@ const severityStyles = {
 
 ### FE-S1-006: Admin User Management UI
 
-**Status**: 📝 To Do
+**Status**: ✅ Complete
 **Estimate**: 7 hours
 **Dependencies**: FE-S1-004, BE-S1-007
 **Description**: Implement the user management interface in the admin panel. This will allow admins to view a list of all users, see their details, and perform administrative actions.
@@ -311,7 +311,7 @@ def validate_allergen(name: str) -> bool:
 
 ### BE-S1-005: Admin Role & Protected Routes API
 
-**Status**: 📝 To Do
+**Status**: ✅ Complete
 **Estimate**: 5 hours
 **Dependencies**: BE-S1-004
 **Description**: Implement the backend foundation for the admin system. This involves adding a role to the user model to distinguish admins and creating a reusable dependency to protect admin-only API endpoints.
@@ -368,7 +368,7 @@ async def create_allergen(
 
 ### BE-S1-007: Admin User Management API
 
-**Status**: 📝 To Do
+**Status**: ✅ Complete
 **Estimate**: 6 hours
 **Dependencies**: BE-S1-005
 **Description**: Create the API endpoints for administrators to manage users. This includes listing users and viewing detailed information about a specific user.
@@ -405,34 +405,34 @@ async def list_users(
 
 - FE-S1-001: Password Validation Fixed
 - FE-S1-002: Email Verification UI
+- FE-S1-004: Admin Panel Foundation UI
+- FE-S1-006: Admin User Management UI
 - BE-S1-001: User Registration API
 - BE-S1-002: Email Verification System
 - BE-S1-003: Health Profile CRUD
 - BE-S1-004: Database Setup
+- BE-S1-005: Admin Role & Protected Routes API
+- BE-S1-007: Admin User Management API
 
 ### Remaining Tasks 🔴
 
 - FE-S1-003: Health Profile Form
-- FE-S1-004: Admin Panel Foundation UI
 - FE-S1-005: Data Management UI (Allergens)
-- FE-S1-006: Admin User Management UI
-- BE-S1-005: Admin Role & Protected Routes API
 - BE-S1-006: Data Management API (Allergens)
-- BE-S1-007: Admin User Management API
 
-### Sprint Progress: 46% Complete (6/13 tasks)
+### Sprint Progress: 77% Complete (10/13 tasks)
 
 ## Task Assignment
 
 | Developer | Focus Area       | Tasks                | Status         |
 | --------- | ---------------- | -------------------- | -------------- |
 | Dev 1     | Frontend Auth    | FE-S1-001, FE-S1-002 | ✅ Complete    |
-| Dev 2     | Backend Auth     | BE-S1-001, BE-S1-002 | ✅ Complete    |
+| Dev 2     | Backend Auth     | BE-S1-001, BE-S1-02 | ✅ Complete    |
 | Dev 3     | Health Profile   | FE-S1-003, BE-S1-003 | ⚡ In Progress |
 | Dev 4     | Infrastructure   | BE-S1-004            | ✅ Complete    |
-| Dev 5     | Admin Foundation | FE-S1-004, BE-S1-005 | 📝 To Do       |
-| Dev 6     | Admin Features   | FE-S1-005, BE-S1-006 | 📝 To Do       |
-| Dev 7     | Admin User Mgmt  | FE-S1-006, BE-S1-007 | 📝 To Do       |
+| Dev 5     | Admin Foundation | FE-S1-004, BE-S1-005 | ✅ Complete    |
+| Dev 6     | Admin Features   | FE-S1-005, BE-S1-006 | ⚡ In Progress |
+| Dev 7     | Admin User Mgmt  | FE-S1-006, BE-S1-007 | ✅ Complete    |
 
 ---
 
@@ -482,7 +482,7 @@ async def list_users(
 
 | Metric          | Target   | Current |
 | --------------- | -------- | ------- |
-| Tasks Completed | 13       | 6       |
+| Tasks Completed | 13       | 10      |
 | Test Coverage   | 80%      | 88%     |
 | PR Cycle Time   | <4 hours | 2 hours |
 | Critical Bugs   | 0        | 0       |
