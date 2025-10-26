@@ -9,7 +9,6 @@ from src.eatsential.models.models import AllergenAuditLogDB, UserDB
 from src.eatsential.schemas import AllergenCreate
 from src.eatsential.services.health_service import HealthProfileService
 
-
 # Bulk Import Tests
 
 

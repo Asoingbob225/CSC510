@@ -281,6 +281,21 @@ class AllergenAuditLogResponse(BaseModel):
     created_at: datetime
 
 
+class UserAuditLogResponse(BaseModel):
+    """Schema for user audit log response"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    target_user_id: str
+    target_username: str
+    action: str
+    admin_user_id: str
+    admin_username: str
+    changes: Optional[str]
+    created_at: datetime
+
+
 # --- Admin User Management Schemas ---
 
 
