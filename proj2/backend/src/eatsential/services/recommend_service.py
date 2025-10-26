@@ -146,7 +146,7 @@ class RecommendService:
         # Score and rank items
         recommendations = []
         for item in menu_items:
-            score, explanation = self._score_menu_item(item, user_context, constraints)
+            score, explanation = self._score_menu_item(item, user_context)
             recommendations.append(
                 RecommendationItem(
                     menu_item_id=item.id,
@@ -197,7 +197,6 @@ class RecommendService:
         self,
         item: MenuItem,
         user_context: dict,
-        constraints: Optional[dict] = None,
     ) -> tuple[float, str]:
         """Score a menu item based on user context and generate explanation.
 
@@ -210,7 +209,6 @@ class RecommendService:
         Args:
             item: Menu item to score
             user_context: User context including health profile
-            constraints: Optional constraints from request
 
         Returns:
             Tuple of (score, explanation)
