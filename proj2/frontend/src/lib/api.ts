@@ -414,3 +414,53 @@ export const adminApi = {
     await apiClient.delete(`/health/admin/allergens/${allergenId}`);
   },
 };
+
+// GitHub API types
+export interface GitHubIssue {
+  number: number;
+  title: string;
+  state: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    login: string;
+    avatar_url: string;
+  };
+  html_url: string;
+  labels: Array<{
+    name: string;
+    color: string;
+  }>;
+  pull_request?: {
+    url: string;
+  };
+}
+
+// GitHub API client (no auth needed for public repos)
+const GITHUB_REPO = 'Asoingbob225/CSC510'; // Your repo
+
+export const githubApi = {
+  getRecentIssues: async (limit = 5): Promise<GitHubIssue[]> => {
+    const response = await axios.get(`https://api.github.com/repos/${GITHUB_REPO}/issues`, {
+      params: {
+        state: 'all',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: limit,
+      },
+    });
+    return response.data;
+  },
+
+  getRecentPRs: async (limit = 5): Promise<GitHubIssue[]> => {
+    const response = await axios.get(`https://api.github.com/repos/${GITHUB_REPO}/pulls`, {
+      params: {
+        state: 'all',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: limit,
+      },
+    });
+    return response.data;
+  },
+};
