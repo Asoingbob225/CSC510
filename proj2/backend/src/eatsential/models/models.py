@@ -66,6 +66,12 @@ class UserDB(Base):
         uselist=False,
         cascade="all, delete-orphan",
     )
+    meals: Mapped[list["MealDB"]] = relationship(
+        "MealDB", back_populates="user", cascade="all, delete-orphan"
+    )
+    goals: Mapped[list["GoalDB"]] = relationship(
+        "GoalDB", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class ActivityLevel(str, Enum):
@@ -307,3 +313,62 @@ class MealFoodItemDB(Base):
 
     # Relationships
     meal: Mapped["MealDB"] = relationship("MealDB", back_populates="food_items")
+
+
+class GoalType(str, Enum):
+    """Enumeration of goal types"""
+
+    NUTRITION = "nutrition"
+    WELLNESS = "wellness"
+
+
+class GoalStatus(str, Enum):
+    """Enumeration of goal statuses"""
+
+    ACTIVE = "active"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+
+class GoalDB(Base):
+    """SQLAlchemy model for health goals"""
+
+    __tablename__ = "goals"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    # Goal Definition
+    goal_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    target_type: Mapped[str] = mapped_column(
+        String(100), nullable=False
+    )  # e.g., "daily_calories", "weekly_protein"
+    target_value: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    current_value: Mapped[float] = mapped_column(
+        Numeric(10, 2), nullable=False, default=0
+    )
+
+    # Date Range
+    start_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    end_date: Mapped[date] = mapped_column(Date, nullable=False)
+
+    # Status
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, default=GoalStatus.ACTIVE.value, index=True
+    )
+
+    # Optional
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
+
+    # Relationships
+    user: Mapped["UserDB"] = relationship("UserDB", back_populates="goals")
