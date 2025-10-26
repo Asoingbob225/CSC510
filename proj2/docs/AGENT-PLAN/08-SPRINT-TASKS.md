@@ -299,33 +299,43 @@ Below are four small-to-moderate tasks from the M4 AI Recommendation milestone t
 
 1) BE-S2-004 / Issue #77 — Create Restaurant DB Schema & Seed Data (Assigned: @lzdjohn)
 
-	 - Status: 📝 To Do
+	 - Status: ✅ Complete (PR merged)
 	 - Goal: Define `Restaurant` and `MenuItem` models and add a small seed script that inserts sample restaurants and menu items into the dev database.
 	 - Acceptance:
 		 - SQLAlchemy / ORM models added under `backend/src/eatsential/models/restaurant.py` (or compatible DB layer).
 		 - A seed script `backend/scripts/seed_restaurants.py` that inserts 5 restaurants with 3-5 menu items each.
 		 - Basic unit test ensuring seed script runs without errors (mock DB or use test DB).
 	 - Estimated time: 2–3 hours
+	 - Completed: October 26, 2025
+	 - Branch: `feat/iss77-restaurant-schema-lzdjohn`
 
 2) BE-S2-008 / Issue (Add explanation field) — Add `explanation` field to Recommendation API (Assigned: @lzdjohn)
 
-	 - Status: 📝 To Do
+	 - Status: ✅ Complete (PR merged)
 	 - Goal: Extend the recommendation response schema to include a short human-readable `explanation` string (FR-071).
 	 - Acceptance:
 		 - API response schema updated (Pydantic / TypeScript types) to include `explanation`.
 		 - Back-end stub returns a placeholder explanation for now (e.g., "Based on your protein goal and allergy settings").
 		 - Unit test verifies `explanation` exists and is a non-empty string.
 	 - Estimated time: 1–2 hours
+	 - Completed: October 26, 2025
+	 - Branch: `feat/iss-explanation-field-lzdjohn`
 
 3) BE-S2-005 / Issue #81 — Build Core Recommendation API (stub) (`POST /api/recommend/meal`) (Assigned: @lzdjohn)
 
-	 - Status: 📝 To Do
+	 - Status: � In Progress (PR pending review)
 	 - Goal: Implement a minimal, testable recommendation endpoint that accepts user context and returns a ranked list of recommended menu items (can use a naive scoring function initially).
 	 - Acceptance:
 		 - Endpoint `POST /api/recommend/meal` accepts `{user_id, constraints}` and returns list of `{menu_item_id, score, explanation}`.
 		 - Uses the seeded restaurant/menu data for lookups.
 		 - Unit tests for happy path and simple allergy filtering.
 	 - Estimated time: 3–5 hours
+	 - Branch: `feat/iss81-recommendation-api-lzdjohn`
+	 - Implementation Notes:
+		 - Added `RecommendationRequest` schema with `user_id` and optional `constraints`
+		 - Implemented naive scoring: base 0.5 + 0.3 for calories + 0.2 for price info
+		 - Returns top 10 recommendations sorted by score
+		 - Comprehensive test suite with 6 test cases covering happy path, validation, scoring logic
 
 4) FE-S2-007 / Issue — Add Feedback Buttons (Like/Dislike) to Recommendation UI (Assigned: @lzdjohn)
 
