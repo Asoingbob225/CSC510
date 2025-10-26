@@ -27,6 +27,16 @@ def recommend_meal(
 
     This is a minimal implementation with naive scoring.
     Future versions will include ML-based recommendations.
+
+    Args:
+        request: Recommendation request with user_id and optional constraints
+        db: Database session dependency
+
+    Returns:
+        RecommendationResponse with list of recommended menu items
+
+    Raises:
+        HTTPException: 404 if user not found
     """
     # Verify user exists
     user = db.query(UserDB).filter(UserDB.id == request.user_id).first()
@@ -46,7 +56,7 @@ def recommend_meal(
     menu_items = (
         db.query(MenuItem)
         .join(Restaurant)
-        .filter(Restaurant.is_active == True)  # noqa: E712
+        .filter(Restaurant.is_active)
         .all()
     )
 
