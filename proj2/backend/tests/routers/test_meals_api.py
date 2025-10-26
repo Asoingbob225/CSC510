@@ -14,9 +14,7 @@ from src.eatsential.services.meal_service import MealService
 class TestCreateMealEndpoint:
     """Tests for POST /api/meals endpoint."""
 
-    def test_create_meal_success(
-        self, client: TestClient, auth_headers: dict, db
-    ):
+    def test_create_meal_success(self, client: TestClient, auth_headers: dict, db):
         """Test successful meal creation."""
         meal_data = {
             "meal_type": MealType.BREAKFAST.value,
@@ -170,9 +168,7 @@ class TestGetMealsEndpoint:
             MealService.create_meal(db, test_user.id, meal_data)
 
         # Get page 1 with page_size=2
-        response = client.get(
-            "/api/meals?page=1&page_size=2", headers=auth_headers
-        )
+        response = client.get("/api/meals?page=1&page_size=2", headers=auth_headers)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -182,9 +178,7 @@ class TestGetMealsEndpoint:
         assert data["page_size"] == 2
 
         # Get page 2
-        response = client.get(
-            "/api/meals?page=2&page_size=2", headers=auth_headers
-        )
+        response = client.get("/api/meals?page=2&page_size=2", headers=auth_headers)
 
         data = response.json()
         assert len(data["meals"]) == 2
@@ -344,9 +338,7 @@ class TestGetMealEndpoint:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_get_meal_requires_authentication(
-        self, client: TestClient, test_user, db
-    ):
+    def test_get_meal_requires_authentication(self, client: TestClient, test_user, db):
         """Test that getting specific meal requires authentication."""
         meal_data = MealCreate(
             meal_type=MealType.LUNCH,
@@ -383,14 +375,10 @@ class TestGetMealEndpoint:
             ],
         )
 
-        other_user_meal = MealService.create_meal(
-            db, test_user_2.id, meal_data
-        )
+        other_user_meal = MealService.create_meal(db, test_user_2.id, meal_data)
 
         # Try to access with test_user's auth
-        response = client.get(
-            f"/api/meals/{other_user_meal.id}", headers=auth_headers
-        )
+        response = client.get(f"/api/meals/{other_user_meal.id}", headers=auth_headers)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -537,16 +525,12 @@ class TestDeleteMealEndpoint:
 
         created_meal = MealService.create_meal(db, test_user.id, meal_data)
 
-        response = client.delete(
-            f"/api/meals/{created_meal.id}", headers=auth_headers
-        )
+        response = client.delete(f"/api/meals/{created_meal.id}", headers=auth_headers)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         # Verify meal is deleted
-        get_response = client.get(
-            f"/api/meals/{created_meal.id}", headers=auth_headers
-        )
+        get_response = client.get(f"/api/meals/{created_meal.id}", headers=auth_headers)
         assert get_response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_delete_meal_not_found(self, client: TestClient, auth_headers: dict):
@@ -598,9 +582,7 @@ class TestDeleteMealEndpoint:
             ],
         )
 
-        other_user_meal = MealService.create_meal(
-            db, test_user_2.id, meal_data
-        )
+        other_user_meal = MealService.create_meal(db, test_user_2.id, meal_data)
 
         # Try to delete with test_user's auth
         response = client.delete(
@@ -610,7 +592,5 @@ class TestDeleteMealEndpoint:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
         # Verify meal still exists
-        meal = MealService.get_meal_by_id(
-            db, test_user_2.id, other_user_meal.id
-        )
+        meal = MealService.get_meal_by_id(db, test_user_2.id, other_user_meal.id)
         assert meal is not None
