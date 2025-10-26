@@ -22,8 +22,8 @@ def test_user(db: Session) -> UserDB:
         id=str(uuid.uuid4()),
         email="testuser@example.com",
         username="testuser",
-        hashed_password="hashedpassword123",
-        is_active=True,
+        password_hash="hashedpassword123",
+        email_verified=True,
     )
     db.add(user)
     db.commit()
@@ -38,8 +38,8 @@ def test_user_2(db: Session) -> UserDB:
         id=str(uuid.uuid4()),
         email="testuser2@example.com",
         username="testuser2",
-        hashed_password="hashedpassword456",
-        is_active=True,
+        password_hash="hashedpassword456",
+        email_verified=True,
     )
     db.add(user)
     db.commit()
@@ -130,9 +130,9 @@ class TestCreateMeal:
         assert meal.meal_type == MealType.LUNCH.value
         # Test nutritional totals calculation
         assert meal.total_calories == 280 + 216 + 55
-        assert meal.total_protein_g == 53.0 + 5.0 + 3.7
-        assert meal.total_carbs_g == 0.0 + 45.0 + 11.0
-        assert meal.total_fat_g == 6.0 + 1.8 + 0.6
+        assert float(meal.total_protein_g) == 53.0 + 5.0 + 3.7
+        assert float(meal.total_carbs_g) == 0.0 + 45.0 + 11.0
+        assert float(meal.total_fat_g) == 6.0 + 1.8 + 0.6
         assert len(meal.food_items) == 3
 
     def test_create_meal_with_partial_nutritional_info(
@@ -188,7 +188,7 @@ class TestGetMealById:
 
         # Retrieve the meal
         retrieved_meal = MealService.get_meal_by_id(
-            db_session, test_user.id, created_meal.id
+            db, test_user.id, created_meal.id
         )
 
         assert retrieved_meal is not None
@@ -256,7 +256,7 @@ class TestGetUserMeals:
 
         # Get first page
         meals, total = MealService.get_user_meals(
-            db_session, test_user.id, skip=0, limit=3
+            db, test_user.id, skip=0, limit=3
         )
 
         assert total == 5
@@ -264,7 +264,7 @@ class TestGetUserMeals:
 
         # Get second page
         meals, total = MealService.get_user_meals(
-            db_session, test_user.id, skip=3, limit=3
+            db, test_user.id, skip=3, limit=3
         )
 
         assert total == 5
@@ -299,7 +299,7 @@ class TestGetUserMeals:
 
         # Filter for BREAKFAST only
         meals, total = MealService.get_user_meals(
-            db_session, test_user.id, meal_type=MealType.BREAKFAST.value
+            db, test_user.id, meal_type=MealType.BREAKFAST.value
         )
 
         assert total == 2
@@ -336,7 +336,7 @@ class TestGetUserMeals:
         # Filter for last 2 days
         start_date = now - timedelta(days=2)
         meals, total = MealService.get_user_meals(
-            db_session, test_user.id, start_date=start_date
+            db, test_user.id, start_date=start_date
         )
 
         assert total == 2
@@ -346,7 +346,7 @@ class TestGetUserMeals:
         start_date = now - timedelta(days=6)
         end_date = now - timedelta(days=2)
         meals, total = MealService.get_user_meals(
-            db_session, test_user.id, start_date=start_date, end_date=end_date
+            db, test_user.id, start_date=start_date, end_date=end_date
         )
 
         assert total == 2
@@ -373,12 +373,12 @@ class TestGetUserMeals:
 
         # Get meals for user 1
         meals_user_1, total_user_1 = MealService.get_user_meals(
-            db_session, test_user.id
+            db, test_user.id
         )
 
         # Get meals for user 2
         meals_user_2, total_user_2 = MealService.get_user_meals(
-            db_session, test_user_2.id
+            db, test_user_2.id
         )
 
         assert total_user_1 == 3
@@ -414,7 +414,7 @@ class TestUpdateMeal:
         update_data = MealUpdate(notes="Updated notes")
 
         updated_meal = MealService.update_meal(
-            db_session, test_user.id, created_meal.id, update_data
+            db, test_user.id, created_meal.id, update_data
         )
 
         assert updated_meal is not None
@@ -469,7 +469,7 @@ class TestUpdateMeal:
         )
 
         updated_meal = MealService.update_meal(
-            db_session, test_user.id, created_meal.id, update_data
+            db, test_user.id, created_meal.id, update_data
         )
 
         assert updated_meal is not None
@@ -486,7 +486,7 @@ class TestUpdateMeal:
         update_data = MealUpdate(notes="New notes")
 
         updated_meal = MealService.update_meal(
-            db_session, test_user.id, fake_meal_id, update_data
+            db, test_user.id, fake_meal_id, update_data
         )
 
         assert updated_meal is None
@@ -514,7 +514,7 @@ class TestUpdateMeal:
         update_data = MealUpdate(notes="Hacked notes")
 
         updated_meal = MealService.update_meal(
-            db_session, test_user_2.id, created_meal.id, update_data
+            db, test_user_2.id, created_meal.id, update_data
         )
 
         assert updated_meal is None
@@ -547,7 +547,7 @@ class TestDeleteMeal:
 
         # Verify it's gone
         deleted_meal = MealService.get_meal_by_id(
-            db_session, test_user.id, created_meal.id
+            db, test_user.id, created_meal.id
         )
         assert deleted_meal is None
 

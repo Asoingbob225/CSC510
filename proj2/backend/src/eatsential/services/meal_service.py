@@ -44,10 +44,10 @@ class MealService:
             meal_time=meal_data.meal_time,
             notes=meal_data.notes,
             photo_url=meal_data.photo_url,
-            total_calories=total_calories if total_calories > 0 else None,
-            total_protein_g=total_protein if total_protein > 0 else None,
-            total_carbs_g=total_carbs if total_carbs > 0 else None,
-            total_fat_g=total_fat if total_fat > 0 else None,
+            total_calories=total_calories or 0,
+            total_protein_g=total_protein or 0,
+            total_carbs_g=total_carbs or 0,
+            total_fat_g=total_fat or 0,
         )
 
         # Create food items
@@ -203,10 +203,10 @@ class MealService:
                     total_fat += food_item_data.fat_g
 
             # Update nutritional totals
-            db_meal.total_calories = total_calories if total_calories > 0 else None
-            db_meal.total_protein_g = total_protein if total_protein > 0 else None
-            db_meal.total_carbs_g = total_carbs if total_carbs > 0 else None
-            db_meal.total_fat_g = total_fat if total_fat > 0 else None
+            db_meal.total_calories = total_calories or 0
+            db_meal.total_protein_g = total_protein or 0
+            db_meal.total_carbs_g = total_carbs or 0
+            db_meal.total_fat_g = total_fat or 0
 
         db.commit()
         db.refresh(db_meal)

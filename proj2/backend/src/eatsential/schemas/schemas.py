@@ -363,7 +363,7 @@ class MealUpdate(BaseModel):
 
     @field_validator("meal_time")
     @classmethod
-    def validate_meal_time(cls, value: datetime | None) -> datetime | None:
+    def validate_meal_time(cls, value: Optional[datetime]) -> Optional[datetime]:
         """Validate meal time is within last 30 days"""
         if value is None:
             return value
