@@ -5,8 +5,6 @@ from datetime import date, timedelta
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from src.eatsential.services.mental_wellness_service import MentalWellnessService
-
 
 class TestCreateMoodLogEndpoint:
     """Tests for POST /api/wellness/mood-logs endpoint."""
@@ -190,9 +188,7 @@ class TestCreateSleepLogEndpoint:
 class TestGetWellnessLogsEndpoint:
     """Tests for GET /api/wellness/logs endpoint."""
 
-    def test_get_all_wellness_logs(
-        self, client: TestClient, auth_headers: dict, db
-    ):
+    def test_get_all_wellness_logs(self, client: TestClient, auth_headers: dict, db):
         """Test retrieving all wellness logs."""
         today = date.today()
 
@@ -275,9 +271,7 @@ class TestGetWellnessLogsEndpoint:
         )
 
         # Get only mood logs
-        response = client.get(
-            "/api/wellness/logs?log_type=mood", headers=auth_headers
-        )
+        response = client.get("/api/wellness/logs?log_type=mood", headers=auth_headers)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -318,9 +312,7 @@ class TestGetMoodLogEndpoint:
         log_id = create_response.json()["id"]
 
         # Get the log
-        response = client.get(
-            f"/api/wellness/mood-logs/{log_id}", headers=auth_headers
-        )
+        response = client.get(f"/api/wellness/mood-logs/{log_id}", headers=auth_headers)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()

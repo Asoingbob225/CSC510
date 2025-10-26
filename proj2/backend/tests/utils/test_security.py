@@ -1,6 +1,5 @@
 """Unit tests for encryption/decryption utilities."""
 
-
 import pytest
 
 from src.eatsential.utils.security import (
