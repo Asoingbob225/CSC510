@@ -6,7 +6,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from src.eatsential.models.models import MoodLog, SleepLog, StressLog
+from src.eatsential.models.models import MoodLogDB, SleepLogDB, StressLogDB
 
 
 class TestDataEncryption:
@@ -31,7 +31,7 @@ class TestDataEncryption:
         mood_id = response.json()["id"]
 
         # Check database - notes should be encrypted
-        mood_log = db.query(MoodLog).filter(MoodLog.id == mood_id).first()
+        mood_log = db.query(MoodLogDB).filter(MoodLogDB.id == mood_id).first()
         assert mood_log is not None
         # The encrypted notes should NOT be plaintext
         assert mood_log.notes_encrypted != sensitive_note
@@ -39,9 +39,7 @@ class TestDataEncryption:
         assert len(mood_log.notes_encrypted) > 0
 
         # API should decrypt when returning
-        get_response = client.get(
-            f"/api/wellness/mood/{mood_id}", headers=auth_headers
-        )
+        get_response = client.get(f"/api/wellness/mood/{mood_id}", headers=auth_headers)
         assert get_response.json()["notes"] == sensitive_note
 
     def test_stress_triggers_are_encrypted(
@@ -62,7 +60,7 @@ class TestDataEncryption:
         stress_id = response.json()["id"]
 
         # Check database
-        stress_log = db.query(StressLog).filter(StressLog.id == stress_id).first()
+        stress_log = db.query(StressLogDB).filter(StressLogDB.id == stress_id).first()
         assert stress_log.triggers_encrypted != sensitive_trigger
 
         # API returns decrypted
@@ -90,7 +88,7 @@ class TestDataEncryption:
         sleep_id = response.json()["id"]
 
         # Check database
-        sleep_log = db.query(SleepLog).filter(SleepLog.id == sleep_id).first()
+        sleep_log = db.query(SleepLogDB).filter(SleepLogDB.id == sleep_id).first()
         assert sleep_log.notes_encrypted != sensitive_note
 
         # API returns decrypted
@@ -182,12 +180,10 @@ class TestPrivacyControls:
         assert response2.status_code in [
             status.HTTP_404_NOT_FOUND,
             status.HTTP_403_FORBIDDEN,
-        ]
+        )
 
         # Verify User 1's sleep log still exists
-        response3 = client.get(
-            f"/api/wellness/sleep/{sleep_id}", headers=auth_headers
-        )
+        response3 = client.get(f"/api/wellness/sleep/{sleep_id}", headers=auth_headers)
         assert response3.status_code == status.HTTP_200_OK
 
     def test_wellness_logs_list_shows_only_user_data(
@@ -307,9 +303,7 @@ class TestTrendAnalysis:
             client.post("/api/wellness/sleep", json=sleep_data, headers=auth_headers)
 
         # Get correlation analysis
-        response = client.get(
-            "/api/wellness/sleep/correlation", headers=auth_headers
-        )
+        response = client.get("/api/wellness/sleep/correlation", headers=auth_headers)
 
         assert response.status_code == status.HTTP_200_OK
         correlation = response.json()
