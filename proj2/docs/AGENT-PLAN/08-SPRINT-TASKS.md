@@ -76,11 +76,11 @@ This document tracks development tasks across all milestones, organized by modul
 
 | Issue | Title | Priority | Assignee | Status |
 |-------|-------|----------|----------|--------|
-| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | P1 | TBD | 🟡 Open |
-| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | P1 | TBD | 🟡 Open |
-| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens | P1 | TBD | 🟡 Open |
+| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | P1 | TBD | ✅ Complete |
+| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | P1 | TBD | ✅ Complete |
+| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens | P1 | TBD | ✅ Complete |
 
-**Summary**: 3 open issues for v0.3 Tracking System milestone
+**Summary**: 0 open issues for v0.3 Tracking System milestone
 
 ---
 
@@ -161,7 +161,7 @@ This document tracks development tasks across all milestones, organized by modul
 
 #### FE-03-006: Admin Data Management UI (v0.3)
 
-**Status**: 🟡 In Progress  
+**Status**: ✅ Complete
 **Dependencies**: BE-03-003  
 **Module**: `frontend/src/pages/admin`  
 **Priority**: P1
