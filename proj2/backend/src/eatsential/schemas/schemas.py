@@ -4,11 +4,20 @@ import re
 from datetime import date, datetime
 from typing import Annotated, Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    computed_field,
+    field_validator,
+)
 
 from ..models.models import (
     ActivityLevel,
     AllergySeverity,
+    GoalStatus,
+    GoalType,
     MealType,
     PreferenceType,
     UserRole,
@@ -406,3 +415,119 @@ class MealListResponse(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+# --- Goal Tracking Schemas ---
+
+
+class GoalCreate(BaseModel):
+    """Schema for creating a goal"""
+
+    goal_type: GoalType
+    target_type: Annotated[str, Field(min_length=1, max_length=100)]
+    target_value: Annotated[float, Field(gt=0)]
+    start_date: date
+    end_date: date
+    notes: Optional[str] = Field(None, max_length=1000)
+
+    @field_validator("end_date")
+    @classmethod
+    def validate_end_date(cls, value: date, info) -> date:
+        """Validate end_date is after start_date"""
+        start_date = info.data.get("start_date")
+        if start_date and value <= start_date:
+            raise ValueError("end_date must be after start_date")
+        return value
+
+    @field_validator("start_date")
+    @classmethod
+    def validate_start_date(cls, value: date) -> date:
+        """Validate start_date is not too far in the past"""
+        days_diff = (date.today() - value).days
+        if days_diff > 365:
+            raise ValueError("start_date cannot be more than 365 days in the past")
+        return value
+
+
+class GoalUpdate(BaseModel):
+    """Schema for updating a goal"""
+
+    target_type: Optional[str] = Field(None, min_length=1, max_length=100)
+    target_value: Optional[float] = Field(None, gt=0)
+    current_value: Optional[float] = Field(None, ge=0)
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    status: Optional[GoalStatus] = None
+    notes: Optional[str] = Field(None, max_length=1000)
+
+    @field_validator("end_date")
+    @classmethod
+    def validate_end_date(cls, value: Optional[date], info) -> Optional[date]:
+        """Validate end_date is after start_date if both provided"""
+        if value is None:
+            return value
+
+        start_date = info.data.get("start_date")
+        if start_date and value <= start_date:
+            raise ValueError("end_date must be after start_date")
+        return value
+
+
+class GoalResponse(BaseModel):
+    """Schema for goal response"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    goal_type: str
+    target_type: str
+    target_value: float
+    current_value: float
+    start_date: date
+    end_date: date
+    status: str
+    notes: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    @computed_field
+    @property
+    def completion_percentage(self) -> float:
+        """Calculate goal completion percentage"""
+        if self.target_value <= 0:
+            return 0.0
+        percentage = (self.current_value / self.target_value) * 100
+        return min(percentage, 100.0)
+
+    @computed_field
+    @property
+    def is_active(self) -> bool:
+        """Check if goal is currently active"""
+        today = date.today()
+        return (
+            self.status == GoalStatus.ACTIVE.value
+            and self.start_date <= today <= self.end_date
+        )
+
+
+class GoalListResponse(BaseModel):
+    """Schema for paginated goal list response"""
+
+    goals: list[GoalResponse]
+    total: int
+    page: int
+    page_size: int
+
+
+class GoalProgressResponse(BaseModel):
+    """Schema for goal progress statistics"""
+
+    goal_id: str
+    goal_type: str
+    target_type: str
+    target_value: float
+    current_value: float
+    completion_percentage: float
+    status: str
+    days_remaining: int
