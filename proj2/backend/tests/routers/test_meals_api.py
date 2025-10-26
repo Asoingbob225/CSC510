@@ -60,7 +60,7 @@ class TestCreateMealEndpoint:
 
         response = client.post("/api/meals", json=meal_data)
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_create_meal_validates_meal_time_not_future(
         self, client: TestClient, auth_headers: dict
@@ -80,7 +80,7 @@ class TestCreateMealEndpoint:
 
         response = client.post("/api/meals", json=meal_data, headers=auth_headers)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
         assert "future" in response.json()["detail"][0]["msg"].lower()
 
     def test_create_meal_validates_meal_time_within_30_days(
@@ -101,7 +101,7 @@ class TestCreateMealEndpoint:
 
         response = client.post("/api/meals", json=meal_data, headers=auth_headers)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
         assert "30 days" in response.json()["detail"][0]["msg"].lower()
 
     def test_create_meal_requires_at_least_one_food_item(
@@ -116,7 +116,7 @@ class TestCreateMealEndpoint:
 
         response = client.post("/api/meals", json=meal_data, headers=auth_headers)
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 class TestGetMealsEndpoint:
@@ -270,7 +270,7 @@ class TestGetMealsEndpoint:
         """Test that getting meals requires authentication."""
         response = client.get("/api/meals")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_get_meals_user_isolation(
         self, client: TestClient, auth_headers: dict, test_user, test_user_2, db
@@ -364,7 +364,7 @@ class TestGetMealEndpoint:
 
         response = client.get(f"/api/meals/{created_meal.id}")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_get_meal_user_isolation(
         self, client: TestClient, auth_headers: dict, test_user_2, db
@@ -384,7 +384,7 @@ class TestGetMealEndpoint:
         )
 
         other_user_meal = MealService.create_meal(
-            db_session, test_user_2.id, meal_data
+            db, test_user_2.id, meal_data
         )
 
         # Try to access with test_user's auth
@@ -512,7 +512,7 @@ class TestUpdateMealEndpoint:
 
         response = client.put(f"/api/meals/{created_meal.id}", json=update_data)
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 class TestDeleteMealEndpoint:
@@ -579,7 +579,7 @@ class TestDeleteMealEndpoint:
 
         response = client.delete(f"/api/meals/{created_meal.id}")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_delete_meal_user_isolation(
         self, client: TestClient, auth_headers: dict, test_user_2, db
@@ -599,7 +599,7 @@ class TestDeleteMealEndpoint:
         )
 
         other_user_meal = MealService.create_meal(
-            db_session, test_user_2.id, meal_data
+            db, test_user_2.id, meal_data
         )
 
         # Try to delete with test_user's auth
@@ -611,6 +611,6 @@ class TestDeleteMealEndpoint:
 
         # Verify meal still exists
         meal = MealService.get_meal_by_id(
-            db_session, test_user_2.id, other_user_meal.id
+            db, test_user_2.id, other_user_meal.id
         )
         assert meal is not None
