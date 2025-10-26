@@ -203,6 +203,36 @@ async def get_user_audit_history(
     return audit_logs
 
 
+@router.get("/admin/audit-logs", response_model=list[UserAuditLogResponse])
+async def get_all_user_audit_history(
+    db: SessionDep,
+    current_user: AdminUserDep,
+    limit: int = 100,
+):
+    """Get all user audit log history (Admin only)
+
+    This endpoint allows administrators to view all administrative actions
+    performed on all user accounts, including role changes, status updates,
+    and profile modifications.
+
+    Args:
+        db: Database session
+        current_user: Current authenticated admin user
+        limit: Maximum number of audit logs to return (default: 100)
+
+    Returns:
+        List of all audit log entries
+
+    Raises:
+        HTTPException: 403 if user is not an admin
+
+    """
+    # Get all audit logs (no user_id filter)
+    audit_logs = get_user_audit_logs(db=db, target_user_id=None, limit=limit)
+
+    return audit_logs
+
+
 # Future endpoints:
 # @router.put("/me") - Update current user profile
 # @router.delete("/me") - Delete current user account

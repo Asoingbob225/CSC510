@@ -1,5 +1,13 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
-import { LayoutDashboard, Users, Settings, LogOut, Shield, AlertTriangle } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  LogOut,
+  Shield,
+  AlertTriangle,
+  Clock,
+} from 'lucide-react';
 import { clearAuthToken } from '@/lib/api';
 import {
   Sidebar,
@@ -39,6 +47,11 @@ const navItems: NavItem[] = [
     name: 'Allergen Management',
     path: '/system-manage/allergens',
     icon: AlertTriangle,
+  },
+  {
+    name: 'Audit History',
+    path: '/system-manage/audit',
+    icon: Clock,
   },
   {
     name: 'Settings',

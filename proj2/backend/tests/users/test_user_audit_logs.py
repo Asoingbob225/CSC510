@@ -312,3 +312,43 @@ class TestUserAuditLogs:
         assert '"third"' in data[0]["changes"]
         assert '"second"' in data[1]["changes"]
         assert '"first"' in data[2]["changes"]
+
+    def test_get_all_user_audit_logs(
+        self,
+        client,
+        db: Session,
+        admin_user: UserDB,
+        admin_auth_headers: dict,
+        regular_user: UserDB,
+    ):
+        """Test getting all user audit logs without user_id filter."""
+        # Create audit logs for multiple users
+        # Update regular_user
+        client.put(
+            f"/api/users/admin/users/{regular_user.id}",
+            json={"role": "admin"},
+            headers=admin_auth_headers,
+        )
+
+        # Update admin_user's username
+        client.put(
+            f"/api/users/admin/users/{admin_user.id}",
+            json={"username": "updated_admin"},
+            headers=admin_auth_headers,
+        )
+
+        # Get all audit logs
+        response = client.get(
+            "/api/users/admin/audit-logs",
+            headers=admin_auth_headers,
+        )
+        assert response.status_code == 200
+
+        data = response.json()
+        # Should have at least 2 logs (one for each user)
+        assert len(data) >= 2
+
+        # Verify logs contain different users
+        target_user_ids = {log["target_user_id"] for log in data}
+        assert regular_user.id in target_user_ids
+        assert admin_user.id in target_user_ids

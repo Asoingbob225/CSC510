@@ -303,6 +303,43 @@ export interface AllergenUpdate {
   description?: string;
 }
 
+// Bulk import types
+export interface AllergenBulkImportItem {
+  name: string;
+  category: string;
+  is_major_allergen: boolean;
+  description?: string;
+}
+
+export interface AllergenBulkImportResponse {
+  imported: number;
+  skipped: number;
+  errors: string[];
+}
+
+// Audit log types
+export interface AllergenAuditLog {
+  id: string;
+  allergen_id: string | null;
+  allergen_name: string;
+  action: string;
+  admin_user_id: string;
+  admin_username: string;
+  changes: string | null;
+  created_at: string;
+}
+
+export interface UserAuditLog {
+  id: string;
+  target_user_id: string;
+  target_username: string;
+  action: string;
+  admin_user_id: string;
+  admin_username: string;
+  changes: string | null;
+  created_at: string;
+}
+
 // Create health profile
 export const createHealthProfile = async (
   data: HealthProfileCreate
@@ -412,6 +449,63 @@ export const adminApi = {
 
   deleteAllergen: async (allergenId: string): Promise<void> => {
     await apiClient.delete(`/health/admin/allergens/${allergenId}`);
+  },
+
+  // Bulk operations
+  bulkImportAllergens: async (
+    allergens: AllergenBulkImportItem[]
+  ): Promise<AllergenBulkImportResponse> => {
+    const response = await apiClient.post('/health/admin/allergens/bulk', {
+      allergens,
+    });
+    return response.data;
+  },
+
+  // Search allergens
+  searchAllergens: async (params: {
+    name?: string;
+    category?: string;
+    is_major_allergen?: boolean;
+    skip?: number;
+    limit?: number;
+  }): Promise<AllergenResponse[]> => {
+    const response = await apiClient.get('/health/admin/allergens/search', {
+      params,
+    });
+    return response.data;
+  },
+
+  // Export allergens
+  exportAllergens: async (format: 'json' | 'csv'): Promise<Blob> => {
+    const response = await apiClient.get('/health/admin/allergens/export', {
+      params: { format },
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Get allergen audit logs
+  getAllergenAuditLogs: async (allergenId?: string, limit = 100): Promise<AllergenAuditLog[]> => {
+    const response = await apiClient.get('/health/admin/allergens/audit-logs', {
+      params: { allergen_id: allergenId, limit },
+    });
+    return response.data;
+  },
+
+  // Get user audit logs
+  getUserAuditLogs: async (userId: string, limit = 100): Promise<UserAuditLog[]> => {
+    const response = await apiClient.get(`/users/admin/users/${userId}/audit-logs`, {
+      params: { limit },
+    });
+    return response.data;
+  },
+
+  // Get all user audit logs
+  getAllUserAuditLogs: async (limit = 100): Promise<UserAuditLog[]> => {
+    const response = await apiClient.get('/users/admin/audit-logs', {
+      params: { limit },
+    });
+    return response.data;
   },
 };
 
