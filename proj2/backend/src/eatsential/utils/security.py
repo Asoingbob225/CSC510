@@ -10,7 +10,7 @@ from typing import Optional
 
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
 class EncryptionError(Exception):
@@ -42,7 +42,7 @@ def _get_encryption_key() -> bytes:
         )
 
     # Use PBKDF2 to derive a proper Fernet key from the secret
-    kdf = PBKDF2(
+    kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
         salt=b"eatsential_wellness_salt",  # Static salt for consistency
