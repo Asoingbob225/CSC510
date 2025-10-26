@@ -21,14 +21,14 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.eatsential.db.database import get_database_path, DATABASE_URL, Base
-from src.eatsential.models import Restaurant, MenuItem
+from src.eatsential.db.database import DATABASE_URL, get_database_path
+from src.eatsential.models import MenuItem, Restaurant
 
 
 def seed_restaurants(session):
     """Seed the database with sample restaurant data."""
     print("\nSeeding restaurant data...")
-    
+
     restaurants_data = [
         {
             "name": "Green Bowl Cafe",
@@ -196,7 +196,7 @@ def seed_restaurants(session):
             ]
         },
     ]
-    
+
     for rest_data in restaurants_data:
         # Create restaurant
         restaurant = Restaurant(
@@ -208,7 +208,7 @@ def seed_restaurants(session):
             created_at=datetime.now(timezone.utc).replace(tzinfo=None)
         )
         session.add(restaurant)
-        
+
         # Create menu items for this restaurant
         for item_data in rest_data["menu_items"]:
             menu_item = MenuItem(
@@ -221,13 +221,13 @@ def seed_restaurants(session):
                 created_at=datetime.now(timezone.utc).replace(tzinfo=None)
             )
             session.add(menu_item)
-    
+
     session.commit()
-    
+
     # Count results
     restaurant_count = session.query(Restaurant).count()
     menu_item_count = session.query(MenuItem).count()
-    
+
     print(f"✅ Seeded {restaurant_count} restaurants with {menu_item_count} menu items")
 
 
@@ -285,12 +285,12 @@ def main():
 def seed_data():
     """Seed the database with sample data."""
     print("Seeding database with sample data...")
-    
+
     # Create engine and session
     engine = create_engine(DATABASE_URL)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    session = SessionLocal()
-    
+    session_local = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    session = session_local()
+
     try:
         seed_restaurants(session)
         print("\n✅ Database seeding completed successfully!")
