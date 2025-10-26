@@ -232,3 +232,47 @@ class AllergenResponse(BaseModel):
     category: str
     is_major_allergen: bool
     description: Optional[str] = None
+
+
+# --- Admin User Management Schemas ---
+
+
+class UserListResponse(BaseModel):
+    """Schema for user list response (admin view)"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    username: str
+    email: str
+    role: str
+    account_status: str
+    email_verified: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class UserDetailResponse(BaseModel):
+    """Schema for detailed user response (admin view)"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    username: str
+    email: str
+    role: str
+    account_status: str
+    email_verified: bool
+    verification_token_expires: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UserProfileUpdate(BaseModel):
+    """Schema for updating user profile (admin)"""
+
+    username: Optional[Annotated[str, Field(min_length=3, max_length=20)]] = None
+    email: Optional[EmailStr] = None
+    role: Optional[UserRole] = None
+    account_status: Optional[str] = None
+    email_verified: Optional[bool] = None
