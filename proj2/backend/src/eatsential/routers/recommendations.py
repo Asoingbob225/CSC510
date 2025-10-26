@@ -53,12 +53,7 @@ def recommend_meal(
     allergen_ids = {allergy.allergen_id for allergy in user_allergies}
 
     # Get all active menu items from active restaurants
-    menu_items = (
-        db.query(MenuItem)
-        .join(Restaurant)
-        .filter(Restaurant.is_active)
-        .all()
-    )
+    menu_items = db.query(MenuItem).join(Restaurant).filter(Restaurant.is_active).all()
 
     if not menu_items:
         return RecommendationResponse(
@@ -97,4 +92,3 @@ def recommend_meal(
         user_id=request.user_id,
         recommendations=recommendations,
     )
-
