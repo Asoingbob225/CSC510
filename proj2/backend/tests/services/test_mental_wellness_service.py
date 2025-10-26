@@ -180,9 +180,7 @@ class TestLogSleep:
     def test_log_sleep_without_notes(self, db: Session, test_user: UserDB):
         """Test logging sleep without notes."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=6.0, quality_score=7
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=6.0, quality_score=7)
 
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
@@ -191,9 +189,7 @@ class TestLogSleep:
     def test_log_sleep_short_duration(self, db: Session, test_user: UserDB):
         """Test logging short sleep duration."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=4.0, quality_score=4
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=4.0, quality_score=4)
 
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
@@ -292,9 +288,7 @@ class TestGetSleepLogById:
     def test_get_sleep_log_success(self, db: Session, test_user: UserDB):
         """Test retrieving a sleep log by ID."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=7.0, quality_score=8
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=8)
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
         retrieved = MentalWellnessService.get_sleep_log_by_id(
@@ -310,9 +304,7 @@ class TestGetSleepLogById:
     ):
         """Test user isolation for sleep logs."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=6.0, quality_score=6
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=6.0, quality_score=6)
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
         retrieved = MentalWellnessService.get_sleep_log_by_id(
@@ -336,9 +328,7 @@ class TestGetWellnessLogs:
         stress_data = StressLogCreate(log_date=today, stress_level=5)
         MentalWellnessService.log_stress(db, test_user.id, stress_data)
 
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=7.0, quality_score=8
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=8)
         MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
         # Retrieve all
@@ -381,9 +371,7 @@ class TestGetWellnessLogs:
         today = date.today()
 
         # Create log with notes
-        mood_data = MoodLogCreate(
-            log_date=today, mood_score=8, notes="Decryption test"
-        )
+        mood_data = MoodLogCreate(log_date=today, mood_score=8, notes="Decryption test")
         MentalWellnessService.log_mood(db, test_user.id, mood_data)
 
         # Retrieve
@@ -519,9 +507,7 @@ class TestUpdateSleepLog:
     def test_update_sleep_log_success(self, db: Session, test_user: UserDB):
         """Test updating a sleep log."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=6.0, quality_score=6
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=6.0, quality_score=6)
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
         # Update
@@ -539,9 +525,7 @@ class TestUpdateSleepLog:
     ):
         """Test user cannot update another user's sleep log."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=7.0, quality_score=7
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=7)
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
         update_data = SleepLogUpdate(quality_score=10)
@@ -588,9 +572,7 @@ class TestDeleteMoodLog:
         mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
 
         # Try to delete with different user
-        result = MentalWellnessService.delete_mood_log(
-            db, test_user_2.id, mood_log.id
-        )
+        result = MentalWellnessService.delete_mood_log(db, test_user_2.id, mood_log.id)
 
         assert result is False
 
@@ -637,9 +619,7 @@ class TestDeleteSleepLog:
     def test_delete_sleep_log_success(self, db: Session, test_user: UserDB):
         """Test deleting a sleep log."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=7.0, quality_score=7
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=7)
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
         result = MentalWellnessService.delete_sleep_log(db, test_user.id, sleep_log.id)
@@ -651,9 +631,7 @@ class TestDeleteSleepLog:
     ):
         """Test user cannot delete another user's sleep log."""
         today = date.today()
-        sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=7.0, quality_score=7
-        )
+        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=7)
         sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
 
         result = MentalWellnessService.delete_sleep_log(

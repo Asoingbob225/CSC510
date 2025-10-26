@@ -4,10 +4,9 @@ import uuid
 from datetime import date
 from typing import Literal, Optional
 
-from sqlalchemy import and_, desc, or_
+from sqlalchemy import and_, desc
 from sqlalchemy.orm import Session
 
-from ..utils.security import decrypt_sensitive_data, encrypt_sensitive_data
 from ..models.models import MoodLogDB, SleepLogDB, StressLogDB
 from ..schemas.schemas import (
     MoodLogCreate,
@@ -20,6 +19,7 @@ from ..schemas.schemas import (
     StressLogResponse,
     StressLogUpdate,
 )
+from ..utils.security import decrypt_sensitive_data, encrypt_sensitive_data
 
 LogType = Literal["mood", "stress", "sleep"]
 
@@ -38,6 +38,7 @@ class MentalWellnessService:
 
         Returns:
             Created mood log database object
+
         """
         # Encrypt notes if provided
         encrypted_notes = encrypt_sensitive_data(mood_data.notes)
@@ -70,6 +71,7 @@ class MentalWellnessService:
 
         Returns:
             Created stress log database object
+
         """
         # Encrypt sensitive data if provided
         encrypted_triggers = encrypt_sensitive_data(stress_data.triggers)
@@ -102,6 +104,7 @@ class MentalWellnessService:
 
         Returns:
             Created sleep log database object
+
         """
         # Encrypt notes if provided
         encrypted_notes = encrypt_sensitive_data(sleep_data.notes)
@@ -135,6 +138,7 @@ class MentalWellnessService:
 
         Returns:
             Mood log database object or None if not found
+
         """
         return (
             db.query(MoodLogDB)
@@ -155,6 +159,7 @@ class MentalWellnessService:
 
         Returns:
             Stress log database object or None if not found
+
         """
         return (
             db.query(StressLogDB)
@@ -175,6 +180,7 @@ class MentalWellnessService:
 
         Returns:
             Sleep log database object or None if not found
+
         """
         return (
             db.query(SleepLogDB)
@@ -201,6 +207,7 @@ class MentalWellnessService:
 
         Returns:
             Tuple of (mood_logs, stress_logs, sleep_logs) with decrypted data
+
         """
         mood_logs = []
         stress_logs = []
@@ -299,6 +306,7 @@ class MentalWellnessService:
 
         Returns:
             Updated mood log or None if not found
+
         """
         db_log = MentalWellnessService.get_mood_log_by_id(db, user_id, log_id)
         if not db_log:
@@ -329,6 +337,7 @@ class MentalWellnessService:
 
         Returns:
             Updated stress log or None if not found
+
         """
         db_log = MentalWellnessService.get_stress_log_by_id(db, user_id, log_id)
         if not db_log:
@@ -362,6 +371,7 @@ class MentalWellnessService:
 
         Returns:
             Updated sleep log or None if not found
+
         """
         db_log = MentalWellnessService.get_sleep_log_by_id(db, user_id, log_id)
         if not db_log:
@@ -392,6 +402,7 @@ class MentalWellnessService:
 
         Returns:
             True if deleted, False if not found
+
         """
         db_log = MentalWellnessService.get_mood_log_by_id(db, user_id, log_id)
         if not db_log:
@@ -412,6 +423,7 @@ class MentalWellnessService:
 
         Returns:
             True if deleted, False if not found
+
         """
         db_log = MentalWellnessService.get_stress_log_by_id(db, user_id, log_id)
         if not db_log:
@@ -432,6 +444,7 @@ class MentalWellnessService:
 
         Returns:
             True if deleted, False if not found
+
         """
         db_log = MentalWellnessService.get_sleep_log_by_id(db, user_id, log_id)
         if not db_log:

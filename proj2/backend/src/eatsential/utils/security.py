@@ -33,6 +33,7 @@ def _get_encryption_key() -> bytes:
 
     Raises:
         EncryptionError: If ENCRYPTION_KEY environment variable is not set
+
     """
     secret_key = os.getenv("ENCRYPTION_KEY")
     if not secret_key:
@@ -67,6 +68,7 @@ def encrypt_sensitive_data(plaintext: Optional[str]) -> Optional[str]:
     Example:
         >>> encrypted = encrypt_sensitive_data("I feel anxious today")
         >>> # Returns encrypted base64 string
+
     """
     if not plaintext:
         return None
@@ -95,6 +97,7 @@ def decrypt_sensitive_data(encrypted_text: Optional[str]) -> Optional[str]:
     Example:
         >>> decrypted = decrypt_sensitive_data(encrypted_text)
         >>> # Returns original plain text
+
     """
     if not encrypted_text:
         return None
@@ -121,5 +124,6 @@ def generate_encryption_key() -> str:
     Example:
         >>> key = generate_encryption_key()
         >>> # Save this to your .env file: ENCRYPTION_KEY=<key>
+
     """
     return base64.urlsafe_b64encode(os.urandom(32)).decode("utf-8")

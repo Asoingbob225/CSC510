@@ -1,6 +1,5 @@
 """Unit tests for encryption/decryption utilities."""
 
-import os
 
 import pytest
 
@@ -82,8 +81,8 @@ class TestEncryptionUtilities:
         test_key = "test_encryption_key_for_unit_testing_12345"
         monkeypatch.setenv("ENCRYPTION_KEY", test_key)
 
-        # Test data with unicode
-        plaintext = "情绪日志：今天感觉很好 😊"
+        # Test data with unicode characters (accents, emojis, special chars)
+        plaintext = "Café résumé naïve 😊 ñoño"
 
         encrypted = encrypt_sensitive_data(plaintext)
         decrypted = decrypt_sensitive_data(encrypted)
