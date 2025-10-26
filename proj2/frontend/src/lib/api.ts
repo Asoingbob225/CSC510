@@ -323,8 +323,60 @@ export const getAllergens = async (): Promise<AllergenResponse[]> => {
   return response.data;
 };
 
+// Admin User Management Types
+export interface UserListItem {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  account_status: string;
+  email_verified: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserDetailData {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  account_status: string;
+  email_verified: boolean;
+  verification_token_expires?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserProfileUpdate {
+  username?: string;
+  role?: string;
+  account_status?: string;
+  email_verified?: boolean;
+}
+
 // Auth API functions
 export const getCurrentUser = async (): Promise<UserResponse> => {
   const response = await apiClient.get('/users/me');
   return response.data;
+};
+
+// Admin API functions
+export const adminApi = {
+  // Get all users (admin only)
+  getAllUsers: async (): Promise<UserListItem[]> => {
+    const response = await apiClient.get('/users/admin/users');
+    return response.data;
+  },
+
+  // Get user details (admin only)
+  getUserDetails: async (userId: string): Promise<UserDetailData> => {
+    const response = await apiClient.get(`/users/admin/users/${userId}`);
+    return response.data;
+  },
+
+  // Update user profile (admin only)
+  updateUser: async (userId: string, data: UserProfileUpdate): Promise<UserDetailData> => {
+    const response = await apiClient.put(`/users/admin/users/${userId}`, data);
+    return response.data;
+  },
 };
