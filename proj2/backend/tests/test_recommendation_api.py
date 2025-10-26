@@ -1,61 +1,43 @@
 """Unit tests for Recommendation API (BE-S2-005)."""
 
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 
-from src.eatsential.db.database import Base, get_db
-from src.eatsential.index import app
 from src.eatsential.models.models import UserDB
 from src.eatsential.models.restaurant import MenuItem, Restaurant
 
-# Test database setup
-TEST_DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
-def override_get_db():
-    """Override DB dependency for testing."""
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
-client = TestClient(app)
-
-
-@pytest.fixture(autouse=True)
-def setup_database():
-    """Create tables and seed test data before each test."""
-    Base.metadata.create_all(bind=engine)
-    db = TestingSessionLocal()
-
-    # Create test user
-    test_user = UserDB(
+@pytest.fixture
+def test_user(db: Session) -> UserDB:
+    """Create a test user for recommendation tests."""
+    user = UserDB(
         id="test_user_123",
-        username="testuser",
         email="test@example.com",
+        username="testuser",
         password_hash="hashed_password",
+        email_verified=True,
     )
-    db.add(test_user)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
 
-    # Create test restaurant and menu items
-    test_restaurant = Restaurant(
+
+@pytest.fixture
+def test_restaurant_data(db: Session, test_user: UserDB):
+    """Create test restaurant and menu items."""
+    # Create test restaurant
+    restaurant = Restaurant(
         id="rest_001",
         name="Healthy Eats",
         cuisine="Healthy",
         is_active=True,
     )
-    db.add(test_restaurant)
+    db.add(restaurant)
     db.flush()
 
     # Add menu items with varying nutritional info
-    menu_items = [
+    items = [
         MenuItem(
             id="item_001",
             restaurant_id="rest_001",
@@ -78,29 +60,25 @@ def setup_database():
             price=None,
         ),
     ]
-    for item in menu_items:
+    for item in items:
         db.add(item)
 
     db.commit()
-    db.close()
-
-    yield
-
-    Base.metadata.drop_all(bind=engine)
+    return restaurant, items
 
 
-def test_recommend_meal_happy_path():
+def test_recommend_meal_happy_path(client, test_user, test_restaurant_data):
     """Test successful meal recommendation request."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": "test_user_123", "constraints": {}},
+        json={"user_id": test_user.id, "constraints": {}},
     )
 
     assert response.status_code == 200
     data = response.json()
 
     assert "user_id" in data
-    assert data["user_id"] == "test_user_123"
+    assert data["user_id"] == test_user.id
     assert "recommendations" in data
     assert isinstance(data["recommendations"], list)
     assert len(data["recommendations"]) > 0
@@ -115,7 +93,7 @@ def test_recommend_meal_happy_path():
     assert len(first_rec["explanation"]) > 0
 
 
-def test_recommend_meal_user_not_found():
+def test_recommend_meal_user_not_found(client):
     """Test recommendation request with non-existent user."""
     response = client.post(
         "/api/recommend/meal",
@@ -126,11 +104,11 @@ def test_recommend_meal_user_not_found():
     assert "User not found" in response.json()["detail"]
 
 
-def test_recommend_meal_scoring():
+def test_recommend_meal_scoring(client, test_user, test_restaurant_data):
     """Test that items with more nutritional info score higher."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": "test_user_123", "constraints": {}},
+        json={"user_id": test_user.id, "constraints": {}},
     )
 
     assert response.status_code == 200
@@ -142,7 +120,7 @@ def test_recommend_meal_scoring():
     scores = [rec["score"] for rec in recommendations]
 
     # First two items have both calories and price, should score 1.0
-    assert scores[0] == 1.0 or scores[0] == pytest.approx(1.0)
+    assert scores[0] == pytest.approx(1.0)
 
     # Mystery dish with no nutrition info should score lowest
     mystery_item = next(
@@ -152,11 +130,11 @@ def test_recommend_meal_scoring():
         assert mystery_item["score"] == 0.5
 
 
-def test_recommend_meal_empty_constraints():
+def test_recommend_meal_empty_constraints(client, test_user, test_restaurant_data):
     """Test recommendation with empty constraints."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": "test_user_123"},
+        json={"user_id": test_user.id},
     )
 
     assert response.status_code == 200
@@ -164,10 +142,9 @@ def test_recommend_meal_empty_constraints():
     assert len(data["recommendations"]) > 0
 
 
-def test_recommend_meal_limit_top_10():
+def test_recommend_meal_limit_top_10(client, db: Session, test_user, test_restaurant_data):
     """Test that recommendations are limited to top 10."""
     # Add more menu items to test limit
-    db = TestingSessionLocal()
     for i in range(15):
         item = MenuItem(
             id=f"extra_item_{i}",
@@ -178,11 +155,10 @@ def test_recommend_meal_limit_top_10():
         )
         db.add(item)
     db.commit()
-    db.close()
 
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": "test_user_123", "constraints": {}},
+        json={"user_id": test_user.id, "constraints": {}},
     )
 
     assert response.status_code == 200

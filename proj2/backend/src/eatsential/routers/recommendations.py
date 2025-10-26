@@ -6,12 +6,18 @@ from sqlalchemy.orm import Session
 from ..db.database import get_db
 from ..models.models import UserAllergyDB, UserDB
 from ..models.restaurant import MenuItem, Restaurant
-from ..schemas.schemas import RecommendationRequest, RecommendationResponse, RecommendationItem
+from ..schemas.schemas import (
+    RecommendationItem,
+    RecommendationRequest,
+    RecommendationResponse,
+)
 
 router = APIRouter(prefix="/recommend", tags=["recommendations"])
 
 
-@router.post("/meal", response_model=RecommendationResponse, status_code=status.HTTP_200_OK)
+@router.post(
+    "/meal", response_model=RecommendationResponse, status_code=status.HTTP_200_OK
+)
 def recommend_meal(
     request: RecommendationRequest,
     db: Session = Depends(get_db),
@@ -32,9 +38,7 @@ def recommend_meal(
 
     # Get user's allergies for filtering
     user_allergies = (
-        db.query(UserAllergyDB)
-        .filter(UserAllergyDB.health_profile_id == user.id)
-        .all()
+        db.query(UserAllergyDB).filter(UserAllergyDB.health_profile_id == user.id).all()
     )
     allergen_ids = {allergy.allergen_id for allergy in user_allergies}
 
