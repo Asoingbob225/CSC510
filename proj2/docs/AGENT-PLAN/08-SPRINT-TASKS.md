@@ -79,11 +79,14 @@ This document tracks development tasks across all milestones, organized by modul
 
 | Issue                                                   | Title                                                      | Priority | Assignee | Status      |
 | ------------------------------------------------------- | ---------------------------------------------------------- | -------- | -------- | ----------- |
+| [#102](https://github.com/Asoingbob225/CSC510/issues/102) | feat(frontend): Admin Audit Log Dashboard UI               | P1       | TBD      | ✅ Complete |
+| [#101](https://github.com/Asoingbob225/CSC510/issues/101) | feat(backend): Admin Audit Log System                      | P1       | TBD      | ✅ Complete |
+| [#100](https://github.com/Asoingbob225/CSC510/issues/100) | feat: Admin Audit Log System                             | P1       | TBD      | ✅ Complete |
 | [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | P1       | TBD      | ✅ Complete |
 | [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | P1       | TBD      | ✅ Complete |
 | [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens                  | P1       | TBD      | ✅ Complete |
 
-**Summary**: 0 open issues for v0.3 Tracking System milestone
+**Summary**: 3 open issues for v0.3 Tracking System milestone
 
 ---
 
@@ -171,16 +174,17 @@ This document tracks development tasks across all milestones, organized by modul
 #### FE-03-006: Admin Data Management UI (v0.3)
 
 **Status**: ✅ Complete
-**Dependencies**: BE-03-003  
-**Module**: `frontend/src/pages/admin`  
+**Dependencies**: BE-03-004
+**Module**: `frontend/src/pages/admin`
 **Priority**: P1
 
 **Functional Requirements**:
 
 - Admin interface for allergen database management
 - CRUD operations for allergens (name, category, severity)
-- Bulk upload/export capabilities
+- Bulk upload/export capabilities (JSON, CSV)
 - Search and filtering
+- Link to audit history
 
 **Key Constraints**:
 
@@ -188,9 +192,7 @@ This document tracks development tasks across all milestones, organized by modul
 - Role-based access: Admin only
 - Audit logging for all changes
 
-**Related**: Issues #70-#72, FR-011 (Allergen Management)
-
----
+**Related**: Issues #70-#72, #100-102, FR-011 (Allergen Management)---
 
 ### Backend Tasks (In Progress)
 
@@ -296,25 +298,25 @@ This document tracks development tasks across all milestones, organized by modul
 
 #### BE-03-004: Admin Allergen Management API (v0.3)
 
-**Status**: 🟡 In Progress  
-**Dependencies**: BE-S1-001  
-**Module**: `backend/src/eatsential/routers/admin`  
+**Status**: ✅ Complete
+**Dependencies**: BE-S1-001
+**Module**: `backend/src/eatsential/routers/admin`
 **Priority**: P1
 
 **Functional Requirements**:
 
 - CRUD operations for allergen database
-- Bulk import/export allergens
+- Bulk import/export allergens (JSON, CSV)
 - Search allergens by name or category
-- Audit logging for all changes
+- Audit logging for all changes (allergens and users)
 - Role-based access control (admin only)
 
 **API Endpoints**:
 
-- `POST /api/admin/allergens`
-- `GET /api/admin/allergens`
-- `PUT /api/admin/allergens/{id}`
-- `DELETE /api/admin/allergens/{id}`
+- `POST /api/admin/allergens/bulk`
+- `GET /api/admin/allergens/export`
+- `GET /api/admin/audit-logs/allergens`
+- `GET /api/admin/audit-logs/users`
 
 **Key Constraints**:
 
@@ -323,9 +325,7 @@ This document tracks development tasks across all milestones, organized by modul
 - Cannot delete allergen if referenced by user profiles
 - Bulk operations: max 100 items per request
 
-**Related**: Issues #70-#72, FR-011 (Allergen Management), API-020
-
----
+**Related**: Issues #70-#72, #100-102, FR-011 (Allergen Management), API-020---
 
 ### Testing Tasks (Not Started)
 
