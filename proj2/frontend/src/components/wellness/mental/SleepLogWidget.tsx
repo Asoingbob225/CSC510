@@ -43,8 +43,8 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
 
       const sleepData: SleepLogCreate = {
         log_date: today,
-        sleep_duration: formData.duration_hours,
-        sleep_quality: formData.quality_score,
+        duration_hours: formData.duration_hours,
+        quality_score: formData.quality_score,
         notes: formData.notes,
       };
 

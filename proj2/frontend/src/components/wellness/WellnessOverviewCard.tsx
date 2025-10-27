@@ -136,8 +136,8 @@ export function WellnessOverviewCard() {
                 </div>
                 <div className="flex-1">
                   <p className="text-xs font-medium text-gray-600">Sleep</p>
-                  <p className={`text-lg font-bold ${getSleepColor(todayLog.sleep_quality)}`}>
-                    {todayLog.sleep_quality || '-'}/10
+                  <p className={`text-lg font-bold ${getSleepColor(todayLog.quality_score)}`}>
+                    {todayLog.quality_score || '-'}/10
                   </p>
                 </div>
               </div>

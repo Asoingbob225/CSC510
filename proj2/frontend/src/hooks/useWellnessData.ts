@@ -147,8 +147,8 @@ export function useWellnessChartData(days = 7) {
       if (log.stress_level !== undefined && log.stress_level !== null) {
         chartData.stress.push({ date: log.log_date, value: log.stress_level });
       }
-      if (log.sleep_quality !== undefined && log.sleep_quality !== null) {
-        chartData.sleep.push({ date: log.log_date, value: log.sleep_quality });
+      if (log.quality_score !== undefined && log.quality_score !== null) {
+        chartData.sleep.push({ date: log.log_date, value: log.quality_score });
       }
     });
   }

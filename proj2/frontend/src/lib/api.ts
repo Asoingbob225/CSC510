@@ -511,23 +511,23 @@ export const adminApi = {
 
 // Mental Wellness API Types
 export interface MoodLogCreate {
-  mood_score: number;
+  log_date: string; // YYYY-MM-DD format (required)
+  mood_score: number; // 1-10
   notes?: string;
-  log_date?: string;
 }
 
 export interface StressLogCreate {
-  stress_level: number;
+  log_date: string; // YYYY-MM-DD format (required)
+  stress_level: number; // 1-10
   triggers?: string;
   notes?: string;
-  log_date?: string;
 }
 
 export interface SleepLogCreate {
-  sleep_duration: number;
-  sleep_quality: number;
+  log_date: string; // YYYY-MM-DD format
+  duration_hours: number; // Sleep duration in hours
+  quality_score: number; // Sleep quality from 1 to 10
   notes?: string;
-  log_date?: string;
 }
 
 export interface GoalCreate {
@@ -544,8 +544,8 @@ export interface WellnessLogResponse {
   user_id: string;
   mood_score?: number;
   stress_level?: number;
-  sleep_duration?: number;
-  sleep_quality?: number;
+  duration_hours?: number; // Sleep duration in hours
+  quality_score?: number; // Sleep quality score 1-10
   notes?: string;
   triggers?: string;
   log_date: string;
@@ -631,8 +631,8 @@ export const wellnessApi = {
     sleep_logs.forEach((log) => {
       allLogs.push({
         ...log,
-        sleep_quality: log.sleep_quality,
-        sleep_duration: log.sleep_duration,
+        quality_score: log.quality_score,
+        duration_hours: log.duration_hours,
       });
     });
 
