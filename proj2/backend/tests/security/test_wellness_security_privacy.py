@@ -250,7 +250,7 @@ class TestScaleValidation:
         response = client.post(
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
         )
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_mood_score_above_maximum(
         self, client: TestClient, auth_headers: dict, db: Session
@@ -263,7 +263,7 @@ class TestScaleValidation:
         response = client.post(
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
         )
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_stress_level_range_validation(
         self, client: TestClient, auth_headers: dict, db: Session
@@ -289,7 +289,7 @@ class TestScaleValidation:
             response = client.post(
                 "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
             )
-            assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_sleep_quality_score_range(
         self, client: TestClient, auth_headers: dict, db: Session
@@ -314,4 +314,4 @@ class TestScaleValidation:
         response = client.post(
             "/api/wellness/sleep-logs", json=invalid_data, headers=auth_headers
         )
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
