@@ -97,6 +97,15 @@ export function DashboardNavbar() {
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
+                    href="/wellness-tracking"
+                  >
+                    Wellness
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
                     href="#recipes"
                   >
                     Recipes

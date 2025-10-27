@@ -15,5 +15,8 @@ export * from './mental';
 // Shared Components (used by both mental and physical wellness)
 export * from './shared';
 
+// Dashboard Widget
+export { WellnessOverviewCard } from './WellnessOverviewCard';
+
 // Physical Wellness Components (Future)
 // export * from './physical';
