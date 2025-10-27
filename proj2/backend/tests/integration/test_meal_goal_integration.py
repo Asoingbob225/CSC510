@@ -2,12 +2,11 @@
 
 from datetime import date, datetime, timedelta
 
-import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from src.eatsential.models.models import GoalStatus, GoalType, MealType
+from src.eatsential.models.models import GoalType, MealType
 
 
 class TestMealGoalIntegration:
