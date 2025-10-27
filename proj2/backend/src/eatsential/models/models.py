@@ -504,6 +504,19 @@ class Restaurant(Base):
     address: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
     cuisine: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False
+    )
+
+    # Relationships
+    menu_items: Mapped[list["MenuItem"]] = relationship(
+        "MenuItem", back_populates="restaurant", cascade="all, delete-orphan"
+    )
+
+
+# ============================================================================
 # Audit Log Models
 # ============================================================================
 
@@ -550,9 +563,8 @@ class AllergenAuditLogDB(Base):
         DateTime, default=utcnow, nullable=False
     )
 
-    menu_items: Mapped[list["MenuItem"]] = relationship(
-        "MenuItem", back_populates="restaurant", cascade="all, delete-orphan"
-    )
+    # Relationships
+    admin_user: Mapped["UserDB"] = relationship("UserDB")
 
 
 class MenuItem(Base):
@@ -568,8 +580,16 @@ class MenuItem(Base):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     calories: Mapped[Optional[float]] = mapped_column(Numeric(7, 2), nullable=True)
     price: Mapped[Optional[float]] = mapped_column(Numeric(8, 2), nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False
+    )
+
     # Relationships
-    admin_user: Mapped["UserDB"] = relationship("UserDB")
+    restaurant: Mapped["Restaurant"] = relationship(
+        "Restaurant", back_populates="menu_items"
+    )
 
 
 class UserAuditLogDB(Base):
@@ -604,8 +624,5 @@ class UserAuditLogDB(Base):
         DateTime, default=utcnow, nullable=False
     )
 
-    restaurant: Mapped["Restaurant"] = relationship(
-        "Restaurant", back_populates="menu_items"
-    )
     # Relationships
     admin_user: Mapped["UserDB"] = relationship("UserDB", foreign_keys=[admin_user_id])

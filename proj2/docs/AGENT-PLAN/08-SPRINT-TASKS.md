@@ -42,6 +42,7 @@ This document tracks development tasks across all milestones, organized by modul
 
 | Issue                                                   | Description                              | Task ID   | Status   |
 | ------------------------------------------------------- | ---------------------------------------- | --------- | -------- |
+| [#129](https://github.com/Asoingbob225/CSC510/issues/129)| Backend Test Failure & Model Inconsistency | BE-S2-FIX | ✅ Fixed |
 | [#41](https://github.com/Asoingbob225/CSC510/issues/41) | Password validation doesn't match FR-001 | FE-S1-001 | ✅ Fixed |
 | [#42](https://github.com/Asoingbob225/CSC510/issues/42) | Email verification flow missing          | BE-S1-002 | ✅ Fixed |
 | [#43](https://github.com/Asoingbob225/CSC510/issues/43) | User registration API missing            | BE-S1-001 | ✅ Fixed |

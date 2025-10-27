@@ -3,8 +3,7 @@
 import pytest
 from sqlalchemy.orm import Session
 
-from src.eatsential.models.models import UserDB
-from src.eatsential.models.restaurant import MenuItem, Restaurant
+from src.eatsential.models.models import MenuItem, Restaurant, UserDB
 
 
 @pytest.fixture
