@@ -388,6 +388,14 @@ class GoalDB(Base):
 # ============================================================================
 
 
+class LogType(str, Enum):
+    """Log type enum"""
+
+    MOOD = "mood"
+    STRESS = "stress"
+    SLEEP = "sleep"
+
+
 class MoodLogDB(Base):
     """SQLAlchemy model for mood logging"""
 
@@ -496,6 +504,48 @@ class Restaurant(Base):
     address: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
     cuisine: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+# Audit Log Models
+# ============================================================================
+
+
+class AuditAction(str, Enum):
+    """Audit log action types"""
+
+    CREATE = "create"
+    UPDATE = "update"
+    DELETE = "delete"
+    BULK_IMPORT = "bulk_import"
+    # User-specific actions
+    ROLE_CHANGE = "role_change"
+    STATUS_CHANGE = "status_change"
+    PROFILE_UPDATE = "profile_update"
+    EMAIL_VERIFY = "email_verify"
+
+
+class AllergenAuditLogDB(Base):
+    """SQLAlchemy model for allergen audit log table"""
+
+    __tablename__ = "allergen_audit_logs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+
+    # What was changed
+    allergen_id: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    allergen_name: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    # Action details
+    action: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Who made the change
+    admin_user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id"), nullable=False
+    )
+    admin_username: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Change details (JSON string)
+    changes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamp
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=utcnow, nullable=False
     )
@@ -518,6 +568,38 @@ class MenuItem(Base):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     calories: Mapped[Optional[float]] = mapped_column(Numeric(7, 2), nullable=True)
     price: Mapped[Optional[float]] = mapped_column(Numeric(8, 2), nullable=True)
+    # Relationships
+    admin_user: Mapped["UserDB"] = relationship("UserDB")
+
+
+class UserAuditLogDB(Base):
+    """SQLAlchemy model for user audit log table
+
+    Records all administrative actions performed on user accounts,
+    including role changes, status updates, and profile modifications.
+    """
+
+    __tablename__ = "user_audit_logs"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+
+    # What was changed
+    target_user_id: Mapped[str] = mapped_column(String, nullable=False)
+    target_username: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Action details
+    action: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Who made the change
+    admin_user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id"), nullable=False
+    )
+    admin_username: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    # Change details (JSON string containing old/new values)
+    changes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamp
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=utcnow, nullable=False
     )
@@ -525,3 +607,5 @@ class MenuItem(Base):
     restaurant: Mapped["Restaurant"] = relationship(
         "Restaurant", back_populates="menu_items"
     )
+    # Relationships
+    admin_user: Mapped["UserDB"] = relationship("UserDB", foreign_keys=[admin_user_id])

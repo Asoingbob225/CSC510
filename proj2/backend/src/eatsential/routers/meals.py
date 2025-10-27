@@ -88,7 +88,7 @@ def get_meals(
     )
 
     return MealListResponse(
-        meals=meals,
+        meals=[MealResponse.model_validate(meal) for meal in meals],
         total=total,
         page=page,
         page_size=page_size,

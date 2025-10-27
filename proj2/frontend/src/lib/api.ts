@@ -303,6 +303,43 @@ export interface AllergenUpdate {
   description?: string;
 }
 
+// Bulk import types
+export interface AllergenBulkImportItem {
+  name: string;
+  category: string;
+  is_major_allergen: boolean;
+  description?: string;
+}
+
+export interface AllergenBulkImportResponse {
+  imported: number;
+  skipped: number;
+  errors: string[];
+}
+
+// Audit log types
+export interface AllergenAuditLog {
+  id: string;
+  allergen_id: string | null;
+  allergen_name: string;
+  action: string;
+  admin_user_id: string;
+  admin_username: string;
+  changes: string | null;
+  created_at: string;
+}
+
+export interface UserAuditLog {
+  id: string;
+  target_user_id: string;
+  target_username: string;
+  action: string;
+  admin_user_id: string;
+  admin_username: string;
+  changes: string | null;
+  created_at: string;
+}
+
 // Create health profile
 export const createHealthProfile = async (
   data: HealthProfileCreate
@@ -412,6 +449,168 @@ export const adminApi = {
 
   deleteAllergen: async (allergenId: string): Promise<void> => {
     await apiClient.delete(`/health/admin/allergens/${allergenId}`);
+  },
+
+  // Bulk operations
+  bulkImportAllergens: async (
+    allergens: AllergenBulkImportItem[]
+  ): Promise<AllergenBulkImportResponse> => {
+    const response = await apiClient.post('/health/admin/allergens/bulk', {
+      allergens,
+    });
+    return response.data;
+  },
+
+  // Search allergens
+  searchAllergens: async (params: {
+    name?: string;
+    category?: string;
+    is_major_allergen?: boolean;
+    skip?: number;
+    limit?: number;
+  }): Promise<AllergenResponse[]> => {
+    const response = await apiClient.get('/health/admin/allergens/search', {
+      params,
+    });
+    return response.data;
+  },
+
+  // Export allergens
+  exportAllergens: async (format: 'json' | 'csv'): Promise<Blob> => {
+    const response = await apiClient.get('/health/admin/allergens/export', {
+      params: { format },
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Get allergen audit logs
+  getAllergenAuditLogs: async (allergenId?: string, limit = 100): Promise<AllergenAuditLog[]> => {
+    const response = await apiClient.get('/health/admin/allergens/audit-logs', {
+      params: { allergen_id: allergenId, limit },
+    });
+    return response.data;
+  },
+
+  // Get user audit logs
+  getUserAuditLogs: async (userId: string, limit = 100): Promise<UserAuditLog[]> => {
+    const response = await apiClient.get(`/users/admin/users/${userId}/audit-logs`, {
+      params: { limit },
+    });
+    return response.data;
+  },
+
+  // Get all user audit logs
+  getAllUserAuditLogs: async (limit = 100): Promise<UserAuditLog[]> => {
+    const response = await apiClient.get('/users/admin/audit-logs', {
+      params: { limit },
+    });
+    return response.data;
+  },
+};
+
+// Mental Wellness API Types
+export interface MoodLogCreate {
+  mood_score: number;
+  notes?: string;
+  log_date?: string;
+}
+
+export interface StressLogCreate {
+  stress_level: number;
+  triggers?: string;
+  notes?: string;
+  log_date?: string;
+}
+
+export interface SleepLogCreate {
+  sleep_duration: number;
+  sleep_quality: number;
+  notes?: string;
+  log_date?: string;
+}
+
+export interface GoalCreate {
+  goal_type: 'nutrition' | 'mental_wellness';
+  title?: string;
+  description?: string;
+  target_value?: number;
+  current_value?: number;
+  target_date?: string;
+  priority?: 'low' | 'medium' | 'high';
+}
+
+export interface WellnessLogResponse {
+  id: string;
+  user_id: string;
+  mood_score?: number;
+  stress_level?: number;
+  sleep_duration?: number;
+  sleep_quality?: number;
+  notes?: string;
+  triggers?: string;
+  log_date: string;
+  created_at: string;
+}
+
+export interface GoalResponse {
+  id: string;
+  user_id: string;
+  goal_type: string;
+  title: string;
+  description?: string;
+  target_value?: number;
+  current_value?: number;
+  target_date?: string;
+  priority: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Mental Wellness API
+export const wellnessApi = {
+  // Mood logs
+  createMoodLog: async (data: MoodLogCreate): Promise<WellnessLogResponse> => {
+    const response = await apiClient.post('/wellness/mood-logs', data);
+    return response.data;
+  },
+
+  // Stress logs
+  createStressLog: async (data: StressLogCreate): Promise<WellnessLogResponse> => {
+    const response = await apiClient.post('/wellness/stress-logs', data);
+    return response.data;
+  },
+
+  // Sleep logs
+  createSleepLog: async (data: SleepLogCreate): Promise<WellnessLogResponse> => {
+    const response = await apiClient.post('/wellness/sleep-logs', data);
+    return response.data;
+  },
+
+  // Get all wellness logs
+  getWellnessLogs: async (params?: {
+    start_date?: string;
+    end_date?: string;
+    log_type?: string;
+  }): Promise<WellnessLogResponse[]> => {
+    const response = await apiClient.get('/wellness/logs', { params });
+    return response.data;
+  },
+
+  // Goals
+  createGoal: async (data: GoalCreate): Promise<GoalResponse> => {
+    const response = await apiClient.post('/goals', data);
+    return response.data;
+  },
+
+  getGoals: async (params?: { goal_type?: string; status?: string }): Promise<GoalResponse[]> => {
+    const response = await apiClient.get('/goals', { params });
+    return response.data;
+  },
+
+  deleteGoal: async (goalId: string): Promise<void> => {
+    await apiClient.delete(`/goals/${goalId}`);
   },
 };
 

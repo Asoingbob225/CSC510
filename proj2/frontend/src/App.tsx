@@ -13,6 +13,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import AllergenManagement from './pages/admin/AllergenManagement';
 import AdminSettings from './pages/admin/AdminSettings';
+import AuditDashboard from './pages/admin/AuditDashboard';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<UserManagement />} />
           <Route path="allergens" element={<AllergenManagement />} />
+          <Route path="audit" element={<AuditDashboard />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
 

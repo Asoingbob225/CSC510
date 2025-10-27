@@ -12,8 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.eatsential.db.database import DATABASE_URL, Base
-from src.eatsential.models.restaurant import Restaurant, MenuItem
-
+from src.eatsential.models.restaurant import MenuItem, Restaurant
 
 SAMPLE_RESTAURANTS = [
     {
@@ -61,12 +60,18 @@ SAMPLE_RESTAURANTS = [
 
 
 def init_restaurants(database_url: Optional[str] = None):
+    """Initialize restaurant data in the database.
+
+    Args:
+        database_url: Database connection URL (uses default if None)
+
+    """
     if database_url is None:
         database_url = DATABASE_URL
 
     engine = create_engine(database_url)
-    SessionLocal = sessionmaker(bind=engine)
-    db = SessionLocal()
+    session_local = sessionmaker(bind=engine)
+    db = session_local()
 
     try:
         Base.metadata.create_all(bind=engine)

@@ -1,5 +1,70 @@
 # Frontend Patterns
 
+## Component Directory Structure
+
+### Organization Principles
+
+```
+frontend/src/components/
+│
+├── ui/                   # Base UI primitives (shadcn/ui)
+│   ├── button.tsx
+│   ├── slider.tsx
+│   ├── card.tsx
+│   └── ...
+│
+├── health-profile/       # Static Health Configuration
+│   ├── AllergiesCard.tsx
+│   ├── BasicInfoCard.tsx
+│   └── DietaryPreferencesCard.tsx
+│
+├── wellness/             # Dynamic Health Tracking (Dual-Dimension)
+│   ├── mental/           # Mental Wellness (Issue #99, v0.3 ✅)
+│   │   ├── MoodLogWidget.tsx
+│   │   ├── StressLogWidget.tsx
+│   │   └── SleepLogWidget.tsx
+│   ├── physical/         # Physical Wellness (reserved for future)
+│   │   └── (future quick-log widgets, if needed)
+│   └── shared/           # Shared Components (Issue #99, v0.3)
+│       ├── GoalForm.tsx            (nutrition + wellness goals)
+│       ├── GoalsList.tsx           (goal display)
+│       └── WellnessChart.tsx       (planned)
+│
+├── wizard-step/          # Onboarding wizard components
+├── profile/              # Generic profile display components
+└── admin/                # Admin-specific components
+```
+
+**Key Separation Rationale:**
+
+1. **`health-profile/`** - Static configuration data (set once, updated occasionally)
+   - User's baseline health information
+   - Allergies, dietary preferences, basic vitals
+   - Loaded during onboarding, edited in settings
+
+2. **`wellness/`** - Dynamic tracking data (logged daily/frequently)
+   - Time-series wellness metrics
+   - Mental: mood, stress, sleep logs
+   - Physical: exercise, vitals, nutrition logs
+   - Displayed on wellness dashboard with trends
+
+3. **Subdirectory Organization** (`mental/`, `physical/`, `shared/`)
+   - **Mental wellness**: Domain-specific widgets (mood, stress, sleep) - **Issue #99**
+   - **Physical wellness**: Reserved for future domain-specific widgets
+   - **Shared**: Cross-domain components used by **both** mental and physical
+     - GoalForm/GoalsList: Handle both nutrition goals (physical) and wellness goals (mental)
+     - WellnessChart: Visualize data from both domains - **Issue #99**
+
+**Note**: Physical wellness features like meal logging (Issue #95) are implemented as dedicated pages (`pages/MealLogging.tsx`) rather than dashboard widgets due to their complexity.
+
+**Benefits:**
+- Clear domain boundaries
+- Easy to locate components
+- Supports "dual-dimension health" architecture
+- Future-proof for expansion (physical wellness in v0.4+)
+
+---
+
 ## Component Structure
 
 ### Basic Component Template
