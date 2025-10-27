@@ -306,7 +306,8 @@ frontend/src/
 ├── components/           # Reusable components
 │   ├── ui/               # Base UI components (shadcn/ui)
 │   │   ├── button.tsx    # Button component
-│   │   └── navigation-menu.tsx # Navigation menu
+│   │   ├── slider.tsx    # Slider component (Radix UI)
+│   │   └── ...           # Other shadcn/ui components
 │   │
 │   ├── SignupField.tsx   # Signup form field component
 │   ├── LoginField.tsx    # Login form field component
@@ -316,7 +317,23 @@ frontend/src/
 │   ├── AdminLayout.tsx   # Admin layout wrapper
 │   ├── AdminRoute.tsx    # Admin route protection
 │   │
-│   ├── health-profile/   # Health profile components
+│   ├── health-profile/   # Health profile components (static config)
+│   │   ├── AllergiesCard.tsx      # Allergy management
+│   │   ├── BasicInfoCard.tsx      # Basic health info
+│   │   └── DietaryPreferencesCard.tsx # Dietary settings
+│   │
+│   ├── wellness/         # Wellness tracking components (dynamic logs)
+│   │   ├── mental/       # Mental wellness tracking (Issue #99, v0.3 ✅)
+│   │   │   ├── MoodLogWidget.tsx    # Mood logging
+│   │   │   ├── StressLogWidget.tsx  # Stress tracking
+│   │   │   └── SleepLogWidget.tsx   # Sleep logging
+│   │   ├── physical/     # Physical wellness widgets (reserved for future)
+│   │   │   └── (future quick-log widgets, if needed)
+│   │   └── shared/       # Shared wellness components (Issue #99, v0.3)
+│   │       ├── GoalForm.tsx         # Goal management (both types)
+│   │       ├── GoalsList.tsx        # Goals display
+│   │       └── WellnessChart.tsx    # Trend charts (planned)
+│   │
 │   ├── wizard-step/      # Wizard step components
 │   ├── profile/          # Profile display components
 │   └── admin/            # Admin-specific components
@@ -337,6 +354,8 @@ frontend/src/
 - **shadcn/ui components**: Base UI components from shadcn/ui library
 - **Feature-based components**: Health profile, wizard, admin organized by feature
 - **Admin separation**: Admin pages and components in separate directories
+- **Dual-dimension wellness**: Separate `health-profile/` (static config) and `wellness/` (dynamic tracking)
+- **Mental/Physical separation**: `wellness/mental/` and `wellness/physical/` for clear domain boundaries
 
 ---
 
