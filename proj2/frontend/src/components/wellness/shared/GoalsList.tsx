@@ -18,30 +18,37 @@ function GoalsList() {
     await deleteGoal.mutateAsync(goalId);
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low':
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'completed':
         return 'bg-green-100 text-green-800 border-green-200';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'paused':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'in_progress':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'not_started':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+  const getGoalTypeColor = (type: string) => {
+    switch (type) {
+      case 'nutrition':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'wellness':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const formatTargetType = (targetType: string) => {
+    return targetType
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   if (isLoading) {
@@ -91,13 +98,15 @@ function GoalsList() {
               <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
                   <div className="mb-2 flex items-center gap-2">
-                    <Badge className={getPriorityColor(goal.priority)}>{goal.priority}</Badge>
+                    <Badge className={getGoalTypeColor(goal.goal_type)}>{goal.goal_type}</Badge>
                     <Badge className={getStatusColor(goal.status)}>
                       {goal.status.replace('_', ' ')}
                     </Badge>
                   </div>
-                  <h4 className="font-medium text-gray-900">{goal.description}</h4>
-                  <p className="text-sm text-gray-600">{goal.goal_type}</p>
+                  <h4 className="font-medium text-gray-900">
+                    {formatTargetType(goal.target_type)}
+                  </h4>
+                  {goal.notes && <p className="text-sm text-gray-600">{goal.notes}</p>}
                 </div>
                 <Button
                   variant="ghost"
@@ -133,10 +142,10 @@ function GoalsList() {
                 </div>
               </div>
 
-              {/* Target Date */}
-              {goal.target_date && (
+              {/* End Date */}
+              {goal.end_date && (
                 <div className="mt-2 text-xs text-gray-500">
-                  Target: {new Date(goal.target_date).toLocaleDateString()}
+                  Target: {new Date(goal.end_date).toLocaleDateString()}
                 </div>
               )}
             </div>

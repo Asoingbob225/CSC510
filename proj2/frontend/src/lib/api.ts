@@ -531,13 +531,12 @@ export interface SleepLogCreate {
 }
 
 export interface GoalCreate {
-  goal_type: 'nutrition' | 'mental_wellness';
-  title?: string;
-  description?: string;
-  target_value?: number;
-  current_value?: number;
-  target_date?: string;
-  priority?: 'low' | 'medium' | 'high';
+  goal_type: 'nutrition' | 'wellness';
+  target_type: string; // e.g., "calories", "mood_score", "steps"
+  target_value: number;
+  start_date: string; // YYYY-MM-DD format
+  end_date: string; // YYYY-MM-DD format (was target_date)
+  notes?: string;
 }
 
 export interface WellnessLogResponse {
@@ -553,17 +552,26 @@ export interface WellnessLogResponse {
   created_at: string;
 }
 
+export interface WellnessLogsResponse {
+  mood_logs: WellnessLogResponse[];
+  stress_logs: WellnessLogResponse[];
+  sleep_logs: WellnessLogResponse[];
+  total_count: number;
+}
+
 export interface GoalResponse {
   id: string;
   user_id: string;
   goal_type: string;
-  title: string;
-  description?: string;
-  target_value?: number;
-  current_value?: number;
-  target_date?: string;
-  priority: string;
+  target_type: string;
+  target_value: number;
+  current_value: number;
+  start_date: string;
+  end_date: string;
   status: string;
+  notes?: string;
+  completion_percentage: number;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -594,8 +602,35 @@ export const wellnessApi = {
     end_date?: string;
     log_type?: string;
   }): Promise<WellnessLogResponse[]> => {
-    const response = await apiClient.get('/wellness/logs', { params });
-    return response.data;
+    const response = await apiClient.get<WellnessLogsResponse>('/wellness/logs', { params });
+
+    // Flatten the response into a single array
+    const { mood_logs = [], stress_logs = [], sleep_logs = [] } = response.data;
+
+    // Combine all logs into a single array
+    const allLogs: WellnessLogResponse[] = [];
+
+    // Add mood logs
+    mood_logs.forEach((log) => {
+      allLogs.push({ ...log, mood_score: log.mood_score });
+    });
+
+    // Add stress logs
+    stress_logs.forEach((log) => {
+      allLogs.push({ ...log, stress_level: log.stress_level });
+    });
+
+    // Add sleep logs
+    sleep_logs.forEach((log) => {
+      allLogs.push({
+        ...log,
+        sleep_quality: log.sleep_quality,
+        sleep_duration: log.sleep_duration,
+      });
+    });
+
+    // Sort by date (newest first)
+    return allLogs.sort((a, b) => new Date(b.log_date).getTime() - new Date(a.log_date).getTime());
   },
 
   // Goals

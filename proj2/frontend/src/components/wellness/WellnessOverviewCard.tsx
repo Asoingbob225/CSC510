@@ -169,43 +169,54 @@ export function WellnessOverviewCard() {
 
           {activeGoals.length > 0 ? (
             <div className="space-y-2">
-              {activeGoals.slice(0, 3).map((goal) => (
-                <div
-                  key={goal.id}
-                  className="rounded-lg border border-gray-200 bg-white p-3 transition-colors hover:bg-gray-50"
-                >
-                  <div className="mb-2 flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{goal.description}</p>
-                      <p className="text-xs text-gray-500">{goal.goal_type}</p>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={
-                        goal.priority === 'high'
-                          ? 'border-red-200 bg-red-50 text-red-700'
-                          : goal.priority === 'medium'
-                            ? 'border-yellow-200 bg-yellow-50 text-yellow-700'
-                            : 'border-green-200 bg-green-50 text-green-700'
-                      }
-                    >
-                      {goal.priority}
-                    </Badge>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs text-gray-600">
-                      <span>Progress</span>
-                      <div className="flex items-center gap-1">
-                        <TrendingUp className="size-3" />
-                        <span className="font-medium">
-                          {calculateGoalProgress(goal).toFixed(0)}%
-                        </span>
+              {activeGoals.slice(0, 3).map((goal) => {
+                const formatTargetType = (targetType: string) => {
+                  return targetType
+                    .split('_')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                };
+
+                return (
+                  <div
+                    key={goal.id}
+                    className="rounded-lg border border-gray-200 bg-white p-3 transition-colors hover:bg-gray-50"
+                  >
+                    <div className="mb-2 flex items-start justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {formatTargetType(goal.target_type)}
+                        </p>
+                        <p className="text-xs text-gray-500 capitalize">{goal.goal_type}</p>
                       </div>
+                      <Badge
+                        variant="outline"
+                        className={
+                          goal.status === 'in_progress'
+                            ? 'border-blue-200 bg-blue-50 text-blue-700'
+                            : goal.status === 'completed'
+                              ? 'border-green-200 bg-green-50 text-green-700'
+                              : 'border-gray-200 bg-gray-50 text-gray-700'
+                        }
+                      >
+                        {goal.status.replace('_', ' ')}
+                      </Badge>
                     </div>
-                    <Progress value={calculateGoalProgress(goal)} className="h-1.5" />
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-xs text-gray-600">
+                        <span>Progress</span>
+                        <div className="flex items-center gap-1">
+                          <TrendingUp className="size-3" />
+                          <span className="font-medium">
+                            {calculateGoalProgress(goal).toFixed(0)}%
+                          </span>
+                        </div>
+                      </div>
+                      <Progress value={calculateGoalProgress(goal)} className="h-1.5" />
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {activeGoals.length > 3 && (
                 <Button
@@ -233,7 +244,7 @@ export function WellnessOverviewCard() {
         <div className="border-t border-gray-200 pt-4">
           <Button
             onClick={() => navigate('/wellness-tracking')}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
+            className="w-full bg-emerald-500 text-white hover:bg-emerald-600"
           >
             <Activity className="mr-2 size-4" />
             Go to Wellness Tracking
