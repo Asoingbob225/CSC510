@@ -220,9 +220,7 @@ class TestPrivacyControls:
             )
 
         # User 1 lists mood logs
-        response1 = client.get(
-            "/api/wellness/logs?log_type=mood", headers=auth_headers
-        )
+        response1 = client.get("/api/wellness/logs?log_type=mood", headers=auth_headers)
         assert response1.status_code == status.HTTP_200_OK
         logs1 = response1.json()
         mood_logs1 = logs1.get("mood_logs", [])
