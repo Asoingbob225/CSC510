@@ -217,9 +217,7 @@ class TestScoringAlgorithm:
         assert recommendations[0]["menu_item_id"] == "item_full"
         assert recommendations[0]["score"] == pytest.approx(1.0)
 
-    def test_score_consistency(
-        self, client, db: Session, test_user, test_restaurant
-    ):
+    def test_score_consistency(self, client, db: Session, test_user, test_restaurant):
         """Test that scoring is consistent across multiple requests."""
         item = MenuItem(
             id="consistent_item",

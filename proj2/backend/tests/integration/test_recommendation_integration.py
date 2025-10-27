@@ -140,7 +140,14 @@ class TestEndToEndRecommendationFlow:
         assert "item_i1" not in item_ids
 
         # Should contain items from active restaurants
-        active_items = ["item_h1", "item_h2", "item_h3", "item_f1", "item_f2", "item_f3"]
+        active_items = [
+            "item_h1",
+            "item_h2",
+            "item_h3",
+            "item_f1",
+            "item_f2",
+            "item_f3",
+        ]
         for item_id in active_items:
             assert item_id in item_ids
 
@@ -325,9 +332,7 @@ class TestEmptyAndEdgeCases:
         assert data["user_id"] == integration_test_user.id
         assert data["recommendations"] == []
 
-    def test_all_restaurants_inactive(
-        self, client, db: Session, integration_test_user
-    ):
+    def test_all_restaurants_inactive(self, client, db: Session, integration_test_user):
         """Test behavior when all restaurants are inactive."""
         # Create inactive restaurant with items
         restaurant = Restaurant(
