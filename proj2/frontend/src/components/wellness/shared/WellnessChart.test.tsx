@@ -130,7 +130,8 @@ describe('WellnessChart', () => {
   it('renders SVG chart with proper dimensions', () => {
     const { container } = render(<WellnessChart data={mockData} metric="mood" />);
 
-    const svg = container.querySelector('svg');
+    // Find the chart SVG by looking for the one with overflow-visible class
+    const svg = container.querySelector('svg.overflow-visible');
     expect(svg).toBeInTheDocument();
     expect(svg).toHaveAttribute('width', '100%');
   });

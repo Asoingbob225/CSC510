@@ -170,7 +170,7 @@ describe('GoalsList', () => {
     renderComponent();
 
     expect(screen.getByText('1500')).toBeInTheDocument(); // current_value
-    expect(screen.getByText('/ 2000')).toBeInTheDocument(); // target_value
+    expect(screen.getByText('2000')).toBeInTheDocument(); // target_value
   });
 
   it('calls delete mutation when delete button is clicked after confirmation', async () => {

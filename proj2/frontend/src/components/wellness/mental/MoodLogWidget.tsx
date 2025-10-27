@@ -71,6 +71,15 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
     return '😢';
   };
 
+  // Get mood label based on mood score
+  const getMoodLabel = (score: number) => {
+    if (score >= 9) return 'Very Happy';
+    if (score >= 7) return 'Happy';
+    if (score >= 5) return 'Neutral';
+    if (score >= 3) return 'Sad';
+    return 'Very Sad';
+  };
+
   return (
     <div className="flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
@@ -86,7 +95,10 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
             <Label htmlFor="mood-score" className="text-sm font-medium text-gray-700">
               How are you feeling today?
             </Label>
-            <span className="text-2xl">{getMoodEmoji(moodScore)}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">{getMoodEmoji(moodScore)}</span>
+              <span className="text-sm font-medium text-gray-700">{getMoodLabel(moodScore)}</span>
+            </div>
           </div>
           <div className="space-y-1">
             <Slider

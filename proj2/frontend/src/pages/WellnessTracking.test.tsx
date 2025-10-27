@@ -20,6 +20,7 @@ vi.mock('@/hooks/useWellnessData', () => ({
 vi.mock('@/hooks/useGoalsData', () => ({
   useGoals: vi.fn(),
   useDeleteGoal: vi.fn(),
+  useCreateGoal: vi.fn(),
   calculateGoalProgress: vi.fn((goal) => goal.completion_percentage || 0),
 }));
 
@@ -45,7 +46,7 @@ vi.mock('@/components/wellness/shared/GoalsList', () => ({
 }));
 
 import { useWellnessChartData } from '@/hooks/useWellnessData';
-import { useGoals } from '@/hooks/useGoalsData';
+import { useGoals, useCreateGoal } from '@/hooks/useGoalsData';
 
 describe('WellnessTrackingPage', () => {
   let queryClient: QueryClient;
@@ -81,6 +82,11 @@ describe('WellnessTrackingPage', () => {
       data: [],
       isLoading: false,
       error: null,
+    } as never);
+
+    vi.mocked(useCreateGoal).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
     } as never);
 
     vi.clearAllMocks();
@@ -149,8 +155,8 @@ describe('WellnessTrackingPage', () => {
 
     renderComponent();
 
-    // Component should still render with loading state
-    expect(screen.getByText(/Wellness Tracking/i)).toBeInTheDocument();
+    // Component should show loading state
+    expect(screen.getByText(/Loading wellness data/i)).toBeInTheDocument();
   });
 
   it('handles chart data errors gracefully', () => {

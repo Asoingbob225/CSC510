@@ -61,8 +61,14 @@ describe('MoodLogWidget', () => {
     renderComponent();
 
     const slider = screen.getByRole('slider');
-    fireEvent.change(slider, { target: { value: '9' } });
 
+    // Use keyboard to change slider value (Arrow Right increases value)
+    fireEvent.keyDown(slider, { key: 'ArrowRight', code: 'ArrowRight' });
+    fireEvent.keyDown(slider, { key: 'ArrowRight', code: 'ArrowRight' });
+    fireEvent.keyDown(slider, { key: 'ArrowRight', code: 'ArrowRight' });
+    fireEvent.keyDown(slider, { key: 'ArrowRight', code: 'ArrowRight' });
+
+    // After 4 arrow right presses from default 5, it should be 9
     expect(screen.getByText('🤩')).toBeInTheDocument();
     expect(screen.getByText('Very Happy')).toBeInTheDocument();
   });
@@ -80,9 +86,10 @@ describe('MoodLogWidget', () => {
 
     renderComponent();
 
-    // Change mood score
+    // Change mood score using keyboard
     const slider = screen.getByRole('slider');
-    fireEvent.change(slider, { target: { value: '7' } });
+    fireEvent.keyDown(slider, { key: 'ArrowRight', code: 'ArrowRight' });
+    fireEvent.keyDown(slider, { key: 'ArrowRight', code: 'ArrowRight' });
 
     // Add notes
     const notesInput = screen.getByPlaceholderText(/What's on your mind/i);
@@ -95,7 +102,7 @@ describe('MoodLogWidget', () => {
     await waitFor(() => {
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          mood_score: 7,
+          mood_score: 7, // 5 (default) + 2 (arrow presses) = 7
           notes: 'Feeling good',
           log_date: expect.any(String),
         })
@@ -105,14 +112,32 @@ describe('MoodLogWidget', () => {
 
   it('shows loading state when submitting', async () => {
     const mockCreate = vi.mocked(wellnessApi.createMoodLog);
-    mockCreate.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+    mockCreate.mockImplementation(
+      () =>
+        new Promise((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                id: '1',
+                user_id: 'user1',
+                mood_score: 5,
+                log_date: new Date().toISOString().split('T')[0],
+                created_at: new Date().toISOString(),
+              }),
+            100
+          )
+        )
+    );
 
     renderComponent();
 
     const submitButton = screen.getByRole('button', { name: /Log Mood/i });
     fireEvent.click(submitButton);
 
-    expect(screen.getByText(/Logging.../i)).toBeInTheDocument();
+    // Wait for the loading state to appear
+    await waitFor(() => {
+      expect(screen.getByText(/Logging.../i)).toBeInTheDocument();
+    });
   });
 
   it('calls onSubmit callback after successful submission', async () => {
