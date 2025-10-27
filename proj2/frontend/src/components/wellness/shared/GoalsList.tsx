@@ -21,24 +21,24 @@ function GoalsList() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200';
       case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200';
       case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200';
     }
   };
 
   const getGoalTypeColor = (type: string) => {
     switch (type) {
       case 'nutrition':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200';
       case 'wellness':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200';
     }
   };
 
@@ -90,7 +90,9 @@ function GoalsList() {
               <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
                   <div className="mb-2 flex items-center gap-2">
-                    <Badge className={getGoalTypeColor(goal.goal_type)}>{goal.goal_type}</Badge>
+                    <Badge variant="secondary" className={getGoalTypeColor(goal.goal_type)}>
+                      {goal.goal_type}
+                    </Badge>
                     <Badge className={getStatusColor(goal.status)}>
                       {goal.status.replace('_', ' ')}
                     </Badge>

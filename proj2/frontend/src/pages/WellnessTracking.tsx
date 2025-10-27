@@ -1,19 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { Activity, AlertCircle, RefreshCw } from 'lucide-react';
+import { Activity, AlertCircle } from 'lucide-react';
 import { getAuthToken } from '@/lib/api';
 import { useWellnessChartData } from '@/hooks/useWellnessData';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { MoodLogWidget, StressLogWidget, SleepLogWidget } from '@/components/wellness/mental';
 import { GoalForm, GoalsList, WellnessChart } from '@/components/wellness/shared';
-import { Button } from '@/components/ui/button';
-import { useQueryClient } from '@tanstack/react-query';
-import { wellnessKeys } from '@/hooks/useWellnessData';
-import { goalsKeys } from '@/hooks/useGoalsData';
 
 function WellnessTrackingPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   // Fetch chart data (last 7 days)
   const { data: chartData, isLoading, error } = useWellnessChartData(7);
@@ -26,12 +21,6 @@ function WellnessTrackingPage() {
       return;
     }
   }, [navigate]);
-
-  // Handle refresh - invalidate all wellness and goals queries
-  const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
-    queryClient.invalidateQueries({ queryKey: goalsKeys.all });
-  };
 
   if (isLoading) {
     return (
@@ -61,10 +50,6 @@ function WellnessTrackingPage() {
               Monitor your mental wellness journey with daily mood, stress, and sleep tracking
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={handleRefresh} className="gap-2">
-            <RefreshCw className="size-4" />
-            Refresh
-          </Button>
         </div>
 
         {error && (
