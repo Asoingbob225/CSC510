@@ -576,6 +576,13 @@ export interface GoalResponse {
   updated_at: string;
 }
 
+export interface GoalListResponse {
+  goals: GoalResponse[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
 // Mental Wellness API
 export const wellnessApi = {
   // Mood logs
@@ -639,9 +646,15 @@ export const wellnessApi = {
     return response.data;
   },
 
-  getGoals: async (params?: { goal_type?: string; status?: string }): Promise<GoalResponse[]> => {
-    const response = await apiClient.get('/goals', { params });
-    return response.data;
+  getGoals: async (params?: {
+    goal_type?: string;
+    status?: string;
+    page?: number;
+    page_size?: number;
+  }): Promise<GoalResponse[]> => {
+    const response = await apiClient.get<GoalListResponse>('/goals', { params });
+    // Extract the goals array from the paginated response
+    return response.data.goals || [];
   },
 
   deleteGoal: async (goalId: string): Promise<void> => {

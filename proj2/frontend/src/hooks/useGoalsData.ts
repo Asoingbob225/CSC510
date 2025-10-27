@@ -23,9 +23,15 @@ export function useGoals(filters?: { goal_type?: string; status?: string }) {
   return useQuery({
     queryKey: goalsKeys.list(filters),
     queryFn: async () => {
-      const result = await wellnessApi.getGoals(filters);
-      // Ensure we always return an array
-      return Array.isArray(result) ? result : [];
+      try {
+        const result = await wellnessApi.getGoals(filters);
+        console.log('📊 Goals fetched:', result);
+        // Ensure we always return an array
+        return Array.isArray(result) ? result : [];
+      } catch (error) {
+        console.error('❌ Failed to fetch goals:', error);
+        throw error;
+      }
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
