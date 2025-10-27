@@ -12,12 +12,17 @@ from sqlalchemy.orm import Session
 from ..db.database import get_db
 from ..models import UserDB
 from ..schemas import (
+    UserAuditLogResponse,
     UserDetailResponse,
     UserListResponse,
     UserProfileUpdate,
     UserResponse,
 )
 from ..services.auth_service import get_current_admin_user, get_current_user
+from ..services.user_service import (
+    get_user_audit_logs,
+    update_user_profile_with_audit,
+)
 
 router = APIRouter(
     prefix="/users",
@@ -123,7 +128,7 @@ async def update_user_profile(
 
     This endpoint allows administrators to update a user's basic profile
     information including username, email, role, account status, and
-    email verification status.
+    email verification status. All changes are logged in the audit trail.
 
     Args:
         user_id: The ID of the user to update
@@ -140,6 +145,51 @@ async def update_user_profile(
         HTTPException: 400 if username or email already exists
 
     """
+    # Convert Pydantic model to dict, excluding None values
+    update_dict = user_update.model_dump(exclude_none=True)
+
+    # Use the new audit-logging service
+    updated_user = await update_user_profile_with_audit(
+        db=db,
+        user_id=user_id,
+        user_update=update_dict,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+    )
+
+    return updated_user
+
+
+@router.get(
+    "/admin/users/{user_id}/audit-logs", response_model=list[UserAuditLogResponse]
+)
+async def get_user_audit_history(
+    user_id: str,
+    db: SessionDep,
+    current_user: AdminUserDep,
+    limit: int = 100,
+):
+    """Get audit log history for a specific user (Admin only)
+
+    This endpoint allows administrators to view all administrative actions
+    performed on a user's account, including role changes, status updates,
+    and profile modifications.
+
+    Args:
+        user_id: The ID of the user to get audit logs for
+        db: Database session
+        current_user: Current authenticated admin user
+        limit: Maximum number of audit logs to return (default: 100)
+
+    Returns:
+        List of audit log entries for the user
+
+    Raises:
+        HTTPException: 403 if user is not an admin
+        HTTPException: 404 if user is not found
+
+    """
+    # Verify user exists
     user = db.query(UserDB).filter(UserDB.id == user_id).first()
     if not user:
         raise HTTPException(
@@ -147,43 +197,40 @@ async def update_user_profile(
             detail=f"User with ID {user_id} not found",
         )
 
-    # Check if username is being updated and if it already exists
-    if user_update.username is not None and user_update.username != user.username:
-        existing_user = (
-            db.query(UserDB).filter(UserDB.username == user_update.username).first()
-        )
-        if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username already exists",
-            )
-        user.username = user_update.username
+    # Get audit logs
+    audit_logs = get_user_audit_logs(db=db, target_user_id=user_id, limit=limit)
 
-    # Check if email is being updated and if it already exists
-    if user_update.email is not None and user_update.email != user.email:
-        existing_user = (
-            db.query(UserDB).filter(UserDB.email == user_update.email).first()
-        )
-        if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already exists",
-            )
-        user.email = user_update.email
+    return audit_logs
 
-    # Update other fields if provided
-    if user_update.role is not None:
-        user.role = user_update.role
 
-    if user_update.account_status is not None:
-        user.account_status = user_update.account_status
+@router.get("/admin/audit-logs", response_model=list[UserAuditLogResponse])
+async def get_all_user_audit_history(
+    db: SessionDep,
+    current_user: AdminUserDep,
+    limit: int = 100,
+):
+    """Get all user audit log history (Admin only)
 
-    if user_update.email_verified is not None:
-        user.email_verified = user_update.email_verified
+    This endpoint allows administrators to view all administrative actions
+    performed on all user accounts, including role changes, status updates,
+    and profile modifications.
 
-    db.commit()
-    db.refresh(user)
-    return user
+    Args:
+        db: Database session
+        current_user: Current authenticated admin user
+        limit: Maximum number of audit logs to return (default: 100)
+
+    Returns:
+        List of all audit log entries
+
+    Raises:
+        HTTPException: 403 if user is not an admin
+
+    """
+    # Get all audit logs (no user_id filter)
+    audit_logs = get_user_audit_logs(db=db, target_user_id=None, limit=limit)
+
+    return audit_logs
 
 
 # Future endpoints:

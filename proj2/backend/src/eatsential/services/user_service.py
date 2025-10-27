@@ -1,12 +1,14 @@
 """User service containing user-related business logic."""
 
+import json
 import uuid
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from ..models import AccountStatus, UserDB
+from ..models import AccountStatus, UserAuditLogDB, UserDB
 from ..schemas import UserCreate, UserLogin
 from ..utils.auth_util import create_access_token, get_password_hash, verify_password
 from .emailer import send_verification_email
@@ -208,3 +210,205 @@ async def resend_verification_email(db: Session, email: str) -> dict:
     await send_verification_email(user.email, verification_token)
 
     return {"message": "Verification email sent"}
+
+
+# --- Admin User Management with Audit Logging ---
+
+
+def create_user_audit_log(
+    db: Session,
+    target_user_id: str,
+    target_username: str,
+    action: str,
+    admin_user_id: str,
+    admin_username: str,
+    changes: Optional[dict] = None,
+) -> None:
+    """Create an audit log entry for user management operations.
+
+    Args:
+        db: Database session
+        target_user_id: ID of the user being modified
+        target_username: Username of the user being modified
+        action: Action type (role_change, status_change, profile_update, etc.)
+        admin_user_id: ID of the admin user performing the action
+        admin_username: Username of the admin user
+        changes: Optional dictionary of changes made (old/new values)
+
+    """
+    audit_log = UserAuditLogDB(
+        id=str(uuid.uuid4()),
+        target_user_id=target_user_id,
+        target_username=target_username,
+        action=action,
+        admin_user_id=admin_user_id,
+        admin_username=admin_username,
+        changes=json.dumps(changes) if changes else None,
+    )
+
+    db.add(audit_log)
+    db.commit()
+
+
+def get_user_audit_logs(
+    db: Session,
+    target_user_id: Optional[str] = None,
+    limit: int = 100,
+) -> list:
+    """Get audit logs for user management operations.
+
+    Args:
+        db: Database session
+        target_user_id: Optional user ID to filter logs
+        limit: Maximum number of logs to return
+
+    Returns:
+        List of UserAuditLogDB objects
+
+    """
+    query = db.query(UserAuditLogDB).order_by(UserAuditLogDB.created_at.desc())
+
+    if target_user_id:
+        query = query.filter(UserAuditLogDB.target_user_id == target_user_id)
+
+    return query.limit(limit).all()
+
+
+async def update_user_profile_with_audit(
+    db: Session,
+    user_id: str,
+    user_update: dict,
+    admin_user_id: str,
+    admin_username: str,
+) -> UserDB:
+    """Update a user's profile and create audit log entries.
+
+    Args:
+        db: Database session
+        user_id: ID of the user to update
+        user_update: Dictionary of fields to update
+        admin_user_id: ID of the admin performing the update
+        admin_username: Username of the admin performing the update
+
+    Returns:
+        Updated UserDB object
+
+    Raises:
+        HTTPException: If user not found or validation fails
+
+    """
+    user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User with ID {user_id} not found")
+
+    changes = {}
+
+    # Track changes for audit log
+    if "username" in user_update and user_update["username"] is not None:
+        if user_update["username"] != user.username:
+            # Check if username already exists
+            existing = (
+                db.query(UserDB)
+                .filter(UserDB.username == user_update["username"])
+                .first()
+            )
+            if existing:
+                raise HTTPException(status_code=400, detail="Username already exists")
+            changes["username"] = {
+                "old": user.username,
+                "new": user_update["username"],
+            }
+            user.username = user_update["username"]
+
+    if "email" in user_update and user_update["email"] is not None:
+        if user_update["email"] != user.email:
+            # Check if email already exists
+            existing = (
+                db.query(UserDB).filter(UserDB.email == user_update["email"]).first()
+            )
+            if existing:
+                raise HTTPException(status_code=400, detail="Email already exists")
+            changes["email"] = {"old": user.email, "new": user_update["email"]}
+            user.email = user_update["email"]
+
+    if "role" in user_update and user_update["role"] is not None:
+        if user_update["role"] != user.role:
+            changes["role"] = {"old": user.role, "new": user_update["role"]}
+            user.role = user_update["role"]
+            # Create specific audit log for role change
+            create_user_audit_log(
+                db=db,
+                target_user_id=user.id,
+                target_username=user.username,
+                action="role_change",
+                admin_user_id=admin_user_id,
+                admin_username=admin_username,
+                changes={"old": changes["role"]["old"], "new": changes["role"]["new"]},
+            )
+
+    if "account_status" in user_update and user_update["account_status"] is not None:
+        if user_update["account_status"] != user.account_status:
+            changes["account_status"] = {
+                "old": user.account_status,
+                "new": user_update["account_status"],
+            }
+            user.account_status = user_update["account_status"]
+            # Create specific audit log for status change
+            create_user_audit_log(
+                db=db,
+                target_user_id=user.id,
+                target_username=user.username,
+                action="status_change",
+                admin_user_id=admin_user_id,
+                admin_username=admin_username,
+                changes={
+                    "old": changes["account_status"]["old"],
+                    "new": changes["account_status"]["new"],
+                },
+            )
+
+    if "email_verified" in user_update and user_update["email_verified"] is not None:
+        if user_update["email_verified"] != user.email_verified:
+            changes["email_verified"] = {
+                "old": user.email_verified,
+                "new": user_update["email_verified"],
+            }
+            user.email_verified = user_update["email_verified"]
+            # Create specific audit log for email verification change
+            create_user_audit_log(
+                db=db,
+                target_user_id=user.id,
+                target_username=user.username,
+                action="email_verify",
+                admin_user_id=admin_user_id,
+                admin_username=admin_username,
+                changes={
+                    "old": changes["email_verified"]["old"],
+                    "new": changes["email_verified"]["new"],
+                },
+            )
+
+    # Create general profile update log if there were other changes
+    if any(
+        key in changes
+        for key in ["username", "email"]
+        if key not in ["role", "account_status", "email_verified"]
+    ):
+        profile_changes = {
+            k: v for k, v in changes.items() if k in ["username", "email"]
+        }
+        if profile_changes:
+            create_user_audit_log(
+                db=db,
+                target_user_id=user.id,
+                target_username=user.username,
+                action="profile_update",
+                admin_user_id=admin_user_id,
+                admin_username=admin_username,
+                changes=profile_changes,
+            )
+
+    db.commit()
+    db.refresh(user)
+
+    return user

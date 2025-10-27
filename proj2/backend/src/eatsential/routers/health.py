@@ -1,13 +1,19 @@
 """Health profile router for CRUD operations."""
 
-from typing import Annotated
+import csv
+import io
+from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
 from ..models.models import UserDB
 from ..schemas.schemas import (
+    AllergenAuditLogResponse,
+    AllergenBulkImport,
+    AllergenBulkImportResponse,
     AllergenCreate,
     AllergenResponse,
     AllergenUpdate,
@@ -525,7 +531,11 @@ async def create_allergen(
     """
     try:
         service = HealthProfileService(db)
-        new_allergen = service.create_allergen(allergen)
+        new_allergen = service.create_allergen(
+            allergen,
+            admin_user_id=current_user.id,
+            admin_username=current_user.username,
+        )
         return new_allergen
     except ValueError as e:
         raise HTTPException(
@@ -564,7 +574,12 @@ async def update_allergen(
     """
     try:
         service = HealthProfileService(db)
-        updated_allergen = service.update_allergen(allergen_id, allergen)
+        updated_allergen = service.update_allergen(
+            allergen_id,
+            allergen,
+            admin_user_id=current_user.id,
+            admin_username=current_user.username,
+        )
         return updated_allergen
     except ValueError as e:
         status_code = (
@@ -606,7 +621,11 @@ async def delete_allergen(
     """
     try:
         service = HealthProfileService(db)
-        deleted = service.delete_allergen(allergen_id)
+        deleted = service.delete_allergen(
+            allergen_id,
+            admin_user_id=current_user.id,
+            admin_username=current_user.username,
+        )
         if not deleted:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -625,4 +644,200 @@ async def delete_allergen(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while deleting the allergen",
+        ) from e
+
+
+# Bulk operations and search endpoints
+
+
+@router.post(
+    "/admin/allergens/bulk",
+    response_model=AllergenBulkImportResponse,
+    status_code=201,
+)
+async def bulk_import_allergens(
+    bulk_data: AllergenBulkImport,
+    db: SessionDep,
+    current_user: AdminUserDep,
+):
+    """Bulk import allergens (admin only).
+
+    Args:
+        bulk_data: Bulk allergen import data (max 100 items)
+        db: Database session
+        current_user: Current authenticated admin user
+
+    Returns:
+        Import result with success/failure counts
+
+    Raises:
+        HTTPException: If bulk import fails
+
+    """
+    try:
+        service = HealthProfileService(db)
+        success_count, failure_count, errors = service.bulk_import_allergens(
+            bulk_data.allergens,
+            admin_user_id=current_user.id,
+            admin_username=current_user.username,
+        )
+        return AllergenBulkImportResponse(
+            success_count=success_count,
+            failure_count=failure_count,
+            errors=errors,
+        )
+    except Exception as e:
+        print(f"Error in bulk import: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred during bulk import: {e!s}",
+        ) from e
+
+
+@router.get("/admin/allergens/search", response_model=dict)
+async def search_allergens(
+    db: SessionDep,
+    current_user: AdminUserDep,
+    name: Optional[str] = Query(None, description="Filter by name (partial match)"),
+    category: Optional[str] = Query(None, description="Filter by category"),
+    is_major_allergen: Optional[bool] = Query(
+        None, description="Filter by major allergen status"
+    ),
+    skip: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(100, ge=1, le=100, description="Maximum records to return"),
+):
+    """Search and filter allergens with pagination (admin only).
+
+    Args:
+        db: Database session
+        current_user: Current authenticated admin user
+        name: Optional name filter
+        category: Optional category filter
+        is_major_allergen: Optional major allergen filter
+        skip: Pagination offset
+        limit: Pagination limit
+
+    Returns:
+        Paginated allergen list with metadata
+
+    """
+    try:
+        service = HealthProfileService(db)
+        allergens, total_count = service.search_allergens(
+            name=name,
+            category=category,
+            is_major_allergen=is_major_allergen,
+            skip=skip,
+            limit=limit,
+        )
+
+        return {
+            "items": [AllergenResponse.model_validate(a) for a in allergens],
+            "total": total_count,
+            "skip": skip,
+            "limit": limit,
+        }
+    except Exception as e:
+        print(f"Error searching allergens: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while searching allergens",
+        ) from e
+
+
+@router.get("/admin/allergens/export")
+async def export_allergens(
+    db: SessionDep,
+    current_user: AdminUserDep,
+    format: str = Query("json", pattern="^(json|csv)$", description="Export format"),
+):
+    """Export all allergens as JSON or CSV (admin only).
+
+    Args:
+        db: Database session
+        current_user: Current authenticated admin user
+        format: Export format (json or csv)
+
+    Returns:
+        File download response
+
+    """
+    try:
+        service = HealthProfileService(db)
+        allergens = service.list_all_allergens()
+
+        if format == "csv":
+            # Create CSV
+            output = io.StringIO()
+            writer = csv.DictWriter(
+                output,
+                fieldnames=[
+                    "id",
+                    "name",
+                    "category",
+                    "is_major_allergen",
+                    "description",
+                ],
+            )
+            writer.writeheader()
+            for allergen in allergens:
+                writer.writerow(
+                    {
+                        "id": allergen.id,
+                        "name": allergen.name,
+                        "category": allergen.category,
+                        "is_major_allergen": allergen.is_major_allergen,
+                        "description": allergen.description or "",
+                    }
+                )
+
+            return StreamingResponse(
+                iter([output.getvalue()]),
+                media_type="text/csv",
+                headers={"Content-Disposition": "attachment; filename=allergens.csv"},
+            )
+        else:
+            # Return JSON
+            allergen_list = [AllergenResponse.model_validate(a) for a in allergens]
+            return allergen_list
+
+    except Exception as e:
+        print(f"Error exporting allergens: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while exporting allergens",
+        ) from e
+
+
+@router.get(
+    "/admin/allergens/audit-logs",
+    response_model=list[AllergenAuditLogResponse],
+)
+async def get_allergen_audit_logs(
+    db: SessionDep,
+    current_user: AdminUserDep,
+    allergen_id: Optional[str] = Query(None, description="Filter by allergen ID"),
+    limit: int = Query(100, ge=1, le=500, description="Maximum records to return"),
+):
+    """Get audit logs for allergen operations (admin only).
+
+    Args:
+        db: Database session
+        current_user: Current authenticated admin user
+        allergen_id: Optional allergen ID filter
+        limit: Maximum number of logs to return
+
+    Returns:
+        List of audit log entries
+
+    """
+    try:
+        service = HealthProfileService(db)
+        logs = service.get_audit_logs(allergen_id=allergen_id, limit=limit)
+        return [AllergenAuditLogResponse.model_validate(log) for log in logs]
+    except Exception as e:
+        print(f"Error fetching audit logs: {e!s}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while fetching audit logs",
         ) from e

@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   type ColumnDef,
   flexRender,
@@ -9,7 +8,16 @@ import {
   type SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { Plus, Pencil, Trash2, Search, AlertTriangle, ArrowUpDown } from 'lucide-react';
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+  AlertTriangle,
+  ArrowUpDown,
+  Upload,
+  Download,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -42,7 +50,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { adminApi, type AllergenResponse, type AllergenCreate } from '@/lib/api';
+import { useAllergenManagement } from '@/hooks/useAllergenManagement';
+import { BulkImportDialog, ExportDialog } from '@/components/BulkImportExportDialogs';
+import type { AllergenResponse, AllergenCreate, AllergenBulkImportItem } from '@/lib/api';
 
 export default function AllergenManagement() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -50,6 +60,8 @@ export default function AllergenManagement() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isBulkImportDialogOpen, setIsBulkImportDialogOpen] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [selectedAllergen, setSelectedAllergen] = useState<AllergenResponse | null>(null);
   const [formData, setFormData] = useState<AllergenCreate>({
     name: '',
@@ -58,13 +70,20 @@ export default function AllergenManagement() {
     description: '',
   });
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  // Query for fetching allergens
-  const { data: allergens = [], isLoading } = useQuery({
-    queryKey: ['allergens'],
-    queryFn: adminApi.getAllergens,
-  });
+  // Use custom hook for data management
+  const {
+    allergens,
+    isLoading,
+    createAllergen,
+    updateAllergen,
+    deleteAllergen,
+    bulkImport,
+    isCreating,
+    isUpdating,
+    isDeleting,
+    isImporting,
+  } = useAllergenManagement();
 
   // Define columns
   const columns: ColumnDef<AllergenResponse>[] = useMemo(
@@ -188,79 +207,7 @@ export default function AllergenManagement() {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  // Mutation for creating allergen
-  const createMutation = useMutation({
-    mutationFn: adminApi.createAllergen,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allergens'] });
-      toast({
-        title: 'Success',
-        description: 'Allergen created successfully',
-      });
-      setIsCreateDialogOpen(false);
-    },
-    onError: (error) => {
-      const errorMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? String((error as { response?: { data?: { detail?: string } } }).response?.data?.detail)
-          : 'Failed to create allergen';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Mutation for updating allergen
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: AllergenCreate }) =>
-      adminApi.updateAllergen(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allergens'] });
-      toast({
-        title: 'Success',
-        description: 'Allergen updated successfully',
-      });
-      setIsEditDialogOpen(false);
-    },
-    onError: (error) => {
-      const errorMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? String((error as { response?: { data?: { detail?: string } } }).response?.data?.detail)
-          : 'Failed to update allergen';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Mutation for deleting allergen
-  const deleteMutation = useMutation({
-    mutationFn: adminApi.deleteAllergen,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allergens'] });
-      toast({
-        title: 'Success',
-        description: 'Allergen deleted successfully',
-      });
-      setIsDeleteDialogOpen(false);
-    },
-    onError: (error) => {
-      const errorMessage =
-        error && typeof error === 'object' && 'response' in error
-          ? String((error as { response?: { data?: { detail?: string } } }).response?.data?.detail)
-          : 'Failed to delete allergen';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-    },
-  });
-
+  // Event handlers
   const handleCreate = () => {
     setFormData({
       name: '',
@@ -297,7 +244,9 @@ export default function AllergenManagement() {
       return;
     }
 
-    createMutation.mutate(formData);
+    createAllergen(formData, {
+      onSuccess: () => setIsCreateDialogOpen(false),
+    });
   };
 
   const handleSubmitEdit = () => {
@@ -310,13 +259,24 @@ export default function AllergenManagement() {
       return;
     }
 
-    updateMutation.mutate({ id: selectedAllergen.id, data: formData });
+    updateAllergen(
+      { id: selectedAllergen.id, data: formData },
+      {
+        onSuccess: () => setIsEditDialogOpen(false),
+      }
+    );
   };
 
   const handleConfirmDelete = () => {
     if (!selectedAllergen) return;
 
-    deleteMutation.mutate(selectedAllergen.id);
+    deleteAllergen(selectedAllergen.id, {
+      onSuccess: () => setIsDeleteDialogOpen(false),
+    });
+  };
+
+  const handleBulkImport = (items: AllergenBulkImportItem[]) => {
+    bulkImport(items);
   };
 
   return (
@@ -364,17 +324,26 @@ export default function AllergenManagement() {
       {/* Main content */}
       <Card>
         <CardHeader>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             <AlertTriangle className="text-blue-600" />
-            <div>
+            <div className="flex-1">
               <CardTitle>Allergen Database</CardTitle>
               <CardDescription>View and manage all allergens</CardDescription>
             </div>
-            <div className="grow" />
-            <Button onClick={handleCreate}>
-              <Plus className="mr-2 size-4" />
-              Add Allergen
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setIsBulkImportDialogOpen(true)}>
+                <Upload className="mr-2 size-4" />
+                Bulk Import
+              </Button>
+              <Button variant="outline" onClick={() => setIsExportDialogOpen(true)}>
+                <Download className="mr-2 size-4" />
+                Export
+              </Button>
+              <Button onClick={handleCreate}>
+                <Plus className="mr-2 size-4" />
+                Add Allergen
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -491,8 +460,8 @@ export default function AllergenManagement() {
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSubmitCreate} disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Creating...' : 'Create Allergen'}
+            <Button onClick={handleSubmitCreate} disabled={isCreating}>
+              {isCreating ? 'Creating...' : 'Create Allergen'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -547,8 +516,8 @@ export default function AllergenManagement() {
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSubmitEdit} disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? 'Updating...' : 'Update Allergen'}
+            <Button onClick={handleSubmitEdit} disabled={isUpdating}>
+              {isUpdating ? 'Updating...' : 'Update Allergen'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -577,13 +546,28 @@ export default function AllergenManagement() {
             <AlertDialogAction
               onClick={handleConfirmDelete}
               className="bg-red-600 hover:bg-red-700"
-              disabled={deleteMutation.isPending}
+              disabled={isDeleting}
             >
-              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+              {isDeleting ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Bulk Import Dialog */}
+      <BulkImportDialog
+        open={isBulkImportDialogOpen}
+        onOpenChange={setIsBulkImportDialogOpen}
+        onImport={handleBulkImport}
+        isImporting={isImporting}
+      />
+
+      {/* Export Dialog */}
+      <ExportDialog
+        open={isExportDialogOpen}
+        onOpenChange={setIsExportDialogOpen}
+        allergenCount={allergens.length}
+      />
     </div>
   );
 }
