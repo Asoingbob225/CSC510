@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
+import { RecommendationCarousel } from '@/components/recommendations/RecommendationCarousel';
 import apiClient, { getAuthToken } from '@/lib/api';
 
 function Dashboard() {
   const navigate = useNavigate();
   const [isVerifying, setIsVerifying] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Verify if token is valid
   useEffect(() => {
@@ -20,7 +22,8 @@ function Dashboard() {
 
       try {
         // Call user endpoint to check if token is valid
-        await apiClient.get('/users/me');
+        const response = await apiClient.get('/users/me');
+        setUserId(response.data.id);
         setIsVerifying(false);
       } catch {
         // Token is invalid, clear and redirect
@@ -53,6 +56,13 @@ function Dashboard() {
           <p className="text-gray-600">
             This is your personal dashboard. More features coming soon!
           </p>
+
+          {/* Meal Recommendations */}
+          {userId && (
+            <div className="mt-8">
+              <RecommendationCarousel userId={userId} />
+            </div>
+          )}
 
           {/* Placeholder Cards */}
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
