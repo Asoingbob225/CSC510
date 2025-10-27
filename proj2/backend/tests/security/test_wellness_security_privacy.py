@@ -35,9 +35,9 @@ class TestDataEncryption:
         mood_log = db.query(MoodLogDB).filter(MoodLogDB.id == mood_id).first()
         assert mood_log is not None
         # The encrypted notes should NOT be plaintext
-        assert mood_log.notes_encrypted != sensitive_note
+        assert mood_log.encrypted_notes != sensitive_note
         # Should be encrypted (different from original)
-        assert len(mood_log.notes_encrypted) > 0
+        assert len(mood_log.encrypted_notes) > 0
 
         # API should decrypt when returning
         get_response = client.get(
@@ -52,7 +52,7 @@ class TestDataEncryption:
         sensitive_trigger = "Conflict with boss about project deadline"
 
         stress_data = {
-            "stress_score": 8,
+            "stress_level": 8,
             "log_date": date.today().isoformat(),
             "triggers": sensitive_trigger,
         }
@@ -64,7 +64,7 @@ class TestDataEncryption:
 
         # Check database
         stress_log = db.query(StressLogDB).filter(StressLogDB.id == stress_id).first()
-        assert stress_log.triggers_encrypted != sensitive_trigger
+        assert stress_log.encrypted_triggers != sensitive_trigger
 
         # API returns decrypted
         get_response = client.get(
@@ -92,7 +92,7 @@ class TestDataEncryption:
 
         # Check database
         sleep_log = db.query(SleepLogDB).filter(SleepLogDB.id == sleep_id).first()
-        assert sleep_log.notes_encrypted != sensitive_note
+        assert sleep_log.encrypted_notes != sensitive_note
 
         # API returns decrypted
         get_response = client.get(
@@ -139,7 +139,7 @@ class TestPrivacyControls:
         """Test that users cannot update each other's stress logs."""
         # User 1 creates stress log
         stress_data = {
-            "stress_score": 6,
+            "stress_level": 6,
             "log_date": date.today().isoformat(),
         }
         response1 = client.post(
@@ -151,7 +151,7 @@ class TestPrivacyControls:
         # User 2 tries to update User 1's stress log
         token2 = create_access_token(data={"sub": test_user2.id})
         auth_headers_user2 = {"Authorization": f"Bearer {token2}"}
-        update_data = {"stress_score": 9, "log_date": date.today().isoformat()}
+        update_data = {"stress_level": 9, "log_date": date.today().isoformat()}
         response2 = client.put(
             f"/api/wellness/stress-logs/{stress_id}",
             json=update_data,
@@ -265,14 +265,14 @@ class TestScaleValidation:
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    def test_stress_score_range_validation(
+    def test_stress_level_range_validation(
         self, client: TestClient, auth_headers: dict, db: Session
     ):
-        """Test stress score validation (1-10)."""
-        # Valid scores
-        for score in [1, 5, 10]:
+        """Test stress level validation (1-10)."""
+        # Valid levels
+        for level in [1, 5, 10]:
             stress_data = {
-                "stress_score": score,
+                "stress_level": level,
                 "log_date": date.today().isoformat(),
             }
             response = client.post(
@@ -280,10 +280,10 @@ class TestScaleValidation:
             )
             assert response.status_code == status.HTTP_201_CREATED
 
-        # Invalid scores
-        for score in [0, 11, -1]:
+        # Invalid levels
+        for level in [0, 11, -1]:
             stress_data = {
-                "stress_score": score,
+                "stress_level": level,
                 "log_date": date.today().isoformat(),
             }
             response = client.post(
