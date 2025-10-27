@@ -98,7 +98,7 @@ export function WellnessOverviewCard() {
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-gray-700">Today&apos;s Status</h3>
 
-          {todayLog ? (
+          {todayLog && (todayLog.mood_score || todayLog.stress_level || todayLog.quality_score) ? (
             <div className="grid gap-3 sm:grid-cols-3">
               {/* Mood */}
               <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-3">

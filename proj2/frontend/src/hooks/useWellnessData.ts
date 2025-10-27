@@ -39,6 +39,7 @@ export function useWellnessLogs(params?: { start_date?: string; end_date?: strin
 
 /**
  * Hook to fetch today's wellness log
+ * Returns separate logs for mood, stress, and sleep
  */
 export function useTodayWellnessLog() {
   const today = new Date().toISOString().split('T')[0];
@@ -52,7 +53,20 @@ export function useTodayWellnessLog() {
       });
       // Ensure logs is an array before accessing
       const logsArray = Array.isArray(logs) ? logs : [];
-      return logsArray[0] || null;
+
+      // Find each type of log for today
+      const moodLog = logsArray.find((log) => log.mood_score !== undefined);
+      const stressLog = logsArray.find((log) => log.stress_level !== undefined);
+      const sleepLog = logsArray.find((log) => log.quality_score !== undefined);
+
+      // Return combined data from all three logs
+      return {
+        mood_score: moodLog?.mood_score,
+        stress_level: stressLog?.stress_level,
+        quality_score: sleepLog?.quality_score,
+        duration_hours: sleepLog?.duration_hours,
+        log_date: today,
+      };
     },
     staleTime: 1000 * 60 * 2, // 2 minutes for today's data
   });
