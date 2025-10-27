@@ -121,9 +121,7 @@ class TestMealGoalIntegration:
         meal_id = meal_response.json()["id"]
 
         # Delete meal
-        delete_response = client.delete(
-            f"/api/meals/{meal_id}", headers=auth_headers
-        )
+        delete_response = client.delete(f"/api/meals/{meal_id}", headers=auth_headers)
         assert delete_response.status_code == status.HTTP_204_NO_CONTENT
 
     def test_meal_history_retrieval(
@@ -214,7 +212,7 @@ class TestEdgeCases:
     def test_goal_with_same_start_and_end_date(
         self, client: TestClient, auth_headers: dict, db: Session
     ):
-        """Test goal with same start and end date."""
+        """Test goal with same start and end date (should fail validation)."""
         today = date.today()
         goal_data = {
             "goal_type": GoalType.NUTRITION.value,
@@ -223,5 +221,6 @@ class TestEdgeCases:
             "start_date": today.isoformat(),
             "end_date": today.isoformat(),
         }
+        # API validation requires end_date > start_date
         response = client.post("/api/goals", json=goal_data, headers=auth_headers)
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

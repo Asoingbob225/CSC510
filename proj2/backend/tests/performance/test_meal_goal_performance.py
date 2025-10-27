@@ -201,7 +201,7 @@ class TestDataValidation:
     ):
         """Test goal with various date ranges."""
         today = date.today()
-        
+
         # One week goal
         goal_data = {
             "goal_type": GoalType.NUTRITION.value,
