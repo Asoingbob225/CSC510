@@ -9,8 +9,8 @@ describe('SleepLogWidget', () => {
         <SleepLogWidget />
       </BrowserRouter>
     );
-  expect(screen.getByRole('heading', { name: /Sleep Log/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Sleep Log/i })).toBeInTheDocument();
     expect(screen.getByRole('slider')).toBeInTheDocument();
-  expect(screen.getByPlaceholderText(/How did you sleep/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/How did you sleep/i)).toBeInTheDocument();
   });
 });

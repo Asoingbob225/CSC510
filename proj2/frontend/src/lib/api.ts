@@ -415,6 +415,111 @@ export const adminApi = {
   },
 };
 
+// Mental Wellness API Types
+export interface MoodLogCreate {
+  mood_score: number;
+  notes?: string;
+  log_date?: string;
+}
+
+export interface StressLogCreate {
+  stress_level: number;
+  triggers?: string;
+  notes?: string;
+  log_date?: string;
+}
+
+export interface SleepLogCreate {
+  sleep_duration: number;
+  sleep_quality: number;
+  notes?: string;
+  log_date?: string;
+}
+
+export interface GoalCreate {
+  goal_type: 'nutrition' | 'mental_wellness';
+  title: string;
+  description?: string;
+  target_value?: number;
+  current_value?: number;
+  target_date?: string;
+  priority?: 'low' | 'medium' | 'high';
+}
+
+export interface WellnessLogResponse {
+  id: string;
+  user_id: string;
+  mood_score?: number;
+  stress_level?: number;
+  sleep_duration?: number;
+  sleep_quality?: number;
+  notes?: string;
+  triggers?: string;
+  log_date: string;
+  created_at: string;
+}
+
+export interface GoalResponse {
+  id: string;
+  user_id: string;
+  goal_type: string;
+  title: string;
+  description?: string;
+  target_value?: number;
+  current_value?: number;
+  target_date?: string;
+  priority: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Mental Wellness API
+export const wellnessApi = {
+  // Mood logs
+  createMoodLog: async (data: MoodLogCreate): Promise<WellnessLogResponse> => {
+    const response = await apiClient.post('/wellness/mood-logs', data);
+    return response.data;
+  },
+
+  // Stress logs
+  createStressLog: async (data: StressLogCreate): Promise<WellnessLogResponse> => {
+    const response = await apiClient.post('/wellness/stress-logs', data);
+    return response.data;
+  },
+
+  // Sleep logs
+  createSleepLog: async (data: SleepLogCreate): Promise<WellnessLogResponse> => {
+    const response = await apiClient.post('/wellness/sleep-logs', data);
+    return response.data;
+  },
+
+  // Get all wellness logs
+  getWellnessLogs: async (params?: {
+    start_date?: string;
+    end_date?: string;
+    log_type?: string;
+  }): Promise<WellnessLogResponse[]> => {
+    const response = await apiClient.get('/wellness/logs', { params });
+    return response.data;
+  },
+
+  // Goals
+  createGoal: async (data: GoalCreate): Promise<GoalResponse> => {
+    const response = await apiClient.post('/goals', data);
+    return response.data;
+  },
+
+  getGoals: async (params?: { goal_type?: string; status?: string }): Promise<GoalResponse[]> => {
+    const response = await apiClient.get('/goals', { params });
+    return response.data;
+  },
+
+  deleteGoal: async (goalId: string): Promise<void> => {
+    await apiClient.delete(`/goals/${goalId}`);
+  },
+};
+
 // GitHub API types
 export interface GitHubIssue {
   number: number;

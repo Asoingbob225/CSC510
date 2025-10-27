@@ -40,7 +40,7 @@ interface GoalFormProps {
 function GoalForm({ onSuccess }: GoalFormProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     goal_type: 'nutrition',
     description: '',

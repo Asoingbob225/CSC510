@@ -112,9 +112,7 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
             onChange={(e) => setDurationHours(parseFloat(e.target.value) || 0)}
             className="w-full"
           />
-          <p className="text-xs text-gray-500">
-            Recommended: 7-9 hours per night
-          </p>
+          <p className="text-xs text-gray-500">Recommended: 7-9 hours per night</p>
         </div>
 
         {/* Sleep Quality Slider */}

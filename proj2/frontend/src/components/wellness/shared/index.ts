@@ -1,6 +1,6 @@
 /**
  * Shared Wellness Components
- * 
+ *
  * Components that are used across both mental and physical wellness tracking:
  * - Goal management (nutrition + wellness goals)
  * - Data visualization (charts, progress indicators)

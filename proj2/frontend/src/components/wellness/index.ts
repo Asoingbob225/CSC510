@@ -1,8 +1,8 @@
 /**
  * Wellness Components
- * 
+ *
  * Dual-dimension health tracking components for both mental and physical wellness.
- * 
+ *
  * Structure:
  * - mental/   - Mental wellness tracking (mood, stress, sleep)
  * - physical/ - Physical wellness tracking (reserved for future)

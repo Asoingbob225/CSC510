@@ -3,16 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Activity, AlertCircle, RefreshCw } from 'lucide-react';
 import { getAuthToken, wellnessApi } from '@/lib/api';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
-import { 
-  MoodLogWidget, 
-  StressLogWidget, 
-  SleepLogWidget 
-} from '@/components/wellness/mental';
-import { 
-  GoalForm, 
-  GoalsList, 
-  WellnessChart 
-} from '@/components/wellness/shared';
+import { MoodLogWidget, StressLogWidget, SleepLogWidget } from '@/components/wellness/mental';
+import { GoalForm, GoalsList, WellnessChart } from '@/components/wellness/shared';
 import { Button } from '@/components/ui/button';
 
 function WellnessTrackingPage() {
@@ -20,7 +12,7 @@ function WellnessTrackingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  
+
   // Wellness data for charts
   const [moodData, setMoodData] = useState<Array<{ date: string; value: number }>>([]);
   const [stressData, setStressData] = useState<Array<{ date: string; value: number }>>([]);
@@ -57,17 +49,17 @@ function WellnessTrackingPage() {
         const sleep: Array<{ date: string; value: number }> = [];
 
         // Process mood logs
-        mood_logs.forEach(log => {
+        mood_logs.forEach((log) => {
           mood.push({ date: log.log_date, value: log.mood_score });
         });
 
         // Process stress logs
-        stress_logs.forEach(log => {
+        stress_logs.forEach((log) => {
           stress.push({ date: log.log_date, value: log.stress_level });
         });
 
         // Process sleep logs (use quality_score for the chart)
-        sleep_logs.forEach(log => {
+        sleep_logs.forEach((log) => {
           sleep.push({ date: log.log_date, value: log.quality_score });
         });
 
@@ -87,12 +79,12 @@ function WellnessTrackingPage() {
 
   // Handle successful log submission - refresh data
   const handleLogSuccess = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   // Handle successful goal creation/update - refresh goals list
   const handleGoalSuccess = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   if (isLoading) {
@@ -126,7 +118,7 @@ function WellnessTrackingPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setRefreshKey(prev => prev + 1)}
+            onClick={() => setRefreshKey((prev) => prev + 1)}
             className="gap-2"
           >
             <RefreshCw className="size-4" />
@@ -155,21 +147,9 @@ function WellnessTrackingPage() {
         <section className="mb-8">
           <h2 className="mb-4 text-xl font-semibold text-gray-800">Your Trends (Last 7 Days)</h2>
           <div className="grid gap-6 lg:grid-cols-3">
-            <WellnessChart 
-              data={moodData} 
-              metric="mood"
-              showLegend={true}
-            />
-            <WellnessChart 
-              data={stressData} 
-              metric="stress"
-              showLegend={true}
-            />
-            <WellnessChart 
-              data={sleepData} 
-              metric="sleep"
-              showLegend={true}
-            />
+            <WellnessChart data={moodData} metric="mood" showLegend={true} />
+            <WellnessChart data={stressData} metric="stress" showLegend={true} />
+            <WellnessChart data={sleepData} metric="sleep" showLegend={true} />
           </div>
         </section>
 

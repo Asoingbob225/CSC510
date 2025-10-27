@@ -95,9 +95,7 @@ function GoalsList() {
         <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm">
           <Target className="mx-auto mb-4 h-12 w-12 text-gray-400" />
           <h3 className="mb-2 text-lg font-medium text-gray-900">No goals yet</h3>
-          <p className="mb-4 text-gray-600">
-            Set your first goal to start tracking your progress
-          </p>
+          <p className="mb-4 text-gray-600">Set your first goal to start tracking your progress</p>
           <GoalForm onSuccess={loadGoals} />
         </div>
       ) : (
@@ -111,9 +109,7 @@ function GoalsList() {
               <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
                   <div className="mb-2 flex items-center gap-2">
-                    <Badge className={getPriorityColor(goal.priority)}>
-                      {goal.priority}
-                    </Badge>
+                    <Badge className={getPriorityColor(goal.priority)}>{goal.priority}</Badge>
                     <Badge className={getStatusColor(goal.status)}>
                       {goal.status.replace('_', ' ')}
                     </Badge>

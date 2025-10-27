@@ -118,9 +118,7 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
             />
             <div className="flex justify-between text-xs text-gray-500">
               <span>Very Low (1)</span>
-              <span className={`font-semibold ${getStressColor(stressLevel)}`}>
-                {stressLevel}
-              </span>
+              <span className={`font-semibold ${getStressColor(stressLevel)}`}>{stressLevel}</span>
               <span>Very High (10)</span>
             </div>
           </div>

@@ -9,8 +9,8 @@ describe('MoodLogWidget', () => {
         <MoodLogWidget />
       </BrowserRouter>
     );
-  expect(screen.getByRole('heading', { name: /Mood Log/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Mood Log/i })).toBeInTheDocument();
     expect(screen.getByRole('slider')).toBeInTheDocument();
-  expect(screen.getByPlaceholderText(/What's on your mind/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/What's on your mind/i)).toBeInTheDocument();
   });
 });

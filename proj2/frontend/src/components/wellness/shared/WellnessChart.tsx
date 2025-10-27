@@ -35,19 +35,14 @@ const METRIC_CONFIG = {
   },
 };
 
-function WellnessChart({ 
-  data, 
-  metric, 
-  title,
-  showLegend = true 
-}: WellnessChartProps) {
+function WellnessChart({ data, metric, title, showLegend = true }: WellnessChartProps) {
   const config = METRIC_CONFIG[metric];
   const Icon = config.icon;
 
   // Chart dimensions
   const width = 600;
   const height = 300;
-  const padding = { top: 20, right: 20, bottom: 50, left: 50 };
+  const padding = useMemo(() => ({ top: 20, right: 20, bottom: 50, left: 50 }), []);
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
@@ -58,8 +53,8 @@ function WellnessChart({
     }
 
     // Sort data by date
-    const sortedData = [...data].sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
+    const sortedData = [...data].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
     // Get last 7 days
@@ -92,34 +87,36 @@ function WellnessChart({
       xLabels: calculatedXLabels,
       yTicks: calculatedYTicks,
     };
-  }, [data, chartWidth, chartHeight, padding]);
+  }, [data, chartWidth, chartHeight, padding.top, padding.left]);
 
   // Generate path for line
   const linePath = useMemo(() => {
     if (points.length === 0) return '';
-    
-    return points.map((point, index) => {
-      if (index === 0) {
-        return `M ${point.x} ${point.y}`;
-      }
-      return `L ${point.x} ${point.y}`;
-    }).join(' ');
+
+    return points
+      .map((point, index) => {
+        if (index === 0) {
+          return `M ${point.x} ${point.y}`;
+        }
+        return `L ${point.x} ${point.y}`;
+      })
+      .join(' ');
   }, [points]);
 
   // Generate path for area (gradient fill)
   const areaPath = useMemo(() => {
     if (points.length === 0) return '';
-    
+
     const bottomY = padding.top + chartHeight;
     let path = `M ${points[0].x} ${bottomY}`;
-    
-    points.forEach(point => {
+
+    points.forEach((point) => {
       path += ` L ${point.x} ${point.y}`;
     });
-    
+
     path += ` L ${points[points.length - 1].x} ${bottomY} Z`;
     return path;
-  }, [points, chartHeight, padding]);
+  }, [points, chartHeight, padding.top]);
 
   // Calculate average
   const average = useMemo(() => {
@@ -134,7 +131,7 @@ function WellnessChart({
     const firstValue = points[0].value;
     const lastValue = points[points.length - 1].value;
     const change = lastValue - firstValue;
-    
+
     if (metric === 'stress') {
       // For stress, decreasing is good
       return change < -0.5 ? 'improving' : change > 0.5 ? 'worsening' : 'stable';
@@ -179,21 +176,29 @@ function WellnessChart({
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <TrendingUp 
+                <TrendingUp
                   className={`size-4 ${
-                    trend === 'improving' ? 'text-green-500' :
-                    trend === 'worsening' ? 'text-red-500' :
-                    'text-gray-400'
+                    trend === 'improving'
+                      ? 'text-green-500'
+                      : trend === 'worsening'
+                        ? 'text-red-500'
+                        : 'text-gray-400'
                   }`}
                 />
-                <span className={`text-xs ${
-                  trend === 'improving' ? 'text-green-600' :
-                  trend === 'worsening' ? 'text-red-600' :
-                  'text-gray-600'
-                }`}>
-                  {trend === 'improving' ? 'Improving' :
-                   trend === 'worsening' ? 'Needs attention' :
-                   'Stable'}
+                <span
+                  className={`text-xs ${
+                    trend === 'improving'
+                      ? 'text-green-600'
+                      : trend === 'worsening'
+                        ? 'text-red-600'
+                        : 'text-gray-600'
+                  }`}
+                >
+                  {trend === 'improving'
+                    ? 'Improving'
+                    : trend === 'worsening'
+                      ? 'Needs attention'
+                      : 'Stable'}
                 </span>
               </div>
             </div>
@@ -201,14 +206,14 @@ function WellnessChart({
         </div>
       </CardHeader>
       <CardContent>
-        <svg 
-          width="100%" 
+        <svg
+          width="100%"
           height={height}
           viewBox={`0 0 ${width} ${height}`}
           className="overflow-visible"
         >
           {/* Grid lines (horizontal) */}
-          {yTicks.map(tick => {
+          {yTicks.map((tick) => {
             const y = padding.top + chartHeight - (tick / 10) * chartHeight;
             return (
               <g key={tick}>
@@ -225,7 +230,7 @@ function WellnessChart({
                   y={y}
                   textAnchor="end"
                   alignmentBaseline="middle"
-                  className="text-xs fill-gray-500"
+                  className="fill-gray-500 text-xs"
                 >
                   {tick}
                 </text>
@@ -242,10 +247,7 @@ function WellnessChart({
           </defs>
 
           {/* Area path */}
-          <path
-            d={areaPath}
-            fill={`url(#gradient-${metric})`}
-          />
+          <path d={areaPath} fill={`url(#gradient-${metric})`} />
 
           {/* Line path */}
           <path
@@ -279,7 +281,7 @@ function WellnessChart({
               x={label.x}
               y={padding.top + chartHeight + 20}
               textAnchor="middle"
-              className="text-xs fill-gray-600"
+              className="fill-gray-600 text-xs"
             >
               {label.label}
             </text>
@@ -291,7 +293,7 @@ function WellnessChart({
             y={padding.top + chartHeight / 2}
             textAnchor="middle"
             transform={`rotate(-90 ${padding.left - 35} ${padding.top + chartHeight / 2})`}
-            className="text-xs fill-gray-600 font-medium"
+            className="fill-gray-600 text-xs font-medium"
           >
             {config.yAxisLabel}
           </text>
@@ -301,7 +303,7 @@ function WellnessChart({
             x={padding.left + chartWidth / 2}
             y={height - 10}
             textAnchor="middle"
-            className="text-xs fill-gray-600 font-medium"
+            className="fill-gray-600 text-xs font-medium"
           >
             Date
           </text>

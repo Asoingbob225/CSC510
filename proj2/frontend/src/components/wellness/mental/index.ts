@@ -1,6 +1,6 @@
 /**
  * Mental Wellness Components
- * 
+ *
  * Components for tracking mental health metrics including:
  * - Mood tracking
  * - Stress level monitoring

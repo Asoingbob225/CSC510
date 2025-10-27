@@ -25,6 +25,7 @@ wellness/
 ```
 
 **Design Rationale:**
+
 - **mental/**: Mental wellness quick-log widgets (mood, stress, sleep)
 - **physical/**: Reserved for future physical wellness widgets
 - **shared/**: Components used by **both** mental and physical wellness
@@ -36,6 +37,7 @@ wellness/
 ## Design Principles
 
 ### 1. Dual-Dimension Approach
+
 - **Mental Wellness** (UC-021 to UC-025): Mood, stress, sleep, mental health goals
 - **Physical Wellness** (UC-008 to UC-020): Exercise, nutrition, vitals, physical goals
 - **Integrated Dashboard**: Both dimensions displayed together for holistic health view
@@ -43,17 +45,20 @@ wellness/
 ### 2. Component Separation Rationale
 
 **Why separate `wellness/` from `health-profile/`?**
+
 - `health-profile/`: **Static configuration** (allergies, dietary preferences, basic info)
 - `wellness/`: **Dynamic tracking components** (mental wellness widgets for dashboard)
 
 **Why three subdirectories: mental/, physical/, shared/?**
+
 - `mental/`: Mental health logging widgets (mood, stress, sleep) - domain-specific
-- `physical/`: Physical wellness widgets (reserved for future) - domain-specific  
+- `physical/`: Physical wellness widgets (reserved for future) - domain-specific
 - `shared/`: Cross-domain components used by both mental AND physical wellness
   - **GoalForm/GoalsList**: Handles both nutrition goals (physical) and wellness goals (mental)
   - **WellnessChart**: Visualizes data from both domains
 
 **Why is `physical/` mostly empty?**
+
 - Physical wellness features like **meal logging** (Issue #95) are full-page experiences
 - Current architecture: dedicated pages for complex features, widgets for quick logging
 - The `physical/` directory is reserved for future quick-log widgets if needed
@@ -61,6 +66,7 @@ wellness/
 ### 3. Component Architecture
 
 Each widget follows a consistent pattern:
+
 - **Card container** with icon header
 - **Input method** (slider, number input, select)
 - **Zod validation** schema
@@ -72,6 +78,7 @@ Each widget follows a consistent pattern:
 ### 4. API Integration
 
 Components use centralized API client (`@/lib/api`):
+
 - `wellnessApi.createMoodLog()`, `wellnessApi.createStressLog()`, etc.
 - `goalsApi.createGoal()`, `goalsApi.getGoals()`, etc.
 - JWT authentication handled automatically via Axios interceptors
@@ -99,7 +106,7 @@ function WellnessTracking() {
       <MoodLogWidget />
       <StressLogWidget />
       <SleepLogWidget />
-      
+
       <div className="col-span-full">
         <GoalsList />
       </div>
@@ -118,6 +125,7 @@ function WellnessTracking() {
 ## Issue #99 Scope (Current)
 
 ### Completed Components
+
 - ✅ MoodLogWidget (mental wellness logging)
 - ✅ StressLogWidget (mental wellness logging)
 - ✅ SleepLogWidget (mental wellness logging)
@@ -125,6 +133,7 @@ function WellnessTracking() {
 - ✅ GoalsList (shared: goal display with progress)
 
 ### Remaining Components (Issue #99)
+
 - ⏳ WellnessChart (shared: 7-day trend visualization)
 - ⏳ WellnessTracking page (dashboard integrating all components)
 - ⏳ Routing & Navigation
@@ -137,6 +146,7 @@ function WellnessTracking() {
 ## Future Enhancements (After v0.3)
 
 ### Potential Physical Wellness Widgets
+
 - [ ] QuickMealWidget (simplified meal logging for dashboard) - if needed
 - [ ] ExerciseLogWidget (quick workout logging) - if needed
 - [ ] VitalsWidget (heart rate, blood pressure) - if needed
@@ -144,6 +154,7 @@ function WellnessTracking() {
 **Note**: Most physical wellness features will remain as dedicated pages rather than dashboard widgets due to complexity.
 
 ### Integration Features
+
 - [ ] Dual-dimension dashboard (physical + mental in one view)
 - [ ] Correlation insights (how sleep affects mood, exercise affects stress)
 - [ ] AI recommendations based on wellness patterns
@@ -152,6 +163,7 @@ function WellnessTracking() {
 ## Testing
 
 Each component should have corresponding test file:
+
 ```
 mental/
 ├── MoodLogWidget.tsx
@@ -160,6 +172,7 @@ mental/
 ```
 
 Test coverage should include:
+
 - Component rendering
 - Form validation
 - API call success/failure
@@ -168,13 +181,14 @@ Test coverage should include:
 
 ## Status
 
-| Component Category | Status | Issue/Version |
-|-------------------|--------|---------------|
-| Mental Wellness Widgets | ✅ Complete (3/3) | Issue #99 (v0.3) |
-| Shared Components | 🟡 In Progress (2/3) | Issue #99 (v0.3) |
-| Physical Wellness Widgets | 📝 Reserved | Future |
+| Component Category        | Status               | Issue/Version    |
+| ------------------------- | -------------------- | ---------------- |
+| Mental Wellness Widgets   | ✅ Complete (3/3)    | Issue #99 (v0.3) |
+| Shared Components         | 🟡 In Progress (2/3) | Issue #99 (v0.3) |
+| Physical Wellness Widgets | 📝 Reserved          | Future           |
 
 **Shared Components Status:**
+
 - ✅ GoalForm (supports both nutrition + wellness goal types)
 - ✅ GoalsList (displays all goal types)
 - ⏳ WellnessChart (trend visualization - in progress)

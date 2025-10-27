@@ -9,8 +9,10 @@ describe('StressLogWidget', () => {
         <StressLogWidget />
       </BrowserRouter>
     );
-  expect(screen.getByRole('heading', { name: /Stress Log/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Stress Log/i })).toBeInTheDocument();
     expect(screen.getByRole('slider')).toBeInTheDocument();
-  expect(screen.getByPlaceholderText(/e\.g\., work deadline, traffic, etc\./i)).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/e\.g\., work deadline, traffic, etc\./i)
+    ).toBeInTheDocument();
   });
 });
