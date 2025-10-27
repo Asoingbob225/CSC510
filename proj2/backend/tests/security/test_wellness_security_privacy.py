@@ -35,6 +35,7 @@ class TestDataEncryption:
         mood_log = db.query(MoodLogDB).filter(MoodLogDB.id == mood_id).first()
         assert mood_log is not None
         # The encrypted notes should NOT be plaintext
+        assert mood_log.encrypted_notes is not None
         assert mood_log.encrypted_notes != sensitive_note
         # Should be encrypted (different from original)
         assert len(mood_log.encrypted_notes) > 0
@@ -64,6 +65,8 @@ class TestDataEncryption:
 
         # Check database
         stress_log = db.query(StressLogDB).filter(StressLogDB.id == stress_id).first()
+        assert stress_log is not None
+        assert stress_log.encrypted_triggers is not None
         assert stress_log.encrypted_triggers != sensitive_trigger
 
         # API returns decrypted
@@ -92,6 +95,8 @@ class TestDataEncryption:
 
         # Check database
         sleep_log = db.query(SleepLogDB).filter(SleepLogDB.id == sleep_id).first()
+        assert sleep_log is not None
+        assert sleep_log.encrypted_notes is not None
         assert sleep_log.encrypted_notes != sensitive_note
 
         # API returns decrypted
@@ -202,7 +207,7 @@ class TestPrivacyControls:
     ):
         """Test that listing wellness logs returns only user's own data."""
         # User 1 creates logs
-        for i in range(3):
+        for _i in range(3):
             client.post(
                 "/api/wellness/mood-logs",
                 json={"mood_score": 7, "log_date": date.today().isoformat()},
@@ -212,7 +217,7 @@ class TestPrivacyControls:
         # User 2 creates logs
         token2 = create_access_token(data={"sub": test_user2.id})
         auth_headers_user2 = {"Authorization": f"Bearer {token2}"}
-        for i in range(2):
+        for _i in range(2):
             client.post(
                 "/api/wellness/mood-logs",
                 json={"mood_score": 5, "log_date": date.today().isoformat()},
