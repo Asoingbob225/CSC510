@@ -4,6 +4,8 @@ import os
 
 # Set test mode to disable rate limiting
 os.environ["TEST_MODE"] = "true"
+# Set encryption key for mental wellness tests
+os.environ["ENCRYPTION_KEY"] = "test_encryption_key_for_unit_testing_only_12345678"
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

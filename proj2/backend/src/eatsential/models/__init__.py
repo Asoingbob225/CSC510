@@ -15,6 +15,7 @@ from .models import (
     UserRole,
     utcnow,
 )
+from .restaurant import MenuItem, Restaurant
 
 __all__ = [
     "AccountStatus",
@@ -24,7 +25,9 @@ __all__ = [
     "AuditAction",
     "DietaryPreferenceDB",
     "HealthProfileDB",
+    "MenuItem",
     "PreferenceType",
+    "Restaurant",
     "UserAllergyDB",
     "UserAuditLogDB",
     "UserDB",

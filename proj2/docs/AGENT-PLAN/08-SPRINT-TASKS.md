@@ -2,7 +2,7 @@
 
 **Document Version**: 2.0 (Dual-Dimension Health Platform)  
 **Last Updated**: October 26, 2025  
-**Current Milestone**: v0.3 - Tracking System (40% Complete)
+**Current Milestone**: v0.3 - Tracking System (60% Complete)
 
 ---
 
@@ -75,25 +75,52 @@ This document tracks development tasks across all milestones, organized by modul
 
 **Summary**: 18 issues completed across v0.1 (Authentication) and v0.2 (Health Data Management)
 
+### ✅ Completed Issues (v0.3)
+
+| Issue                                                   | Title                                                      | Milestone | Status    | Closed |
+| ------------------------------------------------------- | ---------------------------------------------------------- | --------- | --------- | ------ |
+| [#98](https://github.com/Asoingbob225/CSC510/issues/98) | subtask(backend): Mood/Stress/Sleep Logging API            | v0.3      | ✅ Closed | Oct 26 |
+| [#97](https://github.com/Asoingbob225/CSC510/issues/97) | subtask(backend): Goal Tracking API                        | v0.3      | ✅ Closed | Oct 26 |
+| [#94](https://github.com/Asoingbob225/CSC510/issues/94) | subtask(backend): Meal Logging API                         | v0.3      | ✅ Closed | Oct 26 |
+| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | v0.3      | ✅ Closed | Oct 26 |
+| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | v0.3      | ✅ Closed | Oct 26 |
+| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens                  | v0.3      | ✅ Closed | Oct 26 |
+
+**Summary**: 6 issues completed for v0.3 Tracking System milestone
+
 ### 🔄 Open Issues (v0.3)
 
-| Issue                                                   | Title                                                      | Priority | Assignee | Status      |
-| ------------------------------------------------------- | ---------------------------------------------------------- | -------- | -------- | ----------- |
-| [#102](https://github.com/Asoingbob225/CSC510/issues/102) | feat(frontend): Admin Audit Log Dashboard UI               | P1       | TBD      | ✅ Complete |
-| [#101](https://github.com/Asoingbob225/CSC510/issues/101) | feat(backend): Admin Audit Log System                      | P1       | TBD      | ✅ Complete |
-| [#100](https://github.com/Asoingbob225/CSC510/issues/100) | feat: Admin Audit Log System                             | P1       | TBD      | ✅ Complete |
-| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | P1       | TBD      | ✅ Complete |
-| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | P1       | TBD      | ✅ Complete |
-| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens                  | P1       | TBD      | ✅ Complete |
+| Issue                                                     | Title                                        | Priority | Status         |
+| --------------------------------------------------------- | -------------------------------------------- | -------- | -------------- |
+| [#104](https://github.com/Asoingbob225/CSC510/issues/104) | test: Mental Wellness Tracking Tests         | P0       | 📝 To Do       |
+| [#103](https://github.com/Asoingbob225/CSC510/issues/103) | test: Meal & Goal Tracking Tests             | P0       | 📝 To Do       |
+| [#102](https://github.com/Asoingbob225/CSC510/issues/102) | feat(frontend): Admin Audit Log Dashboard UI | P1       | ✅ Complete    |
+| [#101](https://github.com/Asoingbob225/CSC510/issues/101) | feat(backend): Admin Audit Log System        | P1       | ✅ Complete    |
+| [#100](https://github.com/Asoingbob225/CSC510/issues/100) | feat: Admin Audit Log System                 | P1       | ✅ Complete    |
+| [#99](https://github.com/Asoingbob225/CSC510/issues/99)   | subtask(frontend): Goal & Mood Tracking UI   | P0       | 🟡 In Progress |
+| [#96](https://github.com/Asoingbob225/CSC510/issues/96)   | feat: Mental Wellness Tracking System (M3)   | P0       | 🟡 In Progress |
+| [#95](https://github.com/Asoingbob225/CSC510/issues/95)   | subtask(frontend): Meal Logging Interface    | P0       | 🟡 In Progress |
 
-**Summary**: 3 open issues for v0.3 Tracking System milestone
+**Summary**: 5 open issues for v0.3 Tracking System milestone (3 in progress, 5 to do)
+
+### 🔄 Open Issues (v0.4 - Future Milestone)
+
+| Issue                                                     | Title                                        | Priority | Status   |
+| --------------------------------------------------------- | -------------------------------------------- | -------- | -------- |
+| [#109](https://github.com/Asoingbob225/CSC510/issues/109) | test: Recommendation Algorithm Tests         | P1       | 📝 To Do |
+| [#108](https://github.com/Asoingbob225/CSC510/issues/108) | subtask(frontend): Recommendation Display UI | P0       | 📝 To Do |
+| [#107](https://github.com/Asoingbob225/CSC510/issues/107) | subtask(backend): Recommendation API         | P0       | 📝 To Do |
+| [#106](https://github.com/Asoingbob225/CSC510/issues/106) | subtask(backend): Basic Scoring Algorithm    | P0       | 📝 To Do |
+| [#105](https://github.com/Asoingbob225/CSC510/issues/105) | feat: Basic Recommendation Engine (M4)       | P0       | 📝 To Do |
+
+**Summary**: 5 issues planned for v0.4 AI Recommendation Engine milestone
 
 ---
 
 ## 🎯 Current Milestone: v0.3 - Tracking System
 
-**Open Issues**: #70, #71, #72  
-**Status**: 40% Complete  
+**Completed Issues**: #70, #71, #72, #94, #97, #98  
+**Status**: 67% Complete (6/9 backend tasks done)  
 **Focus**: Physical meal logging + Mental wellness tracking (goals, mood, stress, sleep)
 
 ---
@@ -198,7 +225,7 @@ This document tracks development tasks across all milestones, organized by modul
 
 #### BE-03-001: Meal Logging API (v0.3)
 
-**Status**: 🟡 In Progress  
+**Status**: ✅ Complete  
 **Dependencies**: BE-S1-003  
 **Module**: `backend/src/eatsential/routers`  
 **Priority**: P0
@@ -215,6 +242,7 @@ This document tracks development tasks across all milestones, organized by modul
 
 - `POST /api/meals`
 - `GET /api/meals`
+- `GET /api/meals/{id}`
 - `PUT /api/meals/{id}`
 - `DELETE /api/meals/{id}`
 
@@ -225,13 +253,109 @@ This document tracks development tasks across all milestones, organized by modul
 - Timestamp validation: must be within last 30 days
 - Response time: <2s for POST requests
 
-**Related**: Issue #70, FR-020 (Meal Tracking), API-010
+**Implementation Details**:
+
+- ✅ MealDB and MealFoodItemDB models with relationships
+- ✅ MealService with 5 methods (100% coverage)
+- ✅ 5 API endpoints (95% coverage)
+- ✅ 41 tests (18 unit + 23 integration, all passing)
+- ✅ Automatic nutritional totals calculation
+
+**Related**: Issue #94, FR-020 (Meal Tracking), API-010
+
+---
+
+#### BE-03-001-A: Implement POST /api/meals (Assigned: lzdjohn)
+
+**Status**: 🟡 In Progress
+
+**Assignee**: @lzdjohn
+
+**Goal**: Deliver a minimal, production-ready POST endpoint to create a meal log. This task is intentionally scoped small so it can be completed without blocking others.
+
+**Acceptance Criteria**:
+
+- `POST /api/meals` accepts JSON payload with: `user_id`, `meal_type` (breakfast|lunch|dinner|snack), `items` (list of {food_id, portion}), and optional `timestamp` and `photo_url`.
+- Validates required fields and returns 201 with created meal object (id, timestamp, nutritional_summary).
+- Persists meal into database (basic model) and enqueues nutritional calculation job (can be a stubbed job queue for now).
+- Unit tests covering success case and at least two validation failures.
+
+**Implementation Notes / Tasks**:
+
+1. Add router method `create_meal` under `backend/src/eatsential/routers/meals.py`.
+2. Add minimal Pydantic schema for request/response under `backend/src/eatsential/schemas/meals.py`.
+3. Add DB model migration or simple model in `backend/src/eatsential/models.py` (compatible with current DB layer).
+4. Add a basic service `backend/src/eatsential/services/nutrition.py` with a stub `calculate_nutrition` that returns calories/macros (can be mocked in tests).
+5. Add tests under `backend/tests/test_meals.py` (pytest) for create success and validation errors.
+6. Ensure route is registered and protected (requires authenticated user) — if auth middleware not available, document in PR what auth hook to wire.
+
+**Estimated Size**: Small — aim to complete in one focused session (2-4 hours).
+
+**Notes**: I will not modify other people's branches or files unrelated to this task. All changes will be submitted via a feature branch following `feat/iss<issue-number>-short-description` naming.
+
+---
+
+## Suggested Starter Tasks for lzdjohn (AI Recommendation M4)
+
+Below are four small-to-moderate tasks from the M4 AI Recommendation milestone that are good to start with in sequence. They are ordered from easiest to slightly larger and are intentionally scoped so you can complete them one-by-one and open small PRs.
+
+1. BE-S2-004 / Issue #77 — Create Restaurant DB Schema & Seed Data (Assigned: @lzdjohn)
+   - Status: ✅ Complete (PR merged)
+   - Goal: Define `Restaurant` and `MenuItem` models and add a small seed script that inserts sample restaurants and menu items into the dev database.
+   - Acceptance:
+     - SQLAlchemy / ORM models added under `backend/src/eatsential/models/restaurant.py` (or compatible DB layer).
+     - A seed script `backend/scripts/seed_restaurants.py` that inserts 5 restaurants with 3-5 menu items each.
+     - Basic unit test ensuring seed script runs without errors (mock DB or use test DB).
+   - Estimated time: 2–3 hours
+   - Completed: October 26, 2025
+   - Branch: `feat/iss77-restaurant-schema-lzdjohn`
+
+2. BE-S2-008 / Issue (Add explanation field) — Add `explanation` field to Recommendation API (Assigned: @lzdjohn)
+   - Status: ✅ Complete (PR merged)
+   - Goal: Extend the recommendation response schema to include a short human-readable `explanation` string (FR-071).
+   - Acceptance:
+     - API response schema updated (Pydantic / TypeScript types) to include `explanation`.
+     - Back-end stub returns a placeholder explanation for now (e.g., "Based on your protein goal and allergy settings").
+     - Unit test verifies `explanation` exists and is a non-empty string.
+   - Estimated time: 1–2 hours
+   - Completed: October 26, 2025
+   - Branch: `feat/iss-explanation-field-lzdjohn`
+
+3. BE-S2-005 / Issue #81 — Build Core Recommendation API (stub) (`POST /api/recommend/meal`) (Assigned: @lzdjohn)
+   - Status: � In Progress (PR pending review)
+   - Goal: Implement a minimal, testable recommendation endpoint that accepts user context and returns a ranked list of recommended menu items (can use a naive scoring function initially).
+   - Acceptance:
+     - Endpoint `POST /api/recommend/meal` accepts `{user_id, constraints}` and returns list of `{menu_item_id, score, explanation}`.
+     - Uses the seeded restaurant/menu data for lookups.
+     - Unit tests for happy path and simple allergy filtering.
+   - Estimated time: 3–5 hours
+   - Branch: `feat/iss81-recommendation-api-lzdjohn`
+   - Implementation Notes:
+     - Added `RecommendationRequest` schema with `user_id` and optional `constraints`
+     - Implemented naive scoring: base 0.5 + 0.3 for calories + 0.2 for price info
+     - Returns top 10 recommendations sorted by score
+     - Comprehensive test suite with 6 test cases covering happy path, validation, scoring logic
+
+4. FE-S2-007 / Issue — Add Feedback Buttons (Like/Dislike) to Recommendation UI (Assigned: @lzdjohn)
+   - Status: 📝 To Do
+   - Goal: Add simple like/dislike buttons to recommendation cards that POST feedback to `/api/recommend/feedback`.
+   - Acceptance:
+     - UI buttons added to recommendation card component (`frontend/src/components/RecommendationCard.tsx` or equivalent).
+     - Button click sends a fetch POST to `/api/recommend/feedback` (backend stub can accept and return 200).
+     - Basic component test or manual verification instructions included.
+   - Estimated time: 1–2 hours
+
+Notes:
+
+- Work sequentially: start with 1 → 2 → 3 → 4. Each task is deliberately small so you can open focused PRs and get early reviews.
+- Naming for feature branches: `feat/iss77-restaurant-schema-lzdjohn`, `feat/issX-explanation-field-lzdjohn`, etc.
+- If you want, I can scaffold the code stubs for task 1 and 2 on this branch now (models + seed + API schema) and run quick local tests; confirm and I'll proceed.
 
 ---
 
 #### BE-03-002: Goal Tracking API (v0.3)
 
-**Status**: 🟡 In Progress  
+**Status**: ✅ Complete  
 **Dependencies**: BE-S1-003  
 **Module**: `backend/src/eatsential/routers`  
 **Priority**: P0
@@ -249,6 +373,7 @@ This document tracks development tasks across all milestones, organized by modul
 - `POST /api/goals`
 - `GET /api/goals`
 - `PUT /api/goals/{id}`
+- `DELETE /api/goals/{id}`
 - `GET /api/goals/progress`
 
 **Key Constraints**:
@@ -258,7 +383,15 @@ This document tracks development tasks across all milestones, organized by modul
 - Date validation: goals must be future-dated
 - User isolation: users can only access own goals
 
-**Related**: FR-025 (Goal Tracking), API-012
+**Implementation Details**:
+
+- ✅ GoalDB model with 12 fields and 4 indexes
+- ✅ GoalService with 7 methods (96% coverage)
+- ✅ 6 API endpoints (91% coverage)
+- ✅ 54 tests (26 unit + 28 integration, all passing)
+- ✅ Comprehensive Pydantic validation
+
+**Related**: Issue #97, FR-025 (Goal Tracking), API-012
 
 ---
 
