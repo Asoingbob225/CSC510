@@ -1,52 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Target, Trash2, TrendingUp } from 'lucide-react';
-import { wellnessApi, type GoalResponse } from '@/lib/api';
+import { Trash2, TrendingUp, Target } from 'lucide-react';
+import { useGoals, useDeleteGoal, calculateGoalProgress } from '@/hooks/useGoalsData';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
 import GoalForm from './GoalForm';
 
 function GoalsList() {
-  const [goals, setGoals] = useState<GoalResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const loadGoals = async () => {
-    try {
-      setIsLoading(true);
-      const response = await wellnessApi.getGoals();
-      setGoals(response);
-    } catch (error) {
-      console.error('Error loading goals:', error);
-      toast.error('Failed to load goals');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadGoals();
-  }, []);
+  const { data: goals, isLoading } = useGoals();
+  const deleteGoal = useDeleteGoal();
 
   const handleDelete = async (goalId: string) => {
     if (!confirm('Are you sure you want to delete this goal?')) {
       return;
     }
 
-    try {
-      await wellnessApi.deleteGoal(goalId);
-      toast.success('Goal deleted successfully');
-      loadGoals(); // Reload goals
-    } catch (error) {
-      console.error('Error deleting goal:', error);
-      toast.error('Failed to delete goal');
-    }
-  };
-
-  const calculateProgress = (goal: GoalResponse) => {
-    if (!goal.current_value || !goal.target_value) return 0;
-    const progress = (goal.current_value / goal.target_value) * 100;
-    return Math.min(Math.max(progress, 0), 100); // Clamp between 0-100
+    await deleteGoal.mutateAsync(goalId);
   };
 
   const getPriorityColor = (priority: string) => {
@@ -77,8 +46,20 @@ function GoalsList() {
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="text-center text-gray-600">Loading goals...</div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-gray-900">Your Goals</h3>
+          <GoalForm />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+              <Skeleton className="mb-2 h-6 w-3/4" />
+              <Skeleton className="mb-4 h-4 w-1/2" />
+              <Skeleton className="h-2 w-full" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -88,7 +69,7 @@ function GoalsList() {
       {/* Header with New Goal Button */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium text-gray-900">Your Goals</h3>
-        <GoalForm onSuccess={loadGoals} />
+        <GoalForm />
       </div>
 
       {/* Goals List */}
@@ -97,7 +78,7 @@ function GoalsList() {
           <Target className="mx-auto mb-4 h-12 w-12 text-gray-400" />
           <h3 className="mb-2 text-lg font-medium text-gray-900">No goals yet</h3>
           <p className="mb-4 text-gray-600">Set your first goal to start tracking your progress</p>
-          <GoalForm onSuccess={loadGoals} />
+          <GoalForm />
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
@@ -134,10 +115,10 @@ function GoalsList() {
                   <span className="text-gray-600">Progress</span>
                   <div className="flex items-center gap-1 font-medium text-gray-900">
                     <TrendingUp className="h-3 w-3" />
-                    {calculateProgress(goal).toFixed(0)}%
+                    {calculateGoalProgress(goal).toFixed(0)}%
                   </div>
                 </div>
-                <Progress value={calculateProgress(goal)} className="h-2" />
+                <Progress value={calculateGoalProgress(goal)} className="h-2" />
               </div>
 
               {/* Goal Stats */}

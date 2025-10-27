@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Target, Plus } from 'lucide-react';
 import { z } from 'zod';
-import { wellnessApi, type GoalCreate } from '@/lib/api';
+import { type GoalCreate } from '@/lib/api';
+import { useCreateGoal } from '@/hooks/useGoalsData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,7 +40,6 @@ interface GoalFormProps {
 
 function GoalForm({ onSuccess }: GoalFormProps) {
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     goal_type: 'nutrition',
@@ -52,14 +52,14 @@ function GoalForm({ onSuccess }: GoalFormProps) {
     priority: 'medium' as 'low' | 'medium' | 'high',
   });
 
+  const createGoal = useCreateGoal();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       // Validate form data
       const validatedData = goalSchema.parse(formData);
-
-      setIsSubmitting(true);
 
       const goalData: GoalCreate = {
         goal_type: validatedData.goal_type as 'nutrition' | 'mental_wellness',
@@ -70,9 +70,7 @@ function GoalForm({ onSuccess }: GoalFormProps) {
         priority: validatedData.priority,
       };
 
-      await wellnessApi.createGoal(goalData);
-
-      toast.success('Goal created successfully! 🎯');
+      await createGoal.mutateAsync(goalData);
 
       // Reset form
       setFormData({
@@ -96,12 +94,8 @@ function GoalForm({ onSuccess }: GoalFormProps) {
       if (error instanceof z.ZodError) {
         const firstError = error.issues[0];
         toast.error(firstError.message);
-      } else {
-        console.error('Error creating goal:', error);
-        toast.error('Failed to create goal. Please try again.');
       }
-    } finally {
-      setIsSubmitting(false);
+      // Error toast is handled by the mutation hook
     }
   };
 
@@ -243,8 +237,8 @@ function GoalForm({ onSuccess }: GoalFormProps) {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? 'Creating...' : 'Create Goal'}
+          <Button type="submit" disabled={createGoal.isPending} className="w-full">
+            {createGoal.isPending ? 'Creating...' : 'Create Goal'}
           </Button>
         </form>
       </DialogContent>

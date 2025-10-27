@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Smile } from 'lucide-react';
 import { z } from 'zod';
-import { wellnessApi, type MoodLogCreate } from '@/lib/api';
+import { type MoodLogCreate } from '@/lib/api';
+import { useCreateMoodLog } from '@/hooks/useWellnessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,7 +22,8 @@ interface MoodLogWidgetProps {
 function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
   const [moodScore, setMoodScore] = useState(5);
   const [notes, setNotes] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createMoodLog = useCreateMoodLog();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +35,6 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
         notes: notes.trim() || undefined,
       });
 
-      setIsSubmitting(true);
-
       // Get today's date in YYYY-MM-DD format
       const today = new Date().toISOString().split('T')[0];
 
@@ -44,9 +44,7 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
         notes: formData.notes,
       };
 
-      await wellnessApi.createMoodLog(moodData);
-
-      toast.success('Mood logged successfully! 😊');
+      await createMoodLog.mutateAsync(moodData);
 
       // Reset form
       setMoodScore(5);
@@ -59,12 +57,8 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error('Invalid input. Please check your entries.');
-      } else {
-        console.error('Error logging mood:', error);
-        toast.error('Failed to log mood. Please try again.');
       }
-    } finally {
-      setIsSubmitting(false);
+      // Error toast is handled by the mutation hook
     }
   };
 
@@ -100,7 +94,7 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
               max={10}
               step={1}
               value={[moodScore]}
-              onValueChange={(value) => setMoodScore(value[0])}
+              onValueChange={(value: number[]) => setMoodScore(value[0])}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-gray-500">
@@ -130,10 +124,10 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={createMoodLog.isPending}
           className="w-full bg-blue-600 text-white hover:bg-blue-700"
         >
-          {isSubmitting ? 'Logging...' : 'Log Mood'}
+          {createMoodLog.isPending ? 'Logging...' : 'Log Mood'}
         </Button>
       </form>
     </div>

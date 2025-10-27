@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Moon } from 'lucide-react';
 import { z } from 'zod';
-import { wellnessApi, type SleepLogCreate } from '@/lib/api';
+import { type SleepLogCreate } from '@/lib/api';
+import { useCreateSleepLog } from '@/hooks/useWellnessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,7 +24,8 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
   const [durationHours, setDurationHours] = useState(7.5);
   const [qualityScore, setQualityScore] = useState(7);
   const [notes, setNotes] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createSleepLog = useCreateSleepLog();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +38,6 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
         notes: notes.trim() || undefined,
       });
 
-      setIsSubmitting(true);
-
       // Get today's date in YYYY-MM-DD format
       const today = new Date().toISOString().split('T')[0];
 
@@ -48,9 +48,7 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
         notes: formData.notes,
       };
 
-      await wellnessApi.createSleepLog(sleepData);
-
-      toast.success('Sleep logged successfully! 💤');
+      await createSleepLog.mutateAsync(sleepData);
 
       // Reset form
       setDurationHours(7.5);
@@ -64,12 +62,8 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error('Invalid input. Please check your entries.');
-      } else {
-        console.error('Error logging sleep:', error);
-        toast.error('Failed to log sleep. Please try again.');
       }
-    } finally {
-      setIsSubmitting(false);
+      // Error toast is handled by the mutation hook
     }
   };
 
@@ -132,7 +126,7 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
               max={10}
               step={1}
               value={[qualityScore]}
-              onValueChange={(value) => setQualityScore(value[0])}
+              onValueChange={(value: number[]) => setQualityScore(value[0])}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-gray-500">
@@ -164,10 +158,10 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={createSleepLog.isPending}
           className="w-full bg-purple-600 text-white hover:bg-purple-700"
         >
-          {isSubmitting ? 'Logging...' : 'Log Sleep'}
+          {createSleepLog.isPending ? 'Logging...' : 'Log Sleep'}
         </Button>
       </form>
     </div>
