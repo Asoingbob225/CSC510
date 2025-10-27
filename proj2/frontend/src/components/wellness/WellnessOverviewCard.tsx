@@ -168,8 +168,8 @@ export function WellnessOverviewCard() {
           </div>
 
           {activeGoals.length > 0 ? (
-            <div className="space-y-2">
-              {activeGoals.slice(0, 3).map((goal) => {
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {activeGoals.slice(0, 6).map((goal) => {
                 const formatTargetType = (targetType: string) => {
                   return targetType
                     .split('_')
@@ -180,55 +180,47 @@ export function WellnessOverviewCard() {
                 return (
                   <div
                     key={goal.id}
-                    className="rounded-lg border border-gray-200 bg-white p-3 transition-colors hover:bg-gray-50"
+                    className="rounded-lg border border-gray-200 bg-white p-2.5 transition-all hover:border-purple-300 hover:shadow-sm"
                   >
-                    <div className="mb-2 flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
+                    <div className="mb-1.5 flex items-start justify-between gap-1">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs font-medium text-gray-900">
                           {formatTargetType(goal.target_type)}
                         </p>
-                        <p className="text-xs text-gray-500 capitalize">{goal.goal_type}</p>
+                        <p className="text-[10px] text-gray-500 capitalize">{goal.goal_type}</p>
                       </div>
                       <Badge
                         variant="outline"
-                        className={
-                          goal.status === 'in_progress'
+                        className={`h-4 shrink-0 px-1.5 py-0 text-[10px] ${
+                          goal.status === 'active'
                             ? 'border-blue-200 bg-blue-50 text-blue-700'
                             : goal.status === 'completed'
                               ? 'border-green-200 bg-green-50 text-green-700'
                               : 'border-gray-200 bg-gray-50 text-gray-700'
-                        }
+                        }`}
                       >
-                        {goal.status.replace('_', ' ')}
+                        {goal.status}
                       </Badge>
                     </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-xs text-gray-600">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center justify-between text-[10px] text-gray-600">
                         <span>Progress</span>
-                        <div className="flex items-center gap-1">
-                          <TrendingUp className="size-3" />
+                        <div className="flex items-center gap-0.5">
+                          <TrendingUp className="size-2.5" />
                           <span className="font-medium">
                             {calculateGoalProgress(goal).toFixed(0)}%
                           </span>
                         </div>
                       </div>
-                      <Progress value={calculateGoalProgress(goal)} className="h-1.5" />
+                      <Progress value={calculateGoalProgress(goal)} className="h-1" />
+                      <div className="flex items-center justify-between text-[10px] text-gray-500">
+                        <span>{goal.current_value}</span>
+                        <span>/ {goal.target_value}</span>
+                      </div>
                     </div>
                   </div>
                 );
               })}
-
-              {activeGoals.length > 3 && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => navigate('/wellness-tracking')}
-                  className="w-full text-xs text-purple-600"
-                >
-                  View {activeGoals.length - 3} more{' '}
-                  {activeGoals.length - 3 === 1 ? 'goal' : 'goals'}
-                </Button>
-              )}
             </div>
           ) : (
             <div className="rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-4 text-center">
@@ -237,6 +229,17 @@ export function WellnessOverviewCard() {
                 Set Your First Goal
               </Button>
             </div>
+          )}
+
+          {activeGoals.length > 6 && (
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => navigate('/wellness-tracking')}
+              className="w-full text-xs text-purple-600 hover:text-purple-700"
+            >
+              View {activeGoals.length - 6} more {activeGoals.length - 6 === 1 ? 'goal' : 'goals'}
+            </Button>
           )}
         </div>
 

@@ -39,10 +39,10 @@ export function useGoals(filters?: { goal_type?: string; status?: string }) {
 }
 
 /**
- * Hook to fetch active goals (in_progress status)
+ * Hook to fetch active goals (active status)
  */
 export function useActiveGoals() {
-  return useGoals({ status: 'in_progress' });
+  return useGoals({ status: 'active' });
 }
 
 /**
