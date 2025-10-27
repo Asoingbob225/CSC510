@@ -155,14 +155,6 @@ class TestPerformance:
         end_time = time.time()
 
         assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()) == 20        # Test paginated retrieval
-        start_time = time.time()
-        response = client.get(
-            "/api/meals?skip=0&limit=20", headers=auth_headers
-        )
-        end_time = time.time()
-
-        assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == 20
         response_time = end_time - start_time
         assert response_time < 2.0, f"Response time {response_time}s exceeds 2s limit"
