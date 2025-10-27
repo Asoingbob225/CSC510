@@ -30,12 +30,8 @@ describe('WellnessTrackingPage', () => {
     });
 
     // Mock wellness API responses
-    vi.mocked(wellnessApi.getWellnessLogs).mockResolvedValue({
-      mood_logs: [],
-      stress_logs: [],
-      sleep_logs: [],
-      total_count: 0,
-    });
+    vi.mocked(wellnessApi.getWellnessLogs).mockResolvedValue([]);
+    vi.mocked(wellnessApi.getGoals).mockResolvedValue([]);
   });
 
   afterEach(() => {

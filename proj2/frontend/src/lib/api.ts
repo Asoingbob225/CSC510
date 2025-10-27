@@ -438,7 +438,7 @@ export interface SleepLogCreate {
 
 export interface GoalCreate {
   goal_type: 'nutrition' | 'mental_wellness';
-  title: string;
+  title?: string;
   description?: string;
   target_value?: number;
   current_value?: number;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Target, Trash2, TrendingUp } from 'lucide-react';
-import { goalsApi, type GoalResponse } from '@/lib/api';
+import { wellnessApi, type GoalResponse } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -14,8 +14,8 @@ function GoalsList() {
   const loadGoals = async () => {
     try {
       setIsLoading(true);
-      const response = await goalsApi.getGoals({ page_size: 50 });
-      setGoals(response.goals);
+      const response = await wellnessApi.getGoals();
+      setGoals(response);
     } catch (error) {
       console.error('Error loading goals:', error);
       toast.error('Failed to load goals');
@@ -34,7 +34,7 @@ function GoalsList() {
     }
 
     try {
-      await goalsApi.deleteGoal(goalId);
+      await wellnessApi.deleteGoal(goalId);
       toast.success('Goal deleted successfully');
       loadGoals(); // Reload goals
     } catch (error) {
@@ -44,6 +44,7 @@ function GoalsList() {
   };
 
   const calculateProgress = (goal: GoalResponse) => {
+    if (!goal.current_value || !goal.target_value) return 0;
     const progress = (goal.current_value / goal.target_value) * 100;
     return Math.min(Math.max(progress, 0), 100); // Clamp between 0-100
   };
@@ -91,7 +92,7 @@ function GoalsList() {
       </div>
 
       {/* Goals List */}
-      {goals.length === 0 ? (
+      {!goals || goals.length === 0 ? (
         <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm">
           <Target className="mx-auto mb-4 h-12 w-12 text-gray-400" />
           <h3 className="mb-2 text-lg font-medium text-gray-900">No goals yet</h3>
@@ -143,22 +144,20 @@ function GoalsList() {
               <div className="flex items-center justify-between text-sm">
                 <div>
                   <span className="text-gray-600">Current: </span>
-                  <span className="font-medium text-gray-900">
-                    {goal.current_value} {goal.unit}
-                  </span>
+                  <span className="font-medium text-gray-900">{goal.current_value || 0}</span>
                 </div>
                 <div>
                   <span className="text-gray-600">Target: </span>
-                  <span className="font-medium text-gray-900">
-                    {goal.target_value} {goal.unit}
-                  </span>
+                  <span className="font-medium text-gray-900">{goal.target_value || 0}</span>
                 </div>
               </div>
 
               {/* Target Date */}
-              <div className="mt-2 text-xs text-gray-500">
-                Target: {new Date(goal.target_date).toLocaleDateString()}
-              </div>
+              {goal.target_date && (
+                <div className="mt-2 text-xs text-gray-500">
+                  Target: {new Date(goal.target_date).toLocaleDateString()}
+                </div>
+              )}
             </div>
           ))}
         </div>

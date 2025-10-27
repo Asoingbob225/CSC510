@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Target, Plus } from 'lucide-react';
 import { z } from 'zod';
-import { goalsApi, type GoalCreate } from '@/lib/api';
+import { wellnessApi, type GoalCreate } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -62,10 +62,15 @@ function GoalForm({ onSuccess }: GoalFormProps) {
       setIsSubmitting(true);
 
       const goalData: GoalCreate = {
-        ...validatedData,
+        goal_type: validatedData.goal_type as 'nutrition' | 'mental_wellness',
+        description: validatedData.description,
+        target_value: validatedData.target_value,
+        current_value: validatedData.current_value,
+        target_date: validatedData.target_date,
+        priority: validatedData.priority,
       };
 
-      await goalsApi.createGoal(goalData);
+      await wellnessApi.createGoal(goalData);
 
       toast.success('Goal created successfully! 🎯');
 

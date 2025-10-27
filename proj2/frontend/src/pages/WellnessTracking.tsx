@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Activity, AlertCircle, RefreshCw } from 'lucide-react';
-import { getAuthToken, wellnessApi } from '@/lib/api';
+import {
+  getAuthToken,
+  wellnessApi,
+  type WellnessLogResponse,
+} from '@/lib/api';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { MoodLogWidget, StressLogWidget, SleepLogWidget } from '@/components/wellness/mental';
 import { GoalForm, GoalsList, WellnessChart } from '@/components/wellness/shared';
@@ -41,26 +45,22 @@ function WellnessTrackingPage() {
           end_date: endDate.toISOString().split('T')[0],
         });
 
-        const { mood_logs, stress_logs, sleep_logs } = logsResponse;
-
         // Transform data for charts
         const mood: Array<{ date: string; value: number }> = [];
         const stress: Array<{ date: string; value: number }> = [];
         const sleep: Array<{ date: string; value: number }> = [];
 
-        // Process mood logs
-        mood_logs.forEach((log) => {
-          mood.push({ date: log.log_date, value: log.mood_score });
-        });
-
-        // Process stress logs
-        stress_logs.forEach((log) => {
-          stress.push({ date: log.log_date, value: log.stress_level });
-        });
-
-        // Process sleep logs (use quality_score for the chart)
-        sleep_logs.forEach((log) => {
-          sleep.push({ date: log.log_date, value: log.quality_score });
+        // Process logs
+        logsResponse.forEach((log: WellnessLogResponse) => {
+          if (log.mood_score !== undefined) {
+            mood.push({ date: log.log_date, value: log.mood_score });
+          }
+          if (log.stress_level !== undefined) {
+            stress.push({ date: log.log_date, value: log.stress_level });
+          }
+          if (log.sleep_quality !== undefined) {
+            sleep.push({ date: log.log_date, value: log.sleep_quality });
+          }
         });
 
         setMoodData(mood);
