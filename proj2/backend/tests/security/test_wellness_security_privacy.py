@@ -180,7 +180,7 @@ class TestPrivacyControls:
         assert response2.status_code in [
             status.HTTP_404_NOT_FOUND,
             status.HTTP_403_FORBIDDEN,
-        )
+        ]
 
         # Verify User 1's sleep log still exists
         response3 = client.get(f"/api/wellness/sleep/{sleep_id}", headers=auth_headers)
