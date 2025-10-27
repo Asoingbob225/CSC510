@@ -1,7 +1,7 @@
 """add_restaurant_and_menu_items_tables
 
 Revision ID: e0e9218c2ea3
-Revises: 60cef32d6c1f
+Revises: 005_add_user_audit_log_table, 007_add_mental_wellness_tables
 Create Date: 2025-10-26 20:56:35.832514
 
 """
@@ -14,7 +14,10 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "e0e9218c2ea3"
-down_revision: Union[str, Sequence[str], None] = "60cef32d6c1f"
+down_revision: Union[str, Sequence[str], None] = (
+    "005_add_user_audit_log_table",
+    "007_add_mental_wellness_tables",
+)
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
