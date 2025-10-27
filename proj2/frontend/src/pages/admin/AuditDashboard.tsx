@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Clock, User, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Clock, User, AlertTriangle, ChevronDown, ChevronUp, Pen } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -120,7 +120,7 @@ export default function AuditDashboard() {
 
     return (
       <Card key={log.id} className="mb-3">
-        <CardContent className="pt-6">
+        <CardContent>
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="mb-2 flex items-center gap-2">
@@ -130,7 +130,7 @@ export default function AuditDashboard() {
               </div>
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1">
-                  <User className="size-3" />
+                  <Pen className="size-3" />
                   Modified by: {log.admin_username}
                 </span>
                 <span className="flex items-center gap-1">
