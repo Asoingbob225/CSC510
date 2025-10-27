@@ -73,12 +73,6 @@ function GoalsList() {
 
   return (
     <div className="space-y-4">
-      {/* Header with New Goal Button */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium text-gray-900">Your Goals</h3>
-        <GoalForm />
-      </div>
-
       {/* Goals List */}
       {!goals || !Array.isArray(goals) || goals.length === 0 ? (
         <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm">
