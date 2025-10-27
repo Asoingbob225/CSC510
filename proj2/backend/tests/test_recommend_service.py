@@ -9,11 +9,12 @@ from src.eatsential.models.models import (
     AllergySeverity,
     DietaryPreferenceDB,
     HealthProfileDB,
+    MenuItem,
     PreferenceType,
+    Restaurant,
     UserAllergyDB,
     UserDB,
 )
-from src.eatsential.models.restaurant import MenuItem, Restaurant
 from src.eatsential.services.recommend_service import RecommendService
 
 
