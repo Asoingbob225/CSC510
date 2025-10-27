@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import WellnessTrackingPage from './WellnessTracking';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { wellnessApi } from '@/lib/api';
 import { vi } from 'vitest';
 

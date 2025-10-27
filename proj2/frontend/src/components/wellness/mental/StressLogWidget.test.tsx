@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import StressLogWidget from './StressLogWidget';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 
 describe('StressLogWidget', () => {
   it('renders stress slider and trigger input', () => {

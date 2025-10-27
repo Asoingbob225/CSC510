@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import MoodLogWidget from './MoodLogWidget';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 
 describe('MoodLogWidget', () => {
   it('renders mood slider and notes input', () => {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Activity, AlertCircle, RefreshCw } from 'lucide-react';
 import { getAuthToken, wellnessApi } from '@/lib/api';
 import { DashboardNavbar } from '@/components/DashboardNavbar';

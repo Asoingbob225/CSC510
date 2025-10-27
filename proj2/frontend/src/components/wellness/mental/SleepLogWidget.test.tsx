@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import SleepLogWidget from './SleepLogWidget';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 
 describe('SleepLogWidget', () => {
   it('renders sleep duration and quality slider', () => {
