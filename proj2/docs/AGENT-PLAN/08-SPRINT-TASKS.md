@@ -77,51 +77,62 @@ This document tracks development tasks across all milestones, organized by modul
 
 ### ✅ Completed Issues (v0.3)
 
-| Issue                                                   | Title                                                      | Milestone | Status    | Closed |
-| ------------------------------------------------------- | ---------------------------------------------------------- | --------- | --------- | ------ |
-| [#98](https://github.com/Asoingbob225/CSC510/issues/98) | subtask(backend): Mood/Stress/Sleep Logging API            | v0.3      | ✅ Closed | Oct 26 |
-| [#97](https://github.com/Asoingbob225/CSC510/issues/97) | subtask(backend): Goal Tracking API                        | v0.3      | ✅ Closed | Oct 26 |
-| [#94](https://github.com/Asoingbob225/CSC510/issues/94) | subtask(backend): Meal Logging API                         | v0.3      | ✅ Closed | Oct 26 |
-| [#72](https://github.com/Asoingbob225/CSC510/issues/72) | feat(backend): Implement Data Management API for Allergens | v0.3      | ✅ Closed | Oct 26 |
-| [#71](https://github.com/Asoingbob225/CSC510/issues/71) | feat(frontend): Implement Data Management UI for Allergens | v0.3      | ✅ Closed | Oct 26 |
-| [#70](https://github.com/Asoingbob225/CSC510/issues/70) | feat: Admin Data Management for Allergens                  | v0.3      | ✅ Closed | Oct 26 |
+## 📋 Issue Tracking
 
-**Summary**: 6 issues completed for v0.3 Tracking System milestone
+### Milestone: v0.3 - Tracking System
 
-### 🔄 Open Issues (v0.3)
+| Issue                                                       | Title                                                         | Priority | Status          | Merged/Closed |
+| ----------------------------------------------------------- | ------------------------------------------------------------- | -------- | --------------- | ------------- |
+| [#104](https://github.com/Asoingbob225/CSC510/issues/104)  | test: Mental Wellness Tracking Tests                          | P0       | ✅ Complete     | PR #125       |
+| [#103](https://github.com/Asoingbob225/CSC510/issues/103)  | test: Meal & Goal Tracking Tests                              | P0       | 📝 To Do        | -             |
+| [#102](https://github.com/Asoingbob225/CSC510/issues/102)  | feat(frontend): Admin Audit Log Dashboard UI                  | P1       | ✅ Complete     | PR #124       |
+| [#101](https://github.com/Asoingbob225/CSC510/issues/101)  | feat(backend): Admin Audit Log System                         | P1       | ✅ Complete     | PR #124       |
+| [#100](https://github.com/Asoingbob225/CSC510/issues/100)  | feat: Admin Audit Log System                                  | P1       | ✅ Complete     | PR #124       |
+| [#99](https://github.com/Asoingbob225/CSC510/issues/99)    | subtask(frontend): Goal & Mood Tracking UI                    | P0       | ✅ Complete     | PR #122       |
+| [#98](https://github.com/Asoingbob225/CSC510/issues/98)    | subtask(backend): Mood/Stress/Sleep Logging API               | P0       | ✅ Complete     | PR #117       |
+| [#97](https://github.com/Asoingbob225/CSC510/issues/97)    | subtask(backend): Goal Tracking API                           | P0       | ✅ Complete     | PR #114       |
+| [#96](https://github.com/Asoingbob225/CSC510/issues/96)    | feat: Mental Wellness Tracking System (M3)                    | P0       | ✅ Complete     | Epic          |
+| [#95](https://github.com/Asoingbob225/CSC510/issues/95)    | subtask(frontend): Meal Logging Interface                     | P0       | 🟡 In Progress  | -             |
+| [#94](https://github.com/Asoingbob225/CSC510/issues/94)    | subtask(backend): Meal Logging API                            | P0       | ✅ Complete     | Oct 26        |
+| [#72](https://github.com/Asoingbob225/CSC510/issues/72)    | feat(backend): Implement Data Management API for Allergens    | P0       | ✅ Complete     | Oct 26        |
+| [#71](https://github.com/Asoingbob225/CSC510/issues/71)    | feat(frontend): Implement Data Management UI for Allergens    | P0       | ✅ Complete     | Oct 26        |
+| [#70](https://github.com/Asoingbob225/CSC510/issues/70)    | feat: Admin Data Management for Allergens                     | P0       | ✅ Complete     | Oct 26        |
 
-| Issue                                                     | Title                                        | Priority | Status         |
-| --------------------------------------------------------- | -------------------------------------------- | -------- | -------------- |
-| [#104](https://github.com/Asoingbob225/CSC510/issues/104) | test: Mental Wellness Tracking Tests         | P0       | 📝 To Do       |
-| [#103](https://github.com/Asoingbob225/CSC510/issues/103) | test: Meal & Goal Tracking Tests             | P0       | 📝 To Do       |
-| [#102](https://github.com/Asoingbob225/CSC510/issues/102) | feat(frontend): Admin Audit Log Dashboard UI | P1       | ✅ Complete    |
-| [#101](https://github.com/Asoingbob225/CSC510/issues/101) | feat(backend): Admin Audit Log System        | P1       | ✅ Complete    |
-| [#100](https://github.com/Asoingbob225/CSC510/issues/100) | feat: Admin Audit Log System                 | P1       | ✅ Complete    |
-| [#99](https://github.com/Asoingbob225/CSC510/issues/99)   | subtask(frontend): Goal & Mood Tracking UI   | P0       | 🟡 In Progress |
-| [#96](https://github.com/Asoingbob225/CSC510/issues/96)   | feat: Mental Wellness Tracking System (M3)   | P0       | 🟡 In Progress |
-| [#95](https://github.com/Asoingbob225/CSC510/issues/95)   | subtask(frontend): Meal Logging Interface    | P0       | 🟡 In Progress |
+**Progress**: 13/14 issues complete (93%)
 
-**Summary**: 5 open issues for v0.3 Tracking System milestone (3 in progress, 5 to do)
+### Milestone: v0.4 - AI Recommendation Engine (Future)
 
-### 🔄 Open Issues (v0.4 - Future Milestone)
+| Issue                                                       | Title                                        | Priority | Status          | Notes         |
+| ----------------------------------------------------------- | -------------------------------------------- | -------- | --------------- | ------------- |
+| [#109](https://github.com/Asoingbob225/CSC510/issues/109)  | test: Recommendation Algorithm Tests         | P1       | ✅ Complete     | PR #123       |
+| [#108](https://github.com/Asoingbob225/CSC510/issues/108)  | subtask(frontend): Recommendation Display UI | P0       | 📝 To Do        | -             |
+| [#107](https://github.com/Asoingbob225/CSC510/issues/107)  | subtask(backend): Recommendation API         | P0       | 📝 To Do        | -             |
+| [#106](https://github.com/Asoingbob225/CSC510/issues/106)  | subtask(backend): Basic Scoring Algorithm    | P0       | 📝 To Do        | -             |
+| [#105](https://github.com/Asoingbob225/CSC510/issues/105)  | feat: Basic Recommendation Engine (M4)       | P0       | 📝 To Do        | Epic          |
 
-| Issue                                                     | Title                                        | Priority | Status   |
-| --------------------------------------------------------- | -------------------------------------------- | -------- | -------- |
-| [#109](https://github.com/Asoingbob225/CSC510/issues/109) | test: Recommendation Algorithm Tests         | P1       | 📝 To Do |
-| [#108](https://github.com/Asoingbob225/CSC510/issues/108) | subtask(frontend): Recommendation Display UI | P0       | 📝 To Do |
-| [#107](https://github.com/Asoingbob225/CSC510/issues/107) | subtask(backend): Recommendation API         | P0       | 📝 To Do |
-| [#106](https://github.com/Asoingbob225/CSC510/issues/106) | subtask(backend): Basic Scoring Algorithm    | P0       | 📝 To Do |
-| [#105](https://github.com/Asoingbob225/CSC510/issues/105) | feat: Basic Recommendation Engine (M4)       | P0       | 📝 To Do |
-
-**Summary**: 5 issues planned for v0.4 AI Recommendation Engine milestone
+**Progress**: 1/5 issues complete (20%)
 
 ---
 
-## 🎯 Current Milestone: v0.3 - Tracking System
+## 🎯 Current Focus
 
-**Completed Issues**: #70, #71, #72, #94, #97, #98  
-**Status**: 67% Complete (6/9 backend tasks done)  
-**Focus**: Physical meal logging + Mental wellness tracking (goals, mood, stress, sleep)
+**Active Milestone**: v0.3 - Tracking System  
+**Completion**: 93% (13/14 issues)  
+**Remaining**:
+- #103: Meal & Goal Tracking Tests (P0)
+- #95: Meal Logging Interface (P0)
+
+**Recent Completions**:
+- ✅ #104: Mental Wellness Tracking Tests (PR #125)
+- ✅ #122: Mental Wellness Tracking UI (PR #122)
+- ✅ #117: Mood/Stress/Sleep Logging API (PR #117)
+- ✅ #114: Goal Tracking API (PR #114)
+- #104: Mental Wellness Tests ✅
+- #102: Admin Audit Log UI ✅  
+- #101: Admin Audit Log Backend ✅
+- #99: Mental Wellness UI ✅
+- #98: Mental Wellness API ✅
+- #97: Goal Tracking API ✅
 
 ---
 
@@ -129,18 +140,17 @@ This document tracks development tasks across all milestones, organized by modul
 
 ### Task Status Summary
 
-- **Total Tasks**: 21
-- **Completed (v0.1-v0.2)**: 18 tasks
-- **In Progress (v0.3)**: 3 tasks
-- **Priority P0**: 15 tasks (critical path)
-- **Priority P1**: 6 tasks (important)
+- **Total Issues (v0.3)**: 14
+- **Completed**: 12 (86%)
+- **In Progress**: 1 (#95)
+- **To Do**: 1 (#103)
 
-### Module Breakdown
+### Module Breakdown (v0.3)
 
-- **Frontend**: 6 tasks (3 completed, 3 in progress)
-- **Backend**: 8 tasks (4 completed, 4 in progress)
-- **Admin**: 5 tasks (5 completed)
-- **Testing**: 2 tasks (0 completed, 2 not started)
+- **Frontend**: 3 issues (2 completed, 1 in progress)
+- **Backend**: 6 issues (6 completed)
+- **Admin**: 3 issues (3 completed)
+- **Testing**: 2 issues (1 completed, 1 to do)
 
 ---
 

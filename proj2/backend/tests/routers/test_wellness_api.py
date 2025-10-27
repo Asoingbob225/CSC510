@@ -50,7 +50,7 @@ class TestCreateMoodLogEndpoint:
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
         )
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_create_mood_log_validates_date_not_future(
         self, client: TestClient, auth_headers: dict
@@ -63,7 +63,7 @@ class TestCreateMoodLogEndpoint:
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
         )
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
     def test_create_mood_log_validates_date_within_7_days(
         self, client: TestClient, auth_headers: dict
@@ -76,7 +76,7 @@ class TestCreateMoodLogEndpoint:
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
         )
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 class TestCreateStressLogEndpoint:
@@ -182,7 +182,7 @@ class TestCreateSleepLogEndpoint:
             "/api/wellness/sleep-logs", json=sleep_data, headers=auth_headers
         )
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
 
 class TestGetWellnessLogsEndpoint:
