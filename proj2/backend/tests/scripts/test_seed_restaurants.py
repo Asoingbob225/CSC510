@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.eatsential.db.database import Base
-from src.eatsential.models.restaurant import MenuItem, Restaurant
+from src.eatsential.models import MenuItem, Restaurant
 from src.eatsential.scripts.seed_restaurants import init_restaurants
 
 
