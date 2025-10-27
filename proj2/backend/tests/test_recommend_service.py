@@ -9,11 +9,12 @@ from src.eatsential.models.models import (
     AllergySeverity,
     DietaryPreferenceDB,
     HealthProfileDB,
+    MenuItem,
     PreferenceType,
+    Restaurant,
     UserAllergyDB,
     UserDB,
 )
-from src.eatsential.models.restaurant import MenuItem, Restaurant
 from src.eatsential.services.recommend_service import RecommendService
 
 
@@ -221,9 +222,7 @@ def test_recommend_meals_with_calorie_constraint(
     """Test meal recommendations with calorie constraint."""
     service = RecommendService(db)
     constraints = {"max_calories": 500}
-    recommendations = service.recommend_meals(
-        test_user.id, constraints=constraints
-    )
+    recommendations = service.recommend_meals(test_user.id, constraints=constraints)
 
     # Should only include items with calories <= 500
     # Note: items without calorie info are filtered out by constraint
@@ -241,9 +240,7 @@ def test_recommend_meals_with_price_constraint(
     """Test meal recommendations with price constraint."""
     service = RecommendService(db)
     constraints = {"max_price": 13.00}
-    recommendations = service.recommend_meals(
-        test_user.id, constraints=constraints
-    )
+    recommendations = service.recommend_meals(test_user.id, constraints=constraints)
 
     # Should only include items with price <= 13.00
     assert len(recommendations) > 0
@@ -259,9 +256,7 @@ def test_recommend_meals_with_multiple_constraints(
     """Test meal recommendations with multiple constraints."""
     service = RecommendService(db)
     constraints = {"max_calories": 500, "max_price": 15.00}
-    recommendations = service.recommend_meals(
-        test_user.id, constraints=constraints
-    )
+    recommendations = service.recommend_meals(test_user.id, constraints=constraints)
 
     assert len(recommendations) > 0
     for rec in recommendations:
