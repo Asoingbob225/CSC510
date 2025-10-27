@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Activity, AlertCircle, RefreshCw } from 'lucide-react';
-import {
-  getAuthToken,
-  wellnessApi,
-  type WellnessLogResponse,
-} from '@/lib/api';
+import { getAuthToken, wellnessApi, type WellnessLogResponse } from '@/lib/api';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { MoodLogWidget, StressLogWidget, SleepLogWidget } from '@/components/wellness/mental';
 import { GoalForm, GoalsList, WellnessChart } from '@/components/wellness/shared';
