@@ -83,13 +83,13 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <Brain className="h-5 w-5 text-orange-600" />
         <h3 className="text-lg font-medium text-gray-900">Stress Log</h3>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col space-y-4">
         {/* Stress Level Slider */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -149,6 +149,8 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
             className="w-full"
           />
         </div>
+
+        <div className="flex-1"></div>
 
         {/* Submit Button */}
         <Button
