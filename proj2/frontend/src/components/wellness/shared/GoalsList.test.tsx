@@ -87,11 +87,11 @@ describe('GoalsList', () => {
       data: [],
       isLoading: true,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     renderComponent();
 
@@ -106,11 +106,11 @@ describe('GoalsList', () => {
       data: [],
       isLoading: false,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     renderComponent();
 
@@ -125,11 +125,11 @@ describe('GoalsList', () => {
       data: mockGoals,
       isLoading: false,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     renderComponent();
 
@@ -144,11 +144,11 @@ describe('GoalsList', () => {
       data: mockGoals,
       isLoading: false,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     renderComponent();
 
@@ -161,11 +161,11 @@ describe('GoalsList', () => {
       data: mockGoals,
       isLoading: false,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     renderComponent();
 
@@ -179,11 +179,11 @@ describe('GoalsList', () => {
       data: mockGoals,
       isLoading: false,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: mockDeleteGoal,
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     // Mock window.confirm
     vi.spyOn(window, 'confirm').mockReturnValue(true);
@@ -204,11 +204,11 @@ describe('GoalsList', () => {
       data: mockGoals,
       isLoading: false,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: mockDeleteGoal,
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     // Mock window.confirm to return false
     vi.spyOn(window, 'confirm').mockReturnValue(false);
@@ -231,11 +231,11 @@ describe('GoalsList', () => {
       data: [completedGoal],
       isLoading: false,
       error: null,
-    } as any);
+    } as unknown as ReturnType<typeof useGoals>);
     vi.mocked(useDeleteGoal).mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: false,
-    } as any);
+    } as unknown as ReturnType<typeof useDeleteGoal>);
 
     renderComponent();
 

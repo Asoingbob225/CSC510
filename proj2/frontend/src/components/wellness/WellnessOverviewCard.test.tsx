@@ -96,15 +96,15 @@ describe('WellnessOverviewCard', () => {
     );
   };
 
-  it('shows loading skeleton when data is loading', () => {
+  it('shows loading state', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: null,
       isLoading: true,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: [],
       isLoading: true,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -117,11 +117,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: [],
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -136,11 +136,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: [],
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -152,11 +152,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: null,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: [],
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -168,11 +168,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: mockActiveGoals,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -186,11 +186,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: [],
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -208,11 +208,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: manyGoals,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -224,11 +224,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: mockActiveGoals,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -242,11 +242,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: mockActiveGoals,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
@@ -260,11 +260,11 @@ describe('WellnessOverviewCard', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: mockTodayLog,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
     vi.mocked(useActiveGoals).mockReturnValue({
       data: mockActiveGoals,
       isLoading: false,
-    } as any);
+    } as unknown as ReturnType<typeof useActiveGoals>);
 
     renderComponent();
 
