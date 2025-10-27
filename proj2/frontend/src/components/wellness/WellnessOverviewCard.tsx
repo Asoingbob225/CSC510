@@ -17,7 +17,7 @@ import { calculateGoalProgress } from '@/hooks/useGoalsData';
 export function WellnessOverviewCard() {
   const navigate = useNavigate();
   const { data: todayLog, isLoading: logLoading } = useTodayWellnessLog();
-  const { data: activeGoals, isLoading: goalsLoading } = useActiveGoals();
+  const { data: activeGoals = [], isLoading: goalsLoading } = useActiveGoals();
 
   const isLoading = logLoading || goalsLoading;
 
@@ -160,14 +160,14 @@ export function WellnessOverviewCard() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-700">Active Goals</h3>
-            {activeGoals && activeGoals.length > 0 && (
+            {activeGoals.length > 0 && (
               <Badge variant="secondary" className="text-xs">
                 {activeGoals.length} {activeGoals.length === 1 ? 'goal' : 'goals'}
               </Badge>
             )}
           </div>
 
-          {activeGoals && activeGoals.length > 0 ? (
+          {activeGoals.length > 0 ? (
             <div className="space-y-2">
               {activeGoals.slice(0, 3).map((goal) => (
                 <div

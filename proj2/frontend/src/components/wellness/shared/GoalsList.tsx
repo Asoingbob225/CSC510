@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import GoalForm from './GoalForm';
 
 function GoalsList() {
-  const { data: goals, isLoading } = useGoals();
+  const { data: goals = [], isLoading } = useGoals();
   const deleteGoal = useDeleteGoal();
 
   const handleDelete = async (goalId: string) => {
@@ -73,7 +73,7 @@ function GoalsList() {
       </div>
 
       {/* Goals List */}
-      {!goals || goals.length === 0 ? (
+      {!goals || !Array.isArray(goals) || goals.length === 0 ? (
         <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm">
           <Target className="mx-auto mb-4 h-12 w-12 text-gray-400" />
           <h3 className="mb-2 text-lg font-medium text-gray-900">No goals yet</h3>

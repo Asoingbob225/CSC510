@@ -27,7 +27,11 @@ export const wellnessKeys = {
 export function useWellnessLogs(params?: { start_date?: string; end_date?: string }) {
   return useQuery({
     queryKey: wellnessKeys.logs(params),
-    queryFn: () => wellnessApi.getWellnessLogs(params),
+    queryFn: async () => {
+      const result = await wellnessApi.getWellnessLogs(params);
+      // Ensure we always return an array
+      return Array.isArray(result) ? result : [];
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime)
   });
@@ -46,7 +50,9 @@ export function useTodayWellnessLog() {
         start_date: today,
         end_date: today,
       });
-      return logs[0] || null;
+      // Ensure logs is an array before accessing
+      const logsArray = Array.isArray(logs) ? logs : [];
+      return logsArray[0] || null;
     },
     staleTime: 1000 * 60 * 2, // 2 minutes for today's data
   });

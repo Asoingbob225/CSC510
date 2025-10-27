@@ -22,7 +22,11 @@ export const goalsKeys = {
 export function useGoals(filters?: { goal_type?: string; status?: string }) {
   return useQuery({
     queryKey: goalsKeys.list(filters),
-    queryFn: () => wellnessApi.getGoals(filters),
+    queryFn: async () => {
+      const result = await wellnessApi.getGoals(filters);
+      // Ensure we always return an array
+      return Array.isArray(result) ? result : [];
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
   });
