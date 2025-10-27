@@ -5,6 +5,7 @@ Revises: 60cef32d6c1f
 Create Date: 2025-10-26 20:56:35.832514
 
 """
+
 from collections.abc import Sequence
 from typing import Union
 
