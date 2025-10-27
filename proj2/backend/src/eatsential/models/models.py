@@ -388,6 +388,14 @@ class GoalDB(Base):
 # ============================================================================
 
 
+class LogType(str, Enum):
+    """Log type enum"""
+
+    MOOD = "mood"
+    STRESS = "stress"
+    SLEEP = "sleep"
+
+
 class MoodLogDB(Base):
     """SQLAlchemy model for mood logging"""
 

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
+from ..models.models import LogType
 from ..schemas.schemas import (
     MoodLogCreate,
     MoodLogResponse,
@@ -174,7 +175,7 @@ def get_wellness_logs(
     db: Session = Depends(get_db),
     start_date: Optional[date] = Query(None, description="Filter by start date"),
     end_date: Optional[date] = Query(None, description="Filter by end date"),
-    log_type: Optional[str] = Query(
+    log_type: Optional[LogType] = Query(
         None, description="Filter by type: 'mood', 'stress', or 'sleep'"
     ),
 ):
@@ -190,17 +191,7 @@ def get_wellness_logs(
     Returns:
         Wellness logs (mood, stress, sleep) with decrypted data
 
-    Raises:
-        HTTPException: If invalid log_type provided
-
     """
-    # Validate log_type if provided
-    if log_type and log_type not in ["mood", "stress", "sleep"]:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="log_type must be 'mood', 'stress', or 'sleep'",
-        )
-
     try:
         mood_logs, stress_logs, sleep_logs = MentalWellnessService.get_wellness_logs(
             db=db,

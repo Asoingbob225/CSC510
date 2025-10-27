@@ -22,8 +22,7 @@ def recommend_meal(
     request: RecommendationRequest,
     db: Session = Depends(get_db),
 ):
-    """
-    Recommend meals based on user profile and constraints (BE-S2-005).
+    """Recommend meals based on user profile and constraints (BE-S2-005).
 
     This is a minimal implementation with naive scoring.
     Future versions will include ML-based recommendations.
@@ -37,6 +36,7 @@ def recommend_meal(
 
     Raises:
         HTTPException: 404 if user not found
+
     """
     # Verify user exists
     user = db.query(UserDB).filter(UserDB.id == request.user_id).first()

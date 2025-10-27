@@ -12,8 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.eatsential.db.database import DATABASE_URL, Base
-from src.eatsential.models.restaurant import Restaurant, MenuItem
-
+from src.eatsential.models.restaurant import MenuItem, Restaurant
 
 SAMPLE_RESTAURANTS = [
     {

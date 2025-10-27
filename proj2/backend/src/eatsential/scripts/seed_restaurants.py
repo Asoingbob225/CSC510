@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker
 from ..db.database import DATABASE_URL, Base
 from ..models.restaurant import MenuItem, Restaurant
 
-
 SAMPLE_RESTAURANTS = [
     {
         "name": "Green Bowl",

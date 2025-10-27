@@ -2,12 +2,12 @@
 
 import uuid
 from datetime import date
-from typing import Literal, Optional
+from typing import Optional
 
 from sqlalchemy import and_, desc
 from sqlalchemy.orm import Session
 
-from ..models.models import MoodLogDB, SleepLogDB, StressLogDB
+from ..models.models import LogType, MoodLogDB, SleepLogDB, StressLogDB
 from ..schemas.schemas import (
     MoodLogCreate,
     MoodLogResponse,
@@ -20,8 +20,6 @@ from ..schemas.schemas import (
     StressLogUpdate,
 )
 from ..utils.security import decrypt_sensitive_data, encrypt_sensitive_data
-
-LogType = Literal["mood", "stress", "sleep"]
 
 
 class MentalWellnessService:
