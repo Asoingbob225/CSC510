@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
@@ -15,7 +15,7 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -29,12 +29,11 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     fetchRecommendations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [fetchRecommendations]);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : recommendations.length - 1));
@@ -129,7 +128,6 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
                 <h3 className="mb-2 font-semibold text-gray-900">
                   {currentRecommendation.explanation}
                 </h3>
-                <p className="text-xs text-gray-500">Menu Item ID: {currentRecommendation.menu_item_id}</p>
               </div>
               <div className="ml-4 rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-800">
                 {scorePercentage}% Match

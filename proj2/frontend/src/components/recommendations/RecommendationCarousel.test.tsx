@@ -341,19 +341,6 @@ describe('RecommendationCarousel', () => {
       });
     });
 
-    it('displays menu item ID', async () => {
-      vi.spyOn(api.recommendationApi, 'getMealRecommendations').mockResolvedValue({
-        user_id: mockUserId,
-        recommendations: mockRecommendations,
-      });
-
-      render(<RecommendationCarousel userId={mockUserId} />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Menu Item ID: item-1')).toBeInTheDocument();
-      });
-    });
-
     it('displays explanation text', async () => {
       vi.spyOn(api.recommendationApi, 'getMealRecommendations').mockResolvedValue({
         user_id: mockUserId,
