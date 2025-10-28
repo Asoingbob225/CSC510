@@ -2,15 +2,6 @@ version: 2
 
 enable-beta-ecosystems: true
 
-# Group updates for better PR management
-groups:
-  python-dependencies:
-    patterns:
-      - "*"
-  npm-dependencies:
-    patterns:
-      - "*"
-
 updates:
   # Python dependencies (uv + pip) - Backend
   - package-ecosystem: "pip"
