@@ -662,6 +662,41 @@ export const wellnessApi = {
   },
 };
 
+// Meal Recommendation API Types
+export interface MealRecommendationRequest {
+  user_id: string;
+  constraints?: {
+    max_calories?: number;
+    max_price?: number;
+    [key: string]: unknown;
+  };
+}
+
+export interface RecommendationItem {
+  menu_item_id: string;
+  score: number;
+  explanation: string;
+}
+
+export interface MealRecommendationResponse {
+  user_id?: string;
+  recommendations: RecommendationItem[];
+}
+
+// Meal Recommendation API
+export const recommendationApi = {
+  getMealRecommendations: async (
+    userId: string,
+    constraints?: Record<string, unknown>
+  ): Promise<MealRecommendationResponse> => {
+    const response = await apiClient.post<MealRecommendationResponse>('/recommend/meal', {
+      user_id: userId,
+      constraints: constraints || {},
+    });
+    return response.data;
+  },
+};
+
 // GitHub API types
 export interface GitHubIssue {
   number: number;
