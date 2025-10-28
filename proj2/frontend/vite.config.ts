@@ -20,15 +20,4 @@ export default defineConfig({
       },
     },
   },
-  test: {
-    globals: true,
-    reporters: ['default', 'junit'],
-    environment: 'jsdom',
-    setupFiles: './src/setupTests.ts',
-    coverage: {
-      provider: 'v8',
-      reporter: ['lcov'],
-      exclude: ['vite.config.ts', 'eslint.config.js', 'src/main.tsx', 'src/vite-env.d.ts'],
-    },
-  },
 });
