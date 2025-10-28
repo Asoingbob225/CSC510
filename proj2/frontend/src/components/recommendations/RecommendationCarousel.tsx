@@ -1,39 +1,29 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
-import { recommendationApi, type RecommendationItem } from '@/lib/api';
-import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { ChevronLeft, ChevronRight, RefreshCw, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { useMealRecommendations } from '@/hooks/useRecommendations';
+import type { RecommendationItem } from '@/lib/api';
 
 interface RecommendationCarouselProps {
   userId: string;
+  constraints?: Record<string, unknown>;
 }
 
-export function RecommendationCarousel({ userId }: RecommendationCarouselProps) {
-  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function RecommendationCarousel({ userId, constraints }: RecommendationCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const fetchRecommendations = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await recommendationApi.getMealRecommendations(userId);
-      setRecommendations(response.recommendations);
-      setCurrentIndex(0);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load recommendations';
-      setError(errorMessage);
-      toast.error('Failed to load meal recommendations');
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+  // Use TanStack Query for data fetching
+  const { data, isLoading, isError, error, refetch } = useMealRecommendations(userId, constraints);
 
-  useEffect(() => {
-    fetchRecommendations();
-  }, [fetchRecommendations]);
+  const recommendations = data?.recommendations || [];
+
+  // Reset index when recommendations change
+  const handleRefresh = () => {
+    setCurrentIndex(0);
+    refetch();
+  };
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : recommendations.length - 1));
@@ -43,11 +33,15 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
     setCurrentIndex((prev) => (prev < recommendations.length - 1 ? prev + 1 : 0));
   };
 
-  if (loading) {
+  // Loading state
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Meal Recommendations</CardTitle>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <CardTitle>Meal Recommendations</CardTitle>
+          </div>
           <CardDescription>Loading personalized recommendations...</CardDescription>
         </CardHeader>
         <CardContent>
@@ -59,17 +53,23 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
     );
   }
 
-  if (error) {
+  // Error state
+  if (isError) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Meal Recommendations</CardTitle>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <CardTitle>Meal Recommendations</CardTitle>
+          </div>
           <CardDescription>Unable to load recommendations</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center gap-4 py-8">
-            <p className="text-sm text-red-600">{error}</p>
-            <Button onClick={fetchRecommendations} variant="outline" size="sm">
+            <p className="text-sm text-red-600">
+              {error instanceof Error ? error.message : 'Failed to load recommendations'}
+            </p>
+            <Button onClick={handleRefresh} variant="outline" size="sm">
               <RefreshCw className="mr-2 h-4 w-4" />
               Try Again
             </Button>
@@ -79,19 +79,24 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
     );
   }
 
+  // Empty state
   if (recommendations.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Meal Recommendations</CardTitle>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <CardTitle>Meal Recommendations</CardTitle>
+          </div>
           <CardDescription>No recommendations available yet</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center gap-4 py-8">
-            <p className="text-sm text-gray-600">
+            <UtensilsCrossed className="h-12 w-12 text-gray-300" />
+            <p className="text-center text-sm text-gray-600">
               Complete your health profile to get personalized meal recommendations!
             </p>
-            <Button onClick={fetchRecommendations} variant="outline" size="sm">
+            <Button onClick={handleRefresh} variant="outline" size="sm">
               <RefreshCw className="mr-2 h-4 w-4" />
               Check Again
             </Button>
@@ -101,20 +106,21 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
     );
   }
 
-  const currentRecommendation = recommendations[currentIndex];
+  const currentRecommendation: RecommendationItem = recommendations[currentIndex];
   const scorePercentage = Math.round(currentRecommendation.score * 100);
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Meal Recommendations</CardTitle>
-            <CardDescription>
-              Personalized suggestions based on your profile
-            </CardDescription>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <div>
+              <CardTitle>Meal Recommendations</CardTitle>
+              <CardDescription>Personalized suggestions based on your profile</CardDescription>
+            </div>
           </div>
-          <Button onClick={fetchRecommendations} variant="ghost" size="sm">
+          <Button onClick={handleRefresh} variant="ghost" size="sm">
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
@@ -122,16 +128,42 @@ export function RecommendationCarousel({ userId }: RecommendationCarouselProps) 
       <CardContent>
         <div className="space-y-4">
           {/* Recommendation Card */}
-          <div className="rounded-lg border bg-muted/50 p-6">
-            <div className="mb-3 flex items-start justify-between">
+          <div className="rounded-lg border bg-linear-to-br from-muted/50 to-muted/30 p-6 shadow-sm">
+            <div className="mb-4 flex items-start justify-between gap-4">
               <div className="flex-1">
-                <h3 className="mb-2 font-semibold text-gray-900">
+                <div className="mb-2 flex items-center gap-2">
+                  <Badge variant="secondary" className="font-mono text-xs">
+                    ID: {currentRecommendation.menu_item_id.slice(0, 8)}...
+                  </Badge>
+                  <Badge
+                    variant={scorePercentage >= 80 ? 'default' : 'secondary'}
+                    className="font-semibold"
+                  >
+                    {scorePercentage}% Match
+                  </Badge>
+                </div>
+                <h3 className="mb-3 text-lg font-semibold text-gray-900">
                   {currentRecommendation.explanation}
                 </h3>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="h-full rounded-full bg-green-500 transition-all duration-300"
+                      style={{ width: `${scorePercentage}%` }}
+                    />
+                  </div>
+                  <span className="text-sm font-medium text-gray-600">
+                    Score: {currentRecommendation.score.toFixed(2)}
+                  </span>
+                </div>
               </div>
-              <div className="ml-4 rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-800">
-                {scorePercentage}% Match
-              </div>
+            </div>
+
+            {/* Additional metadata if available */}
+            <div className="flex flex-wrap gap-2 text-xs text-gray-600">
+              <span className="rounded-md bg-background/80 px-2 py-1">
+                Menu Item ID: {currentRecommendation.menu_item_id}
+              </span>
             </div>
           </div>
 

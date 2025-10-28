@@ -66,7 +66,7 @@ function Dashboard() {
 
         {/* Meal Recommendations */}
         {userId && (
-          <div className="mt-8">
+          <div className="mb-8">
             <RecommendationCarousel userId={userId} />
           </div>
         )}
