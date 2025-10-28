@@ -15,12 +15,15 @@ updates:
       python-dependencies:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "python"
       - "backend"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "chore"
       include: "scope"
 
   - package-ecosystem: "uv"
@@ -34,16 +37,19 @@ updates:
       python-dependencies:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "python"
       - "backend"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "chore"
       include: "scope"
 
   # JavaScript/TypeScript dependencies (bun/npm) - Frontend
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/proj2/frontend"
     schedule:
       interval: "weekly"
@@ -51,29 +57,39 @@ updates:
       time: "09:00"
     open-pull-requests-limit: 10
     groups:
-      npm-dependencies:
+      frontend-dependencies:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "frontend"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "chore"
       include: "scope"
 
-  # Root level npm dependencies (if any)
-  - package-ecosystem: "npm"
+  # Root level bun dependencies (if any)
+  - package-ecosystem: "bun"
     directory: "/proj2"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    groups:
+      root-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "root"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "chore"
       include: "scope"
 
   # GitHub Actions dependencies
@@ -84,9 +100,16 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    groups:
+      github-actions-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "github-actions"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "chore"
       include: "scope"
