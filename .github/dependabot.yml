@@ -20,7 +20,6 @@ updates:
           - "patch"
     labels:
       - "dependencies"
-      - "python"
       - "backend"
     commit-message:
       prefix: "chore"
@@ -42,33 +41,12 @@ updates:
           - "patch"
     labels:
       - "dependencies"
-      - "python"
       - "backend"
     commit-message:
       prefix: "chore"
       include: "scope"
 
   # JavaScript/TypeScript dependencies (bun/npm) - Frontend
-  - package-ecosystem: "bun"
-    directory: "/proj2/frontend"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    open-pull-requests-limit: 10
-    groups:
-      frontend-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-    labels:
-      - "dependencies"
-      - "frontend"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
 
   # Root level bun dependencies (if any)
   - package-ecosystem: "bun"
@@ -87,7 +65,7 @@ updates:
           - "patch"
     labels:
       - "dependencies"
-      - "root"
+      - "frontend"
     commit-message:
       prefix: "chore"
       include: "scope"
