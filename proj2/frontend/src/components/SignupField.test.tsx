@@ -1,4 +1,5 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import * as ReactRouter from 'react-router';
@@ -12,6 +13,8 @@ describe('SignupField Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetAllMocks();
+    (global.fetch as ReturnType<typeof vi.fn>).mockClear();
     mockNavigate = vi.fn();
     vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate);
   });
@@ -21,6 +24,7 @@ describe('SignupField Component', () => {
   });
 
   it('prevents submission with short username', async () => {
+    const user = userEvent.setup();
     render(
       <MemoryRouter>
         <SignupField />
@@ -32,10 +36,10 @@ describe('SignupField Component', () => {
     const passwordInput = screen.getByPlaceholderText(/strong password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'ab' } });
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'Password123!' } });
-    fireEvent.click(submitButton);
+    await user.type(usernameInput, 'ab');
+    await user.type(emailInput, 'test@example.com');
+    await user.type(passwordInput, 'Password123!');
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByText(/username must be at least 3 characters/i)).toBeInTheDocument();
@@ -43,6 +47,7 @@ describe('SignupField Component', () => {
   });
 
   it('prevents submission with invalid email', async () => {
+    const user = userEvent.setup();
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: 'Success' }),
@@ -59,10 +64,10 @@ describe('SignupField Component', () => {
     const passwordInput = screen.getByPlaceholderText(/strong password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
-    fireEvent.change(passwordInput, { target: { value: 'Password123!' } });
-    fireEvent.click(submitButton);
+    await user.type(usernameInput, 'testuser');
+    await user.type(emailInput, 'invalid-email');
+    await user.type(passwordInput, 'Password123!');
+    await user.click(submitButton);
 
     // Form should not call API with invalid email
     await waitFor(
@@ -74,6 +79,7 @@ describe('SignupField Component', () => {
   });
 
   it('prevents submission with short password', async () => {
+    const user = userEvent.setup();
     render(
       <MemoryRouter>
         <SignupField />
@@ -85,10 +91,10 @@ describe('SignupField Component', () => {
     const passwordInput = screen.getByPlaceholderText(/strong password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: '12345' } });
-    fireEvent.click(submitButton);
+    await user.type(usernameInput, 'testuser');
+    await user.type(emailInput, 'test@example.com');
+    await user.type(passwordInput, '12345');
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByText(/password must be at least 8 characters/i)).toBeInTheDocument();
@@ -96,6 +102,7 @@ describe('SignupField Component', () => {
   });
 
   it('submits form successfully with valid data', async () => {
+    const user = userEvent.setup();
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -117,10 +124,10 @@ describe('SignupField Component', () => {
     const passwordInput = screen.getByPlaceholderText(/strong password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'Password123!' } });
-    fireEvent.click(submitButton);
+    await user.type(usernameInput, 'testuser');
+    await user.type(emailInput, 'test@example.com');
+    await user.type(passwordInput, 'Password123!');
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByText(/registration successful/i)).toBeInTheDocument();
@@ -144,6 +151,7 @@ describe('SignupField Component', () => {
   });
 
   it('shows error message on failed registration', async () => {
+    const user = userEvent.setup();
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: false,
       json: async () => ({
@@ -162,10 +170,10 @@ describe('SignupField Component', () => {
     const passwordInput = screen.getByPlaceholderText(/strong password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'Password123!' } });
-    fireEvent.click(submitButton);
+    await user.type(usernameInput, 'testuser');
+    await user.type(emailInput, 'test@example.com');
+    await user.type(passwordInput, 'Password123!');
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByText(/email already exists/i)).toBeInTheDocument();
@@ -173,9 +181,18 @@ describe('SignupField Component', () => {
   });
 
   it('disables button while submitting', async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation(
-      () => new Promise(() => {}) // Never resolves
-    );
+    const user = userEvent.setup();
+    let resolvePromise: () => void;
+    const pendingPromise = new Promise<Response>((resolve) => {
+      resolvePromise = () => {
+        resolve({
+          ok: true,
+          json: async () => ({ message: 'Success' }),
+        } as Response);
+      };
+    });
+
+    (global.fetch as ReturnType<typeof vi.fn>).mockReturnValue(pendingPromise);
 
     render(
       <MemoryRouter>
@@ -188,13 +205,17 @@ describe('SignupField Component', () => {
     const passwordInput = screen.getByPlaceholderText(/strong password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'Password123!' } });
-    fireEvent.click(submitButton);
+    await user.type(usernameInput, 'testuser');
+    await user.type(emailInput, 'test@example.com');
+    await user.type(passwordInput, 'Password123!');
+    await user.click(submitButton);
 
+    // Button should be disabled during submission
     await waitFor(() => {
       expect(submitButton).toBeDisabled();
     });
+
+    // Resolve the promise to clean up
+    resolvePromise!();
   });
 });

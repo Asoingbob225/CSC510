@@ -12,11 +12,11 @@ afterEach(() => {
 });
 
 // Mock ResizeObserver for components that use it (e.g., @radix-ui components)
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
 
 // Mock window.matchMedia for shadcn sidebar and other responsive components
 Object.defineProperty(window, 'matchMedia', {
