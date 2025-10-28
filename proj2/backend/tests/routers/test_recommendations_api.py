@@ -128,9 +128,7 @@ def test_menu_items_api(db: Session):
     return items
 
 
-def test_recommend_meal_api_success(
-    client, test_user_rec_api, test_menu_items_api
-):
+def test_recommend_meal_api_success(client, test_user_rec_api, test_menu_items_api):
     """Test successful meal recommendation API request."""
     response = client.post(
         "/api/recommend/meal",

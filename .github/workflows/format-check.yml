@@ -15,10 +15,10 @@ jobs:
         working-directory: proj2/backend
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: "Set up Python"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.9"
       - name: "Run Ruff Formatter Check"
@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: "Set up Bun"
         uses: oven-sh/setup-bun@v2
 

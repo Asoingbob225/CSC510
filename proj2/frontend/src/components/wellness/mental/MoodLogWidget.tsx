@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Smile } from 'lucide-react';
 import { z } from 'zod';
-import { wellnessApi, type MoodLogCreate } from '@/lib/api';
+import { type MoodLogCreate } from '@/lib/api';
+import { useCreateMoodLog } from '@/hooks/useWellnessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,7 +22,8 @@ interface MoodLogWidgetProps {
 function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
   const [moodScore, setMoodScore] = useState(5);
   const [notes, setNotes] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createMoodLog = useCreateMoodLog();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +35,6 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
         notes: notes.trim() || undefined,
       });
 
-      setIsSubmitting(true);
-
       // Get today's date in YYYY-MM-DD format
       const today = new Date().toISOString().split('T')[0];
 
@@ -44,9 +44,7 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
         notes: formData.notes,
       };
 
-      await wellnessApi.createMoodLog(moodData);
-
-      toast.success('Mood logged successfully! 😊');
+      await createMoodLog.mutateAsync(moodData);
 
       // Reset form
       setMoodScore(5);
@@ -59,12 +57,8 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error('Invalid input. Please check your entries.');
-      } else {
-        console.error('Error logging mood:', error);
-        toast.error('Failed to log mood. Please try again.');
       }
-    } finally {
-      setIsSubmitting(false);
+      // Error toast is handled by the mutation hook
     }
   };
 
@@ -77,21 +71,34 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
     return '😢';
   };
 
+  // Get mood label based on mood score
+  const getMoodLabel = (score: number) => {
+    if (score >= 9) return 'Very Happy';
+    if (score >= 7) return 'Happy';
+    if (score >= 5) return 'Neutral';
+    if (score >= 3) return 'Sad';
+    return 'Very Sad';
+  };
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <Smile className="h-5 w-5 text-blue-600" />
         <h3 className="text-lg font-medium text-gray-900">Mood Log</h3>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col space-y-4">
         {/* Mood Score Slider */}
+
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="mood-score" className="text-sm font-medium text-gray-700">
               How are you feeling today?
             </Label>
-            <span className="text-2xl">{getMoodEmoji(moodScore)}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">{getMoodEmoji(moodScore)}</span>
+              <span className="text-sm font-medium text-gray-700">{getMoodLabel(moodScore)}</span>
+            </div>
           </div>
           <div className="space-y-1">
             <Slider
@@ -100,7 +107,7 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
               max={10}
               step={1}
               value={[moodScore]}
-              onValueChange={(value) => setMoodScore(value[0])}
+              onValueChange={(value: number[]) => setMoodScore(value[0])}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-gray-500">
@@ -127,13 +134,15 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
           />
         </div>
 
+        <div className="flex-1"></div>
+
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={createMoodLog.isPending}
           className="w-full bg-blue-600 text-white hover:bg-blue-700"
         >
-          {isSubmitting ? 'Logging...' : 'Log Mood'}
+          {createMoodLog.isPending ? 'Logging...' : 'Log Mood'}
         </Button>
       </form>
     </div>
