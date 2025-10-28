@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import HealthProfileWizard from './pages/HealthProfileWizard';
 import HealthProfilePage from './pages/HealthProfile';
+import WellnessTracking from './pages/WellnessTracking';
 import AdminRoute from './components/AdminRoute';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -26,6 +27,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/health-profile-wizard" element={<HealthProfileWizard />} />
         <Route path="/health-profile" element={<HealthProfilePage />} />
+        <Route path="/wellness-tracking" element={<WellnessTracking />} />
 
         {/* Admin routes - protected */}
         <Route

@@ -9,11 +9,12 @@ from src.eatsential.models.models import (
     AllergySeverity,
     DietaryPreferenceDB,
     HealthProfileDB,
+    MenuItem,
     PreferenceType,
+    Restaurant,
     UserAllergyDB,
     UserDB,
 )
-from src.eatsential.models.restaurant import MenuItem, Restaurant
 from src.eatsential.services.recommend_service import RecommendService
 
 
@@ -157,7 +158,7 @@ def test_get_user_context_with_health_profile(
     db: Session, test_user_with_health_profile
 ):
     """Test getting user context with complete health profile."""
-    test_user, health_profile = test_user_with_health_profile
+    test_user, _ = test_user_with_health_profile
     service = RecommendService(db)
     context = service.get_user_context(test_user.id)
 
@@ -221,9 +222,7 @@ def test_recommend_meals_with_calorie_constraint(
     """Test meal recommendations with calorie constraint."""
     service = RecommendService(db)
     constraints = {"max_calories": 500}
-    recommendations = service.recommend_meals(
-        test_user.id, constraints=constraints
-    )
+    recommendations = service.recommend_meals(test_user.id, constraints=constraints)
 
     # Should only include items with calories <= 500
     # Note: items without calorie info are filtered out by constraint
@@ -231,6 +230,7 @@ def test_recommend_meals_with_calorie_constraint(
     for rec in recommendations:
         # Verify by checking the returned items
         item = db.query(MenuItem).filter(MenuItem.id == rec.menu_item_id).first()
+        assert item is not None
         if item.calories is not None:
             assert item.calories <= 500
 
@@ -241,14 +241,13 @@ def test_recommend_meals_with_price_constraint(
     """Test meal recommendations with price constraint."""
     service = RecommendService(db)
     constraints = {"max_price": 13.00}
-    recommendations = service.recommend_meals(
-        test_user.id, constraints=constraints
-    )
+    recommendations = service.recommend_meals(test_user.id, constraints=constraints)
 
     # Should only include items with price <= 13.00
     assert len(recommendations) > 0
     for rec in recommendations:
         item = db.query(MenuItem).filter(MenuItem.id == rec.menu_item_id).first()
+        assert item is not None
         if item.price is not None:
             assert item.price <= 13.00
 
@@ -259,13 +258,12 @@ def test_recommend_meals_with_multiple_constraints(
     """Test meal recommendations with multiple constraints."""
     service = RecommendService(db)
     constraints = {"max_calories": 500, "max_price": 15.00}
-    recommendations = service.recommend_meals(
-        test_user.id, constraints=constraints
-    )
+    recommendations = service.recommend_meals(test_user.id, constraints=constraints)
 
     assert len(recommendations) > 0
     for rec in recommendations:
         item = db.query(MenuItem).filter(MenuItem.id == rec.menu_item_id).first()
+        assert item is not None
         if item.calories is not None:
             assert item.calories <= 500
         if item.price is not None:
@@ -302,6 +300,7 @@ def test_score_menu_item(db: Session, test_user: UserDB, test_restaurants):
 
     # Get a menu item with full data
     item = db.query(MenuItem).filter(MenuItem.id == "item_salad").first()
+    assert item is not None
     score, explanation = service._score_menu_item(item, user_context)
 
     # Item with calories and price should score 1.0 (0.5 base + 0.3 + 0.2)
@@ -312,6 +311,7 @@ def test_score_menu_item(db: Session, test_user: UserDB, test_restaurants):
 
     # Get item without nutritional data
     item_mystery = db.query(MenuItem).filter(MenuItem.id == "item_mystery").first()
+    assert item_mystery is not None
     score_mystery, explanation_mystery = service._score_menu_item(
         item_mystery, user_context
     )

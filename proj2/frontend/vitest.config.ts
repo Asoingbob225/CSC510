@@ -3,13 +3,14 @@ import path from 'path';
 
 export default defineConfig({
   test: {
-    environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/setupTests.ts'],
+    reporters: ['default', 'junit'],
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov', 'clover'],
-      reportsDirectory: './coverage',
+      exclude: ['vite.config.ts', 'eslint.config.js', 'src/main.tsx', 'src/vite-env.d.ts'],
     },
   },
   resolve: {

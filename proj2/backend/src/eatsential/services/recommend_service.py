@@ -13,8 +13,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session, selectinload
 
-from ..models.models import HealthProfileDB, UserAllergyDB, UserDB
-from ..models.restaurant import MenuItem, Restaurant
+from ..models.models import HealthProfileDB, MenuItem, Restaurant, UserAllergyDB, UserDB
 from ..schemas.schemas import RecommendationItem
 
 
@@ -130,10 +129,7 @@ class RecommendService:
 
         # Get all active menu items from active restaurants
         menu_items = (
-            self.db.query(MenuItem)
-            .join(Restaurant)
-            .filter(Restaurant.is_active)
-            .all()
+            self.db.query(MenuItem).join(Restaurant).filter(Restaurant.is_active).all()
         )
 
         if not menu_items:

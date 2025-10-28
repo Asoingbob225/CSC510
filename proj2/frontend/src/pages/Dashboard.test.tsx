@@ -1,14 +1,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as ReactRouter from 'react-router';
 import Dashboard from './Dashboard';
 import * as api from '@/lib/api';
 
 describe('Dashboard', () => {
   let mockNavigate: ReturnType<typeof vi.fn>;
+  let queryClient: QueryClient;
 
   beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     mockNavigate = vi.fn();
     vi.spyOn(ReactRouter, 'useNavigate').mockReturnValue(mockNavigate);
     // Mock getAuthToken to return a valid token
@@ -25,9 +33,11 @@ describe('Dashboard', () => {
 
   it('renders the dashboard page', async () => {
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </QueryClientProvider>
     );
 
     // Wait for verification to complete and check for main content
@@ -39,9 +49,11 @@ describe('Dashboard', () => {
 
   it('renders placeholder cards', async () => {
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </QueryClientProvider>
     );
 
     // Wait for verification to complete
@@ -61,9 +73,11 @@ describe('Dashboard', () => {
     // Testing dropdown interactions should be done in E2E tests due to complexity
     // with Radix UI primitives. This test verifies the navbar is rendered.
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </QueryClientProvider>
     );
 
     // Wait for verification to complete and verify navbar is present
@@ -77,9 +91,11 @@ describe('Dashboard', () => {
     // The logout functionality is inside a dropdown menu in DashboardNavbar
     // which uses Radix UI primitives that are complex to test in unit tests
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </QueryClientProvider>
     );
 
     // Wait for verification to complete

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Brain } from 'lucide-react';
 import { z } from 'zod';
-import { wellnessApi, type StressLogCreate } from '@/lib/api';
+import { type StressLogCreate } from '@/lib/api';
+import { useCreateStressLog } from '@/hooks/useWellnessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,7 +24,8 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
   const [stressLevel, setStressLevel] = useState(5);
   const [triggers, setTriggers] = useState('');
   const [notes, setNotes] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createStressLog = useCreateStressLog();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +38,6 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
         notes: notes.trim() || undefined,
       });
 
-      setIsSubmitting(true);
-
       // Get today's date in YYYY-MM-DD format
       const today = new Date().toISOString().split('T')[0];
 
@@ -48,9 +48,7 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
         notes: formData.notes,
       };
 
-      await wellnessApi.createStressLog(stressData);
-
-      toast.success('Stress level logged successfully!');
+      await createStressLog.mutateAsync(stressData);
 
       // Reset form
       setStressLevel(5);
@@ -64,12 +62,8 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error('Invalid input. Please check your entries.');
-      } else {
-        console.error('Error logging stress:', error);
-        toast.error('Failed to log stress. Please try again.');
       }
-    } finally {
-      setIsSubmitting(false);
+      // Error toast is handled by the mutation hook
     }
   };
 
@@ -89,13 +83,13 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <Brain className="h-5 w-5 text-orange-600" />
         <h3 className="text-lg font-medium text-gray-900">Stress Log</h3>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col space-y-4">
         {/* Stress Level Slider */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -113,7 +107,7 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
               max={10}
               step={1}
               value={[stressLevel]}
-              onValueChange={(value) => setStressLevel(value[0])}
+              onValueChange={(value: number[]) => setStressLevel(value[0])}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-gray-500">
@@ -156,13 +150,15 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
           />
         </div>
 
+        <div className="flex-1"></div>
+
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={createStressLog.isPending}
           className="w-full bg-orange-600 text-white hover:bg-orange-700"
         >
-          {isSubmitting ? 'Logging...' : 'Log Stress'}
+          {createStressLog.isPending ? 'Logging...' : 'Log Stress'}
         </Button>
       </form>
     </div>
