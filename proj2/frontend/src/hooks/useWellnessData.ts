@@ -85,9 +85,15 @@ export function useCreateMoodLog() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
       toast.success('Mood logged successfully! 😊');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error logging mood:', error);
-      toast.error('Failed to log mood. Please try again.');
+      
+      // Check if it's a duplicate entry error (409 Conflict)
+      if (error.response?.status === 409) {
+        toast.error('You already logged your mood today. Please update the existing entry instead.');
+      } else {
+        toast.error('Failed to log mood. Please try again.');
+      }
     },
   });
 }
@@ -104,9 +110,15 @@ export function useCreateStressLog() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
       toast.success('Stress level logged successfully!');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error logging stress:', error);
-      toast.error('Failed to log stress. Please try again.');
+      
+      // Check if it's a duplicate entry error (409 Conflict)
+      if (error.response?.status === 409) {
+        toast.error('You already logged your stress level today. Please update the existing entry instead.');
+      } else {
+        toast.error('Failed to log stress. Please try again.');
+      }
     },
   });
 }
@@ -123,9 +135,15 @@ export function useCreateSleepLog() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
       toast.success('Sleep logged successfully! 💤');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error logging sleep:', error);
-      toast.error('Failed to log sleep. Please try again.');
+      
+      // Check if it's a duplicate entry error (409 Conflict)
+      if (error.response?.status === 409) {
+        toast.error('You already logged your sleep today. Please update the existing entry instead.');
+      } else {
+        toast.error('Failed to log sleep. Please try again.');
+      }
     },
   });
 }

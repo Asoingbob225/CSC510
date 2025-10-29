@@ -37,7 +37,28 @@ class MentalWellnessService:
         Returns:
             Created mood log database object
 
+        Raises:
+            ValueError: If a mood log already exists for this date
+
         """
+        # Check if a log already exists for this date
+        existing_log = (
+            db.query(MoodLogDB)
+            .filter(
+                and_(
+                    MoodLogDB.user_id == user_id,
+                    MoodLogDB.log_date == mood_data.log_date,
+                )
+            )
+            .first()
+        )
+
+        if existing_log:
+            raise ValueError(
+                f"A mood log already exists for {mood_data.log_date}. "
+                "Please update the existing entry or delete it first."
+            )
+
         # Encrypt notes if provided
         encrypted_notes = encrypt_sensitive_data(mood_data.notes)
 
@@ -70,7 +91,28 @@ class MentalWellnessService:
         Returns:
             Created stress log database object
 
+        Raises:
+            ValueError: If a stress log already exists for this date
+
         """
+        # Check if a log already exists for this date
+        existing_log = (
+            db.query(StressLogDB)
+            .filter(
+                and_(
+                    StressLogDB.user_id == user_id,
+                    StressLogDB.log_date == stress_data.log_date,
+                )
+            )
+            .first()
+        )
+
+        if existing_log:
+            raise ValueError(
+                f"A stress log already exists for {stress_data.log_date}. "
+                "Please update the existing entry or delete it first."
+            )
+
         # Encrypt sensitive data if provided
         encrypted_triggers = encrypt_sensitive_data(stress_data.triggers)
         encrypted_notes = encrypt_sensitive_data(stress_data.notes)
@@ -103,7 +145,28 @@ class MentalWellnessService:
         Returns:
             Created sleep log database object
 
+        Raises:
+            ValueError: If a sleep log already exists for this date
+
         """
+        # Check if a log already exists for this date
+        existing_log = (
+            db.query(SleepLogDB)
+            .filter(
+                and_(
+                    SleepLogDB.user_id == user_id,
+                    SleepLogDB.log_date == sleep_data.log_date,
+                )
+            )
+            .first()
+        )
+
+        if existing_log:
+            raise ValueError(
+                f"A sleep log already exists for {sleep_data.log_date}. "
+                "Please update the existing entry or delete it first."
+            )
+
         # Encrypt notes if provided
         encrypted_notes = encrypt_sensitive_data(sleep_data.notes)
 
