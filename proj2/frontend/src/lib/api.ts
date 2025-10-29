@@ -662,6 +662,83 @@ export const wellnessApi = {
   },
 };
 
+// Meal Logging API Types
+export type MealTypeOption = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
+export interface MealFoodItemInput {
+  food_name: string;
+  portion_size: number;
+  portion_unit: string;
+  calories?: number;
+  protein_g?: number;
+  carbs_g?: number;
+  fat_g?: number;
+}
+
+export interface MealCreateRequest {
+  meal_type: MealTypeOption;
+  meal_time: string;
+  notes?: string;
+  photo_url?: string;
+  food_items: MealFoodItemInput[];
+}
+
+export interface MealFoodItemResponse {
+  id: string;
+  food_name: string;
+  portion_size: number;
+  portion_unit: string;
+  calories?: number | null;
+  protein_g?: number | null;
+  carbs_g?: number | null;
+  fat_g?: number | null;
+  created_at: string;
+}
+
+export interface MealLogResponse {
+  id: string;
+  user_id: string;
+  meal_type: MealTypeOption;
+  meal_time: string;
+  notes?: string | null;
+  photo_url?: string | null;
+  total_calories?: number | null;
+  total_protein_g?: number | null;
+  total_carbs_g?: number | null;
+  total_fat_g?: number | null;
+  food_items: MealFoodItemResponse[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MealListResponse {
+  meals: MealLogResponse[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface MealListFilters {
+  page?: number;
+  page_size?: number;
+  meal_type?: MealTypeOption | '';
+  start_date?: string;
+  end_date?: string;
+}
+
+export const mealApi = {
+  logMeal: async (data: MealCreateRequest): Promise<MealLogResponse> => {
+    const response = await apiClient.post<MealLogResponse>('/meals', data);
+    return response.data;
+  },
+  getMeals: async (params?: MealListFilters): Promise<MealListResponse> => {
+    const response = await apiClient.get<MealListResponse>('/meals', {
+      params,
+    });
+    return response.data;
+  },
+};
+
 // Meal Recommendation API Types
 export interface MealRecommendationRequest {
   user_id: string;

@@ -394,12 +394,14 @@ class MealCreate(BaseModel):
     @classmethod
     def validate_meal_time(cls, value: datetime) -> datetime:
         """Validate meal time is within last 30 days"""
-        now = datetime.now()
-        days_diff = (now - value).days
+        comparison_now = (
+            datetime.now(tz=value.tzinfo) if value.tzinfo else datetime.now()
+        )
+        days_diff = (comparison_now - value).days
 
         if days_diff > 30:
             raise ValueError("meal_time must be within the last 30 days")
-        if value > now:
+        if value > comparison_now:
             raise ValueError("meal_time cannot be in the future")
 
         return value
@@ -421,12 +423,14 @@ class MealUpdate(BaseModel):
         if value is None:
             return value
 
-        now = datetime.now()
-        days_diff = (now - value).days
+        comparison_now = (
+            datetime.now(tz=value.tzinfo) if value.tzinfo else datetime.now()
+        )
+        days_diff = (comparison_now - value).days
 
         if days_diff > 30:
             raise ValueError("meal_time must be within the last 30 days")
-        if value > now:
+        if value > comparison_now:
             raise ValueError("meal_time cannot be in the future")
 
         return value

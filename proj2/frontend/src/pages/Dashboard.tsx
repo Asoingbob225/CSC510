@@ -1,14 +1,40 @@
 import { useNavigate } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { WellnessOverviewCard } from '@/components/wellness';
 import { RecommendationCarousel } from '@/components/recommendations/RecommendationCarousel';
+import { QuickMealLogger } from '@/components/meals/QuickMealLogger';
+import { MealHistory } from '@/components/meals/MealHistory';
 import apiClient, { getAuthToken } from '@/lib/api';
+import { useMeals } from '@/hooks/useMeals';
 
 function Dashboard() {
   const navigate = useNavigate();
   const [isVerifying, setIsVerifying] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+
+  const { data: mealSuggestionData } = useMeals(
+    {
+      page: 1,
+      page_size: 50,
+    },
+    { enabled: !isVerifying }
+  );
+
+  const foodSuggestions = useMemo(() => {
+    if (!mealSuggestionData?.meals) {
+      return [];
+    }
+    const suggestions = new Set<string>();
+    mealSuggestionData.meals.forEach((meal) => {
+      meal.food_items.forEach((item) => {
+        if (item.food_name) {
+          suggestions.add(item.food_name);
+        }
+      });
+    });
+    return Array.from(suggestions).sort((a, b) => a.localeCompare(b));
+  }, [mealSuggestionData]);
 
   // Verify if token is valid
   useEffect(() => {
@@ -70,6 +96,12 @@ function Dashboard() {
             <RecommendationCarousel userId={userId} />
           </div>
         )}
+
+        {/* Meal Logging and History */}
+        <div className="mb-8 space-y-6">
+          <QuickMealLogger foodSuggestions={foodSuggestions} />
+          <MealHistory />
+        </div>
 
         {/* Other Dashboard Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
