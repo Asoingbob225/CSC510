@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { format, parseISO } from 'date-fns';
-import { Calendar, Filter, Loader2, RefreshCw } from 'lucide-react';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon, Filter, Loader2, RefreshCw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,13 +11,22 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 
 import { useMeals } from '@/hooks/useMeals';
 import type { MealListFilters, MealLogResponse, MealTypeOption } from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 const MEAL_TYPE_LABELS: Record<MealTypeOption, string> = {
   breakfast: 'Breakfast',
@@ -28,23 +37,43 @@ const MEAL_TYPE_LABELS: Record<MealTypeOption, string> = {
 
 const PAGE_SIZE = 10;
 
-const toISOStringOrUndefined = (date?: string, endOfDay = false) => {
+const mealDateFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+
+const toISOStringOrUndefined = (date?: Date, endOfDay = false) => {
   if (!date) return undefined;
-  const base = endOfDay ? `${date}T23:59:59` : `${date}T00:00:00`;
-  return new Date(base).toISOString();
+  const boundary = new Date(date);
+  if (endOfDay) {
+    boundary.setHours(23, 59, 59, 999);
+  } else {
+    boundary.setHours(0, 0, 0, 0);
+  }
+  return boundary.toISOString();
+};
+
+const formatMealTime = (isoTimestamp: string) => {
+  try {
+    return mealDateFormatter.format(new Date(isoTimestamp));
+  } catch {
+    return isoTimestamp;
+  }
 };
 
 export function MealHistory() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<{
     meal_type: '' | MealTypeOption;
-    start_date: string;
-    end_date: string;
+    start_date?: Date;
+    end_date?: Date;
   }>({
     meal_type: '',
-    start_date: '',
-    end_date: '',
+    start_date: undefined,
+    end_date: undefined,
   });
+  const [isStartDateOpen, setIsStartDateOpen] = useState(false);
+  const [isEndDateOpen, setIsEndDateOpen] = useState(false);
 
   const queryFilters: MealListFilters = useMemo(() => {
     return {
@@ -60,13 +89,41 @@ export function MealHistory() {
     enabled: true,
   });
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = event.target;
+  const handleMealTypeChange = (value: string) => {
+    const normalized = value === 'all' ? '' : (value as MealTypeOption);
     setPage(1);
     setFilters((prev) => ({
       ...prev,
-      [name]: value,
+      meal_type: normalized,
     }));
+  };
+
+  const handleStartDateChange = (date: Date | undefined) => {
+    setPage(1);
+    setFilters((prev) => {
+      const sanitizedEnd = prev.end_date && date && prev.end_date < date ? date : prev.end_date;
+      return {
+        ...prev,
+        start_date: date,
+        end_date: sanitizedEnd,
+      };
+    });
+  };
+
+  const handleEndDateChange = (date: Date | undefined) => {
+    setPage(1);
+    setFilters((prev) => {
+      if (date && prev.start_date && date < prev.start_date) {
+        return {
+          ...prev,
+          end_date: prev.start_date,
+        };
+      }
+      return {
+        ...prev,
+        end_date: date,
+      };
+    });
   };
 
   const handleRefresh = () => {
@@ -87,56 +144,93 @@ export function MealHistory() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <form className="grid gap-4 md:grid-cols-4" aria-label="Meal history filters">
+        <form className="grid items-end gap-4 md:grid-cols-4" aria-label="Meal history filters">
           <div className="space-y-2">
             <Label htmlFor="meal_type" className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-purple-500" />
               Meal type
             </Label>
-            <select
-              id="meal_type"
-              name="meal_type"
-              value={filters.meal_type}
-              onChange={handleFilterChange}
-              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none"
-            >
-              <option value="">All meals</option>
-              {Object.entries(MEAL_TYPE_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            <Select value={filters.meal_type || 'all'} onValueChange={handleMealTypeChange}>
+              <SelectTrigger id="meal_type" className="mb-0 w-full">
+                <SelectValue placeholder="All meals" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All meals</SelectItem>
+                {Object.entries(MEAL_TYPE_LABELS).map(([value, label]) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="start_date" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-purple-500" />
+              <CalendarIcon className="h-4 w-4 text-purple-500" />
               Start date
             </Label>
-            <Input
-              id="start_date"
-              name="start_date"
-              type="date"
-              value={filters.start_date}
-              max={filters.end_date || undefined}
-              onChange={handleFilterChange}
-            />
+            <Popover open={isStartDateOpen} onOpenChange={setIsStartDateOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  id="start_date"
+                  variant="outline"
+                  className={cn(
+                    'w-full justify-start text-left font-normal',
+                    !filters.start_date && 'text-muted-foreground'
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {filters.start_date ? format(filters.start_date, 'PPP') : 'Pick a start date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={filters.start_date}
+                  onSelect={(date) => {
+                    handleStartDateChange(date);
+                    setIsStartDateOpen(false);
+                  }}
+                  disabled={(date) => (filters.end_date ? date > filters.end_date : false)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="end_date" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-purple-500" />
+              <CalendarIcon className="h-4 w-4 text-purple-500" />
               End date
             </Label>
-            <Input
-              id="end_date"
-              name="end_date"
-              type="date"
-              value={filters.end_date}
-              min={filters.start_date || undefined}
-              onChange={handleFilterChange}
-            />
+            <Popover open={isEndDateOpen} onOpenChange={setIsEndDateOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  id="end_date"
+                  variant="outline"
+                  className={cn(
+                    'w-full justify-start text-left font-normal',
+                    !filters.end_date && 'text-muted-foreground'
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {filters.end_date ? format(filters.end_date, 'PPP') : 'Pick an end date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={filters.end_date}
+                  onSelect={(date) => {
+                    handleEndDateChange(date);
+                    setIsEndDateOpen(false);
+                  }}
+                  disabled={(date) => (filters.start_date ? date < filters.start_date : false)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="flex items-end gap-3">
@@ -157,14 +251,12 @@ export function MealHistory() {
               onClick={() => {
                 setFilters({
                   meal_type: '',
-                  start_date: '',
-                  end_date: '',
+                  start_date: undefined,
+                  end_date: undefined,
                 });
                 setPage(1);
               }}
-              disabled={
-                !filters.meal_type && !filters.start_date && !filters.end_date && !isFetching
-              }
+              disabled={!filters.meal_type && !filters.start_date && !filters.end_date}
             >
               Clear
             </Button>
@@ -204,7 +296,7 @@ export function MealHistory() {
                       {MEAL_TYPE_LABELS[meal.meal_type]}
                     </p>
                     <p className="text-lg font-semibold text-gray-900">
-                      {format(parseISO(meal.meal_time), 'PPP p')}
+                      {formatMealTime(meal.meal_time)}
                     </p>
                     {meal.notes && (
                       <p className="mt-2 text-sm text-gray-700">

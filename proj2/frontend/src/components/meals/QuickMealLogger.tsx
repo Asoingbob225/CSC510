@@ -2,13 +2,16 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { Loader2, Plus, Trash2, Upload } from 'lucide-react';
+import { Calendar as CalendarIcon, Loader2, Plus, Trash2, Upload } from 'lucide-react';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -21,6 +24,7 @@ import { toast } from 'sonner';
 
 import { useLogMeal } from '@/hooks/useMeals';
 import type { MealCreateRequest, MealTypeOption } from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 const MEAL_TYPES: { label: string; value: MealTypeOption }[] = [
   { label: 'Breakfast', value: 'breakfast' },
@@ -30,6 +34,7 @@ const MEAL_TYPES: { label: string; value: MealTypeOption }[] = [
 ];
 
 const DEFAULT_PORTION_UNITS = ['serving', 'cup', 'g', 'oz', 'ml', 'slice', 'piece'] as const;
+type PortionUnitOption = (typeof DEFAULT_PORTION_UNITS)[number];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 const numberString = z
@@ -70,6 +75,7 @@ const mealFormSchema = z.object({
 });
 
 type MealFormValues = z.infer<typeof mealFormSchema>;
+type PortionUnitFieldName = `food_items.${number}.portion_unit`;
 
 const getDefaultDateTime = () => format(new Date(), "yyyy-MM-dd'T'HH:mm");
 
@@ -92,6 +98,7 @@ export function QuickMealLogger({ foodSuggestions = [] }: QuickMealLoggerProps) 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [isMealDateOpen, setIsMealDateOpen] = useState(false);
 
   const form = useForm<MealFormValues>({
     resolver: zodResolver(mealFormSchema),
@@ -139,6 +146,12 @@ export function QuickMealLogger({ foodSuggestions = [] }: QuickMealLoggerProps) 
       }
     };
   }, [photoPreviewUrl]);
+
+  const parseMealTimeValue = (value?: string): Date | undefined => {
+    if (!value) return undefined;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+  };
 
   const watchedItems = useWatch({
     control: form.control,
@@ -316,16 +329,105 @@ export function QuickMealLogger({ foodSuggestions = [] }: QuickMealLoggerProps) 
               )}
             />
 
-            <Field data-invalid={!!form.formState.errors.meal_time}>
-              <FieldLabel htmlFor="meal_time">Meal time</FieldLabel>
-              <Input
-                id="meal_time"
-                type="datetime-local"
-                aria-invalid={!!form.formState.errors.meal_time}
-                {...form.register('meal_time')}
-              />
-              <FieldError>{form.formState.errors.meal_time?.message}</FieldError>
-            </Field>
+            <Controller
+              name="meal_time"
+              control={form.control}
+              render={({ field: mealTimeField, fieldState }) => {
+                const selectedDate = parseMealTimeValue(mealTimeField.value);
+                const timeValue = selectedDate ? format(selectedDate, 'HH:mm') : '';
+
+                const updateFieldWithDate = (date: Date) => {
+                  const next = new Date(date);
+                  const baseline = selectedDate ?? new Date();
+                  next.setHours(baseline.getHours(), baseline.getMinutes(), 0, 0);
+                  mealTimeField.onChange(format(next, "yyyy-MM-dd'T'HH:mm"));
+                };
+
+                const updateFieldWithTime = (time: string) => {
+                  if (!time) {
+                    if (selectedDate) {
+                      const reset = new Date(selectedDate);
+                      reset.setHours(0, 0, 0, 0);
+                      mealTimeField.onChange(format(reset, "yyyy-MM-dd'T'HH:mm"));
+                    } else {
+                      mealTimeField.onChange('');
+                    }
+                    return;
+                  }
+
+                  const [hoursStr, minutesStr] = time.split(':');
+                  const hours = Number(hoursStr);
+                  const minutes = Number(minutesStr);
+
+                  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                    return;
+                  }
+
+                  const base = selectedDate ?? new Date();
+                  const next = new Date(base);
+                  next.setHours(hours, minutes, 0, 0);
+                  mealTimeField.onChange(format(next, "yyyy-MM-dd'T'HH:mm"));
+                };
+
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="meal_time">Meal time</FieldLabel>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                      <Popover open={isMealDateOpen} onOpenChange={setIsMealDateOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            id="meal_time"
+                            type="button"
+                            variant="outline"
+                            className={cn(
+                              'w-full justify-start text-left font-normal sm:max-w-[220px]',
+                              !selectedDate && 'text-muted-foreground'
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {selectedDate ? format(selectedDate, 'PPP') : 'Select date'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={(date) => {
+                              if (date) {
+                                updateFieldWithDate(date);
+                                mealTimeField.onBlur();
+                              } else {
+                                mealTimeField.onChange('');
+                              }
+                              setIsMealDateOpen(false);
+                            }}
+                            disabled={(date) => date > new Date()}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <div className="flex w-full flex-col gap-3 sm:w-auto sm:max-w-[180px]">
+                        <Input
+                          type="time"
+                          id="meal_time_picker"
+                          step={60}
+                          value={timeValue}
+                          onChange={(event) => {
+                            updateFieldWithTime(event.target.value);
+                          }}
+                          onBlur={mealTimeField.onBlur}
+                          aria-invalid={fieldState.invalid}
+                          className={cn(
+                            'appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none',
+                            'w-full sm:w-auto sm:max-w-[140px]'
+                          )}
+                        />
+                      </div>
+                    </div>
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Field>
+                );
+              }}
+            />
           </FieldGroup>
 
           <Field data-invalid={!!form.formState.errors.notes}>
@@ -358,12 +460,13 @@ export function QuickMealLogger({ foodSuggestions = [] }: QuickMealLoggerProps) 
                 const nameError = form.formState.errors.food_items?.[index]?.food_name?.message;
                 const portionError =
                   form.formState.errors.food_items?.[index]?.portion_size?.message;
-                const unitError = form.formState.errors.food_items?.[index]?.portion_unit?.message;
                 const caloriesError = form.formState.errors.food_items?.[index]?.calories?.message;
                 const proteinError = form.formState.errors.food_items?.[index]?.protein_g?.message;
                 const carbsError = form.formState.errors.food_items?.[index]?.carbs_g?.message;
                 const fatError = form.formState.errors.food_items?.[index]?.fat_g?.message;
                 const datalistId = `food-suggestions-${field.id}`;
+                const portionUnitFieldName =
+                  `food_items.${index}.portion_unit` as PortionUnitFieldName;
 
                 return (
                   <div key={field.id} className="rounded-lg border border-gray-200 p-4 shadow-sm">
@@ -408,22 +511,76 @@ export function QuickMealLogger({ foodSuggestions = [] }: QuickMealLoggerProps) 
                         <FieldError>{portionError}</FieldError>
                       </Field>
 
-                      <Field data-invalid={!!unitError}>
-                        <FieldLabel htmlFor={`portion_unit_${index}`}>Portion unit</FieldLabel>
-                        <Input
-                          id={`portion_unit_${index}`}
-                          aria-invalid={!!unitError}
-                          placeholder="serving"
-                          list={`portion-units-${field.id}`}
-                          {...form.register(`food_items.${index}.portion_unit`)}
-                        />
-                        <datalist id={`portion-units-${field.id}`}>
-                          {DEFAULT_PORTION_UNITS.map((unit) => (
-                            <option key={`${field.id}-${unit}`} value={unit} />
-                          ))}
-                        </datalist>
-                        <FieldError>{unitError}</FieldError>
-                      </Field>
+                      <Controller
+                        key={`${field.id}-portion-unit-controller`}
+                        name={portionUnitFieldName}
+                        control={form.control}
+                        render={({ field: portionUnitField, fieldState }) => {
+                          const rawValue =
+                            typeof portionUnitField.value === 'string'
+                              ? portionUnitField.value
+                              : '';
+                          const isPreset =
+                            rawValue !== '' &&
+                            DEFAULT_PORTION_UNITS.includes(rawValue as PortionUnitOption);
+                          const selectValue: PortionUnitOption | 'other' = isPreset
+                            ? (rawValue as PortionUnitOption)
+                            : 'other';
+                          const showCustomInput = !isPreset;
+
+                          return (
+                            <Field data-invalid={fieldState.invalid}>
+                              <FieldLabel htmlFor={`portion_unit_select_${index}`}>
+                                Portion unit
+                              </FieldLabel>
+                              <Select
+                                value={selectValue}
+                                onValueChange={(value) => {
+                                  if (value === 'other') {
+                                    portionUnitField.onChange('');
+                                  } else {
+                                    portionUnitField.onChange(value);
+                                  }
+                                }}
+                              >
+                                <SelectTrigger
+                                  id={`portion_unit_select_${index}`}
+                                  aria-invalid={fieldState.invalid}
+                                  className="w-full"
+                                  onBlur={portionUnitField.onBlur}
+                                >
+                                  <SelectValue placeholder="Select unit" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {DEFAULT_PORTION_UNITS.map((unit) => (
+                                    <SelectItem
+                                      key={`${field.id}-portion-unit-${unit}`}
+                                      value={unit}
+                                    >
+                                      {unit}
+                                    </SelectItem>
+                                  ))}
+                                  <SelectItem value="other">Other</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              {showCustomInput && (
+                                <Input
+                                  id={`portion_unit_${index}`}
+                                  className="mt-2"
+                                  placeholder="Enter custom unit"
+                                  value={rawValue}
+                                  onChange={(event) =>
+                                    portionUnitField.onChange(event.target.value)
+                                  }
+                                  onBlur={portionUnitField.onBlur}
+                                  aria-invalid={fieldState.invalid}
+                                />
+                              )}
+                              <FieldError>{fieldState.error?.message}</FieldError>
+                            </Field>
+                          );
+                        }}
+                      />
 
                       <Field data-invalid={!!caloriesError}>
                         <FieldLabel htmlFor={`calories_${index}`}>Calories (kcal)</FieldLabel>
