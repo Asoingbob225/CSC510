@@ -57,3 +57,7 @@ Thumbs.db
 # Node modules (for frontend)
 node_modules/
 copilot-instructions.md
+
+
+# AI agents
+AGENTS.md

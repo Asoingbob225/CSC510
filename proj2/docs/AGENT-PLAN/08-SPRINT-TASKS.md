@@ -1,7 +1,7 @@
 # Sprint Tasks
 
 **Document Version**: 2.0 (Dual-Dimension Health Platform)  
-**Last Updated**: October 26, 2025  
+**Last Updated**: October 29, 2025  
 **Current Milestone**: v0.3 - Tracking System (60% Complete)
 
 ---
@@ -1151,6 +1151,238 @@ Notes:
 
 ---
 
+## 🧠 Sprint 0.4 — AI Recommendation Engine (M4)
+
+### Task Status Summary (M4)
+
+- Total Issues (M4): 14 (8 open, 6 closed)
+- Open: #105, #106, #107, #108, #109, #81, #82, #83
+- Closed to date: #76, #77, #78, #79, #80, #129
+
+### Carryover From v0.3 (to include in M4)
+
+- [ ] [#95](https://github.com/Asoingbob225/CSC510/issues/95) — subtask(frontend): Meal Logging Interface [Carryover]
+- [ ] [#96](https://github.com/Asoingbob225/CSC510/issues/96) — feat: Mental Wellness Tracking System (M3) [Carryover]
+- [ ] [#103](https://github.com/Asoingbob225/CSC510/issues/103) — test: Meal & Goal Tracking Tests [Carryover]
+
+---
+
+### Overview and Scope
+
+The initial recommendation system should suggest restaurants and specific menu items. It must leverage the user’s dual‑dimension profile (nutrition + mental wellness), registered allergens, wellness tracking data (mood, stress, sleep), and health/nutrition goals to generate safe, personalized suggestions with brief explanations.
+
+Inputs: health profile, allergies, dietary preferences, wellness logs, and defined goals.  
+Outputs: ranked recommendations of restaurants and menu items with short explanations and safety filtering.
+
+Constraints and Targets:
+
+- Strict allergen avoidance and dietary filters (no unsafe items)
+- Response time: <2s for cached/simple paths; <4s with LLM calls
+- Clear, human‑readable “why” explanations per item
+- Observability: basic metrics + error logging for LLM calls
+
+---
+
+### Backend Tasks (v0.4)
+
+#### BE-04-001: Core Recommendation Engine (LLM + Rules)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-03-001, BE-03-002, BE-03-003  
+**Module**: `backend/src/eatsential/services/recsys`  
+**Priority**: P0
+
+**Flow**: hard-filter (allergens/diet) → candidate gen → baseline rank → LLM rerank + explanation
+
+**Functional Requirements**:
+
+- Enforce deterministic safety filtering before any ranking
+- Use profile + goals + wellness to influence ranking
+- LLM provides reranking and short per-item explanations
+
+**Key Constraints**:
+
+- Deterministic fallback path available (no-LLM mode)
+- Log prompt/response metadata (no PII)
+
+**Related**: [#105](https://github.com/Asoingbob225/CSC510/issues/105), [#78](https://github.com/Asoingbob225/CSC510/issues/78) ✅
+
+---
+
+#### BE-04-002: Deterministic Fallback + Baseline Ranking
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-001  
+**Module**: `backend/src/eatsential/services/recsys`  
+**Priority**: P0
+
+**Scope**:
+
+- Minimal, transparent scoring after hard filters; normalized scores and tie-breakers
+- Toggleable via `mode=baseline|llm`; used for tests and fallback
+
+**Acceptance**:
+
+- Deterministic ordering on identical inputs
+- Unit tests cover allergen filtering and score normalization
+
+**Related**: [#106](https://github.com/Asoingbob225/CSC510/issues/106)
+
+---
+
+#### BE-04-003: Recommendation API Endpoint(s)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-001, BE-04-002  
+**Module**: `backend/src/eatsential/routers/recommend`  
+**Priority**: P0
+
+**API Endpoints**:
+
+- `POST /api/recommend/meal` — menu item recommendations
+- `POST /api/recommend/restaurant` — restaurant recommendations
+
+**Functional Requirements**:
+
+- Accepts user context or infers from auth’d user
+- Returns ranked items with `score` and `explanation`
+- Supports filters (price range, cuisine, distance when available)
+
+**Related**: [#107](https://github.com/Asoingbob225/CSC510/issues/107), [#79](https://github.com/Asoingbob225/CSC510/issues/79) ✅
+
+---
+
+#### BE-04-004: Restaurant Data Ingestion and Matching
+
+**Status**: ⏳ Not Started  
+**Dependencies**: DB seed and models  
+**Module**: `backend/src/eatsential/services/restaurant_index`  
+**Priority**: P1
+
+**Functional Requirements**:
+
+- Index restaurant and menu data for efficient filtering
+- Provide candidate generation API for the rec engine
+
+**Related**: [#81](https://github.com/Asoingbob225/CSC510/issues/81), [#82](https://github.com/Asoingbob225/CSC510/issues/82), [#77](https://github.com/Asoingbob225/CSC510/issues/77) ✅, [#76](https://github.com/Asoingbob225/CSC510/issues/76) ✅
+
+---
+
+#### BE-04-005: Feedback Endpoint (Like/Dislike)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-003  
+**Module**: `backend/src/eatsential/routers/recommend`  
+**Priority**: P2
+
+**API Endpoint**: `POST /api/recommend/feedback`  
+**Note**: [NEEDS GITHUB ISSUE CREATED]
+
+**Functional Requirements**:
+
+- Accept simple like/dislike per recommendation item
+- Store for future personalization and evaluation
+
+---
+
+### Frontend Tasks (v0.4)
+
+#### FE-04-001: Recommendation Display UI
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-003  
+**Module**: `frontend/src/pages/recommendations`, `frontend/src/components`  
+**Priority**: P0
+
+**Functional Requirements**:
+
+- Display ranked restaurant and menu item cards
+- Show short explanations and key nutrition flags
+- Provide filters (diet, cuisine), pagination/scroll
+
+**Related**: [#108](https://github.com/Asoingbob225/CSC510/issues/108), [#80](https://github.com/Asoingbob225/CSC510/issues/80) ✅
+
+---
+
+#### FE-04-002: Display Matched Restaurants on UI
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-004  
+**Module**: `frontend/src/components/RecommendationList`  
+**Priority**: P1
+
+**Functional Requirements**:
+
+- Render restaurant candidates with basic fit indicators
+- Navigate into menu item recommendations per restaurant
+
+**Related**: [#83](https://github.com/Asoingbob225/CSC510/issues/83)
+
+---
+
+#### FE-04-003: Feedback Buttons (Like/Dislike)
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-005  
+**Module**: `frontend/src/components/RecommendationCard`  
+**Priority**: P2  
+**Note**: [NEEDS GITHUB ISSUE CREATED]
+
+**Functional Requirements**:
+
+- Add like/dislike to each recommendation card
+- POST to feedback endpoint; optimistic UI update
+
+---
+
+### Testing Tasks (v0.4)
+
+#### TEST-04-001: Recommendation Algorithm Tests
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-001, BE-04-002  
+**Module**: `backend/tests/recsys`  
+**Priority**: P0
+
+**Functional Requirements**:
+
+- Unit tests for scoring, filtering, and explanation presence
+- Mock LLM path; ensure deterministic fallback
+
+**Related**: [#109](https://github.com/Asoingbob225/CSC510/issues/109)
+
+---
+
+#### TEST-04-002: E2E Recommendation Flow
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-003, FE-04-001  
+**Module**: `e2e/`  
+**Priority**: P1  
+**Note**: [NEEDS GITHUB ISSUE CREATED]
+
+**Functional Requirements**:
+
+- End‑to‑end test from profile+wellness data to UI recommendations
+- Verifies allergen filtering and explanations
+
+---
+
+#### TEST-04-003: Prompt/Response Regression Fixtures
+
+**Status**: ⏳ Not Started  
+**Dependencies**: BE-04-001  
+**Module**: `backend/tests/recsys/prompts`  
+**Priority**: P2  
+**Note**: [NEEDS GITHUB ISSUE CREATED]
+
+**Functional Requirements**:
+
+- Store anonymized prompt/response fixtures for regression
+- Validate safety filters and output schema
+
+---
+
 ## Definition of Done
 
 ### For ALL Tasks:
@@ -1194,5 +1426,5 @@ Notes:
 
 ---
 
-**Last Updated**: October 26, 2025  
-**Next Review**: End of v0.3 milestone
+**Last Updated**: October 29, 2025  
+**Next Review**: Mid v0.4 milestone (AI recsys)
