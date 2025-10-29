@@ -46,7 +46,10 @@ def create_mood_log(
         Created mood log with decrypted notes
 
     Raises:
-        HTTPException: If creation fails or validation errors occur
+        HTTPException:
+            - 409: If a log already exists for this date
+            - 400: If validation errors occur
+            - 500: If creation fails
 
     """
     try:
@@ -65,6 +68,9 @@ def create_mood_log(
             updated_at=db_log.updated_at,
         )
     except ValueError as e:
+        # Check if it's a duplicate entry error
+        if "already exists" in str(e):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
@@ -94,7 +100,10 @@ def create_stress_log(
         Created stress log with decrypted triggers and notes
 
     Raises:
-        HTTPException: If creation fails or validation errors occur
+        HTTPException:
+            - 409: If a log already exists for this date
+            - 400: If validation errors occur
+            - 500: If creation fails
 
     """
     try:
@@ -114,6 +123,9 @@ def create_stress_log(
             updated_at=db_log.updated_at,
         )
     except ValueError as e:
+        # Check if it's a duplicate entry error
+        if "already exists" in str(e):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
@@ -141,7 +153,10 @@ def create_sleep_log(
         Created sleep log with decrypted notes
 
     Raises:
-        HTTPException: If creation fails or validation errors occur
+        HTTPException:
+            - 409: If a log already exists for this date
+            - 400: If validation errors occur
+            - 500: If creation fails
 
     """
     try:
@@ -161,6 +176,10 @@ def create_sleep_log(
             updated_at=db_log.updated_at,
         )
     except ValueError as e:
+        # Check if it's a duplicate entry error
+        if "already exists" in str(e):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(

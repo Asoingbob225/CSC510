@@ -1,6 +1,6 @@
 """Security and privacy tests for Mental Wellness tracking (Issue #104)."""
 
-from datetime import date
+from datetime import date, timedelta
 
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -206,21 +206,24 @@ class TestPrivacyControls:
         self, client: TestClient, auth_headers: dict, db: Session, test_user, test_user2
     ):
         """Test that listing wellness logs returns only user's own data."""
-        # User 1 creates logs
-        for _i in range(3):
+        # User 1 creates logs on different days
+        today = date.today()
+        for i in range(3):
+            log_date = (today - timedelta(days=i)).isoformat()
             client.post(
                 "/api/wellness/mood-logs",
-                json={"mood_score": 7, "log_date": date.today().isoformat()},
+                json={"mood_score": 7, "log_date": log_date},
                 headers=auth_headers,
             )
 
-        # User 2 creates logs
+        # User 2 creates logs on different days
         token2 = create_access_token(data={"sub": test_user2.id})
         auth_headers_user2 = {"Authorization": f"Bearer {token2}"}
-        for _i in range(2):
+        for i in range(2):
+            log_date = (today - timedelta(days=i)).isoformat()
             client.post(
                 "/api/wellness/mood-logs",
-                json={"mood_score": 5, "log_date": date.today().isoformat()},
+                json={"mood_score": 5, "log_date": log_date},
                 headers=auth_headers_user2,
             )
 
@@ -274,11 +277,12 @@ class TestScaleValidation:
         self, client: TestClient, auth_headers: dict, db: Session
     ):
         """Test stress level validation (1-10)."""
-        # Valid levels
-        for level in [1, 5, 10]:
+        # Valid levels - use different days to avoid duplicate entry conflict
+        today = date.today()
+        for idx, level in enumerate([1, 5, 10]):
             stress_data = {
                 "stress_level": level,
-                "log_date": date.today().isoformat(),
+                "log_date": (today - timedelta(days=idx)).isoformat(),
             }
             response = client.post(
                 "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
@@ -286,10 +290,10 @@ class TestScaleValidation:
             assert response.status_code == status.HTTP_201_CREATED
 
         # Invalid levels
-        for level in [0, 11, -1]:
+        for idx, level in enumerate([0, 11, -1]):
             stress_data = {
                 "stress_level": level,
-                "log_date": date.today().isoformat(),
+                "log_date": (today - timedelta(days=idx + 10)).isoformat(),
             }
             response = client.post(
                 "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
