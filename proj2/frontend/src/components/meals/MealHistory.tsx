@@ -42,6 +42,15 @@ const mealDateFormatter = new Intl.DateTimeFormat(undefined, {
   timeStyle: 'short',
 });
 
+const hasTimezone = (value: string) => /([zZ]|[+-]\d{2}:\d{2})$/.test(value);
+
+const coerceToDate = (value: string): Date | undefined => {
+  if (!value) return undefined;
+  const normalized = hasTimezone(value) ? value : `${value}Z`;
+  const parsed = new Date(normalized);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+};
+
 const toISOStringOrUndefined = (date?: Date, endOfDay = false) => {
   if (!date) return undefined;
   const boundary = new Date(date);
@@ -55,7 +64,11 @@ const toISOStringOrUndefined = (date?: Date, endOfDay = false) => {
 
 const formatMealTime = (isoTimestamp: string) => {
   try {
-    return mealDateFormatter.format(new Date(isoTimestamp));
+    const parsed = coerceToDate(isoTimestamp);
+    if (!parsed) {
+      return isoTimestamp;
+    }
+    return mealDateFormatter.format(parsed);
   } catch {
     return isoTimestamp;
   }

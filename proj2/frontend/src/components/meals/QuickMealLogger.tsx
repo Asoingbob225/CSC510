@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
-import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 import {
