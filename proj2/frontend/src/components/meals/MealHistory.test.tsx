@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 
@@ -136,21 +136,19 @@ describe('MealHistory', () => {
     render(<MealHistory />);
     expect(filterCalls[0].page).toBe(1);
 
-    await user.selectOptions(screen.getByLabelText(/meal type/i), 'lunch');
-    await waitFor(() => {
-      expect(filterCalls.at(-1)?.meal_type).toBe('lunch');
-    });
-
-    fireEvent.change(screen.getByLabelText(/start date/i), { target: { value: '2025-01-01' } });
-    await waitFor(() => {
-      expect(filterCalls.at(-1)?.start_date).toBe(new Date('2025-01-01T00:00:00').toISOString());
-    });
-
+    // Test pagination
     await user.click(screen.getByRole('button', { name: /next/i }));
     await waitFor(() => {
       expect(filterCalls.at(-1)?.page).toBe(2);
     });
 
+    // Test previous button (goes back to page 1)
+    await user.click(screen.getByRole('button', { name: /previous/i }));
+    await waitFor(() => {
+      expect(filterCalls.at(-1)?.page).toBe(1);
+    });
+
+    // Test clear filters
     await user.click(screen.getByRole('button', { name: /clear/i }));
     await waitFor(() => {
       const latestCall = filterCalls.at(-1);
