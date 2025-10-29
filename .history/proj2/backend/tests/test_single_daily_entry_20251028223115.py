@@ -129,11 +129,11 @@ def test_duplicate_stress_log_same_day(client: TestClient, auth_headers: dict):
 
 def test_duplicate_sleep_log_same_day(client: TestClient, auth_headers: dict):
     """Test that creating duplicate sleep logs for the same day is prevented.
-
+    
     Test Case ID: TC-WELL-003
     Requirement: FR-079 (Sleep Tracking)
     Priority: High
-
+    
     Steps:
     1. Create first sleep log for today
     2. Attempt to create second sleep log for same day
@@ -175,11 +175,11 @@ def test_duplicate_sleep_log_same_day(client: TestClient, auth_headers: dict):
 
 def test_different_days_allowed(client: TestClient, auth_headers: dict):
     """Test that creating logs for different days is allowed.
-
+    
     Test Case ID: TC-WELL-004
     Requirement: FR-077 (Daily Mood Logging)
     Priority: Medium
-
+    
     Steps:
     1. Create mood log for yesterday
     2. Create mood log for today
@@ -218,14 +218,13 @@ def test_different_days_allowed(client: TestClient, auth_headers: dict):
     mood_logs = data.get("mood_logs", [])
     assert len(mood_logs) >= 2  # Should have at least 2 mood logs (yesterday and today)
 
-
 def test_update_existing_log_allowed(client: TestClient, auth_headers: dict):
     """Test that updating an existing log for a day is allowed.
-
+    
     Test Case ID: TC-WELL-005
     Requirement: FR-077 (Daily Mood Logging - Update)
     Priority: High
-
+    
     Steps:
     1. Create mood log
     2. Update the log with new values

@@ -5,7 +5,7 @@ can only create one wellness log entry per day per metric type.
 
 Test Coverage:
 - Duplicate prevention for mood logs
-- Duplicate prevention for stress logs
+- Duplicate prevention for stress logs  
 - Duplicate prevention for sleep logs
 - Multiple day entries allowed
 - Update existing entries allowed
@@ -49,11 +49,11 @@ def auth_headers(test_user: UserDB) -> dict[str, str]:
 
 def test_duplicate_mood_log_same_day(client: TestClient, auth_headers: dict):
     """Test that creating duplicate mood logs for the same day is prevented.
-
+    
     Test Case ID: TC-WELL-001
     Requirement: FR-077 (Daily Mood Logging)
     Priority: High
-
+    
     Steps:
     1. Create first mood log for today
     2. Attempt to create second mood log for same day
@@ -84,11 +84,11 @@ def test_duplicate_mood_log_same_day(client: TestClient, auth_headers: dict):
 
 def test_duplicate_stress_log_same_day(client: TestClient, auth_headers: dict):
     """Test that creating duplicate stress logs for the same day is prevented.
-
+    
     Test Case ID: TC-WELL-002
     Requirement: FR-078 (Stress Level Tracking)
     Priority: High
-
+    
     Steps:
     1. Create first stress log for today
     2. Attempt to create second stress log for same day
@@ -129,11 +129,11 @@ def test_duplicate_stress_log_same_day(client: TestClient, auth_headers: dict):
 
 def test_duplicate_sleep_log_same_day(client: TestClient, auth_headers: dict):
     """Test that creating duplicate sleep logs for the same day is prevented.
-
+    
     Test Case ID: TC-WELL-003
     Requirement: FR-079 (Sleep Tracking)
     Priority: High
-
+    
     Steps:
     1. Create first sleep log for today
     2. Attempt to create second sleep log for same day
@@ -175,11 +175,11 @@ def test_duplicate_sleep_log_same_day(client: TestClient, auth_headers: dict):
 
 def test_different_days_allowed(client: TestClient, auth_headers: dict):
     """Test that creating logs for different days is allowed.
-
+    
     Test Case ID: TC-WELL-004
     Requirement: FR-077 (Daily Mood Logging)
     Priority: Medium
-
+    
     Steps:
     1. Create mood log for yesterday
     2. Create mood log for today
@@ -211,21 +211,25 @@ def test_different_days_allowed(client: TestClient, auth_headers: dict):
         "/api/wellness/mood-logs", json=mood_data_today, headers=auth_headers
     )
     assert response.status_code == status.HTTP_201_CREATED
+
     # Verify both logs exist
     response = client.get("/api/wellness/logs", headers=auth_headers)
     assert response.status_code == 200
-    data = response.json()
-    mood_logs = data.get("mood_logs", [])
-    assert len(mood_logs) >= 2  # Should have at least 2 mood logs (yesterday and today)
+    mood_logs = [
+        log
+        for log in response.json()
+        if log.get("mood_score") is not None and log["mood_score"] > 0
+    ]
+    assert len(mood_logs) >= 2
 
 
 def test_update_existing_log_allowed(client: TestClient, auth_headers: dict):
     """Test that updating an existing log for a day is allowed.
-
+    
     Test Case ID: TC-WELL-005
     Requirement: FR-077 (Daily Mood Logging - Update)
     Priority: High
-
+    
     Steps:
     1. Create mood log
     2. Update the log with new values
@@ -247,7 +251,7 @@ def test_update_existing_log_allowed(client: TestClient, auth_headers: dict):
     response = client.put(
         f"/api/wellness/mood-logs/{log_id}", json=update_data, headers=auth_headers
     )
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200
     updated_log = response.json()
     assert updated_log["mood_score"] == 9
     assert updated_log["notes"] == "Updated mood"

@@ -218,14 +218,13 @@ def test_different_days_allowed(client: TestClient, auth_headers: dict):
     mood_logs = data.get("mood_logs", [])
     assert len(mood_logs) >= 2  # Should have at least 2 mood logs (yesterday and today)
 
-
 def test_update_existing_log_allowed(client: TestClient, auth_headers: dict):
     """Test that updating an existing log for a day is allowed.
-
+    
     Test Case ID: TC-WELL-005
     Requirement: FR-077 (Daily Mood Logging - Update)
     Priority: High
-
+    
     Steps:
     1. Create mood log
     2. Update the log with new values

@@ -46,7 +46,7 @@ def create_mood_log(
         Created mood log with decrypted notes
 
     Raises:
-        HTTPException:
+        HTTPException: 
             - 409: If a log already exists for this date
             - 400: If validation errors occur
             - 500: If creation fails

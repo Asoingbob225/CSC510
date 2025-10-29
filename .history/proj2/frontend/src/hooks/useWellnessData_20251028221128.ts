@@ -87,12 +87,10 @@ export function useCreateMoodLog() {
     },
     onError: (error: any) => {
       console.error('Error logging mood:', error);
-
+      
       // Check if it's a duplicate entry error (409 Conflict)
       if (error.response?.status === 409) {
-        toast.error(
-          'You already logged your mood today. Please update the existing entry instead.'
-        );
+        toast.error('You already logged your mood today. Please update the existing entry instead.');
       } else {
         toast.error('Failed to log mood. Please try again.');
       }
@@ -114,12 +112,10 @@ export function useCreateStressLog() {
     },
     onError: (error: any) => {
       console.error('Error logging stress:', error);
-
+      
       // Check if it's a duplicate entry error (409 Conflict)
       if (error.response?.status === 409) {
-        toast.error(
-          'You already logged your stress level today. Please update the existing entry instead.'
-        );
+        toast.error('You already logged your stress level today. Please update the existing entry instead.');
       } else {
         toast.error('Failed to log stress. Please try again.');
       }
@@ -139,17 +135,9 @@ export function useCreateSleepLog() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
       toast.success('Sleep logged successfully! 💤');
     },
-    onError: (error: any) => {
+    onError: (error) => {
       console.error('Error logging sleep:', error);
-
-      // Check if it's a duplicate entry error (409 Conflict)
-      if (error.response?.status === 409) {
-        toast.error(
-          'You already logged your sleep today. Please update the existing entry instead.'
-        );
-      } else {
-        toast.error('Failed to log sleep. Please try again.');
-      }
+      toast.error('Failed to log sleep. Please try again.');
     },
   });
 }

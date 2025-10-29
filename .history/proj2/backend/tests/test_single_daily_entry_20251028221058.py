@@ -1,71 +1,22 @@
-"""Tests for single daily entry enforcement in wellness tracking.
+"""Tests for single daily entry enforcement in wellness tracking."""
 
-This test suite validates FR-077, FR-078, FR-079 requirement that users
-can only create one wellness log entry per day per metric type.
-
-Test Coverage:
-- Duplicate prevention for mood logs
-- Duplicate prevention for stress logs
-- Duplicate prevention for sleep logs
-- Multiple day entries allowed
-- Update existing entries allowed
-
-Related Requirements: FR-077, FR-078, FR-079
-Test Level: Integration Test
-"""
-
-from datetime import date, timedelta
+from datetime import date
 
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from src.eatsential.models.models import UserDB
-from src.eatsential.utils.auth_util import create_access_token
+from src.eatsential.models.models import MoodLogDB, SleepLogDB, StressLogDB
 
 
-@pytest.fixture
-def test_user(db) -> UserDB:
-    """Create a test user for wellness tests."""
-    user = UserDB(
-        id="wellness_test_user_id",
-        email="wellness_test@example.com",
-        username="wellness_test_user",
-        password_hash="hashed_password",
-        email_verified=True,
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
-
-
-@pytest.fixture
-def auth_headers(test_user: UserDB) -> dict[str, str]:
-    """Get authentication headers for the test user."""
-    access_token = create_access_token(data={"sub": test_user.id})
-    return {"Authorization": f"Bearer {access_token}"}
-
-
-def test_duplicate_mood_log_same_day(client: TestClient, auth_headers: dict):
-    """Test that creating duplicate mood logs for the same day is prevented.
-
-    Test Case ID: TC-WELL-001
-    Requirement: FR-077 (Daily Mood Logging)
-    Priority: High
-
-    Steps:
-    1. Create first mood log for today
-    2. Attempt to create second mood log for same day
-    3. Verify 409 Conflict response
-    4. Verify error message contains "already exists"
-    """
+def test_duplicate_mood_log_same_day(test_client: TestClient, auth_headers: dict):
+    """Test that creating duplicate mood logs for the same day is prevented."""
     today = date.today().isoformat()
 
     mood_data = {"log_date": today, "mood_score": 8, "notes": "Feeling great"}
 
     # Create first mood log - should succeed
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
     )
     assert response.status_code == status.HTTP_201_CREATED
@@ -75,26 +26,15 @@ def test_duplicate_mood_log_same_day(client: TestClient, auth_headers: dict):
 
     # Try to create another mood log for the same day - should fail with 409
     mood_data_2 = {"log_date": today, "mood_score": 6, "notes": "Feeling okay"}
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/mood-logs", json=mood_data_2, headers=auth_headers
     )
     assert response.status_code == status.HTTP_409_CONFLICT
     assert "already exists" in response.json()["detail"]
 
 
-def test_duplicate_stress_log_same_day(client: TestClient, auth_headers: dict):
-    """Test that creating duplicate stress logs for the same day is prevented.
-
-    Test Case ID: TC-WELL-002
-    Requirement: FR-078 (Stress Level Tracking)
-    Priority: High
-
-    Steps:
-    1. Create first stress log for today
-    2. Attempt to create second stress log for same day
-    3. Verify 409 Conflict response
-    4. Verify error message contains "already exists"
-    """
+def test_duplicate_stress_log_same_day(test_client: TestClient, auth_headers: dict):
+    """Test that creating duplicate stress logs for the same day is prevented."""
     today = date.today().isoformat()
 
     stress_data = {
@@ -105,7 +45,7 @@ def test_duplicate_stress_log_same_day(client: TestClient, auth_headers: dict):
     }
 
     # Create first stress log - should succeed
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
     )
     assert response.status_code == status.HTTP_201_CREATED
@@ -120,26 +60,15 @@ def test_duplicate_stress_log_same_day(client: TestClient, auth_headers: dict):
         "triggers": "Traffic",
         "notes": "High stress",
     }
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/stress-logs", json=stress_data_2, headers=auth_headers
     )
     assert response.status_code == status.HTTP_409_CONFLICT
     assert "already exists" in response.json()["detail"]
 
 
-def test_duplicate_sleep_log_same_day(client: TestClient, auth_headers: dict):
-    """Test that creating duplicate sleep logs for the same day is prevented.
-
-    Test Case ID: TC-WELL-003
-    Requirement: FR-079 (Sleep Tracking)
-    Priority: High
-
-    Steps:
-    1. Create first sleep log for today
-    2. Attempt to create second sleep log for same day
-    3. Verify 409 Conflict response
-    4. Verify error message contains "already exists"
-    """
+def test_duplicate_sleep_log_same_day(test_client: TestClient, auth_headers: dict):
+    """Test that creating duplicate sleep logs for the same day is prevented."""
     today = date.today().isoformat()
 
     sleep_data = {
@@ -150,7 +79,7 @@ def test_duplicate_sleep_log_same_day(client: TestClient, auth_headers: dict):
     }
 
     # Create first sleep log - should succeed
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/sleep-logs", json=sleep_data, headers=auth_headers
     )
     assert response.status_code == status.HTTP_201_CREATED
@@ -166,26 +95,17 @@ def test_duplicate_sleep_log_same_day(client: TestClient, auth_headers: dict):
         "quality_score": 5,
         "notes": "Different sleep record",
     }
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/sleep-logs", json=sleep_data_2, headers=auth_headers
     )
     assert response.status_code == status.HTTP_409_CONFLICT
     assert "already exists" in response.json()["detail"]
 
 
-def test_different_days_allowed(client: TestClient, auth_headers: dict):
-    """Test that creating logs for different days is allowed.
+def test_different_days_allowed(test_client: TestClient, auth_headers: dict):
+    """Test that creating logs for different days is allowed."""
+    from datetime import timedelta
 
-    Test Case ID: TC-WELL-004
-    Requirement: FR-077 (Daily Mood Logging)
-    Priority: Medium
-
-    Steps:
-    1. Create mood log for yesterday
-    2. Create mood log for today
-    3. Verify both succeed
-    4. Verify both logs exist in database
-    """
     today = date.today()
     yesterday = (today - timedelta(days=1)).isoformat()
     today_str = today.isoformat()
@@ -196,7 +116,7 @@ def test_different_days_allowed(client: TestClient, auth_headers: dict):
         "mood_score": 7,
         "notes": "Yesterday's mood",
     }
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/mood-logs", json=mood_data_yesterday, headers=auth_headers
     )
     assert response.status_code == status.HTTP_201_CREATED
@@ -207,36 +127,29 @@ def test_different_days_allowed(client: TestClient, auth_headers: dict):
         "mood_score": 8,
         "notes": "Today's mood",
     }
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/mood-logs", json=mood_data_today, headers=auth_headers
     )
     assert response.status_code == status.HTTP_201_CREATED
+
     # Verify both logs exist
-    response = client.get("/api/wellness/logs", headers=auth_headers)
-    assert response.status_code == 200
-    data = response.json()
-    mood_logs = data.get("mood_logs", [])
-    assert len(mood_logs) >= 2  # Should have at least 2 mood logs (yesterday and today)
+    response = test_client.get("/api/wellness/logs", headers=auth_headers)
+    assert response.status_code == status.HTTP_200
+    mood_logs = [
+        log
+        for log in response.json()
+        if log.get("mood_score") is not None and log["mood_score"] > 0
+    ]
+    assert len(mood_logs) >= 2
 
 
-def test_update_existing_log_allowed(client: TestClient, auth_headers: dict):
-    """Test that updating an existing log for a day is allowed.
-
-    Test Case ID: TC-WELL-005
-    Requirement: FR-077 (Daily Mood Logging - Update)
-    Priority: High
-
-    Steps:
-    1. Create mood log
-    2. Update the log with new values
-    3. Verify update succeeds
-    4. Verify updated values are persisted
-    """
+def test_update_existing_log_allowed(test_client: TestClient, auth_headers: dict):
+    """Test that updating an existing log for a day is allowed."""
     today = date.today().isoformat()
 
     # Create mood log
     mood_data = {"log_date": today, "mood_score": 7, "notes": "Initial mood"}
-    response = client.post(
+    response = test_client.post(
         "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
     )
     assert response.status_code == status.HTTP_201_CREATED
@@ -244,10 +157,10 @@ def test_update_existing_log_allowed(client: TestClient, auth_headers: dict):
 
     # Update the log
     update_data = {"mood_score": 9, "notes": "Updated mood"}
-    response = client.put(
+    response = test_client.put(
         f"/api/wellness/mood-logs/{log_id}", json=update_data, headers=auth_headers
     )
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200
     updated_log = response.json()
     assert updated_log["mood_score"] == 9
     assert updated_log["notes"] == "Updated mood"
