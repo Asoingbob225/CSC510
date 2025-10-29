@@ -4,6 +4,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import {
   wellnessApi,
   type MoodLogCreate,
@@ -85,7 +86,7 @@ export function useCreateMoodLog() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
       toast.success('Mood logged successfully! 😊');
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       console.error('Error logging mood:', error);
 
       // Check if it's a duplicate entry error (409 Conflict)
@@ -112,7 +113,7 @@ export function useCreateStressLog() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
       toast.success('Stress level logged successfully!');
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       console.error('Error logging stress:', error);
 
       // Check if it's a duplicate entry error (409 Conflict)
@@ -139,7 +140,7 @@ export function useCreateSleepLog() {
       queryClient.invalidateQueries({ queryKey: wellnessKeys.all });
       toast.success('Sleep logged successfully! 💤');
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       console.error('Error logging sleep:', error);
 
       // Check if it's a duplicate entry error (409 Conflict)
