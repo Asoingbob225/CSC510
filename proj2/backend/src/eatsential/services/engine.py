@@ -562,9 +562,7 @@ class RecommendationService:
                 explanation_candidate = ""
             else:
                 explanation_candidate = str(explanation_raw)
-            explanation = (
-                explanation_candidate.strip() or "Selected by LLM ranking"
-            )
+            explanation = explanation_candidate.strip() or "Selected by LLM ranking"
 
             recommendations.append(
                 RecommendedItem(

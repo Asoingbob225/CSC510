@@ -20,9 +20,7 @@ class _FakeModels:
         self.calls: list[dict[str, object]] = []
 
     def generate_content(self, *, model, contents, config):
-        self.calls.append(
-            {"model": model, "contents": contents, "config": config}
-        )
+        self.calls.append({"model": model, "contents": contents, "config": config})
         return self._response
 
 
