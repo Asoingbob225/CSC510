@@ -2,36 +2,29 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
 from ..models.models import UserDB
-from ..schemas.schemas import (
-    RecommendationItem,
+from ..schemas.recommendation_schemas import (
     RecommendationRequest,
     RecommendationResponse,
 )
-from ..services.recommend_service import RecommendService
+from ..services.auth_service import get_current_user
+from ..services.engine import RecommendationService
 
 router = APIRouter(prefix="/recommend", tags=["recommendations"])
 
-
-def _load_user(db: Session, user_id: str) -> UserDB:
-    user = db.query(UserDB).filter(UserDB.id == user_id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-        )
-    return user
+SessionDep = Annotated[Session, Depends(get_db)]
+CurrentUserDep = Annotated[UserDB, Depends(get_current_user)]
 
 
-def _to_response(
-    user_id: str,
-    items: list[RecommendationItem],
-) -> RecommendationResponse:
-    return RecommendationResponse(user_id=user_id, recommendations=items)
+def _build_service(db: Session) -> RecommendationService:
+    """Instantiate the recommendation service for the request lifecycle."""
+    return RecommendationService(db)
 
 
 @router.post(
@@ -41,17 +34,12 @@ def _to_response(
 )
 def recommend_meal(
     request: RecommendationRequest,
-    db: Session = Depends(get_db),
+    current_user: CurrentUserDep,
+    db: SessionDep,
 ) -> RecommendationResponse:
-    """Return personalized meal recommendations using the legacy scorer."""
-    _load_user(db, request.user_id)
-
-    legacy_service = RecommendService(db)
-    recommendations = legacy_service.recommend_meals(
-        user_id=request.user_id,
-        constraints=request.constraints,
-    )
-    return _to_response(request.user_id, recommendations)
+    """Return personalized meal recommendations using the LLM-enabled engine."""
+    service = _build_service(db)
+    return service.get_meal_recommendations(user=current_user, request=request)
 
 
 @router.post(
@@ -61,14 +49,9 @@ def recommend_meal(
 )
 def recommend_restaurant(
     request: RecommendationRequest,
-    db: Session = Depends(get_db),
+    current_user: CurrentUserDep,
+    db: SessionDep,
 ) -> RecommendationResponse:
-    """Return restaurant recommendations using the legacy scorer."""
-    _load_user(db, request.user_id)
-
-    legacy_service = RecommendService(db)
-    recommendations = legacy_service.recommend_meals(
-        user_id=request.user_id,
-        constraints=request.constraints,
-    )
-    return _to_response(request.user_id, recommendations)
+    """Return restaurant recommendations using the LLM-enabled engine."""
+    service = _build_service(db)
+    return service.get_restaurant_recommendations(user=current_user, request=request)

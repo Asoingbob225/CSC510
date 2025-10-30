@@ -1,33 +1,42 @@
-"""Unit tests for Recommendation API (BE-S2-005)."""
+"""Basic integration tests for the recommendation API using the LLM engine."""
+
+from collections.abc import Iterator
+from typing import Any
 
 import pytest
 from sqlalchemy.orm import Session
 
 from src.eatsential.models import MenuItem, Restaurant, UserDB
+from src.eatsential.utils.auth_util import create_access_token
+
+
+def _auth_headers(user: UserDB) -> dict[str, str]:
+    """Build authorization headers for a given user."""
+    token = create_access_token(data={"sub": user.id})
+    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture
-def test_user(db: Session) -> UserDB:
-    """Create a test user for recommendation tests."""
+def test_user(db: Session) -> Iterator[UserDB]:
+    """Persist a test user for recommendation tests."""
     user = UserDB(
-        id="test_user_123",
-        email="test@example.com",
-        username="testuser",
+        id="rec_basic_user",
+        email="rec_basic@example.com",
+        username="rec_basic",
         password_hash="hashed_password",
         email_verified=True,
     )
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+    yield user
 
 
 @pytest.fixture
-def test_restaurant_data(db: Session, test_user: UserDB):
-    """Create test restaurant and menu items."""
-    # Create test restaurant
+def test_restaurant_data(db: Session, test_user: UserDB) -> Iterator[dict[str, Any]]:
+    """Create a restaurant and menu items for recommendation scenarios."""
     restaurant = Restaurant(
-        id="rest_001",
+        id="rest_basic",
         name="Healthy Eats",
         cuisine="Healthy",
         is_active=True,
@@ -35,133 +44,116 @@ def test_restaurant_data(db: Session, test_user: UserDB):
     db.add(restaurant)
     db.flush()
 
-    # Add menu items with varying nutritional info
     items = [
         MenuItem(
-            id="item_001",
-            restaurant_id="rest_001",
+            id="item_basic_salad",
+            restaurant_id=restaurant.id,
             name="Grilled Chicken Salad",
+            description="Lean protein with greens",
             calories=350.0,
             price=12.99,
         ),
         MenuItem(
-            id="item_002",
-            restaurant_id="rest_001",
+            id="item_basic_quinoa",
+            restaurant_id=restaurant.id,
             name="Quinoa Bowl",
+            description="Plant based protein option",
             calories=420.0,
             price=10.50,
         ),
         MenuItem(
-            id="item_003",
-            restaurant_id="rest_001",
+            id="item_basic_blank",
+            restaurant_id=restaurant.id,
             name="Mystery Dish",
+            description="Chef special",
             calories=None,
             price=None,
         ),
     ]
-    for item in items:
-        db.add(item)
-
+    db.add_all(items)
     db.commit()
-    return restaurant, items
+    yield {"restaurant": restaurant, "items": items}
 
 
 def test_recommend_meal_happy_path(client, test_user, test_restaurant_data):
-    """Test successful meal recommendation request."""
+    """Ensure the endpoint returns LLM-formatted items for an authenticated user."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": test_user.id, "constraints": {}},
+        headers=_auth_headers(test_user),
+        json={},
     )
 
     assert response.status_code == 200
     data = response.json()
 
-    assert "user_id" in data
-    assert data["user_id"] == test_user.id
-    assert "recommendations" in data
-    assert isinstance(data["recommendations"], list)
-    assert len(data["recommendations"]) > 0
+    assert "items" in data
+    assert isinstance(data["items"], list)
+    assert len(data["items"]) > 0
 
-    # Check first recommendation structure
-    first_rec = data["recommendations"][0]
-    assert "menu_item_id" in first_rec
-    assert "score" in first_rec
-    assert "explanation" in first_rec
-    assert isinstance(first_rec["score"], float)
-    assert isinstance(first_rec["explanation"], str)
-    assert len(first_rec["explanation"]) > 0
+    first_item = data["items"][0]
+    assert {"item_id", "name", "score", "explanation"} <= set(first_item)
+    assert isinstance(first_item["score"], float)
+    assert 0.0 <= first_item["score"] <= 1.0
 
 
-def test_recommend_meal_user_not_found(client):
-    """Test recommendation request with non-existent user."""
+def test_recommend_meal_requires_auth(client):
+    """Requests without authentication should be rejected."""
+    response = client.post("/api/recommend/meal", json={})
+    assert response.status_code == 403
+
+
+def test_recommend_meal_returns_sorted_scores(client, test_user, test_restaurant_data):
+    """Scores should be returned in descending order."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": "nonexistent_user", "constraints": {}},
-    )
-
-    assert response.status_code == 404
-    assert "User not found" in response.json()["detail"]
-
-
-def test_recommend_meal_scoring(client, test_user, test_restaurant_data):
-    """Test that items with more nutritional info score higher."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={"user_id": test_user.id, "constraints": {}},
+        headers=_auth_headers(test_user),
+        json={},
     )
 
     assert response.status_code == 200
-    recommendations = response.json()["recommendations"]
-
-    # Items with both calories and price should score highest (1.0)
-    # Items with only calories should score 0.8
-    # Items with neither should score 0.5
-    scores = [rec["score"] for rec in recommendations]
-
-    # First two items have both calories and price, should score 1.0
-    assert scores[0] == pytest.approx(1.0)
-
-    # Mystery dish with no nutrition info should score lowest
-    mystery_item = next(
-        (rec for rec in recommendations if rec["menu_item_id"] == "item_003"), None
-    )
-    if mystery_item:
-        assert mystery_item["score"] == 0.5
+    scores = [item["score"] for item in response.json()["items"]]
+    assert scores == sorted(scores, reverse=True)
 
 
-def test_recommend_meal_empty_constraints(client, test_user, test_restaurant_data):
-    """Test recommendation with empty constraints."""
+def test_recommend_meal_price_filter_excludes_high_cost_items(
+    client, test_user, test_restaurant_data
+):
+    """Applying a strict price filter should eliminate items outside the range."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": test_user.id},
+        headers=_auth_headers(test_user),
+        json={"mode": "baseline", "filters": {"price_range": "$"}},
     )
 
     assert response.status_code == 200
-    data = response.json()
-    assert len(data["recommendations"]) > 0
+    items = response.json()["items"]
+    assert len(items) == 1
+    assert items[0]["item_id"] == "item_basic_blank"
 
 
-def test_recommend_meal_limit_top_10(
+def test_recommend_meal_limit_top_results(
     client, db: Session, test_user, test_restaurant_data
 ):
-    """Test that recommendations are limited to top 10."""
-    # Add more menu items to test limit
-    for i in range(15):
-        item = MenuItem(
-            id=f"extra_item_{i}",
-            restaurant_id="rest_001",
-            name=f"Extra Item {i}",
-            calories=300.0 + i * 10,
-            price=8.0 + i,
+    """The endpoint should cap the number of returned items."""
+    # Add additional menu items to exceed the max results threshold.
+    for i in range(12):
+        db.add(
+            MenuItem(
+                id=f"item_extra_{i}",
+                restaurant_id="rest_basic",
+                name=f"Extra Item {i}",
+                description="Additional option",
+                calories=300.0 + i,
+                price=11.0 + i,
+            )
         )
-        db.add(item)
     db.commit()
 
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": test_user.id, "constraints": {}},
+        headers=_auth_headers(test_user),
+        json={},
     )
 
     assert response.status_code == 200
-    recommendations = response.json()["recommendations"]
-    assert len(recommendations) <= 10
+    assert len(response.json()["items"]) <= 5

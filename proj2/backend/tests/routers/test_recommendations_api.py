@@ -1,4 +1,6 @@
-"""Unit tests for meal recommendation API router."""
+"""Integration tests for the LLM-enabled recommendation API."""
+
+from collections.abc import Iterator
 
 import pytest
 from sqlalchemy.orm import Session
@@ -15,30 +17,35 @@ from src.eatsential.models.models import (
     UserAllergyDB,
     UserDB,
 )
+from src.eatsential.utils.auth_util import create_access_token
+
+
+def _auth_headers(user: UserDB) -> dict[str, str]:
+    token = create_access_token(data={"sub": user.id})
+    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture
-def test_user_rec_api(db: Session) -> UserDB:
-    """Create a test user for API tests."""
+def api_user(db: Session) -> Iterator[UserDB]:
+    """Create a baseline user for API recommendation tests."""
     user = UserDB(
-        id="test_user_api_rec",
-        email="test_api_rec@example.com",
-        username="testuser_api_rec",
-        password_hash="hashed_password",
+        id="rec_api_user",
+        email="rec_api@example.com",
+        username="rec_api",
+        password_hash="hashed",
         email_verified=True,
     )
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+    yield user
 
 
 @pytest.fixture
-def test_user_with_profile_api(db: Session, test_user_rec_api: UserDB):
-    """Create test user with health profile for API tests."""
-    # Create allergen
+def api_user_with_profile(db: Session, api_user: UserDB) -> Iterator[UserDB]:
+    """Attach a health profile with allergies and preferences to the base user."""
     allergen = AllergenDB(
-        id="allergen_gluten_api",
+        id="rec_api_allergen",
         name="Gluten",
         category="Grains",
         description="Gluten allergen",
@@ -46,47 +53,43 @@ def test_user_with_profile_api(db: Session, test_user_rec_api: UserDB):
     db.add(allergen)
     db.flush()
 
-    # Create health profile
-    health_profile = HealthProfileDB(
-        id="health_profile_api",
-        user_id=test_user_rec_api.id,
+    profile = HealthProfileDB(
+        id="rec_api_profile",
+        user_id=api_user.id,
         height_cm=180.0,
         weight_kg=75.0,
         activity_level=ActivityLevel.ACTIVE,
         metabolic_rate=2200,
     )
-    db.add(health_profile)
+    db.add(profile)
     db.flush()
 
-    # Add allergy
-    allergy = UserAllergyDB(
-        id="allergy_api",
-        health_profile_id=health_profile.id,
-        allergen_id=allergen.id,
-        severity=AllergySeverity.MODERATE,
+    db.add(
+        UserAllergyDB(
+            id="rec_api_user_allergy",
+            health_profile_id=profile.id,
+            allergen_id=allergen.id,
+            severity=AllergySeverity.MODERATE,
+        )
     )
-    db.add(allergy)
-
-    # Add dietary preference
-    preference = DietaryPreferenceDB(
-        id="pref_api",
-        health_profile_id=health_profile.id,
-        preference_type=PreferenceType.DIET,
-        preference_name="Vegan",
-        is_strict=True,
+    db.add(
+        DietaryPreferenceDB(
+            id="rec_api_preference",
+            health_profile_id=profile.id,
+            preference_type=PreferenceType.DIET,
+            preference_name="Vegan",
+            is_strict=True,
+        )
     )
-    db.add(preference)
-
     db.commit()
-    return test_user_rec_api, health_profile
+    yield api_user
 
 
 @pytest.fixture
-def test_menu_items_api(db: Session):
-    """Create test restaurants and menu items for API tests."""
-    # Create restaurants
+def api_menu_items(db: Session) -> Iterator[list[MenuItem]]:
+    """Provision a sample restaurant menu for recommendation tests."""
     restaurant = Restaurant(
-        id="rest_api_healthy",
+        id="rec_api_restaurant",
         name="API Test Restaurant",
         cuisine="Mixed",
         is_active=True,
@@ -94,254 +97,88 @@ def test_menu_items_api(db: Session):
     db.add(restaurant)
     db.flush()
 
-    # Add menu items
     items = [
         MenuItem(
-            id="item_api_1",
-            restaurant_id="rest_api_healthy",
+            id="rec_api_item_light",
+            restaurant_id=restaurant.id,
             name="Light Salad",
             description="Fresh garden salad",
             calories=250.0,
             price=10.99,
         ),
         MenuItem(
-            id="item_api_2",
-            restaurant_id="rest_api_healthy",
+            id="rec_api_item_protein",
+            restaurant_id=restaurant.id,
             name="Protein Bowl",
             description="High protein bowl",
             calories=500.0,
             price=14.99,
         ),
         MenuItem(
-            id="item_api_3",
-            restaurant_id="rest_api_healthy",
+            id="rec_api_item_heavy",
+            restaurant_id=restaurant.id,
             name="Heavy Meal",
             description="Large calorie meal",
             calories=1000.0,
             price=19.99,
         ),
     ]
-    for item in items:
-        db.add(item)
-
+    db.add_all(items)
     db.commit()
-    return items
+    yield items
 
 
-def test_recommend_meal_api_success(client, test_user_rec_api, test_menu_items_api):
-    """Test successful meal recommendation API request."""
+def test_recommend_meal_api_success(client, api_user, api_menu_items):
+    """Ensure the endpoint returns results for an authenticated request."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": test_user_rec_api.id},
+        headers=_auth_headers(api_user),
+        json={},
     )
 
     assert response.status_code == 200
-    data = response.json()
-
-    assert "user_id" in data
-    assert data["user_id"] == test_user_rec_api.id
-    assert "recommendations" in data
-    assert isinstance(data["recommendations"], list)
-    assert len(data["recommendations"]) > 0
-
-    # Verify recommendation structure
-    first_rec = data["recommendations"][0]
-    assert "menu_item_id" in first_rec
-    assert "score" in first_rec
-    assert "explanation" in first_rec
-    assert isinstance(first_rec["score"], float)
-    assert 0 <= first_rec["score"] <= 1
-    assert isinstance(first_rec["explanation"], str)
-    assert len(first_rec["explanation"]) > 0
+    payload = response.json()
+    assert "items" in payload
+    assert len(payload["items"]) > 0
 
 
 def test_recommend_meal_api_with_health_profile(
-    client, test_user_with_profile_api, test_menu_items_api
+    client, api_user_with_profile, api_menu_items
 ):
-    """Test meal recommendation for user with health profile."""
-    test_user, _ = test_user_with_profile_api
+    """Verify recommendations remain sorted when user health context is present."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": test_user.id},
+        headers=_auth_headers(api_user_with_profile),
+        json={},
     )
 
     assert response.status_code == 200
-    data = response.json()
-
-    assert data["user_id"] == test_user.id
-    assert len(data["recommendations"]) > 0
-
-    # Recommendations should be sorted by score
-    scores = [rec["score"] for rec in data["recommendations"]]
-    assert scores == sorted(scores, reverse=True)
+    items = response.json()["items"]
+    assert items
+    assert items == sorted(items, key=lambda item: item["score"], reverse=True)
 
 
-def test_recommend_meal_api_with_constraints(
-    client, test_user_rec_api, test_menu_items_api
-):
-    """Test meal recommendation with constraints."""
+def test_recommend_meal_api_price_filter(client, api_user, api_menu_items):
+    """Ensure price filters exclude higher-cost items when using the baseline mode."""
     response = client.post(
         "/api/recommend/meal",
-        json={
-            "user_id": test_user_rec_api.id,
-            "constraints": {"max_calories": 600, "max_price": 15.00},
-        },
+        headers=_auth_headers(api_user),
+        json={"mode": "baseline", "filters": {"price_range": "$"}},
     )
 
     assert response.status_code == 200
-    data = response.json()
-
-    assert len(data["recommendations"]) > 0
-    # Should exclude the heavy meal with 1000 calories
-    menu_item_ids = [rec["menu_item_id"] for rec in data["recommendations"]]
-    assert "item_api_3" not in menu_item_ids
+    assert response.json()["items"] == []
 
 
-def test_recommend_meal_api_user_not_found(client, test_menu_items_api):
-    """Test recommendation request with non-existent user."""
+def test_recommend_meal_api_cuisine_filter(client, api_user, api_menu_items):
+    """Confirm cuisine filters keep relevant results."""
     response = client.post(
         "/api/recommend/meal",
-        json={"user_id": "nonexistent_user"},
-    )
-
-    assert response.status_code == 404
-    assert "User not found" in response.json()["detail"]
-
-
-def test_recommend_meal_api_empty_constraints(
-    client, test_user_rec_api, test_menu_items_api
-):
-    """Test recommendation with empty constraints object."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={"user_id": test_user_rec_api.id, "constraints": {}},
+        headers=_auth_headers(api_user),
+        json={"filters": {"cuisine": ["mixed"]}},
     )
 
     assert response.status_code == 200
-    data = response.json()
-    assert len(data["recommendations"]) > 0
-
-
-def test_recommend_meal_api_no_constraints(
-    client, test_user_rec_api, test_menu_items_api
-):
-    """Test recommendation without constraints field."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={"user_id": test_user_rec_api.id},
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data["recommendations"]) > 0
-
-
-def test_recommend_meal_api_calorie_constraint_only(
-    client, test_user_rec_api, test_menu_items_api
-):
-    """Test recommendation with only calorie constraint."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={
-            "user_id": test_user_rec_api.id,
-            "constraints": {"max_calories": 400},
-        },
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    # Should only include Light Salad (250 cal)
-    assert len(data["recommendations"]) >= 1
-    menu_item_ids = [rec["menu_item_id"] for rec in data["recommendations"]]
-    assert "item_api_1" in menu_item_ids
-    assert "item_api_2" not in menu_item_ids  # 500 cal
-    assert "item_api_3" not in menu_item_ids  # 1000 cal
-
-
-def test_recommend_meal_api_price_constraint_only(
-    client, test_user_rec_api, test_menu_items_api
-):
-    """Test recommendation with only price constraint."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={
-            "user_id": test_user_rec_api.id,
-            "constraints": {"max_price": 12.00},
-        },
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    # Should only include Light Salad (10.99)
-    assert len(data["recommendations"]) >= 1
-    menu_item_ids = [rec["menu_item_id"] for rec in data["recommendations"]]
-    assert "item_api_1" in menu_item_ids
-    assert "item_api_2" not in menu_item_ids  # 14.99
-    assert "item_api_3" not in menu_item_ids  # 19.99
-
-
-def test_recommend_meal_api_invalid_request_missing_user_id(client):
-    """Test recommendation request without user_id."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={"constraints": {}},
-    )
-
-    assert response.status_code == 422  # Validation error
-
-
-def test_recommend_meal_api_response_limit(
-    client, db: Session, test_user_rec_api, test_menu_items_api
-):
-    """Test that API returns at most 10 recommendations."""
-    # Add more menu items to test limit
-    restaurant_id = "rest_api_healthy"
-    for i in range(15):
-        item = MenuItem(
-            id=f"item_api_extra_{i}",
-            restaurant_id=restaurant_id,
-            name=f"Extra Item {i}",
-            calories=300.0 + i * 10,
-            price=10.0 + i,
-        )
-        db.add(item)
-    db.commit()
-
-    response = client.post(
-        "/api/recommend/meal",
-        json={"user_id": test_user_rec_api.id},
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data["recommendations"]) <= 10
-
-
-def test_recommend_meal_api_no_menu_items(client, test_user_rec_api):
-    """Test recommendation when no menu items exist."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={"user_id": test_user_rec_api.id},
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert data["recommendations"] == []
-
-
-def test_recommend_meal_api_explanation_contains_restaurant(
-    client, test_user_rec_api, test_menu_items_api
-):
-    """Test that explanation includes restaurant name."""
-    response = client.post(
-        "/api/recommend/meal",
-        json={"user_id": test_user_rec_api.id},
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data["recommendations"]) > 0
-
-    # All explanations should contain restaurant name
-    for rec in data["recommendations"]:
-        assert "API Test Restaurant" in rec["explanation"]
+    items = response.json()["items"]
+    assert items
+    assert all(isinstance(item["explanation"], str) for item in items)

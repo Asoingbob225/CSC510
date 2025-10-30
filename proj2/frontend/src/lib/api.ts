@@ -802,18 +802,13 @@ export type MealRecommendationResponse =
 // Meal Recommendation API
 export const recommendationApi = {
   getMealRecommendations: async (
-    userId: string,
+    _userId: string,
     options?: RecommendationQueryOptions
   ): Promise<MealRecommendationResponse> => {
     const payload: Record<string, unknown> = {};
 
-    if (userId) {
-      payload.user_id = userId;
-    }
-
-    if (options?.mode) {
-      payload.mode = options.mode;
-    }
+    // Default to LLM mode unless explicitly overridden
+    payload.mode = options?.mode ?? 'llm';
 
     if (options?.filters) {
       payload.filters = options.filters;
