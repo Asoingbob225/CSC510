@@ -1,110 +1,76 @@
-"""Meal recommendation API router with health profile integration.
+"""Recommendation API endpoints for meals and restaurants."""
 
-This router provides the /api/recommend/meal endpoint that:
-- Accepts user ID and contextual data
-- Queries the recommendation service with user's health profile
-- Returns personalized meal suggestions with explanations
+from __future__ import annotations
 
-Future: Will integrate with LLM/RAG pipeline for advanced recommendations.
-"""
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
-from ..schemas.schemas import RecommendationRequest, RecommendationResponse
-from ..services.recommend_service import RecommendService
+from ..models.models import UserDB
+from ..schemas.recommendation_schemas import (
+    RecommendationRequest,
+    RecommendationResponse,
+)
+from ..services.auth_service import get_current_user
+from ..services.engine import RecommendationService
 
 router = APIRouter(prefix="/recommend", tags=["recommendations"])
 
 
 @router.post(
-    "/meal", response_model=RecommendationResponse, status_code=status.HTTP_200_OK
+    "/meal",
+    response_model=RecommendationResponse,
+    status_code=status.HTTP_200_OK,
 )
 def recommend_meal(
     request: RecommendationRequest,
+    current_user: Annotated[UserDB, Depends(get_current_user)],
     db: Session = Depends(get_db),
-):
-    """Generate personalized meal recommendations based on user profile and constraints.
-
-    This endpoint queries the user's health profile, dietary preferences, and allergies
-    to provide personalized meal suggestions. The recommendation engine applies scoring
-    based on nutritional fit and user context.
-
-    Future enhancement: Will integrate LLM/RAG pipeline for semantic matching and
-    advanced recommendation logic.
-
-    Args:
-        request: RecommendationRequest containing:
-            - user_id: User to generate recommendations for
-            - constraints: Optional dict with filters (max_calories, max_price, etc.)
-        db: Database session dependency
-
-    Returns:
-        RecommendationResponse with:
-            - user_id: User the recommendations are for
-            - recommendations: List of RecommendationItem objects with:
-                - menu_item_id: ID of recommended menu item
-                - score: Recommendation score (0-1)
-                - explanation: Human-readable explanation
-
-    Raises:
-        HTTPException:
-            - 404: User not found
-            - 500: Internal server error during recommendation generation
-
-    Example:
-        Request:
-        ```json
-        {
-            "user_id": "user_123",
-            "constraints": {
-                "max_calories": 600,
-                "max_price": 15.00
-            }
-        }
-        ```
-
-        Response:
-        ```json
-        {
-            "user_id": "user_123",
-            "recommendations": [
-                {
-                    "menu_item_id": "item_456",
-                    "score": 0.95,
-                    "explanation": "Restaurant: Healthy Eats, 450 cal, $12.50"
-                }
-            ]
-        }
-        ```
-
-    """
-    # Initialize recommendation service
-    service = RecommendService(db)
+) -> RecommendationResponse:
+    """Return personalized meal recommendations for the authenticated user."""
+    service = RecommendationService(db)
 
     try:
-        # Generate recommendations
-        recommendations = service.recommend_meals(
-            user_id=request.user_id,
-            constraints=request.constraints or {},
-            limit=10,
-        )
-
-        return RecommendationResponse(
-            user_id=request.user_id,
-            recommendations=recommendations,
-        )
-
-    except ValueError as e:
-        # User not found or invalid input
+        return service.get_meal_recommendations(user=current_user, request=request)
+    except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        )
-    except Exception as e:
-        # Unexpected error during recommendation generation
+            detail=str(exc),
+        ) from exc
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error generating recommendations: {e!s}",
+            detail=f"Unable to generate meal recommendations: {exc!s}",
+        ) from exc
+
+
+@router.post(
+    "/restaurant",
+    response_model=RecommendationResponse,
+    status_code=status.HTTP_200_OK,
+)
+def recommend_restaurant(
+    request: RecommendationRequest,
+    current_user: Annotated[UserDB, Depends(get_current_user)],
+    db: Session = Depends(get_db),
+) -> RecommendationResponse:
+    """Return personalized restaurant recommendations for the authenticated user."""
+    service = RecommendationService(db)
+
+    try:
+        return service.get_restaurant_recommendations(
+            user=current_user,
+            request=request,
         )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unable to generate restaurant recommendations: {exc!s}",
+        ) from exc

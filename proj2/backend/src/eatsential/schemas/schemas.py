@@ -746,18 +746,18 @@ class WellnessLogsResponse(BaseModel):
     total_count: int
 
 
-# --- Recommendation Schemas (BE-S2-008) ---
+# --- Legacy Recommendation Schemas (used by older services/tests) ---
 
 
 class RecommendationRequest(BaseModel):
-    """Schema for recommendation request (BE-S2-005)."""
+    """Schema for legacy recommendation request."""
 
     user_id: str
     constraints: Optional[dict] = None
 
 
 class RecommendationItem(BaseModel):
-    """A single recommended menu item with score and short explanation."""
+    """A single legacy recommendation item with score and explanation."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -767,7 +767,7 @@ class RecommendationItem(BaseModel):
 
 
 class RecommendationResponse(BaseModel):
-    """Schema for recommendation API responses (list of RecommendationItem)."""
+    """Legacy recommendation response containing a list of items."""
 
     model_config = ConfigDict(from_attributes=True)
 
