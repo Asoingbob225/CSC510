@@ -1,15 +1,16 @@
-"""Unit tests for Recommendation schema with explanation field (BE-S2-008)."""
+"""Unit tests for the modern recommendation schema."""
 
-from src.eatsential.schemas.schemas import (
-    RecommendationItem,
+from src.eatsential.schemas.recommendation_schemas import (
     RecommendationResponse,
+    RecommendedItem,
 )
 
 
-def test_recommendation_item_has_explanation_field():
-    """Ensure RecommendationItem includes an explanation field."""
-    item = RecommendationItem(
-        menu_item_id="m_1",
+def test_recommended_item_has_explanation_field():
+    """Ensure RecommendedItem includes an explanation string."""
+    item = RecommendedItem(
+        item_id="m_1",
+        name="Protein Power Bowl",
         score=0.87,
         explanation="High protein, low allergen risk",
     )
@@ -19,26 +20,28 @@ def test_recommendation_item_has_explanation_field():
     assert item.explanation == "High protein, low allergen risk"
 
 
-def test_recommendation_response_contains_explanation():
-    """Ensure RecommendationResponse and items include an explanation field."""
-    item = RecommendationItem(
-        menu_item_id="m_1",
+def test_recommendation_response_contains_items():
+    """Ensure RecommendationResponse wraps recommended items with explanations."""
+    item = RecommendedItem(
+        item_id="m_1",
+        name="Protein Power Bowl",
         score=0.87,
         explanation="High protein, low allergen risk",
     )
-    resp = RecommendationResponse(user_id="u_1", recommendations=[item])
+    resp = RecommendationResponse(items=[item])
 
-    assert isinstance(resp.recommendations, list)
-    assert len(resp.recommendations) == 1
-    assert resp.recommendations[0].explanation
-    assert isinstance(resp.recommendations[0].explanation, str)
-    assert resp.recommendations[0].explanation == "High protein, low allergen risk"
+    assert isinstance(resp.items, list)
+    assert len(resp.items) == 1
+    assert resp.items[0].explanation
+    assert isinstance(resp.items[0].explanation, str)
+    assert resp.items[0].explanation == "High protein, low allergen risk"
 
 
-def test_recommendation_item_explanation_non_empty():
+def test_recommended_item_explanation_non_empty():
     """Ensure explanation is a non-empty string."""
-    item = RecommendationItem(
-        menu_item_id="m_2",
+    item = RecommendedItem(
+        item_id="m_2",
+        name="Gut Friendly Salad",
         score=0.92,
         explanation="Matches your dietary preferences",
     )
