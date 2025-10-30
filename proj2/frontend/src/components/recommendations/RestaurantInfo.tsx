@@ -11,12 +11,12 @@ interface RestaurantInfoProps {
 export function RestaurantInfo({ restaurant, menuItem }: RestaurantInfoProps) {
   return (
     <Card className="mt-4">
-      <CardContent className="pt-4 space-y-3">
+      <CardContent className="space-y-3 pt-4">
         {/* Restaurant Name and Status */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             <Utensils className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-lg">{restaurant.name}</h3>
+            <h3 className="text-lg font-semibold">{restaurant.name}</h3>
           </div>
           {restaurant.is_active ? (
             <Badge variant="default" className="bg-green-500">
@@ -38,21 +38,21 @@ export function RestaurantInfo({ restaurant, menuItem }: RestaurantInfoProps) {
         {/* Address */}
         {restaurant.address && (
           <div className="flex items-start gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" />
             <span>{restaurant.address}</span>
           </div>
         )}
 
         {/* Menu Item Details */}
         {menuItem && (
-          <div className="pt-3 border-t space-y-2">
+          <div className="space-y-2 border-t pt-3">
             <h4 className="font-medium">{menuItem.name}</h4>
-            
+
             {menuItem.description && (
               <p className="text-sm text-muted-foreground">{menuItem.description}</p>
             )}
 
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {/* Price */}
               {menuItem.price !== undefined && menuItem.price !== null && (
                 <Badge variant="outline" className="flex items-center gap-1">
@@ -63,9 +63,7 @@ export function RestaurantInfo({ restaurant, menuItem }: RestaurantInfoProps) {
 
               {/* Calories */}
               {menuItem.calories !== undefined && menuItem.calories !== null && (
-                <Badge variant="outline">
-                  {Math.round(menuItem.calories)} cal
-                </Badge>
+                <Badge variant="outline">{Math.round(menuItem.calories)} cal</Badge>
               )}
             </div>
           </div>

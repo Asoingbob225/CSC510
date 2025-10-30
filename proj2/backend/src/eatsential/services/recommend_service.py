@@ -143,7 +143,7 @@ class RecommendService:
         recommendations = []
         for item in menu_items:
             score, explanation = self._score_menu_item(item, user_context)
-            
+
             # Create menu item info
             menu_item_info = MenuItemInfo(
                 id=item.id,
@@ -152,7 +152,7 @@ class RecommendService:
                 price=item.price,
                 calories=item.calories,
             )
-            
+
             # Create restaurant info
             restaurant_info = RestaurantInfo(
                 id=item.restaurant.id,
@@ -160,7 +160,7 @@ class RecommendService:
                 cuisine=item.restaurant.cuisine,
                 is_active=item.restaurant.is_active,
             )
-            
+
             recommendations.append(
                 RecommendationItem(
                     menu_item_id=item.id,
