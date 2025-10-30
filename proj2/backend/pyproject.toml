@@ -17,6 +17,7 @@ dependencies = [
     "python-multipart>=0.0.9", # For form data handling
     "bcrypt>=4.0.1", # For password hashing
     "pyjwt>=2.10.1",
+    "google-genai>=1.47.0",
 ]
 
 [project.optional-dependencies]
@@ -32,6 +33,7 @@ dev = [
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
     "coverage>=7.6.10",
+    "pyright>=1.1.407",
 ]
 test = [
     "pytest>=7.0.0",

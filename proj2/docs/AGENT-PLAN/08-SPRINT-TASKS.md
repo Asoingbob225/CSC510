@@ -107,11 +107,11 @@ This document tracks development tasks across all milestones, organized by modul
 | --------------------------------------------------------- | -------------------------------------------- | -------- | ----------- | ------- |
 | [#109](https://github.com/Asoingbob225/CSC510/issues/109) | test: Recommendation Algorithm Tests         | P1       | ✅ Complete | PR #123 |
 | [#108](https://github.com/Asoingbob225/CSC510/issues/108) | subtask(frontend): Recommendation Display UI | P0       | 📝 To Do    | -       |
-| [#107](https://github.com/Asoingbob225/CSC510/issues/107) | subtask(backend): Recommendation API         | P0       | 📝 To Do    | -       |
+| [#107](https://github.com/Asoingbob225/CSC510/issues/107) | subtask(backend): Recommendation API         | P0       | ✅ Complete | PR #TBD |
 | [#106](https://github.com/Asoingbob225/CSC510/issues/106) | subtask(backend): Basic Scoring Algorithm    | P0       | 📝 To Do    | -       |
 | [#105](https://github.com/Asoingbob225/CSC510/issues/105) | feat: Basic Recommendation Engine (M4)       | P0       | 📝 To Do    | Epic    |
 
-**Progress**: 1/5 issues complete (20%)
+**Progress**: 2/5 issues complete (40%)
 
 ---
 
@@ -1154,9 +1154,9 @@ Notes:
 
 ### Task Status Summary (M4)
 
-- Total Issues (M4): 14 (8 open, 6 closed)
-- Open: #105, #106, #107, #108, #109, #81, #82, #83
-- Closed to date: #76, #77, #78, #79, #80, #129
+- Total Issues (M4): 14 (7 open, 7 closed)
+- Open: #105, #106, #108, #109, #81, #82, #83
+- Closed to date: #76, #77, #78, #79, #80, #107, #129
 
 ### Carryover From v0.3 (to include in M4)
 
@@ -1231,7 +1231,7 @@ Constraints and Targets:
 
 #### BE-04-003: Recommendation API Endpoint(s)
 
-**Status**: ⏳ Not Started  
+**Status**: ✅ Complete  
 **Dependencies**: BE-04-001, BE-04-002  
 **Module**: `backend/src/eatsential/routers/recommend`  
 **Priority**: P0
@@ -1243,9 +1243,16 @@ Constraints and Targets:
 
 **Functional Requirements**:
 
-- Accepts user context or infers from auth’d user
+- Accepts legacy request payload (user_id + constraints)
 - Returns ranked items with `score` and `explanation`
-- Supports filters (price range, cuisine, distance when available)
+- Supports filters (price range, cuisine) via legacy scorer; LLM path gated by config
+
+**Deliverables**:
+
+- FastAPI router reconciled with legacy schema and new engine
+- Unit coverage for Gemini client integration and fallback path
+- Pyright/Ruff clean for new service code
+- PR: #TBD (branch `feat/iss106-recsys`)
 
 **Related**: [#107](https://github.com/Asoingbob225/CSC510/issues/107), [#79](https://github.com/Asoingbob225/CSC510/issues/79) ✅
 
