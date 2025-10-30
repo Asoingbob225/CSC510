@@ -1,6 +1,7 @@
 # Database Design
 
 **⚠️ Note**: This is a quick reference for AI agents. For detailed database schema and design decisions, see:
+
 - **Comprehensive Database Docs**: `/docs/2-DESIGN/database-design.md`
 - **Actual Schema**: `/backend/src/eatsential/models/models.py`
 - **Migrations**: `/backend/alembic/versions/`

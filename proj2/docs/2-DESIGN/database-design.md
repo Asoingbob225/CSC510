@@ -7,6 +7,7 @@
 **Database:** PostgreSQL 15+ (Production), SQLite 3 (Development)
 
 **Version 2.0 Updates**:
+
 - Added 7 Mental Wellness tables (Section 9)
 - Added health tagging system for food categorization
 - Added AI chat session tracking
@@ -1132,7 +1133,7 @@ CREATE INDEX idx_ai_sessions_started ON health.ai_chat_sessions(started_at DESC)
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Example: Encrypted notes column
-ALTER TABLE health.mood_logs 
+ALTER TABLE health.mood_logs
 ADD COLUMN encrypted_notes BYTEA;
 
 -- Encryption function
@@ -1169,27 +1170,28 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 ### Mental Wellness Tables (Planned - v2.0)
 
-| Table                    | Row Size  | Daily Growth | 1 Year Size |
-| ------------------------ | --------- | ------------ | ----------- |
-| mental_wellness_goals    | 300 bytes | 500          | 55 MB       |
-| mood_logs                | 250 bytes | 10,000       | 913 MB      |
-| stress_logs              | 350 bytes | 8,000        | 1.02 GB     |
-| sleep_logs               | 200 bytes | 5,000        | 365 MB      |
-| health_tags              | 400 bytes | 10 (static)  | 1 MB        |
-| food_tags                | 150 bytes | 1,000        | 55 MB       |
-| ai_chat_sessions         | 500 bytes | 2,000        | 365 MB      |
-| **Subtotal**             | -         | -            | **~2.8 GB** |
+| Table                 | Row Size  | Daily Growth | 1 Year Size |
+| --------------------- | --------- | ------------ | ----------- |
+| mental_wellness_goals | 300 bytes | 500          | 55 MB       |
+| mood_logs             | 250 bytes | 10,000       | 913 MB      |
+| stress_logs           | 350 bytes | 8,000        | 1.02 GB     |
+| sleep_logs            | 200 bytes | 5,000        | 365 MB      |
+| health_tags           | 400 bytes | 10 (static)  | 1 MB        |
+| food_tags             | 150 bytes | 1,000        | 55 MB       |
+| ai_chat_sessions      | 500 bytes | 2,000        | 365 MB      |
+| **Subtotal**          | -         | -            | **~2.8 GB** |
 
 ### Total Database Size (Physical + Mental)
 
-| Category          | Size     |
-| ----------------- | -------- |
-| Physical Health   | ~37 GB   |
-| Mental Wellness   | ~2.8 GB  |
-| Indexes (~30%)    | ~12 GB   |
-| **Total (1 year)**| **~52 GB** |
+| Category           | Size       |
+| ------------------ | ---------- |
+| Physical Health    | ~37 GB     |
+| Mental Wellness    | ~2.8 GB    |
+| Indexes (~30%)     | ~12 GB     |
+| **Total (1 year)** | **~52 GB** |
 
 **Notes**:
+
 - Mental Wellness tables assume 50% user adoption rate
 - mood_logs, stress_logs: Average 1-2 entries per active user per day
 - sleep_logs: 1 entry per user per day

@@ -141,52 +141,52 @@ graph LR
 | **NFR-009** | Real-time Updates      | -        | WebSocket         | `realtime.updates`   | PT-006           | ○      |
 | **NFR-010** | Data Retention 7yr     | -        | Archive Service   | `data.retention`     | ST-016           | ○      |
 
-### 3.6 Mental Wellness Management *(NEW FEATURE)*
+### 3.6 Mental Wellness Management _(NEW FEATURE)_
 
-| Req ID      | Requirement                      | Use Case | Design Component         | Code Module                  | Test Cases | Status        |
-| ----------- | -------------------------------- | -------- | ------------------------ | ---------------------------- | ---------- | ------------- |
-| **FR-076**  | Mental Wellness Goal Setting     | UC-021   | Mental Wellness Service  | `mental.goals`               | TC-023, TC-024 | ○ Not Implemented |
-| **FR-077**  | Mood Tracking                    | UC-022   | Mood Tracking Service    | `mood.logging`               | TC-025, TC-026 | ○ Not Implemented |
-| **FR-078**  | Stress Level Monitoring          | UC-023   | Stress Tracking Service  | `stress.logging`             | TC-027, TC-028 | ○ Not Implemented |
-| **FR-079**  | Sleep Quality Tracking           | UC-024   | Sleep Tracking Service   | `sleep.logging`              | TC-029, TC-030 | ○ Not Implemented |
-| **FR-080**  | Pattern Identification           | UC-022, UC-026 | Analytics Service  | `mental.patterns`            | TC-026, TC-028 | ○ Not Implemented |
-| **FR-081**  | Wellness Pattern Detection       | UC-023   | Analytics Service        | `mental.analysis`            | TC-028     | ○ Not Implemented |
-| **FR-082**  | Mental Wellness Dashboard        | UC-025   | Dashboard Service        | `mental.dashboard`           | TC-031     | ○ Not Implemented |
-| **FR-083**  | Mental-Physical Correlation      | UC-024   | Analytics Service        | `mental.correlation`         | TC-030     | ○ Not Implemented |
-| **FR-084**  | Mindful Eating Reminders         | -        | Notification Service     | `mental.reminders`           | -          | ○ Not Implemented |
-| **FR-085**  | Mental Wellness Progress Reports | -        | Reporting Service        | `mental.reports`             | -          | ○ Not Implemented |
-| **NFR-001** | Mental Dashboard <2s *(Enhanced)* | -       | Dashboard Service        | `mental.performance`         | TC-031     | ○ Not Implemented |
-| **NFR-007A**| Mental Health Data Privacy       | -        | Encryption Service       | `security.mental_data`       | TC-040     | ○ Not Implemented |
-| **NFR-022** | Analytics Accuracy (p<0.05)      | UC-027, UC-031 | Analytics Engine   | `analytics.validation`       | TC-033, TC-038 | ○ Not Implemented |
-| **NFR-023** | Data Retention & Deletion        | -        | Data Management Service  | `data.deletion`              | TC-040     | ○ Not Implemented |
+| Req ID       | Requirement                       | Use Case       | Design Component        | Code Module            | Test Cases     | Status            |
+| ------------ | --------------------------------- | -------------- | ----------------------- | ---------------------- | -------------- | ----------------- |
+| **FR-076**   | Mental Wellness Goal Setting      | UC-021         | Mental Wellness Service | `mental.goals`         | TC-023, TC-024 | ○ Not Implemented |
+| **FR-077**   | Mood Tracking                     | UC-022         | Mood Tracking Service   | `mood.logging`         | TC-025, TC-026 | ○ Not Implemented |
+| **FR-078**   | Stress Level Monitoring           | UC-023         | Stress Tracking Service | `stress.logging`       | TC-027, TC-028 | ○ Not Implemented |
+| **FR-079**   | Sleep Quality Tracking            | UC-024         | Sleep Tracking Service  | `sleep.logging`        | TC-029, TC-030 | ○ Not Implemented |
+| **FR-080**   | Pattern Identification            | UC-022, UC-026 | Analytics Service       | `mental.patterns`      | TC-026, TC-028 | ○ Not Implemented |
+| **FR-081**   | Wellness Pattern Detection        | UC-023         | Analytics Service       | `mental.analysis`      | TC-028         | ○ Not Implemented |
+| **FR-082**   | Mental Wellness Dashboard         | UC-025         | Dashboard Service       | `mental.dashboard`     | TC-031         | ○ Not Implemented |
+| **FR-083**   | Mental-Physical Correlation       | UC-024         | Analytics Service       | `mental.correlation`   | TC-030         | ○ Not Implemented |
+| **FR-084**   | Mindful Eating Reminders          | -              | Notification Service    | `mental.reminders`     | -              | ○ Not Implemented |
+| **FR-085**   | Mental Wellness Progress Reports  | -              | Reporting Service       | `mental.reports`       | -              | ○ Not Implemented |
+| **NFR-001**  | Mental Dashboard <2s _(Enhanced)_ | -              | Dashboard Service       | `mental.performance`   | TC-031         | ○ Not Implemented |
+| **NFR-007A** | Mental Health Data Privacy        | -              | Encryption Service      | `security.mental_data` | TC-040         | ○ Not Implemented |
+| **NFR-022**  | Analytics Accuracy (p<0.05)       | UC-027, UC-031 | Analytics Engine        | `analytics.validation` | TC-033, TC-038 | ○ Not Implemented |
+| **NFR-023**  | Data Retention & Deletion         | -              | Data Management Service | `data.deletion`        | TC-040         | ○ Not Implemented |
 
-### 3.7 Health Tagging System *(NEW FEATURE)*
+### 3.7 Health Tagging System _(NEW FEATURE)_
 
-| Req ID     | Requirement                  | Use Case | Design Component      | Code Module           | Test Cases | Status        |
-| ---------- | ---------------------------- | -------- | --------------------- | --------------------- | ---------- | ------------- |
-| **FR-086** | Health Tag Database          | UC-026   | Tagging Service       | `tags.database`       | TC-032     | ○ Not Implemented |
-| **FR-087** | Tag-Based Food Filtering     | UC-026   | Search Service        | `tags.filtering`      | TC-032     | ○ Not Implemented |
-| **FR-088** | AI Tag Suggestion            | UC-027   | Recommendation Engine | `tags.ai_recommend`   | TC-033     | ○ Not Implemented |
+| Req ID     | Requirement              | Use Case | Design Component      | Code Module         | Test Cases | Status            |
+| ---------- | ------------------------ | -------- | --------------------- | ------------------- | ---------- | ----------------- |
+| **FR-086** | Health Tag Database      | UC-026   | Tagging Service       | `tags.database`     | TC-032     | ○ Not Implemented |
+| **FR-087** | Tag-Based Food Filtering | UC-026   | Search Service        | `tags.filtering`    | TC-032     | ○ Not Implemented |
+| **FR-088** | AI Tag Suggestion        | UC-027   | Recommendation Engine | `tags.ai_recommend` | TC-033     | ○ Not Implemented |
 
-### 3.8 Dual-Dimension Recommendation Engine *(NEW FEATURE)*
+### 3.8 Dual-Dimension Recommendation Engine _(NEW FEATURE)_
 
-| Req ID     | Requirement                      | Use Case | Design Component              | Code Module                | Test Cases | Status        |
-| ---------- | -------------------------------- | -------- | ----------------------------- | -------------------------- | ---------- | ------------- |
-| **FR-089** | Dual-Dimension Meal Scoring      | UC-028   | Dual-Dimension Engine         | `dual.scoring`             | TC-034     | ○ Not Implemented |
-| **FR-090** | Context-Aware Recommendations    | UC-029   | Context Service               | `dual.contextual`          | TC-035     | ○ Not Implemented |
-| **FR-091** | Goal Balancing Algorithm         | UC-028   | Conflict Resolution Engine    | `dual.balancing`           | TC-034     | ○ Not Implemented |
-| **NFR-001**| Dual-Dimension Recs <4s *(Enhanced)* | -    | Recommendation Engine         | `dual.performance`         | TC-034     | ○ Not Implemented |
+| Req ID      | Requirement                          | Use Case | Design Component           | Code Module        | Test Cases | Status            |
+| ----------- | ------------------------------------ | -------- | -------------------------- | ------------------ | ---------- | ----------------- |
+| **FR-089**  | Dual-Dimension Meal Scoring          | UC-028   | Dual-Dimension Engine      | `dual.scoring`     | TC-034     | ○ Not Implemented |
+| **FR-090**  | Context-Aware Recommendations        | UC-029   | Context Service            | `dual.contextual`  | TC-035     | ○ Not Implemented |
+| **FR-091**  | Goal Balancing Algorithm             | UC-028   | Conflict Resolution Engine | `dual.balancing`   | TC-034     | ○ Not Implemented |
+| **NFR-001** | Dual-Dimension Recs <4s _(Enhanced)_ | -        | Recommendation Engine      | `dual.performance` | TC-034     | ○ Not Implemented |
 
-### 3.9 AI Health Concierge *(NEW FEATURE)*
+### 3.9 AI Health Concierge _(NEW FEATURE)_
 
-| Req ID     | Requirement                      | Use Case | Design Component      | Code Module              | Test Cases | Status        |
-| ---------- | -------------------------------- | -------- | --------------------- | ------------------------ | ---------- | ------------- |
-| **FR-092** | LLM Integration                  | UC-030   | AI Concierge Service  | `ai.llm_chat`            | TC-036, TC-037 | ○ Not Implemented |
-| **FR-093** | Natural Language Health Queries  | UC-030   | NLP Service           | `ai.nlp_query`           | TC-036     | ○ Not Implemented |
-| **FR-094** | Conversational Goal Modification | UC-032   | Intent Parser         | `ai.intent_parsing`      | TC-039     | ○ Not Implemented |
-| **FR-095** | Real-Time Wellness Insights      | UC-031   | Insight Engine        | `ai.insights`            | TC-038     | ○ Not Implemented |
-| **NFR-020**| AI/LLM Performance <3s           | -        | LLM Gateway           | `ai.performance`         | TC-036     | ○ Not Implemented |
-| **NFR-021**| AI Safety Validation             | -        | Safety Filter         | `ai.safety_validation`   | TC-037     | ○ Not Implemented |
+| Req ID      | Requirement                      | Use Case | Design Component     | Code Module            | Test Cases     | Status            |
+| ----------- | -------------------------------- | -------- | -------------------- | ---------------------- | -------------- | ----------------- |
+| **FR-092**  | LLM Integration                  | UC-030   | AI Concierge Service | `ai.llm_chat`          | TC-036, TC-037 | ○ Not Implemented |
+| **FR-093**  | Natural Language Health Queries  | UC-030   | NLP Service          | `ai.nlp_query`         | TC-036         | ○ Not Implemented |
+| **FR-094**  | Conversational Goal Modification | UC-032   | Intent Parser        | `ai.intent_parsing`    | TC-039         | ○ Not Implemented |
+| **FR-095**  | Real-Time Wellness Insights      | UC-031   | Insight Engine       | `ai.insights`          | TC-038         | ○ Not Implemented |
+| **NFR-020** | AI/LLM Performance <3s           | -        | LLM Gateway          | `ai.performance`       | TC-036         | ○ Not Implemented |
+| **NFR-021** | AI Safety Validation             | -        | Safety Filter        | `ai.safety_validation` | TC-037         | ○ Not Implemented |
 
 ---
 
@@ -194,30 +194,30 @@ graph LR
 
 ### 4.1 Microservices Mapping
 
-| Design Component                    | Requirements       | API Endpoints                  | Database Tables                          | Dependencies      |
-| ----------------------------------- | ------------------ | ------------------------------ | ---------------------------------------- | ----------------- |
-| **Auth Service**                    | FR-001 to FR-005   | `/auth/*`                      | users, sessions                          | Auth0, Redis      |
-| **Profile Service**                 | FR-016 to FR-020   | `/profile/*`                   | health_profiles, preferences             | PostgreSQL        |
-| **Recommendation Service**          | FR-031 to FR-035   | `/recommendations/*`           | recommendations, ml_models               | AI Engine, RAG    |
-| **Restaurant Service**              | FR-046 to FR-050   | `/restaurants/*`               | restaurants, menus                       | Elasticsearch     |
-| **Planning Service**                | FR-061 to FR-065   | `/planning/*`                  | meal_plans, tracking                     | PostgreSQL, Redis |
-| **Mental Wellness Service** *(NEW)* | FR-076 to FR-085   | `/mental-wellness/*`           | mental_wellness_goals, mood_logs, stress_logs, sleep_logs | PostgreSQL, Analytics Engine |
-| **Health Tagging Service** *(NEW)*  | FR-086 to FR-088   | `/health-tags/*`               | health_tags, food_tags                   | PostgreSQL, AI Engine |
-| **Dual-Dimension Engine** *(NEW)*   | FR-089 to FR-091   | `/recommendations/dual-dimension` | (uses existing + mental tables)       | Scoring Algorithm, Context Service |
-| **AI Concierge Service** *(NEW)*    | FR-092 to FR-095   | `/ai-concierge/*`              | chat_sessions, insights                  | LLM API, RAG, Safety Filter |
+| Design Component                    | Requirements     | API Endpoints                     | Database Tables                                           | Dependencies                       |
+| ----------------------------------- | ---------------- | --------------------------------- | --------------------------------------------------------- | ---------------------------------- |
+| **Auth Service**                    | FR-001 to FR-005 | `/auth/*`                         | users, sessions                                           | Auth0, Redis                       |
+| **Profile Service**                 | FR-016 to FR-020 | `/profile/*`                      | health_profiles, preferences                              | PostgreSQL                         |
+| **Recommendation Service**          | FR-031 to FR-035 | `/recommendations/*`              | recommendations, ml_models                                | AI Engine, RAG                     |
+| **Restaurant Service**              | FR-046 to FR-050 | `/restaurants/*`                  | restaurants, menus                                        | Elasticsearch                      |
+| **Planning Service**                | FR-061 to FR-065 | `/planning/*`                     | meal_plans, tracking                                      | PostgreSQL, Redis                  |
+| **Mental Wellness Service** _(NEW)_ | FR-076 to FR-085 | `/mental-wellness/*`              | mental_wellness_goals, mood_logs, stress_logs, sleep_logs | PostgreSQL, Analytics Engine       |
+| **Health Tagging Service** _(NEW)_  | FR-086 to FR-088 | `/health-tags/*`                  | health_tags, food_tags                                    | PostgreSQL, AI Engine              |
+| **Dual-Dimension Engine** _(NEW)_   | FR-089 to FR-091 | `/recommendations/dual-dimension` | (uses existing + mental tables)                           | Scoring Algorithm, Context Service |
+| **AI Concierge Service** _(NEW)_    | FR-092 to FR-095 | `/ai-concierge/*`                 | chat_sessions, insights                                   | LLM API, RAG, Safety Filter        |
 
 ### 4.2 AI Component Mapping
 
-| AI Component                      | Requirements       | ML Models             | Data Sources                 | Validation           |
-| --------------------------------- | ------------------ | --------------------- | ---------------------------- | -------------------- |
-| **RAG Pipeline**                  | FR-031, FR-034     | -                     | Vector DB, Menus             | Confidence threshold |
-| **Safety Validator**              | FR-032, NFR-021    | Allergen Detector     | Ingredient DB                | Rule engine (100% accuracy) |
-| **Nutrition Matcher**             | FR-033             | Nutrition Model       | USDA DB                      | Accuracy metrics     |
-| **Personalization Engine**        | FR-031, FR-035     | User Preference Model | User history                 | A/B testing          |
-| **Dual-Dimension Scorer** *(NEW)* | FR-089             | Scoring Algorithm     | Physical + Mental goals      | Score transparency   |
-| **Mental Pattern Analyzer** *(NEW)* | FR-080, FR-081   | Pattern Detection     | Mood/Stress/Sleep logs       | Statistical significance (p<0.05) |
-| **LLM Chat Interface** *(NEW)*    | FR-092, FR-093     | GPT-4 / Claude        | Nutrition KB, User context   | Safety validation + Streaming |
-| **Insight Generator** *(NEW)*     | FR-095             | Correlation Model     | 14+ days wellness data       | 70% confidence threshold |
+| AI Component                        | Requirements    | ML Models             | Data Sources               | Validation                        |
+| ----------------------------------- | --------------- | --------------------- | -------------------------- | --------------------------------- |
+| **RAG Pipeline**                    | FR-031, FR-034  | -                     | Vector DB, Menus           | Confidence threshold              |
+| **Safety Validator**                | FR-032, NFR-021 | Allergen Detector     | Ingredient DB              | Rule engine (100% accuracy)       |
+| **Nutrition Matcher**               | FR-033          | Nutrition Model       | USDA DB                    | Accuracy metrics                  |
+| **Personalization Engine**          | FR-031, FR-035  | User Preference Model | User history               | A/B testing                       |
+| **Dual-Dimension Scorer** _(NEW)_   | FR-089          | Scoring Algorithm     | Physical + Mental goals    | Score transparency                |
+| **Mental Pattern Analyzer** _(NEW)_ | FR-080, FR-081  | Pattern Detection     | Mood/Stress/Sleep logs     | Statistical significance (p<0.05) |
+| **LLM Chat Interface** _(NEW)_      | FR-092, FR-093  | GPT-4 / Claude        | Nutrition KB, User context | Safety validation + Streaming     |
+| **Insight Generator** _(NEW)_       | FR-095          | Correlation Model     | 14+ days wellness data     | 70% confidence threshold          |
 
 ---
 
@@ -278,15 +278,15 @@ graph TD
 
 Requirements that affect multiple components when changed:
 
-| Requirement                         | Impact Scope       | Affected Components              | Risk Level |
-| ----------------------------------- | ------------------ | -------------------------------- | ---------- |
-| **FR-032** (Allergy Filtering)      | System-wide        | All recommendation flows         | CRITICAL   |
-| **NFR-003** (HIPAA Compliance)      | All health data    | Database, APIs, UI               | HIGH       |
-| **FR-031** (Recommendations)        | Core feature       | AI, Cache, UI                    | HIGH       |
-| **FR-089** (Dual-Dimension Scoring) *(NEW)* | Core innovation | Physical + Mental services, AI | CRITICAL   |
-| **NFR-021** (AI Safety)             *(NEW)* | All AI outputs  | LLM, Safety Filter, Recommendations | CRITICAL |
-| **NFR-007A** (Mental Data Privacy)  *(NEW)* | Mental wellness data | Mental services, Encryption, APIs | HIGH |
-| **NFR-001** (Performance)           | User experience    | All services                     | MEDIUM     |
+| Requirement                                 | Impact Scope         | Affected Components                 | Risk Level |
+| ------------------------------------------- | -------------------- | ----------------------------------- | ---------- |
+| **FR-032** (Allergy Filtering)              | System-wide          | All recommendation flows            | CRITICAL   |
+| **NFR-003** (HIPAA Compliance)              | All health data      | Database, APIs, UI                  | HIGH       |
+| **FR-031** (Recommendations)                | Core feature         | AI, Cache, UI                       | HIGH       |
+| **FR-089** (Dual-Dimension Scoring) _(NEW)_ | Core innovation      | Physical + Mental services, AI      | CRITICAL   |
+| **NFR-021** (AI Safety) _(NEW)_             | All AI outputs       | LLM, Safety Filter, Recommendations | CRITICAL   |
+| **NFR-007A** (Mental Data Privacy) _(NEW)_  | Mental wellness data | Mental services, Encryption, APIs   | HIGH       |
+| **NFR-001** (Performance)                   | User experience      | All services                        | MEDIUM     |
 
 ### 6.2 Dependency Chains
 
@@ -325,24 +325,24 @@ graph LR
 
 ### 7.1 Requirements Coverage Summary
 
-| Category                                  | Total Reqs | Designed | Implemented | Tested | Coverage % |
-| ----------------------------------------- | ---------- | -------- | ----------- | ------ | ---------- |
-| **Authentication**                        | 15         | 15       | 5           | 10     | 33%        |
-| **Health Profile** (Physical)             | 20         | 20       | 0           | 0      | 0%         |
-| **AI/Recommendations** (Physical)         | 25         | 25       | 0           | 0      | 0%         |
-| **Restaurant**                            | 20         | 15       | 0           | 0      | 0%         |
-| **Meal Planning & Tracking**              | 15         | 15       | 0           | 0      | 0%         |
-| **Mental Wellness Management** *(NEW)*    | 10         | 10       | 0           | 0      | 0%         |
-| **Health Tagging System** *(NEW)*         | 3          | 3        | 0           | 0      | 0%         |
-| **Dual-Dimension Recommendations** *(NEW)* | 3         | 3        | 0           | 0      | 0%         |
-| **AI Health Concierge** *(NEW)*           | 4          | 4        | 0           | 0      | 0%         |
-| **TOTAL**                                 | **115**    | **110**  | **5**       | **10** | **4.3%**   |
+| Category                                   | Total Reqs | Designed | Implemented | Tested | Coverage % |
+| ------------------------------------------ | ---------- | -------- | ----------- | ------ | ---------- |
+| **Authentication**                         | 15         | 15       | 5           | 10     | 33%        |
+| **Health Profile** (Physical)              | 20         | 20       | 0           | 0      | 0%         |
+| **AI/Recommendations** (Physical)          | 25         | 25       | 0           | 0      | 0%         |
+| **Restaurant**                             | 20         | 15       | 0           | 0      | 0%         |
+| **Meal Planning & Tracking**               | 15         | 15       | 0           | 0      | 0%         |
+| **Mental Wellness Management** _(NEW)_     | 10         | 10       | 0           | 0      | 0%         |
+| **Health Tagging System** _(NEW)_          | 3          | 3        | 0           | 0      | 0%         |
+| **Dual-Dimension Recommendations** _(NEW)_ | 3          | 3        | 0           | 0      | 0%         |
+| **AI Health Concierge** _(NEW)_            | 4          | 4        | 0           | 0      | 0%         |
+| **TOTAL**                                  | **115**    | **110**  | **5**       | **10** | **4.3%**   |
 
 **Physical Health Features**: 75 requirements (FR-001 to FR-075) - 6.7% implemented  
 **Mental Wellness Features**: 20 requirements (FR-076 to FR-095) - 0% implemented (target features)
-| **Planning**           | 15         | 10       | 0           | 0      | 0%         |
-| **Non-Functional**     | 30         | 30       | 0           | 0      | 0%         |
-| **TOTAL**              | **125**    | **115**  | **5**       | **10** | **4%**     |
+| **Planning** | 15 | 10 | 0 | 0 | 0% |
+| **Non-Functional** | 30 | 30 | 0 | 0 | 0% |
+| **TOTAL** | **125** | **115** | **5** | **10** | **4%** |
 
 ### 7.2 Critical Requirements Status
 
@@ -486,6 +486,7 @@ DC-XXX: Design Component
 **Version:** 2.0  
 **Completeness:** 4.3% (5/115 requirements with partial implementation)  
 **Requirements Coverage:**
+
 - Physical Health: 75 FRs (FR-001 to FR-075) - 6.7% implemented
 - Mental Wellness: 20 FRs (FR-076 to FR-095) - 0% implemented (target features)
 - Use Cases: 32 UCs (UC-001 to UC-032) - 20 UCs implemented, 12 UCs planned

@@ -7,6 +7,7 @@
 **API Version:** v1
 
 **Version 2.0 Updates**:
+
 - Added 31 Mental Wellness API endpoints (Section 9A)
 - 7 endpoint categories: Goals, Mood, Stress, Sleep, Health Tags, Dual-Dimension Recs, AI Concierge
 - Enhanced security requirements for mental health data
@@ -121,12 +122,12 @@ POST /api/auth/reset-password -> Reset password with token
 
 ### 3.3 Authorization Levels
 
-| Level         | Description                | Access                          | Status           |
-| ------------- | -------------------------- | ------------------------------- | ---------------- |
-| Public        | No authentication required | Health check, auth endpoints    | ✅ Implemented   |
-| Authenticated | Valid JWT token            | Own profile, health data        | ✅ Implemented   |
-| Verified      | Email verified             | Required before login           | ✅ Implemented   |
-| Admin         | Admin role (USER/ADMIN)    | Future admin features           | ✅ Implemented   |
+| Level         | Description                | Access                       | Status         |
+| ------------- | -------------------------- | ---------------------------- | -------------- |
+| Public        | No authentication required | Health check, auth endpoints | ✅ Implemented |
+| Authenticated | Valid JWT token            | Own profile, health data     | ✅ Implemented |
+| Verified      | Email verified             | Required before login        | ✅ Implemented |
+| Admin         | Admin role (USER/ADMIN)    | Future admin features        | ✅ Implemented |
 
 ---
 
@@ -1040,8 +1041,7 @@ Authorization: Bearer <jwt_token>
 
 ### 4.7 Meal Recommendations
 
-**Status**: ❌ **Not Implemented**
----
+## **Status**: ❌ **Not Implemented**
 
 ### 4.8 Meal Recommendations (Future)
 
@@ -1469,6 +1469,7 @@ Create a new mental wellness goal.
 **Authentication**: Required (JWT)
 
 **Request Body**:
+
 ```json
 {
   "goal_type": "mood_improvement",
@@ -1482,6 +1483,7 @@ Create a new mental wellness goal.
 ```
 
 **Response (201 Created)**:
+
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -1502,10 +1504,12 @@ Create a new mental wellness goal.
 Retrieve all mental wellness goals for the authenticated user.
 
 **Query Parameters**:
+
 - `status` (optional): Filter by status (ACTIVE, PAUSED, COMPLETED, ABANDONED)
 - `goal_type` (optional): Filter by goal type
 
 **Response (200 OK)**:
+
 ```json
 {
   "total": 3,
@@ -1540,6 +1544,7 @@ Delete a mental wellness goal.
 Get comprehensive mental wellness dashboard data.
 
 **Response (200 OK)**:
+
 ```json
 {
   "current_week_summary": {
@@ -1569,6 +1574,7 @@ Get comprehensive mental wellness dashboard data.
 Generate mental wellness progress reports (weekly/monthly).
 
 **Query Parameters**:
+
 - `period`: "weekly" | "monthly" | "custom"
 - `start_date`, `end_date` (for custom period)
 
@@ -1581,6 +1587,7 @@ Generate mental wellness progress reports (weekly/monthly).
 Log a mood entry.
 
 **Request Body**:
+
 ```json
 {
   "mood_score": 8,
@@ -1593,6 +1600,7 @@ Log a mood entry.
 ```
 
 **Response (201 Created)**:
+
 ```json
 {
   "id": "660e8400-e29b-41d4-a716-446655440001",
@@ -1609,6 +1617,7 @@ Log a mood entry.
 Retrieve mood logs with filtering and pagination.
 
 **Query Parameters**:
+
 - `start_date`, `end_date`: Date range filter
 - `limit`: Number of results (default 30)
 - `page`: Page number (default 1)
@@ -1618,6 +1627,7 @@ Retrieve mood logs with filtering and pagination.
 Analyze mood patterns and correlations.
 
 **Response (200 OK)**:
+
 ```json
 {
   "trend": "improving",
@@ -1649,6 +1659,7 @@ Analyze mood patterns and correlations.
 Log a stress level entry.
 
 **Request Body**:
+
 ```json
 {
   "stress_level": 6,
@@ -1669,17 +1680,18 @@ Retrieve stress logs with filtering.
 Analyze stress patterns, common triggers, and effective coping strategies.
 
 **Response (200 OK)**:
+
 ```json
 {
   "average_stress_level_30d": 5.2,
   "trend": "decreasing",
   "most_common_triggers": [
-    {"trigger": "Work deadline", "frequency": 15},
-    {"trigger": "Traffic", "frequency": 10}
+    { "trigger": "Work deadline", "frequency": 15 },
+    { "trigger": "Traffic", "frequency": 10 }
   ],
   "most_effective_coping": [
-    {"strategy": "Exercise", "effectiveness_score": 8.5},
-    {"strategy": "Deep breathing", "effectiveness_score": 7.2}
+    { "strategy": "Exercise", "effectiveness_score": 8.5 },
+    { "strategy": "Deep breathing", "effectiveness_score": 7.2 }
   ],
   "high_stress_days": 8,
   "recommended_foods": [
@@ -1701,6 +1713,7 @@ Analyze stress patterns, common triggers, and effective coping strategies.
 Log a sleep entry.
 
 **Request Body**:
+
 ```json
 {
   "sleep_date": "2025-10-24",
@@ -1714,6 +1727,7 @@ Log a sleep entry.
 ```
 
 **Response (201 Created)**:
+
 ```json
 {
   "id": "770e8400-e29b-41d4-a716-446655440002",
@@ -1734,6 +1748,7 @@ Retrieve sleep logs with date range filtering.
 Analyze sleep-food-mood correlations.
 
 **Response (200 OK)**:
+
 ```json
 {
   "average_sleep_hours_30d": 7.3,
@@ -1768,10 +1783,12 @@ Analyze sleep-food-mood correlations.
 Retrieve all active health tags.
 
 **Query Parameters**:
+
 - `category` (optional): Filter by category (Mental Wellness, Physical Health, Sleep, etc.)
 - `min_effectiveness` (optional): Minimum effectiveness rating
 
 **Response (200 OK)**:
+
 ```json
 {
   "total": 25,
@@ -1807,11 +1824,13 @@ Get detailed information about a specific health tag including scientific basis 
 Search foods by health tag.
 
 **Query Parameters**:
+
 - `min_confidence` (optional): Minimum confidence score (0.0-1.0)
 - `verified_only` (optional): Only return verified tag associations
 - `limit`, `page`: Pagination
 
 **Response (200 OK)**:
+
 ```json
 {
   "tag_name": "#StressRelief",
@@ -1837,6 +1856,7 @@ Search foods by health tag.
 Get AI-powered health tag suggestions for a food item.
 
 **Request Body**:
+
 ```json
 {
   "food_name": "Salmon",
@@ -1849,6 +1869,7 @@ Get AI-powered health tag suggestions for a food item.
 ```
 
 **Response (200 OK)**:
+
 ```json
 {
   "suggested_tags": [
@@ -1875,6 +1896,7 @@ Get AI-powered health tag suggestions for a food item.
 Get meal recommendations balancing physical health + mental wellness.
 
 **Request Body**:
+
 ```json
 {
   "meal_type": "lunch",
@@ -1889,6 +1911,7 @@ Get meal recommendations balancing physical health + mental wellness.
 ```
 
 **Response (200 OK)**:
+
 ```json
 {
   "recommendations": [
@@ -1914,9 +1937,9 @@ Get meal recommendations balancing physical health + mental wellness.
     }
   ],
   "algorithm_explanation": {
-    "physical_weight": 0.40,
-    "mental_weight": 0.40,
-    "preference_weight": 0.20,
+    "physical_weight": 0.4,
+    "mental_weight": 0.4,
+    "preference_weight": 0.2,
     "context_boost_applied": "high_stress_day (+15% to #StressRelief foods)"
   }
 }
@@ -1927,6 +1950,7 @@ Get meal recommendations balancing physical health + mental wellness.
 Get detailed explanation of why a specific food/meal was recommended.
 
 **Request Body**:
+
 ```json
 {
   "meal_id": "aa0e8400-e29b-41d4-a716-446655440006",
@@ -1943,6 +1967,7 @@ Get detailed explanation of why a specific food/meal was recommended.
 Get context-aware recommendations based on time of day, recent logs, and patterns.
 
 **Query Parameters**:
+
 - `context_type`: "morning_boost", "pre_workout", "evening_calm", "high_stress", "low_energy"
 
 #### POST /api/recommendations/smart-substitutions
@@ -1950,6 +1975,7 @@ Get context-aware recommendations based on time of day, recent logs, and pattern
 Suggest mental-wellness-optimized alternatives for a meal.
 
 **Request Body**:
+
 ```json
 {
   "current_meal_id": "bb0e8400-e29b-41d4-a716-446655440007",
@@ -1959,6 +1985,7 @@ Suggest mental-wellness-optimized alternatives for a meal.
 ```
 
 **Response (200 OK)**:
+
 ```json
 {
   "original_meal": {
@@ -1990,6 +2017,7 @@ Suggest mental-wellness-optimized alternatives for a meal.
 Send a message to the AI health concierge.
 
 **Request Body**:
+
 ```json
 {
   "session_id": "cc0e8400-e29b-41d4-a716-446655440008",
@@ -1999,6 +2027,7 @@ Send a message to the AI health concierge.
 ```
 
 **Response (200 OK)** - Streaming Response:
+
 ```json
 {
   "session_id": "cc0e8400-e29b-41d4-a716-446655440008",
@@ -2011,10 +2040,7 @@ Send a message to the AI health concierge.
     }
   ],
   "safety_disclaimer": "This is general nutritional guidance. For medical concerns, please consult a healthcare professional.",
-  "sources": [
-    "Journal of Clinical Sleep Medicine, 2020",
-    "Nutrients, 2019 - Magnesium and Stress"
-  ],
+  "sources": ["Journal of Clinical Sleep Medicine, 2020", "Nutrients, 2019 - Magnesium and Stress"],
   "tokens_used": 450
 }
 ```
@@ -2028,6 +2054,7 @@ Retrieve chat session history.
 Get proactive AI-generated wellness insights based on user data patterns.
 
 **Response (200 OK)**:
+
 ```json
 {
   "insights": [
@@ -2054,6 +2081,7 @@ Get proactive AI-generated wellness insights based on user data patterns.
 Let AI suggest goal adjustments based on progress and patterns.
 
 **Request Body**:
+
 ```json
 {
   "goal_id": "dd0e8400-e29b-41d4-a716-446655440009",
@@ -2063,6 +2091,7 @@ Let AI suggest goal adjustments based on progress and patterns.
 ```
 
 **Response (200 OK)**:
+
 ```json
 {
   "suggested_adjustments": [

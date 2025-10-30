@@ -18,12 +18,12 @@ Enable automated code coverage reporting for the repository by integrating Codec
 
 Four levels of documentation created to suit different user needs:
 
-| Document | Purpose | Audience |
-|----------|---------|----------|
-| `QUICK_START_CODECOV.md` | 5-minute quick start | Anyone needing fast setup |
-| `CODECOV_SETUP_REQUIRED.md` | High-level overview | Quick reference |
-| `CODECOV_CHECKLIST.md` | Progress tracking | Project managers |
-| `proj2/docs/6-DEPLOYMENT/codecov-setup.md` | Complete guide | Technical users |
+| Document                                   | Purpose              | Audience                  |
+| ------------------------------------------ | -------------------- | ------------------------- |
+| `QUICK_START_CODECOV.md`                   | 5-minute quick start | Anyone needing fast setup |
+| `CODECOV_SETUP_REQUIRED.md`                | High-level overview  | Quick reference           |
+| `CODECOV_CHECKLIST.md`                     | Progress tracking    | Project managers          |
+| `proj2/docs/6-DEPLOYMENT/codecov-setup.md` | Complete guide       | Technical users           |
 
 ### 2. Workflow Improvements
 
@@ -32,6 +32,7 @@ Four levels of documentation created to suit different user needs:
 **Issue Found:** Workflow was only downloading backend coverage, despite claiming to upload both frontend and backend.
 
 **Fix Applied:**
+
 - Added missing frontend coverage artifact download step
 - Corrected artifact paths for proper Codecov integration
 - Updated job naming for clarity ("proj2-coverage" instead of "proj2-backend-coverage")
@@ -63,6 +64,7 @@ Four levels of documentation created to suit different user needs:
 **Time:** 5-10 minutes
 
 **Instructions:** See any of these guides:
+
 - Quick: `QUICK_START_CODECOV.md`
 - Detailed: `proj2/docs/6-DEPLOYMENT/codecov-setup.md`
 
@@ -89,22 +91,22 @@ Four levels of documentation created to suit different user needs:
 
 ### Current State ✅
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Workflow file | ✅ Fixed | Downloads both frontend/backend coverage |
-| Codecov config | ✅ Present | Optimal settings configured |
-| Badge | ✅ Added | Correct URL in README |
-| Documentation | ✅ Complete | 4 guides created |
-| Test infrastructure | ✅ Working | Both frontend/backend have tests |
+| Component           | Status      | Notes                                    |
+| ------------------- | ----------- | ---------------------------------------- |
+| Workflow file       | ✅ Fixed    | Downloads both frontend/backend coverage |
+| Codecov config      | ✅ Present  | Optimal settings configured              |
+| Badge               | ✅ Added    | Correct URL in README                    |
+| Documentation       | ✅ Complete | 4 guides created                         |
+| Test infrastructure | ✅ Working  | Both frontend/backend have tests         |
 
 ### Target State (After Secret Added) 🎯
 
-| Component | Status | Action Required |
-|-----------|--------|-----------------|
-| CODECOV_TOKEN secret | ⏳ Pending | Admin must add to GitHub |
-| Workflow runs | ⏳ Will work | After secret is added |
-| Coverage reports | ⏳ Will appear | After first successful upload |
-| Badge displays | ⏳ Will show % | After Codecov processes data |
+| Component            | Status         | Action Required               |
+| -------------------- | -------------- | ----------------------------- |
+| CODECOV_TOKEN secret | ⏳ Pending     | Admin must add to GitHub      |
+| Workflow runs        | ⏳ Will work   | After secret is added         |
+| Coverage reports     | ⏳ Will appear | After first successful upload |
+| Badge displays       | ⏳ Will show % | After Codecov processes data  |
 
 ---
 
@@ -166,6 +168,7 @@ After secret is added, verify these items:
 ### For Development Team
 
 Once active:
+
 - Continue writing tests as usual
 - Monitor coverage metrics in Codecov dashboard
 - Review Codecov PR comments for coverage changes
@@ -176,12 +179,14 @@ Once active:
 ## 📚 Additional Resources
 
 ### Documentation Created
+
 - `QUICK_START_CODECOV.md` - Start here for setup
 - `CODECOV_SETUP_REQUIRED.md` - Quick overview
 - `CODECOV_CHECKLIST.md` - Track progress
 - `proj2/docs/6-DEPLOYMENT/codecov-setup.md` - Complete technical guide
 
 ### External Resources
+
 - [Codecov Documentation](https://docs.codecov.com)
 - [GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 - [Codecov GitHub Action](https://github.com/codecov/codecov-action)
@@ -228,12 +233,14 @@ If you encounter any issues:
 ### Coverage Generation
 
 **Frontend (Vitest):**
+
 ```bash
 bun run --filter frontend coverage
 # Generates: frontend/coverage/lcov.info
 ```
 
 **Backend (pytest):**
+
 ```bash
 uv run -m pytest --cov --cov-report=xml
 # Generates: coverage.xml

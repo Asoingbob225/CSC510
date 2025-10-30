@@ -189,79 +189,85 @@ export let options = {
 | **STC-015** | Find nearby restaurants | UC-014      | ST   | HIGH     | 📝     |
 | **STC-016** | Check menu allergens    | UC-016      | ST   | CRITICAL | 📝     |
 
-### 3.5 Mental Wellness Management *(NEW FEATURE)*
+### 3.5 Mental Wellness Management _(NEW FEATURE)_
 
-| Test ID     | Test Case                        | Requirement | Use Case | Type | Priority | Status |
-| ----------- | -------------------------------- | ----------- | -------- | ---- | -------- | ------ |
-| **TC-023**  | Create Mental Wellness Goal      | FR-076      | UC-021   | ST   | CRITICAL | ⏳ Pending |
-| **TC-024**  | Handle Multiple Goals Priority   | FR-076      | UC-021   | ST   | HIGH     | ⏳ Pending |
-| **TC-025**  | Log Daily Mood Entry             | FR-077      | UC-022   | ST   | CRITICAL | ⏳ Pending |
-| **TC-026**  | Analyze Mood Patterns Over Time  | FR-080      | UC-022   | ST   | HIGH     | ⏳ Pending |
-| **TC-027**  | Track Stress Levels with Triggers| FR-078      | UC-023   | ST   | CRITICAL | ⏳ Pending |
-| **TC-028**  | Identify Stress Trigger Patterns | FR-081      | UC-023   | ST   | HIGH     | ⏳ Pending |
-| **TC-029**  | Monitor Sleep Quality            | FR-079      | UC-024   | ST   | CRITICAL | ⏳ Pending |
-| **TC-030**  | Correlate Sleep with Meals       | FR-083      | UC-024   | ST   | HIGH     | ⏳ Pending |
-| **TC-031**  | View Mental Wellness Dashboard   | FR-082      | UC-025   | ST   | CRITICAL | ⏳ Pending |
+| Test ID    | Test Case                         | Requirement | Use Case | Type | Priority | Status     |
+| ---------- | --------------------------------- | ----------- | -------- | ---- | -------- | ---------- |
+| **TC-023** | Create Mental Wellness Goal       | FR-076      | UC-021   | ST   | CRITICAL | ⏳ Pending |
+| **TC-024** | Handle Multiple Goals Priority    | FR-076      | UC-021   | ST   | HIGH     | ⏳ Pending |
+| **TC-025** | Log Daily Mood Entry              | FR-077      | UC-022   | ST   | CRITICAL | ⏳ Pending |
+| **TC-026** | Analyze Mood Patterns Over Time   | FR-080      | UC-022   | ST   | HIGH     | ⏳ Pending |
+| **TC-027** | Track Stress Levels with Triggers | FR-078      | UC-023   | ST   | CRITICAL | ⏳ Pending |
+| **TC-028** | Identify Stress Trigger Patterns  | FR-081      | UC-023   | ST   | HIGH     | ⏳ Pending |
+| **TC-029** | Monitor Sleep Quality             | FR-079      | UC-024   | ST   | CRITICAL | ⏳ Pending |
+| **TC-030** | Correlate Sleep with Meals        | FR-083      | UC-024   | ST   | HIGH     | ⏳ Pending |
+| **TC-031** | View Mental Wellness Dashboard    | FR-082      | UC-025   | ST   | CRITICAL | ⏳ Pending |
 
 **Test Coverage**: 9 test cases covering Mental Wellness goals, mood tracking, stress monitoring, sleep quality, and dashboard visualization.
 
 **Critical Performance Requirements** (per NFR-001):
+
 - Mental wellness dashboard load: ≤2 seconds
 - Mood/stress/sleep log submission: ≤1 second
 - Pattern analysis requires 14+ days data (per NFR-022)
 
-### 3.6 Health Tagging System *(NEW FEATURE)*
+### 3.6 Health Tagging System _(NEW FEATURE)_
 
-| Test ID     | Test Case                        | Requirement | Use Case | Type | Priority | Status |
-| ----------- | -------------------------------- | ----------- | -------- | ---- | -------- | ------ |
-| **TC-032**  | Filter Foods by Health Tags      | FR-087      | UC-026   | ST   | HIGH     | ⏳ Pending |
-| **TC-033**  | Get Personalized Tag Recommendations | FR-088  | UC-027   | ST   | HIGH     | ⏳ Pending |
+| Test ID    | Test Case                            | Requirement | Use Case | Type | Priority | Status     |
+| ---------- | ------------------------------------ | ----------- | -------- | ---- | -------- | ---------- |
+| **TC-032** | Filter Foods by Health Tags          | FR-087      | UC-026   | ST   | HIGH     | ⏳ Pending |
+| **TC-033** | Get Personalized Tag Recommendations | FR-088      | UC-027   | ST   | HIGH     | ⏳ Pending |
 
 **Test Coverage**: 2 test cases covering health tag filtering (#StressRelief, #MoodBoost, #SleepAid) and AI-based tag recommendations.
 
 **Validation Requirements** (per NFR-022):
+
 - Recommendations require ≥70% confidence threshold
 - Pattern analysis based on 7+ days wellness data
 - Tag filtering: <1 second response time
 
-### 3.7 Dual-Dimension Recommendation Engine *(NEW FEATURE)*
+### 3.7 Dual-Dimension Recommendation Engine _(NEW FEATURE)_
 
-| Test ID     | Test Case                          | Requirement | Use Case | Type | Priority | Status |
-| ----------- | ---------------------------------- | ----------- | -------- | ---- | -------- | ------ |
-| **TC-034**  | Generate Dual-Dimension Meal Recs  | FR-089      | UC-028   | ST   | CRITICAL | ⏳ Pending |
-| **TC-035**  | Context-Aware Meal Suggestions     | FR-090      | UC-029   | ST   | HIGH     | ⏳ Pending |
+| Test ID    | Test Case                         | Requirement | Use Case | Type | Priority | Status     |
+| ---------- | --------------------------------- | ----------- | -------- | ---- | -------- | ---------- |
+| **TC-034** | Generate Dual-Dimension Meal Recs | FR-089      | UC-028   | ST   | CRITICAL | ⏳ Pending |
+| **TC-035** | Context-Aware Meal Suggestions    | FR-090      | UC-029   | ST   | HIGH     | ⏳ Pending |
 
 **Test Coverage**: 2 test cases covering dual-dimension scoring algorithm (physical 40% + mental 40% + preference 20%) and context-aware adaptations.
 
 **Performance Requirements** (per NFR-001):
+
 - Dual-dimension recommendations: ≤4 seconds
 - Score breakdown transparency (show all sub-scores)
 - 100% allergen filtering accuracy maintained (per NFR-021)
 
-### 3.8 AI Health Concierge *(NEW FEATURE)*
+### 3.8 AI Health Concierge _(NEW FEATURE)_
 
-| Test ID     | Test Case                          | Requirement | Use Case | Type | Priority | Status |
-| ----------- | ---------------------------------- | ----------- | -------- | ---- | -------- | ------ |
-| **TC-036**  | AI Concierge Chat Interface        | FR-092      | UC-030   | ST   | CRITICAL | ⏳ Pending |
-| **TC-037**  | AI Safety Validation for Medical Advice | NFR-021 | UC-030 | SEC  | CRITICAL | ⏳ Pending |
-| **TC-038**  | AI-Powered Wellness Insights       | FR-095      | UC-031   | ST   | HIGH     | ⏳ Pending |
-| **TC-039**  | Conversational Plan Adjustments    | FR-094      | UC-032   | ST   | HIGH     | ⏳ Pending |
-| **TC-040**  | Mental Health Data Deletion        | NFR-007A, NFR-023 | -  | SEC  | CRITICAL | ⏳ Pending |
+| Test ID    | Test Case                               | Requirement       | Use Case | Type | Priority | Status     |
+| ---------- | --------------------------------------- | ----------------- | -------- | ---- | -------- | ---------- |
+| **TC-036** | AI Concierge Chat Interface             | FR-092            | UC-030   | ST   | CRITICAL | ⏳ Pending |
+| **TC-037** | AI Safety Validation for Medical Advice | NFR-021           | UC-030   | SEC  | CRITICAL | ⏳ Pending |
+| **TC-038** | AI-Powered Wellness Insights            | FR-095            | UC-031   | ST   | HIGH     | ⏳ Pending |
+| **TC-039** | Conversational Plan Adjustments         | FR-094            | UC-032   | ST   | HIGH     | ⏳ Pending |
+| **TC-040** | Mental Health Data Deletion             | NFR-007A, NFR-023 | -        | SEC  | CRITICAL | ⏳ Pending |
 
 **Test Coverage**: 5 test cases covering LLM chat, safety validation, wellness insights, conversational modifications, and data privacy.
 
 **Critical Safety Requirements** (per NFR-021):
+
 - 100% medical advice declination (zero false negatives)
 - All AI meal recommendations cross-checked with allergens
 - Harmful content validation before display
 - Maximum 5 retry attempts for LLM failures
 
 **Performance Requirements** (per NFR-020):
+
 - LLM first token response: ≤3 seconds
 - Complete response: ≤10 seconds
 - Streaming enabled for perceived speed
 
 **Privacy Requirements** (per NFR-007A, NFR-023):
+
 - Mental wellness data separately encrypted (AES-256)
 - Independent deletion within 24 hours
 - No third-party sharing without consent
@@ -625,12 +631,14 @@ test_case:
 
 **Document Status:** ACTIVE  
 **Version:** 2.0  
-**Test Coverage:** 
+**Test Coverage:**
+
 - **Physical Health**: 22 test cases (TC-001 to TC-022) - 0% executed, 100% planned
 - **Mental Wellness**: 18 test cases (TC-023 to TC-040) - 0% executed, 100% planned
 - **Total**: 40 test cases - 0% executed (0/40), 100% defined
 
 **Requirements Coverage:**
+
 - FR-001 to FR-075 (Physical): Partially covered (22 tests)
 - FR-076 to FR-095 (Mental): Fully covered (18 tests)
 - NFR-007A, NFR-020, NFR-021, NFR-022, NFR-023: Covered in TC-031~040

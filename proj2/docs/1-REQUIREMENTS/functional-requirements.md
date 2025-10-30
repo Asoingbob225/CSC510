@@ -7,6 +7,7 @@ This document specifies the complete functional requirements for the Eatsential 
 **Dual-Dimension Health Focus**: Eatsential uniquely addresses both **Physical Health** (fitness goals, nutrition, allergies) and **Mental Wellness** (mood, stress, sleep, focus) through an integrated platform.
 
 **Implementation Status Legend**:
+
 - ✅ **Implemented**: Feature is fully functional in codebase
 - 🟡 **Partially Implemented**: Some aspects implemented, others pending
 - ❌ **Not Implemented**: Feature not yet started
@@ -129,8 +130,8 @@ This document specifies the complete functional requirements for the Eatsential 
 
 ```json
 {
-  "sub": "user_id",  // Subject (user identifier)
-  "exp": 1234567890  // Expiration timestamp
+  "sub": "user_id", // Subject (user identifier)
+  "exp": 1234567890 // Expiration timestamp
 }
 ```
 
@@ -1771,6 +1772,7 @@ This document specifies the complete functional requirements for the Eatsential 
 **Example Tags**:
 
 Mental Wellness:
+
 - `#StressRelief` - Foods high in magnesium, omega-3, vitamin B
 - `#MoodBoost` - Foods with tryptophan, vitamin D, folate
 - `#SleepAid` - Foods with melatonin, tryptophan, magnesium
@@ -1778,6 +1780,7 @@ Mental Wellness:
 - `#AnxietyReduction` - Foods with GABA, L-theanine, probiotics
 
 Physical Fitness:
+
 - `#PostWorkoutRecovery` - High protein, BCAAs, antioxidants
 - `#EnergyBoost` - Complex carbs, iron, B vitamins
 - `#MuscleBuilding` - High protein, leucine, creatine
@@ -1867,6 +1870,7 @@ Physical Fitness:
 - Explainable scoring (show breakdown of score components)
 
 **Scoring Example**:
+
 ```
 Meal: Salmon with quinoa and leafy greens
 Physical Score: 85/100
@@ -2106,19 +2110,19 @@ Total Score: 87.5/100
 
 ## Requirement Traceability Matrix
 
-| Module                            | Requirements     | Related Use Cases | Priority Distribution                  |
-| --------------------------------- | ---------------- | ----------------- | -------------------------------------- |
-| **Physical Health Modules** |
-| Authentication & Profile          | FR-001 to FR-015 | UC-001 to UC-007  | Critical: 8, Important: 6, Optional: 1 |
-| Meal Planning                     | FR-016 to FR-030 | UC-008 to UC-012  | Critical: 6, Important: 8, Optional: 1 |
-| Nutrition Tracking                | FR-031 to FR-045 | UC-011, UC-012    | Critical: 5, Important: 9, Optional: 1 |
-| Professional Tools                | FR-046 to FR-060 | UC-018 to UC-020  | Critical: 5, Important: 9, Optional: 1 |
-| Visual Wellness                   | FR-061 to FR-075 | UC-013 to UC-017  | Critical: 6, Important: 8, Optional: 1 |
+| Module                            | Requirements     | Related Use Cases | Priority Distribution                        |
+| --------------------------------- | ---------------- | ----------------- | -------------------------------------------- |
+| **Physical Health Modules**       |
+| Authentication & Profile          | FR-001 to FR-015 | UC-001 to UC-007  | Critical: 8, Important: 6, Optional: 1       |
+| Meal Planning                     | FR-016 to FR-030 | UC-008 to UC-012  | Critical: 6, Important: 8, Optional: 1       |
+| Nutrition Tracking                | FR-031 to FR-045 | UC-011, UC-012    | Critical: 5, Important: 9, Optional: 1       |
+| Professional Tools                | FR-046 to FR-060 | UC-018 to UC-020  | Critical: 5, Important: 9, Optional: 1       |
+| Visual Wellness                   | FR-061 to FR-075 | UC-013 to UC-017  | Critical: 6, Important: 8, Optional: 1       |
 | **Mental Wellness Modules (NEW)** |
-| Mental Wellness Management        | FR-076 to FR-085 | UC-021 to UC-025  | Critical: 6, Important: 4, Optional: 0 |
-| Health Tagging System             | FR-086 to FR-088 | UC-026, UC-027    | Critical: 2, Important: 0, Optional: 1 |
-| Dual-Dimension Recommendations    | FR-089 to FR-091 | UC-028, UC-029    | Critical: 3, Important: 0, Optional: 0 |
-| AI Health Concierge               | FR-092 to FR-095 | UC-030, UC-031    | Critical: 3, Important: 1, Optional: 0 |
+| Mental Wellness Management        | FR-076 to FR-085 | UC-021 to UC-025  | Critical: 6, Important: 4, Optional: 0       |
+| Health Tagging System             | FR-086 to FR-088 | UC-026, UC-027    | Critical: 2, Important: 0, Optional: 1       |
+| Dual-Dimension Recommendations    | FR-089 to FR-091 | UC-028, UC-029    | Critical: 3, Important: 0, Optional: 0       |
+| AI Health Concierge               | FR-092 to FR-095 | UC-030, UC-031    | Critical: 3, Important: 1, Optional: 0       |
 | **TOTALS**                        | **95**           | **32**            | **Critical: 44, Important: 45, Optional: 6** |
 
 ## Dependencies and Integration Points
@@ -2162,7 +2166,7 @@ Total Score: 87.5/100
 
 ## Document Revision History
 
-| Version | Date       | Author           | Changes                                                                                                 |
-| ------- | ---------- | ---------------- | ------------------------------------------------------------------------------------------------------- |
-| 1.0     | 2025-10-18 | Development Team | Initial functional requirements specification                                                           |
+| Version | Date       | Author           | Changes                                                                                            |
+| ------- | ---------- | ---------------- | -------------------------------------------------------------------------------------------------- |
+| 1.0     | 2025-10-18 | Development Team | Initial functional requirements specification                                                      |
 | 2.0     | 2025-10-25 | Development Team | Added Mental Wellness dimension: Modules 6-9 (FR-076 to FR-095), expanded to 95 requirements total |

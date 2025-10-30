@@ -82,22 +82,27 @@ POST /api/auth/register
 ## 6. 测试用例
 
 ### TC-001: 成功注册
+
 - 输入：合法的用户名/邮箱/密码
 - 预期：创建用户，发送验证邮件，返回 201
 
 ### TC-002: 邮箱无效
+
 - 输入：格式错误的邮箱
 - 预期：返回 400，不创建用户
 
 ### TC-003: 邮箱或用户名重复
+
 - 输入：已存在的邮箱或用户名
 - 预期：返回 409，不创建用户
 
 ### TC-004: 密码强度不足
+
 - 输入：简单密码
 - 预期：返回 400，包含密码要求说明
 
 ### TC-005: 访问频率限制
+
 - 输入：短时间内多次注册请求
 - 预期：返回 429，包含限制说明
 
@@ -142,51 +147,56 @@ RATE_LIMIT_MINUTES=10
 
 ```json
 {
-    "id": "user-uuid",
-    "username": "john_doe",
-    "email": "john@example.com",
-    "message": "Verification email sent"
+  "id": "user-uuid",
+  "username": "john_doe",
+  "email": "john@example.com",
+  "message": "Verification email sent"
 }
 ```
 
 ### 错误响应
 
 1. 验证错误 (400 Bad Request)
+
 ```json
 {
-    "error": "validation_error",
-    "message": "Invalid email format",
-    "field": "email"
+  "error": "validation_error",
+  "message": "Invalid email format",
+  "field": "email"
 }
 ```
 
 2. 冲突 (409 Conflict)
+
 ```json
 {
-    "error": "conflict",
-    "message": "Email already registered",
-    "field": "email"
+  "error": "conflict",
+  "message": "Email already registered",
+  "field": "email"
 }
 ```
 
 3. 速率限制 (429 Too Many Requests)
+
 ```json
 {
-    "error": "rate_limit_exceeded",
-    "message": "Too many registration attempts",
-    "retry_after": 600
+  "error": "rate_limit_exceeded",
+  "message": "Too many registration attempts",
+  "retry_after": 600
 }
 ```
 
 ## 10. 安全实现细节
 
 1. 密码哈希配置
+
    ```python
    from passlib.hash import argon2
    password_hash = argon2.hash(password)
    ```
 
 2. 验证 Token 生成
+
    ```python
    from secrets import token_urlsafe
    verification_token = token_urlsafe(32)
@@ -234,4 +244,4 @@ CREATE INDEX idx_users_username ON users(username);
 
 ---
 
-*文档生成时间：2025-10-19*
+_文档生成时间：2025-10-19_

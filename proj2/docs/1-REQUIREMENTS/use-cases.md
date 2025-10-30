@@ -9,6 +9,7 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ## Use Case Categories
 
 **Physical Health** (Existing):
+
 - **Authentication & User Management**: UC-001 to UC-003
 - **Health Profile Management**: UC-004 to UC-007
 - **Meal Planning & Recommendations**: UC-008 to UC-012
@@ -16,6 +17,7 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 - **Nutritionist Integration**: UC-018 to UC-020
 
 **Mental Wellness & AI** (NEW):
+
 - **Mental Wellness Management**: UC-021 to UC-025
 - **Health Tagging & Discovery**: UC-026 to UC-027
 - **Dual-Dimension Recommendations**: UC-028 to UC-029
@@ -1078,11 +1080,13 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ### Alternate Flows
 
 **A1**: Multiple goals
+
 - 2a. User creates multiple mental wellness goals
 - 2b. System prompts user to prioritize if more than 3 goals
 - 2c. System balances competing goals in recommendations
 
 **A2**: Goal templates
+
 - 2a. User selects pre-defined goal template (e.g., "Reduce Work Stress")
 - 2b. System pre-fills common settings
 - 2c. User customizes template to personal situation
@@ -1090,11 +1094,13 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ### Exception Flows
 
 **E1**: Conflicting goals
+
 - 8a. System detects potential goal conflicts (e.g., high-calorie comfort foods vs weight loss)
 - 8b. System displays conflict warning with explanation
 - 8c. User adjusts priority or accepts trade-offs
 
 **E2**: Unrealistic targets
+
 - 4a. User sets extreme target (e.g., current=2, target=10 in 1 week)
 - 4b. System suggests more realistic timeline
 - 4c. User adjusts expectations or confirms ambitious target
@@ -1132,11 +1138,13 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ### Alternate Flows
 
 **A1**: Quick logging
+
 - 1a. User uses one-tap quick mood log from notification
 - 1b. System logs mood with current time and minimal data
 - 1c. User can expand entry later to add details
 
 **A2**: Post-meal mood tracking
+
 - 1a. System prompts mood log 30 minutes after meal logging
 - 1b. User logs mood with automatic meal correlation
 - 1c. System analyzes food-mood relationship
@@ -1144,11 +1152,13 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ### Exception Flows
 
 **E1**: Multiple logs same hour
+
 - 8a. User tries to log mood multiple times within 1 hour
 - 8b. System asks if user wants to update previous entry or create new entry
 - 8c. User confirms action
 
 **E2**: Extreme mood changes
+
 - 2a. User logs dramatically different mood than recent pattern (e.g., 9→2 in 2 hours)
 - 2b. System displays supportive message with wellness resources
 - 2c. System flags for potential follow-up insights
@@ -1164,20 +1174,24 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-023: Track Stress Levels
+
 **ID**: UC-023  
 **Primary Actor**: User  
 **Goal**: Log current stress level with triggers and coping strategies
 
 **Preconditions**:
+
 - User is authenticated
 - User has mental wellness goals configured
 
 **Postconditions**:
+
 - Stress log saved with triggers and strategies
 - Stress timeline updated
 - Personalized insights generated if patterns detected
 
 **Main Flow**:
+
 1. User navigates to "Stress Tracking" from Mental Wellness dashboard
 2. System displays stress logging interface with 1-10 visual scale
 3. User selects stress level using slider (stress thermometer visualization)
@@ -1194,12 +1208,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: Quick stress check-in
+
 - 3a. User selects "Quick Log" option
 - 3b. System only requires stress level (1-10)
 - 3c. Skip triggers and strategies
 - 3d. System saves minimal stress log
 
 **A2**: Voice-to-text stress journaling
+
 - 8a. User taps microphone icon
 - 8b. User speaks contextual notes
 - 8c. System transcribes speech to text
@@ -1208,12 +1224,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: High stress alert
+
 - 3a. User logs stress level > 8
 - 3b. System checks history for pattern (3+ consecutive high-stress days)
 - 3c. System displays wellness resources (helpline, professional support)
 - 3d. System suggests #StressRelief meals for upcoming meals
 
 **E2**: Night-time extreme stress
+
 - 9a. User logs stress level > 8 after 8 PM
 - 9b. System recognizes potential sleep impact
 - 9c. System offers #SleepAid meal suggestions
@@ -1230,20 +1248,24 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-024: Monitor Sleep Quality
+
 **ID**: UC-024  
 **Primary Actor**: User  
 **Goal**: Track sleep duration, quality, and factors affecting rest
 
 **Preconditions**:
+
 - User is authenticated
 - User has mental wellness profile
 
 **Postconditions**:
+
 - Sleep log saved with quality metrics
 - Sleep-nutrition correlation analysis updated
 - Evening meal recommendations adjusted if patterns detected
 
 **Main Flow**:
+
 1. User accesses "Sleep Tracking" (typically in morning)
 2. System auto-populates previous night's date
 3. User enters bedtime using time picker
@@ -1261,12 +1283,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: Wearable device auto-import (future feature)
+
 - 2a. System detects connected wearable device
 - 2b. System auto-imports sleep duration and quality from device
 - 2c. User confirms or adjusts imported data
 - 2d. User adds subjective notes if desired
 
 **A2**: Quick morning check-in
+
 - 6a. User selects "Quick Log" mode
 - 6b. System only requires duration + quality (skip details)
 - 6c. System saves minimal sleep log
@@ -1274,12 +1298,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: Insufficient sleep pattern
+
 - 10a. System detects sleep duration < 5 hours for 3+ consecutive nights
 - 10b. System displays sleep health warning
 - 10c. System recommends #SleepAid foods for evening meals
 - 10d. System suggests consulting healthcare provider if pattern continues
 
 **E2**: Poor sleep after heavy meals
+
 - 12a. System identifies correlation: poor sleep after meals consumed after 8 PM
 - 12b. System adjusts dinner recommendation timing
 - 12c. System sends notification: "Try earlier, lighter dinners for better sleep"
@@ -1296,18 +1322,22 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-025: View Mental Wellness Dashboard
+
 **ID**: UC-025  
 **Primary Actor**: User  
 **Goal**: See comprehensive overview of mental wellness metrics and trends
 
 **Preconditions**:
+
 - User has logged at least 3 days of mental wellness data (mood/stress/sleep)
 
 **Postconditions**:
+
 - User has clear understanding of mental wellness trends
 - Actionable insights provided for improvement
 
 **Main Flow**:
+
 1. User navigates to "Mental Wellness Dashboard"
 2. System calculates composite wellness score (0-100 weighted average)
 3. System displays wellness score with gauge visualization
@@ -1323,12 +1353,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: Compare time periods
+
 - 11a. User selects "Compare" mode
 - 11b. User chooses two time ranges (e.g., this month vs last month)
 - 11c. System displays side-by-side comparison
 - 11d. System highlights improvements and declines
 
 **A2**: Export dashboard for sharing
+
 - 10a. User taps "Export" button
 - 10b. User selects export format (PDF or CSV)
 - 10c. System generates report with all charts and insights
@@ -1337,12 +1369,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: Insufficient data warning
+
 - 2a. User has < 3 days of data
 - 2b. System displays progress indicator: "Log 2 more days to unlock insights"
 - 2c. System shows placeholder charts with sample data
 - 2d. System encourages daily logging
 
 **E2**: Declining wellness trend alert
+
 - 8a. System detects all metrics declining over 14-day period
 - 8b. System displays supportive message
 - 8c. System suggests scheduling check-in with healthcare provider
@@ -1361,19 +1395,23 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ## Health Tagging & Discovery Use Cases
 
 ## UC-026: Discover Foods by Health Tags
+
 **ID**: UC-026  
 **Primary Actor**: User  
 **Goal**: Find meals optimized for specific mental/physical wellness needs
 
 **Preconditions**:
+
 - User is authenticated
 - User has dual-dimension health profile configured
 
 **Postconditions**:
+
 - User discovers meals aligned with wellness goals
 - Meal preferences saved for future recommendations
 
 **Main Flow**:
+
 1. User accesses "Browse by Health Tags" feature from home screen
 2. System displays tag categories (Stress Relief, Mood Boost, Sleep Aid, Focus, Recovery)
 3. User selects one or more tags (e.g., #StressRelief + #SleepAid)
@@ -1389,12 +1427,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: Voice search for tags
+
 - 2a. User taps microphone icon
 - 2b. User speaks: "Show me stress-relief meals"
 - 2c. System interprets query and applies #StressRelief tag
 - 2d. System displays filtered results
 
 **A2**: AI-suggested tags
+
 - 2a. System analyzes user's latest mood/stress logs
 - 2b. System proactively suggests relevant tags
 - 2c. User taps suggested tag to apply filter
@@ -1403,12 +1443,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: No meals match all criteria
+
 - 5a. User selects very restrictive tag combination
 - 5b. System finds 0 matching meals
 - 5c. System suggests loosening criteria (switch AND to OR)
 - 5d. System offers to create custom meal with nutritionist
 
 **E2**: Allergies block all results
+
 - 7a. All matching meals contain user's allergens
 - 7b. System displays "No safe meals found" message
 - 7c. System recommends alternative health tags
@@ -1425,19 +1467,23 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-027: Get Personalized Tag Recommendations
+
 **ID**: UC-027  
 **Primary Actor**: System (automated)  
 **Secondary Actor**: User (receives recommendations)  
 **Goal**: Proactively suggest health-tagged meals based on current wellness state
 
 **Preconditions**:
+
 - User has logged mood, stress, or sleep data in last 24 hours
 
 **Postconditions**:
+
 - User receives timely, context-aware meal suggestions
 - Mental wellness needs addressed through nutrition
 
 **Main Flow**:
+
 1. System monitors user's latest mental wellness logs (background job)
 2. System detects potential need (e.g., stress level > 7, poor sleep)
 3. System retrieves user's physical goals (weight loss, muscle gain, etc.)
@@ -1453,11 +1499,13 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: User dismisses notification
+
 - 9a. User swipes away notification
 - 9b. System queues recommendation for later (in-app inbox)
 - 9c. System reduces notification frequency if repeatedly dismissed
 
 **A2**: User accepts meal suggestion
+
 - 10a. User taps "Add to Meal Plan" button
 - 10b. System adds meal to today's meal plan automatically
 - 10c. System updates meal tracking
@@ -1466,12 +1514,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: No suitable meals found
+
 - 6a. Filters eliminate all candidate meals
 - 6b. System loosens physical constraints (prioritize mental wellness)
 - 6c. If still no results, suggest creating custom meal with nutritionist
 - 6d. System logs recommendation gap for system improvement
 
 **E2**: User repeatedly ignores recommendations
+
 - 9a. System detects < 20% notification open rate over 14 days
 - 9b. System reduces notification frequency
 - 9c. System sends survey: "How can we improve recommendations?"
@@ -1490,18 +1540,22 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ## Dual-Dimension Recommendations Use Cases
 
 ## UC-028: Get Dual-Dimension Meal Recommendations
+
 **ID**: UC-028  
 **Primary Actor**: User  
 **Goal**: Receive meals scored on both physical health and mental wellness dimensions
 
 **Preconditions**:
+
 - User has set both physical goals (weight, fitness) and mental wellness goals
 
 **Postconditions**:
+
 - User receives balanced meal recommendations
 - Both physical and mental wellness needs addressed
 
 **Main Flow**:
+
 1. User requests "Smart Recommendations" from homepage
 2. System retrieves physical goals (calorie target, macros, workout schedule)
 3. System retrieves mental wellness goals (stress reduction, sleep quality, etc.)
@@ -1520,12 +1574,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: Time-of-day optimization
+
 - 5a. System detects current time (breakfast/lunch/dinner)
 - 5b. Breakfast → prioritize #EnergyBoost meals
 - 5c. Dinner → prioritize #SleepAid, calming meals
 - 5d. System adjusts scoring weights automatically
 
 **A2**: Budget filter
+
 - 7a. User applies budget filter (< $15 per meal)
 - 7b. System re-filters results by price
 - 7c. System maintains score ranking within budget
@@ -1534,12 +1590,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: Conflicting goals
+
 - 5a. Physical goal (strict calorie limit) conflicts with mental goal (comfort food for stress)
 - 5b. System identifies conflict
 - 5c. System suggests compromise meals with explanation
 - 5d. System displays conflict resolution: "This meal balances your needs: moderate calories + stress-relief nutrients"
 
 **E2**: No high-scoring meals
+
 - 6a. No meals score > 50 (poor match)
 - 6b. System displays message: "No great matches found"
 - 6c. System recommends adjusting one goal temporarily
@@ -1556,20 +1614,24 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-029: Receive Context-Aware Meal Suggestions
+
 **ID**: UC-029  
 **Primary Actor**: System (automated)  
 **Secondary Actor**: User  
 **Goal**: Adapt meal recommendations based on time of day, current mood, and upcoming events
 
 **Preconditions**:
+
 - User has active meal plan or recommendation preferences
 - User has logged recent mood/stress data
 
 **Postconditions**:
+
 - User receives timely, relevant meal suggestions
 - System learns user's context-specific preferences
 
 **Main Flow**:
+
 1. System monitors time of day (morning, afternoon, evening)
 2. System checks user's latest mood log (within last 4 hours)
 3. System checks user's calendar for upcoming events (if integrated)
@@ -1589,12 +1651,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: User manually triggers recommendations
+
 - 1a. User opens app and taps "What should I eat right now?"
 - 1b. System skips scheduled triggers, runs on-demand
 - 1c. System applies current context rules
 - 1d. System displays immediate suggestions
 
 **A2**: Weather-based suggestions
+
 - 4a. System integrates with weather API
 - 4b. Hot day → prioritize refreshing, hydrating meals
 - 4c. Cold day → prioritize warming, comfort meals
@@ -1603,12 +1667,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: Context conflicts with dietary goals
+
 - 4a. Evening #SleepAid meals conflict with strict calorie limit
 - 4b. System prioritizes user's primary goal (weight loss > sleep aid)
 - 4c. System suggests best compromise meal
 - 4d. System explains trade-off: "This lighter meal supports sleep without exceeding calories"
 
 **E2**: User always rejects suggestions
+
 - 9a. System detects < 30% acceptance rate over 14 days
 - 9b. System sends feedback survey
 - 9c. System asks: "What types of meals do you prefer in the evening?"
@@ -1627,19 +1693,23 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ## AI Health Concierge Use Cases
 
 ## UC-030: Chat with AI Health Concierge
+
 **ID**: UC-030  
 **Primary Actor**: User  
 **Goal**: Have natural conversation about nutrition, wellness, and meal planning
 
 **Preconditions**:
+
 - User is authenticated
 - LLM API operational
 
 **Postconditions**:
+
 - User receives helpful, safe nutrition guidance
 - Conversation history saved for context continuity
 
 **Main Flow**:
+
 1. User opens "AI Concierge" chat interface
 2. System loads conversation history (last 10 messages for context)
 3. User types or speaks query (e.g., "What should I eat to reduce stress?")
@@ -1662,6 +1732,7 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: Voice input/output
+
 - 3a. User taps microphone icon
 - 3b. User speaks query
 - 3c. System transcribes speech to text
@@ -1670,6 +1741,7 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 - 3f. User hears spoken response
 
 **A2**: Image upload for meal analysis
+
 - 3a. User taps camera icon
 - 3b. User uploads photo of meal
 - 3c. System uses vision model to identify ingredients
@@ -1680,18 +1752,21 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: LLM suggests medical advice
+
 - 6a. Safety validator detects medical diagnosis or prescription
 - 6b. System blocks response
 - 6c. System displays: "I can't provide medical advice. Please consult a healthcare provider."
 - 6d. System logs incident for review
 
 **E2**: LLM recommends allergen
+
 - 6a. Safety validator detects allergen in recommended meal
 - 6b. System blocks unsafe recommendation
 - 6c. System corrects response: "I noticed this meal contains dairy, which you're allergic to. Here are safe alternatives..."
 - 6d. System logs validation catch for monitoring
 
 **E3**: API rate limit reached
+
 - 4a. LLM API returns rate limit error
 - 4b. System falls back to pre-written FAQ responses
 - 4c. System displays: "I'm experiencing high demand. Here's a quick answer..."
@@ -1708,19 +1783,23 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-031: Get AI-Powered Wellness Insights
+
 **ID**: UC-031  
 **Primary Actor**: System (automated)  
 **Secondary Actor**: User  
 **Goal**: Proactively discover patterns and provide actionable wellness insights
 
 **Preconditions**:
+
 - User has 14+ days of combined data (meals, mood, stress, sleep)
 
 **Postconditions**:
+
 - User gains awareness of hidden wellness patterns
 - Actionable steps provided for improvement
 
 **Main Flow**:
+
 1. System runs nightly analysis job on user data (background process)
 2. System aggregates data: meals eaten, mood logs, stress levels, sleep quality
 3. System uses LLM to identify patterns:
@@ -1744,12 +1823,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: User manually requests analysis
+
 - 1a. User opens "Insights" tab
 - 1b. User taps "Analyze my wellness patterns"
 - 1c. System runs on-demand analysis
 - 1d. System displays available insights immediately
 
 **A2**: Milestone celebrations
+
 - 3a. System detects significant improvement (e.g., 30% stress reduction over 30 days)
 - 3b. System generates celebratory insight
 - 3c. System displays: "🎉 Congrats! You reduced stress by 30% this month!"
@@ -1758,12 +1839,14 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: Insufficient data
+
 - 2a. User has < 14 days of data
 - 2b. System cannot generate statistically significant insights
 - 2c. System displays progress bar: "Log 5 more days to unlock insights"
 - 2d. System shows example insights to motivate continued logging
 
 **E2**: Insight seems incorrect (user feedback)
+
 - 11a. User taps "Not helpful" button
 - 11b. System asks: "What was wrong with this insight?"
 - 11c. User provides feedback
@@ -1781,19 +1864,23 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-032: Adjust Plans via Conversation
+
 **ID**: UC-032  
 **Primary Actor**: User  
 **Goal**: Modify health goals or meal plans through natural language chat
 
 **Preconditions**:
+
 - User has existing health goals and meal plan
 - AI Concierge active
 
 **Postconditions**:
+
 - User's health profile updated via natural conversation
 - Meal recommendations adjusted to new priorities
 
 **Main Flow**:
+
 1. User opens AI Concierge chat
 2. User types: "I want to focus more on stress reduction this week"
 3. AI parses intent (goal priority adjustment)
@@ -1816,6 +1903,7 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Alternate Flows**:
 
 **A1**: Add new goal via chat
+
 - 2a. User: "I also want to improve my sleep"
 - 2b. AI: "I'll add sleep quality as a new goal. What priority: high, medium, or low?"
 - 2c. User: "High"
@@ -1824,6 +1912,7 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 - 2f. AI confirms: "Sleep quality goal added with high priority"
 
 **A2**: Temporarily pause goal
+
 - 2a. User: "Pause my diet plan during vacation"
 - 2b. AI: "I'll pause weight loss goal from [dates]. When does your vacation start?"
 - 2c. User: "November 1-7"
@@ -1833,18 +1922,21 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 **Exception Flows**:
 
 **E1**: Changes conflict with allergies
+
 - 8a. AI detects new goal prioritizes meals with user's allergen
 - 8b. AI: "Some #StressRelief meals contain dairy (your allergen). I'll filter those out automatically."
 - 8c. User acknowledges warning
 - 8d. System applies changes with allergy filter
 
 **E2**: Ambiguous request
+
 - 2a. User: "Change my goals"
 - 2b. AI: "Which goals would you like to change? Physical (muscle gain, weight loss) or Mental (stress, sleep, mood)?"
 - 2c. User clarifies
 - 2d. AI proceeds with clarified intent
 
 **E3**: User changes mind
+
 - 12a. User sees updated meal plan
 - 12b. User: "Actually, never mind. Keep my old settings."
 - 12c. AI: "No problem! I'll revert to your previous goal priorities."
@@ -1904,4 +1996,3 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 | ------- | ---------- | ---------------- | -------------------------------------------------- |
 | 1.0     | 2025-10-18 | Development Team | Initial use case specification                     |
 | 2.0     | 2025-10-25 | Development Team | Added Mental Wellness use cases (UC-021 to UC-032) |
-

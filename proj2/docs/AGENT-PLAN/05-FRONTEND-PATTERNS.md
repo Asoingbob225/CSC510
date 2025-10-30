@@ -58,6 +58,7 @@ frontend/src/components/
 **Note**: Physical wellness features like meal logging (Issue #95) are implemented as dedicated pages (`pages/MealLogging.tsx`) rather than dashboard widgets due to their complexity.
 
 **Benefits:**
+
 - Clear domain boundaries
 - Easy to locate components
 - Supports "dual-dimension health" architecture

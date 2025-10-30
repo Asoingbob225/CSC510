@@ -52,7 +52,7 @@ graph LR
     FR --> DC[Design Components<br/>Architecture & APIs]
     DC --> CODE[Implementation<br/>19 Physical Health APIs<br/>31 Mental Wellness APIs Planned]
     CODE --> TC
-    
+
     style UC fill:#e3f2fd
     style FR fill:#fff3e0
     style TC fill:#e8f5e9
@@ -61,11 +61,13 @@ graph LR
 ```
 
 **Key Documents for Traceability:**
+
 - [Requirements Traceability Matrix (RTM)](./1-REQUIREMENTS/requirements-traceability.md) - UC → FR → Design (95 FRs, 32 UCs)
 - [Test Traceability Matrix (TTM)](./4-TESTING/test-traceability.md) - FR → TC → Status (40 TCs)
 
 **Architecture Overview:**
 Eatsential is a **Dual-Dimension Health Platform** that integrates:
+
 - **Physical Health** (FR-001 to FR-075): Nutrition tracking, allergen management, dietary preferences
 - **Mental Wellness** (FR-076 to FR-095): Mood tracking, stress management, sleep quality, AI health concierge
 - **Dual-Dimension Engine** (FR-089 to FR-091): Context-aware recommendations balancing physical + mental health
@@ -76,12 +78,12 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 
 ### 📘 [1-REQUIREMENTS](./1-REQUIREMENTS/) - Requirements Engineering ✅
 
-| Document | Description | Status |
-|----------|-------------|--------|
-| [use-cases.md](./1-REQUIREMENTS/use-cases.md) | **32 use cases** (UC-001 to UC-032) covering Physical Health + Mental Wellness workflows | ✅ Complete |
-| [functional-requirements.md](./1-REQUIREMENTS/functional-requirements.md) | **95 functional requirements** (FR-001 to FR-095): Physical Health (75 FRs) + Mental Wellness (20 FRs) | ✅ Complete |
-| [non-functional-requirements.md](./1-REQUIREMENTS/non-functional-requirements.md) | **23 non-functional requirements**: Performance, security, usability, AI safety, privacy | ✅ Complete |
-| [requirements-traceability.md](./1-REQUIREMENTS/requirements-traceability.md) | RTM mapping UC → FR → Design → Test (v2.0 with Mental Wellness) | ✅ Complete |
+| Document                                                                          | Description                                                                                            | Status      |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------- |
+| [use-cases.md](./1-REQUIREMENTS/use-cases.md)                                     | **32 use cases** (UC-001 to UC-032) covering Physical Health + Mental Wellness workflows               | ✅ Complete |
+| [functional-requirements.md](./1-REQUIREMENTS/functional-requirements.md)         | **95 functional requirements** (FR-001 to FR-095): Physical Health (75 FRs) + Mental Wellness (20 FRs) | ✅ Complete |
+| [non-functional-requirements.md](./1-REQUIREMENTS/non-functional-requirements.md) | **23 non-functional requirements**: Performance, security, usability, AI safety, privacy               | ✅ Complete |
+| [requirements-traceability.md](./1-REQUIREMENTS/requirements-traceability.md)     | RTM mapping UC → FR → Design → Test (v2.0 with Mental Wellness)                                        | ✅ Complete |
 
 **Coverage**: 100% of Dual-Dimension Health requirements documented (Physical + Mental Wellness)
 
@@ -89,12 +91,12 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 
 ### 📙 [2-DESIGN](./2-DESIGN/) - Architecture & Detailed Design ✅
 
-| Document | Description | Status |
-|----------|-------------|--------|
-| [architecture-overview.md](./2-DESIGN/architecture-overview.md) | System architecture with Mermaid diagrams, tech stack, deployment, security, **Mental Wellness services** | ✅ Complete |
-| [component-diagram.md](./2-DESIGN/component-diagram.md) | Component interaction flows (auth, health profiles, allergies, **mental wellness**) | ✅ Complete |
-| [database-design.md](./2-DESIGN/database-design.md) | **12-table schema**: 5 Physical Health tables + 7 Mental Wellness tables (goals, mood/stress/sleep logs, tags) | ✅ Complete |
-| [api-design.md](./2-DESIGN/api-design.md) | **50 API endpoints**: 19 implemented (Physical) + 31 planned (Mental Wellness) | ✅ Complete |
+| Document                                                        | Description                                                                                                    | Status      |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------- |
+| [architecture-overview.md](./2-DESIGN/architecture-overview.md) | System architecture with Mermaid diagrams, tech stack, deployment, security, **Mental Wellness services**      | ✅ Complete |
+| [component-diagram.md](./2-DESIGN/component-diagram.md)         | Component interaction flows (auth, health profiles, allergies, **mental wellness**)                            | ✅ Complete |
+| [database-design.md](./2-DESIGN/database-design.md)             | **12-table schema**: 5 Physical Health tables + 7 Mental Wellness tables (goals, mood/stress/sleep logs, tags) | ✅ Complete |
+| [api-design.md](./2-DESIGN/api-design.md)                       | **50 API endpoints**: 19 implemented (Physical) + 31 planned (Mental Wellness)                                 | ✅ Complete |
 
 **Coverage**: 100% of Dual-Dimension Health features designed (Physical Health implemented, Mental Wellness planned)
 
@@ -102,14 +104,14 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 
 ### 📕 [3-IMPLEMENTATION](./3-IMPLEMENTATION/) - Development Standards ✅
 
-| Document | Description | Status |
-|----------|-------------|--------|
-| [coding-standards.md](./3-IMPLEMENTATION/coding-standards.md) | Python (PEP 8, Black) and TypeScript (ESLint, Prettier) standards | ✅ Complete |
-| [git-workflow.md](./3-IMPLEMENTATION/git-workflow.md) | Branch strategy, commit conventions, PR process | ✅ Complete |
-| [ci-cd-pipeline.md](./3-IMPLEMENTATION/ci-cd-pipeline.md) | GitHub Actions workflows for testing and deployment | ✅ Complete |
-| [development-guidelines.md](./3-IMPLEMENTATION/development-guidelines.md) | Setup instructions, development practices, troubleshooting | ✅ Complete |
-| [implementation-status.md](./3-IMPLEMENTATION/implementation-status.md) | **Comprehensive feature analysis**: 12.6% complete (12/95 FRs), Physical Health 16%, Mental Wellness 0% | ✅ Complete |
-| [api-changelog.md](./3-IMPLEMENTATION/api-changelog.md) | API versioning and change tracking (v0.1.0 current) | ✅ Complete |
+| Document                                                                  | Description                                                                                             | Status      |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------- |
+| [coding-standards.md](./3-IMPLEMENTATION/coding-standards.md)             | Python (PEP 8, Black) and TypeScript (ESLint, Prettier) standards                                       | ✅ Complete |
+| [git-workflow.md](./3-IMPLEMENTATION/git-workflow.md)                     | Branch strategy, commit conventions, PR process                                                         | ✅ Complete |
+| [ci-cd-pipeline.md](./3-IMPLEMENTATION/ci-cd-pipeline.md)                 | GitHub Actions workflows for testing and deployment                                                     | ✅ Complete |
+| [development-guidelines.md](./3-IMPLEMENTATION/development-guidelines.md) | Setup instructions, development practices, troubleshooting                                              | ✅ Complete |
+| [implementation-status.md](./3-IMPLEMENTATION/implementation-status.md)   | **Comprehensive feature analysis**: 12.6% complete (12/95 FRs), Physical Health 16%, Mental Wellness 0% | ✅ Complete |
+| [api-changelog.md](./3-IMPLEMENTATION/api-changelog.md)                   | API versioning and change tracking (v0.1.0 current)                                                     | ✅ Complete |
 
 **Coverage**: All development processes documented, **4-phase Mental Wellness roadmap** (16-20 weeks)
 
@@ -117,12 +119,12 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 
 ### 🧪 [4-TESTING](./4-TESTING/) - Software Test Plan ✅
 
-| Document | Description | Status |
-|----------|-------------|--------|
-| [test-strategy.md](./4-TESTING/test-strategy.md) | Unit, integration, system, acceptance testing approach (includes **Mental Wellness testing**) | ✅ Complete |
-| [test-cases.md](./4-TESTING/test-cases.md) | **40 test cases** (TC-001 to TC-040): 22 Physical Health + 18 Mental Wellness | ✅ Complete |
-| [test-traceability.md](./4-TESTING/test-traceability.md) | TTM mapping Test → FR → Status (v2.0 with Mental Wellness coverage) | ✅ Complete |
-| [test-coverage-report.md](./4-TESTING/test-coverage-report.md) | 88% coverage for Physical Health, Mental Wellness tests pending | ✅ Complete |
+| Document                                                       | Description                                                                                   | Status      |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------- |
+| [test-strategy.md](./4-TESTING/test-strategy.md)               | Unit, integration, system, acceptance testing approach (includes **Mental Wellness testing**) | ✅ Complete |
+| [test-cases.md](./4-TESTING/test-cases.md)                     | **40 test cases** (TC-001 to TC-040): 22 Physical Health + 18 Mental Wellness                 | ✅ Complete |
+| [test-traceability.md](./4-TESTING/test-traceability.md)       | TTM mapping Test → FR → Status (v2.0 with Mental Wellness coverage)                           | ✅ Complete |
+| [test-coverage-report.md](./4-TESTING/test-coverage-report.md) | 88% coverage for Physical Health, Mental Wellness tests pending                               | ✅ Complete |
 
 **Coverage**: 20/22 Physical Health tests passing (91%), 0/18 Mental Wellness tests implemented (pending development)
 
@@ -130,11 +132,11 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 
 ### 🚀 [5-PROJECT-MANAGEMENT](./5-PROJECT-MANAGEMENT/) - Project Planning ✅
 
-| Document | Description | Status |
-|----------|-------------|--------|
+| Document                                                        | Description                                                                                       | Status      |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------- |
 | [project-charter.md](./5-PROJECT-MANAGEMENT/project-charter.md) | Project scope, objectives, stakeholders, success criteria (**updated for Dual-Dimension Health**) | ✅ Complete |
-| [risk-management.md](./5-PROJECT-MANAGEMENT/risk-management.md) | Risk identification, assessment, mitigation strategies (includes **LLM integration risks**) | ✅ Complete |
-| [milestones.md](./5-PROJECT-MANAGEMENT/milestones.md) | **Extended timeline**: 8 weeks Physical Health + 16 weeks Mental Wellness (M1-M12) | ✅ Complete |
+| [risk-management.md](./5-PROJECT-MANAGEMENT/risk-management.md) | Risk identification, assessment, mitigation strategies (includes **LLM integration risks**)       | ✅ Complete |
+| [milestones.md](./5-PROJECT-MANAGEMENT/milestones.md)           | **Extended timeline**: 8 weeks Physical Health + 16 weeks Mental Wellness (M1-M12)                | ✅ Complete |
 
 **Coverage**: Complete project management framework for Dual-Dimension Health Platform (26-week total timeline)
 
@@ -144,18 +146,18 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 
 **Purpose**: Quick reference guide for AI-assisted development. Links to comprehensive documentation.
 
-| Document | Description | Status |
-|----------|-------------|--------|
-| [00-QUICK-START.md](./AGENT-PLAN/00-QUICK-START.md) | Fast onboarding for AI agents | ✅ Complete |
-| [01-TECH-STACK.md](./AGENT-PLAN/01-TECH-STACK.md) | Technology stack overview | ✅ Complete |
-| [02-ARCHITECTURE.md](./AGENT-PLAN/02-ARCHITECTURE.md) | System architecture summary | ✅ Complete |
-| [03-API-SPECIFICATIONS.md](./AGENT-PLAN/03-API-SPECIFICATIONS.md) | API endpoints reference | ✅ Complete |
-| [04-DATABASE-DESIGN.md](./AGENT-PLAN/04-DATABASE-DESIGN.md) | Database schema reference | ✅ Complete |
-| [05-FRONTEND-PATTERNS.md](./AGENT-PLAN/05-FRONTEND-PATTERNS.md) | React patterns and practices | ✅ Complete |
-| [06-BACKEND-PATTERNS.md](./AGENT-PLAN/06-BACKEND-PATTERNS.md) | FastAPI patterns and practices | ✅ Complete |
-| [07-TESTING-STRATEGY.md](./AGENT-PLAN/07-TESTING-STRATEGY.md) | Testing approach summary | ✅ Complete |
-| [08-SPRINT-TASKS.md](./AGENT-PLAN/08-SPRINT-TASKS.md) | Current sprint tasks | ✅ Complete |
-| [09-AGENT-INSTRUCTIONS.md](./AGENT-PLAN/09-AGENT-INSTRUCTIONS.md) | AI agent guidelines | ✅ Complete |
+| Document                                                          | Description                    | Status      |
+| ----------------------------------------------------------------- | ------------------------------ | ----------- |
+| [00-QUICK-START.md](./AGENT-PLAN/00-QUICK-START.md)               | Fast onboarding for AI agents  | ✅ Complete |
+| [01-TECH-STACK.md](./AGENT-PLAN/01-TECH-STACK.md)                 | Technology stack overview      | ✅ Complete |
+| [02-ARCHITECTURE.md](./AGENT-PLAN/02-ARCHITECTURE.md)             | System architecture summary    | ✅ Complete |
+| [03-API-SPECIFICATIONS.md](./AGENT-PLAN/03-API-SPECIFICATIONS.md) | API endpoints reference        | ✅ Complete |
+| [04-DATABASE-DESIGN.md](./AGENT-PLAN/04-DATABASE-DESIGN.md)       | Database schema reference      | ✅ Complete |
+| [05-FRONTEND-PATTERNS.md](./AGENT-PLAN/05-FRONTEND-PATTERNS.md)   | React patterns and practices   | ✅ Complete |
+| [06-BACKEND-PATTERNS.md](./AGENT-PLAN/06-BACKEND-PATTERNS.md)     | FastAPI patterns and practices | ✅ Complete |
+| [07-TESTING-STRATEGY.md](./AGENT-PLAN/07-TESTING-STRATEGY.md)     | Testing approach summary       | ✅ Complete |
+| [08-SPRINT-TASKS.md](./AGENT-PLAN/08-SPRINT-TASKS.md)             | Current sprint tasks           | ✅ Complete |
+| [09-AGENT-INSTRUCTIONS.md](./AGENT-PLAN/09-AGENT-INSTRUCTIONS.md) | AI agent guidelines            | ✅ Complete |
 
 ---
 
@@ -201,28 +203,29 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 
 ### Overall Progress: 23/23 documents (100%) ✅
 
-| Phase | Documents | Completed | Status |
-|-------|-----------|-----------|--------|
-| 1-REQUIREMENTS | 4 | 4 | 📘 100% |
-| 2-DESIGN | 4 | 4 | 📙 100% |
-| 3-IMPLEMENTATION | 6 | 6 | 🟢 100% |
-| 4-TESTING | 4 | 4 | 🟢 100% |
-| 5-PROJECT-MANAGEMENT | 3 | 3 | 🟢 100% |
-| AGENT-PLAN | 10 | 10 | 🟢 100% |
+| Phase                | Documents | Completed | Status  |
+| -------------------- | --------- | --------- | ------- |
+| 1-REQUIREMENTS       | 4         | 4         | 📘 100% |
+| 2-DESIGN             | 4         | 4         | 📙 100% |
+| 3-IMPLEMENTATION     | 6         | 6         | 🟢 100% |
+| 4-TESTING            | 4         | 4         | 🟢 100% |
+| 5-PROJECT-MANAGEMENT | 3         | 3         | 🟢 100% |
+| AGENT-PLAN           | 10        | 10        | 🟢 100% |
 
 **Legend:** 🟢 Complete | 🟡 In Progress | 🔴 Not Started
 
 ### Implementation Progress
 
-| Category | Progress | Details |
-|----------|----------|---------|
-| **Backend APIs** | 19/50 (38%) | **Physical Health**: 19 implemented ✅ | **Mental Wellness**: 0/31 implemented ❌ |
-| **Frontend** | 30% | Basic scaffolding, authentication components 🟡 |
-| **Database** | 42% | **Physical Health**: 5/12 tables ✅ | **Mental Wellness**: 0/7 tables ❌ |
-| **Tests** | 50% | **Physical Health**: 70 tests (88% coverage) ✅ | **Mental Wellness**: 0 tests ❌ |
-| **Documentation** | 100% | All 25 core documents complete (v2.0 Dual-Dimension Health) ✅ |
+| Category          | Progress    | Details                                                        |
+| ----------------- | ----------- | -------------------------------------------------------------- | ---------------------------------------- |
+| **Backend APIs**  | 19/50 (38%) | **Physical Health**: 19 implemented ✅                         | **Mental Wellness**: 0/31 implemented ❌ |
+| **Frontend**      | 30%         | Basic scaffolding, authentication components 🟡                |
+| **Database**      | 42%         | **Physical Health**: 5/12 tables ✅                            | **Mental Wellness**: 0/7 tables ❌       |
+| **Tests**         | 50%         | **Physical Health**: 70 tests (88% coverage) ✅                | **Mental Wellness**: 0 tests ❌          |
+| **Documentation** | 100%        | All 25 core documents complete (v2.0 Dual-Dimension Health) ✅ |
 
 **Key Architecture Features:**
+
 - ✅ **Physical Health Foundation** (16% complete): Nutrition tracking, allergen management, dietary preferences
 - ❌ **Mental Wellness System** (0% complete): Mood/stress/sleep tracking, health tags, dual-dimension engine
 - ❌ **AI Health Concierge** (0% complete): LLM integration, conversational AI, wellness insights
@@ -233,18 +236,23 @@ Eatsential is a **Dual-Dimension Health Platform** that integrates:
 ## 🔗 Key Entry Points
 
 ### For New Team Members
+
 **Start Here**: [AGENT-PLAN/00-QUICK-START.md](./AGENT-PLAN/00-QUICK-START.md)
 
 ### For Requirements Review
+
 **Start Here**: [1-REQUIREMENTS/functional-requirements.md](./1-REQUIREMENTS/functional-requirements.md)
 
 ### For Design Review
+
 **Start Here**: [2-DESIGN/architecture-overview.md](./2-DESIGN/architecture-overview.md)
 
 ### For Testing Review
+
 **Start Here**: [4-TESTING/test-cases.md](./4-TESTING/test-cases.md)
 
 ### For Implementation Review
+
 **Start Here**: [3-IMPLEMENTATION/implementation-status.md](./3-IMPLEMENTATION/implementation-status.md)
 
 ---
@@ -292,6 +300,7 @@ Status: ✅ 3/3 tests passing
 **Major Documentation Update**: Expanded from Physical Health MVP to **Dual-Dimension Health Platform**
 
 #### Requirements & Design (NEW):
+
 - ✅ **Added 20 Mental Wellness Requirements** (FR-076 to FR-095)
   - Mental wellness goals & tracking (FR-076~085)
   - Health tagging system (#StressRelief, #MoodBoost, #SleepAid) (FR-086~088)
@@ -304,6 +313,7 @@ Status: ✅ 3/3 tests passing
 - ✅ **Updated Test Traceability Matrix** (TTM v2.0) - 631 lines
 
 #### Implementation Planning (NEW):
+
 - ✅ **Updated Implementation Status** - Added Mental Wellness feature analysis:
   - Section 6.3: Mental Wellness Features Status (4 modules, 20 FRs)
   - Section 6.4: Implementation Roadmap (4 phases, 16-20 weeks)
@@ -316,6 +326,7 @@ Status: ✅ 3/3 tests passing
   - Component Diagrams: Mental wellness interaction flows
 
 #### Total Documentation Growth:
+
 - **Requirements**: 75 → 95 FRs (+27%)
 - **Use Cases**: 20 → 32 UCs (+60%)
 - **Test Cases**: 22 → 40 TCs (+82%)

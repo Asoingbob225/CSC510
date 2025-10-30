@@ -21,11 +21,11 @@ This document provides a comprehensive analysis of implemented features compared
 
 ### Overall Progress Summary
 
-| Category | Requirements | Implemented | In Progress | Not Started | Completion % |
-|----------|--------------|-------------|-------------|-------------|--------------|
-| **Physical Health** | 75 (FR-001~075) | 12 | 3 | 60 | 16% |
-| **Mental Wellness** *(NEW)* | 20 (FR-076~095) | 0 | 0 | 20 | 0% |
-| **Total** | **95** | **12** | **3** | **80** | **12.6%** |
+| Category                    | Requirements    | Implemented | In Progress | Not Started | Completion % |
+| --------------------------- | --------------- | ----------- | ----------- | ----------- | ------------ |
+| **Physical Health**         | 75 (FR-001~075) | 12          | 3           | 60          | 16%          |
+| **Mental Wellness** _(NEW)_ | 20 (FR-076~095) | 0           | 0           | 20          | 0%           |
+| **Total**                   | **95**          | **12**      | **3**       | **80**      | **12.6%**    |
 
 ---
 
@@ -362,10 +362,10 @@ async def get_current_admin_user(current_user: UserDB) -> UserDB:
 
 ```typescript
 // lib/api.ts
-- authApi.register(data)
-- authApi.login(credentials)
-- authApi.verifyEmail(token)
-- authApi.resendVerification(email)
+-authApi.register(data) -
+  authApi.login(credentials) -
+  authApi.verifyEmail(token) -
+  authApi.resendVerification(email);
 ```
 
 **Token Management**:
@@ -398,19 +398,19 @@ async def get_current_admin_user(current_user: UserDB) -> UserDB:
 
 ```typescript
 // lib/api.ts - healthProfileApi
-- getProfile()
-- createProfile(data)
-- updateProfile(data)
-- deleteProfile()
-- addAllergy(data)
-- getAllergies()
-- updateAllergy(id, data)
-- deleteAllergy(id)
-- getDietaryPreferences()
-- addDietaryPreference(data)
-- updateDietaryPreference(id, data)
-- deleteDietaryPreference(id)
-- getAllergens()
+-getProfile() -
+  createProfile(data) -
+  updateProfile(data) -
+  deleteProfile() -
+  addAllergy(data) -
+  getAllergies() -
+  updateAllergy(id, data) -
+  deleteAllergy(id) -
+  getDietaryPreferences() -
+  addDietaryPreference(data) -
+  updateDietaryPreference(id, data) -
+  deleteDietaryPreference(id) -
+  getAllergens();
 ```
 
 ---
@@ -637,32 +637,34 @@ allow_headers=["*"]
 
 ---
 
-### 6.3 Mental Wellness Features Status *(NEW - TARGET FEATURES)*
+### 6.3 Mental Wellness Features Status _(NEW - TARGET FEATURES)_
 
 > **Note**: All Mental Wellness features (FR-076 to FR-095) are **NOT YET IMPLEMENTED**. These represent the expansion from Physical Health-only platform to the Dual-Dimension Health architecture described in System_Introduction.md.
 
 #### Module 6: Mental Wellness Management (FR-076 to FR-085)
 
-| Feature ID | Feature Name | Status | Priority | Estimated Effort |
-|------------|--------------|--------|----------|------------------|
-| **FR-076** | Mental Wellness Goal Setting | ❌ Not Implemented | CRITICAL | 2 weeks |
-| **FR-077** | Mood Tracking | ❌ Not Implemented | CRITICAL | 1.5 weeks |
-| **FR-078** | Stress Level Monitoring | ❌ Not Implemented | CRITICAL | 1.5 weeks |
-| **FR-079** | Sleep Quality Tracking | ❌ Not Implemented | CRITICAL | 2 weeks |
-| **FR-080** | Pattern Identification | ❌ Not Implemented | HIGH | 2 weeks |
-| **FR-081** | Wellness Pattern Detection | ❌ Not Implemented | HIGH | 2 weeks |
-| **FR-082** | Mental Wellness Dashboard | ❌ Not Implemented | CRITICAL | 2 weeks |
-| **FR-083** | Mental-Physical Correlation | ❌ Not Implemented | HIGH | 3 weeks |
-| **FR-084** | Mindful Eating Reminders | ❌ Not Implemented | MEDIUM | 1 week |
-| **FR-085** | Mental Wellness Progress Reports | ❌ Not Implemented | HIGH | 1.5 weeks |
+| Feature ID | Feature Name                     | Status             | Priority | Estimated Effort |
+| ---------- | -------------------------------- | ------------------ | -------- | ---------------- |
+| **FR-076** | Mental Wellness Goal Setting     | ❌ Not Implemented | CRITICAL | 2 weeks          |
+| **FR-077** | Mood Tracking                    | ❌ Not Implemented | CRITICAL | 1.5 weeks        |
+| **FR-078** | Stress Level Monitoring          | ❌ Not Implemented | CRITICAL | 1.5 weeks        |
+| **FR-079** | Sleep Quality Tracking           | ❌ Not Implemented | CRITICAL | 2 weeks          |
+| **FR-080** | Pattern Identification           | ❌ Not Implemented | HIGH     | 2 weeks          |
+| **FR-081** | Wellness Pattern Detection       | ❌ Not Implemented | HIGH     | 2 weeks          |
+| **FR-082** | Mental Wellness Dashboard        | ❌ Not Implemented | CRITICAL | 2 weeks          |
+| **FR-083** | Mental-Physical Correlation      | ❌ Not Implemented | HIGH     | 3 weeks          |
+| **FR-084** | Mindful Eating Reminders         | ❌ Not Implemented | MEDIUM   | 1 week           |
+| **FR-085** | Mental Wellness Progress Reports | ❌ Not Implemented | HIGH     | 1.5 weeks        |
 
 **Missing Database Tables**:
+
 - `mental_wellness_goals` - Store user's mental wellness objectives
 - `mood_logs` - Daily mood tracking (1-10 scale + tags)
 - `stress_logs` - Stress level monitoring with triggers
 - `sleep_logs` - Sleep quality and duration tracking
 
 **Missing API Endpoints**:
+
 - `POST /api/mental-wellness/goals` - Create mental wellness goal
 - `GET /api/mental-wellness/goals` - Get user's mental goals
 - `POST /api/mood-tracking/logs` - Log daily mood entry
@@ -679,23 +681,26 @@ allow_headers=["*"]
 
 #### Module 7: Health Tagging System (FR-086 to FR-088)
 
-| Feature ID | Feature Name | Status | Priority | Estimated Effort |
-|------------|--------------|--------|----------|------------------|
-| **FR-086** | Health Tag Database | ❌ Not Implemented | CRITICAL | 1 week |
-| **FR-087** | Tag-Based Food Filtering | ❌ Not Implemented | CRITICAL | 1.5 weeks |
-| **FR-088** | AI Tag Suggestion | ❌ Not Implemented | HIGH | 2 weeks |
+| Feature ID | Feature Name             | Status             | Priority | Estimated Effort |
+| ---------- | ------------------------ | ------------------ | -------- | ---------------- |
+| **FR-086** | Health Tag Database      | ❌ Not Implemented | CRITICAL | 1 week           |
+| **FR-087** | Tag-Based Food Filtering | ❌ Not Implemented | CRITICAL | 1.5 weeks        |
+| **FR-088** | AI Tag Suggestion        | ❌ Not Implemented | HIGH     | 2 weeks          |
 
 **Missing Database Tables**:
+
 - `health_tags` - Tag definitions (#StressRelief, #MoodBoost, #SleepAid, etc.)
 - `food_tags` - Many-to-many relationship between foods and tags
 
 **Missing API Endpoints**:
+
 - `GET /api/health-tags` - List all available health tags
 - `GET /api/health-tags/{category}` - Get tags by category
 - `GET /api/foods/by-tag/{tag_name}` - Filter foods by health tag
 - `POST /api/health-tags/recommendations` - Get personalized tag suggestions
 
 **Missing Components**:
+
 - Tag effectiveness database (research-backed)
 - Nutrient-to-tag mapping algorithm
 - Tag recommendation engine (requires 7+ days wellness data)
@@ -706,13 +711,14 @@ allow_headers=["*"]
 
 #### Module 8: Dual-Dimension Recommendation Engine (FR-089 to FR-091)
 
-| Feature ID | Feature Name | Status | Priority | Estimated Effort |
-|------------|--------------|--------|----------|------------------|
-| **FR-089** | Dual-Dimension Meal Scoring | ❌ Not Implemented | CRITICAL | 3 weeks |
-| **FR-090** | Context-Aware Recommendations | ❌ Not Implemented | CRITICAL | 2 weeks |
-| **FR-091** | Goal Balancing Algorithm | ❌ Not Implemented | HIGH | 2 weeks |
+| Feature ID | Feature Name                  | Status             | Priority | Estimated Effort |
+| ---------- | ----------------------------- | ------------------ | -------- | ---------------- |
+| **FR-089** | Dual-Dimension Meal Scoring   | ❌ Not Implemented | CRITICAL | 3 weeks          |
+| **FR-090** | Context-Aware Recommendations | ❌ Not Implemented | CRITICAL | 2 weeks          |
+| **FR-091** | Goal Balancing Algorithm      | ❌ Not Implemented | HIGH     | 2 weeks          |
 
 **Missing Core Algorithm**:
+
 ```python
 # Dual-Dimension Scoring Formula (to be implemented)
 total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
@@ -731,17 +737,20 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 ```
 
 **Missing API Endpoints**:
+
 - `POST /api/recommendations/dual-dimension` - Get dual-scored meal recommendations
 - `GET /api/recommendations/explain/{meal_id}` - Explain recommendation score breakdown
 - `POST /api/recommendations/contextual` - Context-aware suggestions
 - `GET /api/recommendations/smart` - Auto-detect context and recommend
 
 **Missing Services**:
+
 - Dual-Dimension Scoring Engine
 - Context Detection Service (time, mood, stress, activity)
 - Goal Conflict Resolution Algorithm
 
 **Performance Requirements** (per NFR-001):
+
 - Dual-dimension recommendations: ≤4 seconds
 - Score transparency (show all sub-scores)
 - Real-time weight adjustment by user
@@ -752,14 +761,15 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 
 #### Module 9: AI Health Concierge (FR-092 to FR-095)
 
-| Feature ID | Feature Name | Status | Priority | Estimated Effort |
-|------------|--------------|--------|----------|------------------|
-| **FR-092** | LLM Integration | ❌ Not Implemented | CRITICAL | 3 weeks |
-| **FR-093** | Natural Language Health Queries | ❌ Not Implemented | HIGH | 2 weeks |
-| **FR-094** | Conversational Goal Modification | ❌ Not Implemented | HIGH | 2 weeks |
-| **FR-095** | Real-Time Wellness Insights | ❌ Not Implemented | HIGH | 2.5 weeks |
+| Feature ID | Feature Name                     | Status             | Priority | Estimated Effort |
+| ---------- | -------------------------------- | ------------------ | -------- | ---------------- |
+| **FR-092** | LLM Integration                  | ❌ Not Implemented | CRITICAL | 3 weeks          |
+| **FR-093** | Natural Language Health Queries  | ❌ Not Implemented | HIGH     | 2 weeks          |
+| **FR-094** | Conversational Goal Modification | ❌ Not Implemented | HIGH     | 2 weeks          |
+| **FR-095** | Real-Time Wellness Insights      | ❌ Not Implemented | HIGH     | 2.5 weeks        |
 
 **Missing Infrastructure**:
+
 - LLM API integration (OpenAI GPT-4, Claude, or alternative)
 - RAG (Retrieval-Augmented Generation) pipeline for nutrition knowledge base
 - Safety validation layer (medical advice declination, allergen cross-check)
@@ -767,16 +777,19 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 - Intent parsing engine for conversational modifications
 
 **Missing Database Tables**:
+
 - `chat_sessions` - Store conversation history
 - `ai_insights` - Cache generated wellness insights
 
 **Missing API Endpoints**:
+
 - `POST /api/ai-concierge/chat` - Send message to AI concierge
 - `GET /api/ai-concierge/session/{id}` - Get chat history
 - `POST /api/ai-concierge/insights` - Generate wellness insights
 - `POST /api/ai-concierge/adjust-goals` - Parse natural language goal modifications
 
 **Critical Safety Requirements** (per NFR-021):
+
 - 100% medical advice declination (zero false negatives)
 - All AI meal recommendations must cross-check with user allergens
 - Harmful content validation before display
@@ -784,11 +797,13 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 - Fallback to cached responses on API failure
 
 **Performance Requirements** (per NFR-020):
+
 - LLM first token response: ≤3 seconds
 - Complete response: ≤10 seconds
 - Streaming enabled for perceived speed
 
 **Privacy Requirements** (per NFR-007A):
+
 - Mental wellness data separately encrypted (AES-256)
 - No LLM prompts containing PII
 - Conversation logs deletable within 24 hours
@@ -800,22 +815,26 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 ### 6.4 Mental Wellness Implementation Roadmap
 
 **Phase 1: Foundation (Weeks 1-2)** - Estimated 4 weeks
+
 - Implement mental_wellness_goals, mood_logs, stress_logs tables
 - Build FR-076 to FR-080 (goals + basic tracking)
 - Develop TC-023 to TC-028
 
 **Phase 2: Sleep & Tags (Weeks 3-4)** - Estimated 4 weeks
+
 - Implement sleep_logs, health_tags tables
 - Build FR-079, FR-083, FR-086 to FR-088
 - Develop TC-029 to TC-033
 
 **Phase 3: Dual-Dimension Engine (Weeks 5-6)** - Estimated 4 weeks
+
 - Build dual-dimension scoring algorithm
 - Implement FR-089 to FR-091
 - Develop TC-034 to TC-035
 - Performance optimization
 
 **Phase 4: AI Concierge (Weeks 7-8)** - Estimated 4 weeks
+
 - Integrate LLM API (OpenAI/Claude)
 - Build RAG pipeline + safety layer
 - Implement FR-092 to FR-095
@@ -825,6 +844,7 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 **Total Estimated Effort**: 16 weeks (4 months) for complete Mental Wellness implementation
 
 **Dependencies**:
+
 - LLM API subscription (OpenAI, Claude, or alternative)
 - Research database for health tag effectiveness
 - Enhanced analytics infrastructure for pattern detection
@@ -836,27 +856,27 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 
 ### 7.1 Implemented Endpoints
 
-| Endpoint                                        | Method | Auth Required | Status           |
-| ----------------------------------------------- | ------ | ------------- | ---------------- |
-| `/api`                                          | GET    | No            | ✅ Implemented   |
-| `/api/auth/register`                            | POST   | No            | ✅ Implemented   |
-| `/api/auth/login`                               | POST   | No            | ✅ Implemented   |
-| `/api/auth/verify-email/{token}`                | GET    | No            | ✅ Implemented   |
-| `/api/auth/resend-verification`                 | POST   | No            | ✅ Implemented   |
-| `/api/users/me`                                 | GET    | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/profile`                           | POST   | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/profile`                           | GET    | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/profile`                           | PUT    | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/profile`                           | DELETE | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/allergies`                         | POST   | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/allergies`                         | GET    | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/allergies/{allergy_id}`            | PUT    | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/allergies/{allergy_id}`            | DELETE | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/dietary-preferences`               | POST   | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/dietary-preferences`               | GET    | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/dietary-preferences/{pref_id}`     | PUT    | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/dietary-preferences/{pref_id}`     | DELETE | Yes (JWT)     | ✅ Implemented   |
-| `/api/health/allergens`                         | GET    | Yes (JWT)     | ✅ Implemented   |
+| Endpoint                                    | Method | Auth Required | Status         |
+| ------------------------------------------- | ------ | ------------- | -------------- |
+| `/api`                                      | GET    | No            | ✅ Implemented |
+| `/api/auth/register`                        | POST   | No            | ✅ Implemented |
+| `/api/auth/login`                           | POST   | No            | ✅ Implemented |
+| `/api/auth/verify-email/{token}`            | GET    | No            | ✅ Implemented |
+| `/api/auth/resend-verification`             | POST   | No            | ✅ Implemented |
+| `/api/users/me`                             | GET    | Yes (JWT)     | ✅ Implemented |
+| `/api/health/profile`                       | POST   | Yes (JWT)     | ✅ Implemented |
+| `/api/health/profile`                       | GET    | Yes (JWT)     | ✅ Implemented |
+| `/api/health/profile`                       | PUT    | Yes (JWT)     | ✅ Implemented |
+| `/api/health/profile`                       | DELETE | Yes (JWT)     | ✅ Implemented |
+| `/api/health/allergies`                     | POST   | Yes (JWT)     | ✅ Implemented |
+| `/api/health/allergies`                     | GET    | Yes (JWT)     | ✅ Implemented |
+| `/api/health/allergies/{allergy_id}`        | PUT    | Yes (JWT)     | ✅ Implemented |
+| `/api/health/allergies/{allergy_id}`        | DELETE | Yes (JWT)     | ✅ Implemented |
+| `/api/health/dietary-preferences`           | POST   | Yes (JWT)     | ✅ Implemented |
+| `/api/health/dietary-preferences`           | GET    | Yes (JWT)     | ✅ Implemented |
+| `/api/health/dietary-preferences/{pref_id}` | PUT    | Yes (JWT)     | ✅ Implemented |
+| `/api/health/dietary-preferences/{pref_id}` | DELETE | Yes (JWT)     | ✅ Implemented |
+| `/api/health/allergens`                     | GET    | Yes (JWT)     | ✅ Implemented |
 
 **Physical Health APIs**: 19 endpoints implemented
 
@@ -864,82 +884,82 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 
 ### 7.2 Not Implemented Endpoints (Physical Health)
 
-| Endpoint                                        | Method | Auth Required | Priority |
-| ----------------------------------------------- | ------ | ------------- | -------- |
-| `/api/users/me`                                 | PUT    | Yes (JWT)     | HIGH     |
-| `/api/users/me`                                 | DELETE | Yes (JWT)     | HIGH     |
-| `/api/auth/forgot-password`                     | POST   | No            | HIGH     |
-| `/api/auth/reset-password`                      | POST   | No            | HIGH     |
-| `/api/recommendations/*`                        | *      | Yes (JWT)     | CRITICAL |
-| `/api/meals/*`                                  | *      | Yes (JWT)     | CRITICAL |
-| `/api/admin/*`                                  | *      | Yes (Admin)   | MEDIUM   |
+| Endpoint                    | Method | Auth Required | Priority |
+| --------------------------- | ------ | ------------- | -------- |
+| `/api/users/me`             | PUT    | Yes (JWT)     | HIGH     |
+| `/api/users/me`             | DELETE | Yes (JWT)     | HIGH     |
+| `/api/auth/forgot-password` | POST   | No            | HIGH     |
+| `/api/auth/reset-password`  | POST   | No            | HIGH     |
+| `/api/recommendations/*`    | \*     | Yes (JWT)     | CRITICAL |
+| `/api/meals/*`              | \*     | Yes (JWT)     | CRITICAL |
+| `/api/admin/*`              | \*     | Yes (Admin)   | MEDIUM   |
 
 ---
 
-### 7.3 Mental Wellness Endpoints *(NEW - NOT IMPLEMENTED)*
+### 7.3 Mental Wellness Endpoints _(NEW - NOT IMPLEMENTED)_
 
 #### Mental Wellness Management
 
-| Endpoint                                        | Method | Auth Required | Status | Priority |
-| ----------------------------------------------- | ------ | ------------- | ------ | -------- |
-| `/api/mental-wellness/goals`                    | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/mental-wellness/goals`                    | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/mental-wellness/goals/{goal_id}`          | PUT    | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/mental-wellness/goals/{goal_id}`          | DELETE | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/mental-wellness/dashboard`                | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/mental-wellness/reports/weekly`           | GET    | Yes (JWT)     | ❌ Not Impl | MEDIUM   |
-| `/api/mental-wellness/reports/monthly`          | GET    | Yes (JWT)     | ❌ Not Impl | MEDIUM   |
+| Endpoint                               | Method | Auth Required | Status      | Priority |
+| -------------------------------------- | ------ | ------------- | ----------- | -------- |
+| `/api/mental-wellness/goals`           | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/mental-wellness/goals`           | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/mental-wellness/goals/{goal_id}` | PUT    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/mental-wellness/goals/{goal_id}` | DELETE | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/mental-wellness/dashboard`       | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/mental-wellness/reports/weekly`  | GET    | Yes (JWT)     | ❌ Not Impl | MEDIUM   |
+| `/api/mental-wellness/reports/monthly` | GET    | Yes (JWT)     | ❌ Not Impl | MEDIUM   |
 
 #### Mood Tracking
 
-| Endpoint                                        | Method | Auth Required | Status | Priority |
-| ----------------------------------------------- | ------ | ------------- | ------ | -------- |
-| `/api/mood-tracking/logs`                       | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/mood-tracking/logs`                       | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/mood-tracking/patterns`                   | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| Endpoint                      | Method | Auth Required | Status      | Priority |
+| ----------------------------- | ------ | ------------- | ----------- | -------- |
+| `/api/mood-tracking/logs`     | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/mood-tracking/logs`     | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/mood-tracking/patterns` | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
 
 #### Stress Tracking
 
-| Endpoint                                        | Method | Auth Required | Status | Priority |
-| ----------------------------------------------- | ------ | ------------- | ------ | -------- |
-| `/api/stress-tracking/logs`                     | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/stress-tracking/logs`                     | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/stress-tracking/patterns`                 | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| Endpoint                        | Method | Auth Required | Status      | Priority |
+| ------------------------------- | ------ | ------------- | ----------- | -------- |
+| `/api/stress-tracking/logs`     | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/stress-tracking/logs`     | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/stress-tracking/patterns` | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
 
 #### Sleep Tracking
 
-| Endpoint                                        | Method | Auth Required | Status | Priority |
-| ----------------------------------------------- | ------ | ------------- | ------ | -------- |
-| `/api/sleep-tracking/logs`                      | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/sleep-tracking/logs`                      | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/sleep-tracking/correlations`              | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| Endpoint                           | Method | Auth Required | Status      | Priority |
+| ---------------------------------- | ------ | ------------- | ----------- | -------- |
+| `/api/sleep-tracking/logs`         | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/sleep-tracking/logs`         | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/sleep-tracking/correlations` | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
 
 #### Health Tagging System
 
-| Endpoint                                        | Method | Auth Required | Status | Priority |
-| ----------------------------------------------- | ------ | ------------- | ------ | -------- |
-| `/api/health-tags`                              | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/health-tags/{category}`                   | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/foods/by-tag/{tag_name}`                  | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/health-tags/recommendations`              | POST   | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| Endpoint                           | Method | Auth Required | Status      | Priority |
+| ---------------------------------- | ------ | ------------- | ----------- | -------- |
+| `/api/health-tags`                 | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/health-tags/{category}`      | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/foods/by-tag/{tag_name}`     | GET    | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/health-tags/recommendations` | POST   | Yes (JWT)     | ❌ Not Impl | HIGH     |
 
 #### Dual-Dimension Recommendations
 
-| Endpoint                                        | Method | Auth Required | Status | Priority |
-| ----------------------------------------------- | ------ | ------------- | ------ | -------- |
-| `/api/recommendations/dual-dimension`           | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/recommendations/explain/{meal_id}`        | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/recommendations/contextual`               | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/recommendations/smart`                    | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| Endpoint                                 | Method | Auth Required | Status      | Priority |
+| ---------------------------------------- | ------ | ------------- | ----------- | -------- |
+| `/api/recommendations/dual-dimension`    | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/recommendations/explain/{meal_id}` | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/recommendations/contextual`        | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/recommendations/smart`             | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
 
 #### AI Health Concierge
 
-| Endpoint                                        | Method | Auth Required | Status | Priority |
-| ----------------------------------------------- | ------ | ------------- | ------ | -------- |
-| `/api/ai-concierge/chat`                        | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
-| `/api/ai-concierge/session/{id}`                | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/ai-concierge/insights`                    | POST   | Yes (JWT)     | ❌ Not Impl | HIGH     |
-| `/api/ai-concierge/adjust-goals`                | POST   | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| Endpoint                         | Method | Auth Required | Status      | Priority |
+| -------------------------------- | ------ | ------------- | ----------- | -------- |
+| `/api/ai-concierge/chat`         | POST   | Yes (JWT)     | ❌ Not Impl | CRITICAL |
+| `/api/ai-concierge/session/{id}` | GET    | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/ai-concierge/insights`     | POST   | Yes (JWT)     | ❌ Not Impl | HIGH     |
+| `/api/ai-concierge/adjust-goals` | POST   | Yes (JWT)     | ❌ Not Impl | HIGH     |
 
 **Mental Wellness APIs**: 31 endpoints planned, 0 implemented (0%)
 
@@ -960,11 +980,13 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 **Implementation Status**: ✅ **Implemented** (MVP)
 
 **Implemented Features**:
+
 - Email/password registration
 - Email verification with 24h token
 - Username/email uniqueness validation
 
 **Not Implemented**:
+
 - OAuth integration (Google, Apple, Facebook)
 
 ...
@@ -1021,15 +1043,18 @@ total_score = (physical_score * 0.4) + (mental_score * 0.4) + (preference * 0.2)
 ### Summary Statistics (Updated for Dual-Dimension Health):
 
 **Physical Health Features (FR-001 to FR-075)**:
+
 - **Implemented**: ~16% (12/75 requirements)
 - **Partially Implemented**: ~4% (3/75 requirements)
 - **Not Implemented**: ~80% (60/75 requirements)
 
 **Mental Wellness Features (FR-076 to FR-095) - NEW**:
+
 - **Implemented**: 0% (0/20 requirements)
 - **Planned**: 100% (20/20 requirements documented and designed)
 
 **Overall Project Status**:
+
 - **Total Requirements**: 95 (75 Physical + 20 Mental)
 - **Implemented**: 12.6% (12/95)
 - **API Endpoints**: 19 implemented, 31+ planned (Mental Wellness)
@@ -1062,30 +1087,35 @@ The current implementation provides a **strong Physical Health foundation** (16%
 ### Implementation Priority for Dual-Dimension Health:
 
 #### Phase 1 (Current - Complete Physical Health MVP):
+
 1. ✅ Implement password reset flow (FR-003)
 2. ✅ Complete account management (FR-010)
 3. ⏳ Build Physical Health meal recommendation engine (FR-016~030) - **IN PROGRESS**
 4. ⏳ Add nutrition tracking and progress visualization
 
 #### Phase 2 (Mental Wellness Foundation - 4-6 weeks):
+
 1. Implement mental wellness goal setting and tracking (FR-076~080)
 2. Build mood, stress, sleep logging systems
 3. Create mental wellness dashboard (FR-082)
 4. Develop basic pattern identification algorithms (FR-080, FR-081)
 
 #### Phase 3 (Health Tagging & Integration - 3-4 weeks):
+
 1. Build health tag database and API (FR-086~088)
 2. Implement tag-based food filtering
 3. Create AI tag recommendation engine
 4. Begin mental-physical correlation analysis (FR-083)
 
 #### Phase 4 (Dual-Dimension Engine - 4-5 weeks):
+
 1. Develop dual-dimension scoring algorithm (FR-089)
 2. Implement context-aware recommendations (FR-090)
 3. Build goal conflict resolution (FR-091)
 4. Optimize performance (<4 seconds per NFR-001)
 
 #### Phase 5 (AI Concierge - 4-5 weeks):
+
 1. Integrate LLM API (OpenAI/Claude) (FR-092)
 2. Build RAG pipeline with nutrition knowledge base
 3. Implement safety validation layer (NFR-021)
@@ -1100,22 +1130,22 @@ The current implementation provides a **strong Physical Health foundation** (16%
 
 ### Next Steps:
 
-1. **Immediate (Week 1-2)**: 
+1. **Immediate (Week 1-2)**:
    - Complete Physical Health MVP (password reset, recommendations)
    - Update all documentation to reflect v2.0 Dual-Dimension architecture
    - Begin Mental Wellness database design
 
-2. **Short-term (Week 3-8)**: 
+2. **Short-term (Week 3-8)**:
    - Implement Mental Wellness Foundation (Phase 2)
    - Deploy mood, stress, sleep tracking MVP
    - Launch mental wellness dashboard
 
-3. **Medium-term (Week 9-16)**: 
+3. **Medium-term (Week 9-16)**:
    - Build Health Tagging System and Dual-Dimension Engine (Phases 3-4)
    - Complete mental-physical correlation analytics
    - Achieve dual-dimension meal recommendations
 
-4. **Long-term (Week 17-26)**: 
+4. **Long-term (Week 17-26)**:
    - Integrate AI Health Concierge (Phase 5)
    - Launch full Dual-Dimension Health platform
    - Deploy production to public beta
@@ -1123,16 +1153,19 @@ The current implementation provides a **strong Physical Health foundation** (16%
 ### Risk Assessment:
 
 **High Risk**:
+
 - LLM API costs and rate limits (Phase 5)
 - Pattern detection algorithm accuracy (requires sufficient user data)
 - Performance optimization for dual-dimension scoring (<4s target)
 
 **Medium Risk**:
+
 - Health tag effectiveness validation (requires research partnerships)
 - User adoption of mental wellness tracking (behavioral challenge)
 - Data privacy compliance for mental health data (NFR-007A critical)
 
 **Low Risk**:
+
 - Database scalability (well-established patterns)
 - API development (straightforward CRUD operations)
 - Frontend UI implementation (existing component library)

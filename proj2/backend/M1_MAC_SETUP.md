@@ -5,7 +5,7 @@
 M1 Mac 使用 ARM64 架构，而某些 Python 包可能默认安装 x86_64 版本，导致运行时出现以下错误：
 
 ```
-ImportError: dlopen(.../_pydantic_core.cpython-39-darwin.so, 0x0002): 
+ImportError: dlopen(.../_pydantic_core.cpython-39-darwin.so, 0x0002):
 mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64')
 ```
 
@@ -130,6 +130,7 @@ rm -rf .venv && arch -arm64 /Users/joezhou/.local/bin/uv sync
 **原因**：该包可能没有 ARM64 预编译版本
 
 **解决方案**：
+
 1. 查找 ARM64 兼容的替代包
 2. 使用 Rosetta 2 运行整个项目（不推荐）
 3. 等待包维护者发布 ARM64 版本

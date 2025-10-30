@@ -11,10 +11,12 @@
 ### Context
 
 Eatsential implements a **dual-dimension health approach**, addressing both:
+
 1. **Physical Health**: Nutrition, exercise, vitals, fitness goals
 2. **Mental Wellness**: Mood, stress, sleep, mental health goals
 
 We needed to decide how to organize frontend components to support this architecture while maintaining:
+
 - Clear separation of concerns
 - Intuitive developer experience
 - Future extensibility
@@ -25,6 +27,7 @@ We needed to decide how to organize frontend components to support this architec
 We separated components into two top-level directories based on **data characteristics**:
 
 #### `components/health-profile/` - Static Configuration
+
 **Purpose**: User's baseline health information (set during onboarding, edited occasionally)
 
 ```
@@ -35,12 +38,14 @@ health-profile/
 ```
 
 **Characteristics:**
+
 - Set once during onboarding wizard
 - Updated infrequently
 - Configuration-style data
 - No time-series tracking
 
 #### `components/wellness/` - Dynamic Tracking
+
 **Purpose**: Daily health metrics tracking with time-series data
 
 ```
@@ -64,6 +69,7 @@ wellness/
 **Note**: Physical wellness features (meal logging - Issue #95) are implemented as dedicated pages due to complexity.
 
 **Characteristics:**
+
 - Logged daily/multiple times per day
 - Time-series data with trends
 - Dashboard visualization
@@ -75,21 +81,23 @@ wellness/
 
 ### 1. Separation by Data Lifecycle
 
-| Aspect | health-profile/ | wellness/ |
-|--------|----------------|-----------|
-| **Update Frequency** | Rarely (weeks/months) | Frequently (daily) |
-| **Data Type** | Configuration | Time-series logs |
-| **UI Pattern** | Forms with edit mode | Quick log widgets |
-| **Storage** | Single record per user | Multiple records with timestamps |
-| **Visualization** | Static display | Charts, trends, progress |
+| Aspect               | health-profile/        | wellness/                        |
+| -------------------- | ---------------------- | -------------------------------- |
+| **Update Frequency** | Rarely (weeks/months)  | Frequently (daily)               |
+| **Data Type**        | Configuration          | Time-series logs                 |
+| **UI Pattern**       | Forms with edit mode   | Quick log widgets                |
+| **Storage**          | Single record per user | Multiple records with timestamps |
+| **Visualization**    | Static display         | Charts, trends, progress         |
 
 ### 2. Alignment with Use Cases
 
 **Physical Health (UC-004 to UC-020):**
+
 - UC-004 to UC-007: Health Profile Management → `health-profile/`
 - UC-008 to UC-012: Meal Planning → (future meal features)
 
 **Mental Wellness (UC-021 to UC-025):**
+
 - UC-021: Set Mental Wellness Goals → `wellness/mental/GoalForm.tsx`
 - UC-022: Log Daily Mood → `wellness/mental/MoodLogWidget.tsx`
 - UC-023: Track Stress Levels → `wellness/mental/StressLogWidget.tsx`
@@ -100,7 +108,7 @@ wellness/
 
 **Why split mental and physical wellness?**
 
-1. **Domain Separation**: 
+1. **Domain Separation**:
    - Mental wellness deals with psychological metrics (mood, stress, sleep)
    - Physical wellness deals with body metrics (meals, exercise, vitals)
 
@@ -122,6 +130,7 @@ wellness/
 - **Avoid duplication**: No need for separate MentalGoalForm and PhysicalGoalForm
 
 **Components in shared/:**
+
 - `GoalForm`: Create/edit goals (supports both nutrition + wellness types)
 - `GoalsList`: Display goals with progress tracking (filters by type if needed)
 - `WellnessChart`: Visualize trends from both mental and physical data
@@ -134,7 +143,7 @@ wellness/
 
 ```typescript
 // Main export file: wellness/index.ts
-export * from './mental';      // Mental wellness components
+export * from './mental'; // Mental wellness components
 // export * from './physical'; // (v0.4+)
 // export * from './shared';   // (v0.4+)
 ```
@@ -151,12 +160,12 @@ import { MoodLogWidget } from '@/components/wellness/mental';
 
 ### Component Naming Convention
 
-| Category | Naming Pattern | Example |
-|----------|----------------|---------|
-| Mental Log Widgets | `{Metric}LogWidget` | `MoodLogWidget` |
-| Physical Log Widgets | `{Metric}LogWidget` | `ExerciseLogWidget` |
-| Goal Management | `Goal{Action}` | `GoalForm`, `GoalsList` |
-| Charts | `{Type}Chart` | `WellnessChart` |
+| Category             | Naming Pattern      | Example                 |
+| -------------------- | ------------------- | ----------------------- |
+| Mental Log Widgets   | `{Metric}LogWidget` | `MoodLogWidget`         |
+| Physical Log Widgets | `{Metric}LogWidget` | `ExerciseLogWidget`     |
+| Goal Management      | `Goal{Action}`      | `GoalForm`, `GoalsList` |
+| Charts               | `{Type}Chart`       | `WellnessChart`         |
 
 ---
 
@@ -189,6 +198,7 @@ import { MoodLogWidget } from '@/components/wellness/mental';
 ### v0.3 Changes (October 2025)
 
 **Completed (Issue #99):**
+
 1. ✅ Created `wellness/` directory structure
 2. ✅ Added `mental/`, `physical/`, `shared/` subdirectories
 3. ✅ Implemented mental wellness components in `wellness/mental/`
@@ -196,22 +206,26 @@ import { MoodLogWidget } from '@/components/wellness/mental';
 5. ✅ Updated documentation
 
 **Mental Wellness Components (Issue #99 - Complete):**
+
 - ✅ MoodLogWidget (mental/)
 - ✅ StressLogWidget (mental/)
 - ✅ SleepLogWidget (mental/)
 
 **Shared Components (Issue #99):**
+
 - ✅ GoalForm (shared/ - handles both nutrition + wellness goal types)
 - ✅ GoalsList (shared/ - displays all goal types)
 - ⏳ WellnessChart (shared/ - 7-day trend visualization)
 
 **Physical Wellness:**
+
 - � Directory reserved for future widgets
 - ℹ️ Current physical features (meal logging) are full pages (Issue #95)
 
 ### Backward Compatibility
 
 No breaking changes - existing components remain in original locations:
+
 - `health-profile/` components unchanged
 - New `wellness/` components are additions
 
@@ -222,12 +236,14 @@ No breaking changes - existing components remain in original locations:
 ### v0.3 Sprint - Remaining Tasks (Issue #99)
 
 **Shared Components (Issue #99):**
+
 ```typescript
 // wellness/shared/
-- WellnessChart.tsx         // 7-day trend visualization (mood/stress/sleep)
+-WellnessChart.tsx; // 7-day trend visualization (mood/stress/sleep)
 ```
 
 **Integration (Issue #99):**
+
 - WellnessTracking.tsx main page (integrate all mental wellness components)
 - Routing configuration (/wellness-tracking)
 - Dashboard navigation card
@@ -235,19 +251,21 @@ No breaking changes - existing components remain in original locations:
 ### Separate Issues (Not #99)
 
 **Issue #95 - Meal Logging Interface:**
+
 ```typescript
 // pages/
-- MealLogging.tsx           // Full page for meal logging (food search, photo upload)
+-MealLogging.tsx; // Full page for meal logging (food search, photo upload)
 ```
 
 ### Future Enhancements (v0.4+)
 
 **Potential Physical Wellness Widgets** (if simplified versions are needed):
+
 ```typescript
 // wellness/physical/
-- QuickMealWidget.tsx       // Simplified meal logging for dashboard (if needed)
-- ExerciseLogWidget.tsx     // Quick workout logging (if needed)
-- VitalsWidget.tsx          // Heart rate, blood pressure (if needed)
+-QuickMealWidget.tsx - // Simplified meal logging for dashboard (if needed)
+  ExerciseLogWidget.tsx - // Quick workout logging (if needed)
+  VitalsWidget.tsx; // Heart rate, blood pressure (if needed)
 ```
 
 **Note**: Current architecture favors dedicated pages for complex features (meal logging, exercise tracking) rather than cramming functionality into dashboard widgets.

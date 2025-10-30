@@ -14,7 +14,6 @@ Instructions:
     the current branch.
 
 2.  Update Documentation:
-
     - Open the sprint planning document located at
       proj2/docs/AGENT-PLAN/08-SPRINT-TASKS.md.
     - Based on your analysis, update the status of all completed tasks (e.g.,
@@ -24,7 +23,6 @@ Instructions:
       changes.
 
 3.  Commit Changes:
-
     - Stage the modified documentation file.
     - Commit the changes with a clear, conventional commit message (e.g., docs:
       update sprint tasks to reflect current progress).

@@ -9,6 +9,7 @@
 ## Versioning Strategy
 
 We follow [Semantic Versioning](https://semver.org/):
+
 - **MAJOR** version: Incompatible API changes
 - **MINOR** version: Add functionality (backwards compatible)
 - **PATCH** version: Bug fixes (backwards compatible)
@@ -35,45 +36,45 @@ Format: `v{MAJOR}.{MINOR}.{PATCH}`
 
 **Authentication (5 endpoints)**
 
-| Method | Endpoint | Description | Status |
-|--------|----------|-------------|--------|
-| POST | `/api/auth/register` | User registration | ✅ Implemented |
-| GET | `/api/auth/verify-email/{token}` | Email verification | ✅ Implemented |
-| POST | `/api/auth/resend-verification` | Resend verification email | ✅ Implemented |
-| POST | `/api/auth/login` | User login (JWT) | ✅ Implemented |
-| GET | `/api/users/me` | Get current user profile | ✅ Implemented |
+| Method | Endpoint                         | Description               | Status         |
+| ------ | -------------------------------- | ------------------------- | -------------- |
+| POST   | `/api/auth/register`             | User registration         | ✅ Implemented |
+| GET    | `/api/auth/verify-email/{token}` | Email verification        | ✅ Implemented |
+| POST   | `/api/auth/resend-verification`  | Resend verification email | ✅ Implemented |
+| POST   | `/api/auth/login`                | User login (JWT)          | ✅ Implemented |
+| GET    | `/api/users/me`                  | Get current user profile  | ✅ Implemented |
 
 **Health Profiles (4 endpoints)**
 
-| Method | Endpoint | Description | Status |
-|--------|----------|-------------|--------|
-| POST | `/api/health-profiles` | Create health profile | ✅ Implemented |
-| GET | `/api/health-profiles/me` | Get current user's profile | ✅ Implemented |
-| PUT | `/api/health-profiles/{id}` | Update health profile | ✅ Implemented |
-| DELETE | `/api/health-profiles/{id}` | Delete health profile | ✅ Implemented |
+| Method | Endpoint                    | Description                | Status         |
+| ------ | --------------------------- | -------------------------- | -------------- |
+| POST   | `/api/health-profiles`      | Create health profile      | ✅ Implemented |
+| GET    | `/api/health-profiles/me`   | Get current user's profile | ✅ Implemented |
+| PUT    | `/api/health-profiles/{id}` | Update health profile      | ✅ Implemented |
+| DELETE | `/api/health-profiles/{id}` | Delete health profile      | ✅ Implemented |
 
 **Allergy Management (3 endpoints)**
 
-| Method | Endpoint | Description | Status |
-|--------|----------|-------------|--------|
-| POST | `/api/allergies/user` | Add user allergy | ✅ Implemented |
-| GET | `/api/allergies/user/me` | Get user's allergies | ✅ Implemented |
-| DELETE | `/api/allergies/user/{id}` | Delete user allergy | ✅ Implemented |
+| Method | Endpoint                   | Description          | Status         |
+| ------ | -------------------------- | -------------------- | -------------- |
+| POST   | `/api/allergies/user`      | Add user allergy     | ✅ Implemented |
+| GET    | `/api/allergies/user/me`   | Get user's allergies | ✅ Implemented |
+| DELETE | `/api/allergies/user/{id}` | Delete user allergy  | ✅ Implemented |
 
 **Dietary Preferences (3 endpoints)**
 
-| Method | Endpoint | Description | Status |
-|--------|----------|-------------|--------|
-| POST | `/api/dietary-preferences` | Add dietary preference | ✅ Implemented |
-| GET | `/api/dietary-preferences/me` | Get user's preferences | ✅ Implemented |
-| DELETE | `/api/dietary-preferences/{id}` | Delete preference | ✅ Implemented |
+| Method | Endpoint                        | Description            | Status         |
+| ------ | ------------------------------- | ---------------------- | -------------- |
+| POST   | `/api/dietary-preferences`      | Add dietary preference | ✅ Implemented |
+| GET    | `/api/dietary-preferences/me`   | Get user's preferences | ✅ Implemented |
+| DELETE | `/api/dietary-preferences/{id}` | Delete preference      | ✅ Implemented |
 
 **System Health (2 endpoints)**
 
-| Method | Endpoint | Description | Status |
-|--------|----------|-------------|--------|
-| GET | `/` | Root endpoint (welcome message) | ✅ Implemented |
-| GET | `/health` | Health check | ✅ Implemented |
+| Method | Endpoint  | Description                     | Status         |
+| ------ | --------- | ------------------------------- | -------------- |
+| GET    | `/`       | Root endpoint (welcome message) | ✅ Implemented |
+| GET    | `/health` | Health check                    | ✅ Implemented |
 
 #### Authentication
 
@@ -92,6 +93,7 @@ Format: `v{MAJOR}.{MINOR}.{PATCH}`
 #### Error Responses
 
 Standard HTTP status codes:
+
 - `200`: Success
 - `201`: Created
 - `204`: No Content
@@ -116,12 +118,14 @@ Standard HTTP status codes:
 ### v0.2.0 (Planned - Next Sprint)
 
 **New Features**:
+
 - Password reset flow (`POST /api/auth/forgot-password`, `POST /api/auth/reset-password`)
 - User profile update (`PUT /api/users/me`)
 - Profile picture upload (`POST /api/users/me/avatar`)
 - Update dietary preferences (`PUT /api/dietary-preferences/{id}`)
 
 **Enhancements**:
+
 - Rate limiting on authentication endpoints
 - Refresh token support
 - Account lockout after failed login attempts
@@ -129,11 +133,13 @@ Standard HTTP status codes:
 ### v0.3.0 (Planned - Future Sprint)
 
 **AI Features**:
+
 - Meal recommendations (`POST /api/recommendations/meals`)
 - Restaurant search (`GET /api/restaurants/search`)
 - AI nutritionist chat (`POST /api/chat/nutrition`)
 
 **Breaking Changes**:
+
 - None planned
 
 ---
@@ -151,6 +157,7 @@ No breaking changes planned. We will maintain backward compatibility through v0.
 No deprecated endpoints currently.
 
 **Deprecation Policy**:
+
 - Endpoints will be marked deprecated 3 months before removal
 - Deprecated endpoints will return `Deprecation` header
 - Migration guide provided for all deprecated features

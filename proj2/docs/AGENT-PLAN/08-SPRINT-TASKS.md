@@ -40,12 +40,12 @@ This document tracks development tasks across all milestones, organized by modul
 
 ## 🚨 Critical Issues (Resolved)
 
-| Issue                                                   | Description                              | Task ID   | Status   |
-| ------------------------------------------------------- | ---------------------------------------- | --------- | -------- |
-| [#129](https://github.com/Asoingbob225/CSC510/issues/129)| Backend Test Failure & Model Inconsistency | BE-S2-FIX | ✅ Fixed |
-| [#41](https://github.com/Asoingbob225/CSC510/issues/41) | Password validation doesn't match FR-001 | FE-S1-001 | ✅ Fixed |
-| [#42](https://github.com/Asoingbob225/CSC510/issues/42) | Email verification flow missing          | BE-S1-002 | ✅ Fixed |
-| [#43](https://github.com/Asoingbob225/CSC510/issues/43) | User registration API missing            | BE-S1-001 | ✅ Fixed |
+| Issue                                                     | Description                                | Task ID   | Status   |
+| --------------------------------------------------------- | ------------------------------------------ | --------- | -------- |
+| [#129](https://github.com/Asoingbob225/CSC510/issues/129) | Backend Test Failure & Model Inconsistency | BE-S2-FIX | ✅ Fixed |
+| [#41](https://github.com/Asoingbob225/CSC510/issues/41)   | Password validation doesn't match FR-001   | FE-S1-001 | ✅ Fixed |
+| [#42](https://github.com/Asoingbob225/CSC510/issues/42)   | Email verification flow missing            | BE-S1-002 | ✅ Fixed |
+| [#43](https://github.com/Asoingbob225/CSC510/issues/43)   | User registration API missing              | BE-S1-001 | ✅ Fixed |
 
 ---
 
@@ -82,22 +82,22 @@ This document tracks development tasks across all milestones, organized by modul
 
 ### Milestone: v0.3 - Tracking System
 
-| Issue                                                     | Title                                                      | Priority | Status         | Merged/Closed |
-| --------------------------------------------------------- | ---------------------------------------------------------- | -------- | -------------- | ------------- |
-| [#104](https://github.com/Asoingbob225/CSC510/issues/104) | test: Mental Wellness Tracking Tests                       | P0       | ✅ Complete    | PR #125       |
-| [#103](https://github.com/Asoingbob225/CSC510/issues/103) | test: Meal & Goal Tracking Tests                           | P0       | 📝 To Do       | -             |
-| [#102](https://github.com/Asoingbob225/CSC510/issues/102) | feat(frontend): Admin Audit Log Dashboard UI               | P1       | ✅ Complete    | PR #124       |
-| [#101](https://github.com/Asoingbob225/CSC510/issues/101) | feat(backend): Admin Audit Log System                      | P1       | ✅ Complete    | PR #124       |
-| [#100](https://github.com/Asoingbob225/CSC510/issues/100) | feat: Admin Audit Log System                               | P1       | ✅ Complete    | PR #124       |
-| [#99](https://github.com/Asoingbob225/CSC510/issues/99)   | subtask(frontend): Goal & Mood Tracking UI                 | P0       | ✅ Complete    | -             |
-| [#98](https://github.com/Asoingbob225/CSC510/issues/98)   | subtask(backend): Mood/Stress/Sleep Logging API            | P0       | ✅ Complete    | PR #117       |
-| [#97](https://github.com/Asoingbob225/CSC510/issues/97)   | subtask(backend): Goal Tracking API                        | P0       | ✅ Complete    | PR #114       |
-| [#96](https://github.com/Asoingbob225/CSC510/issues/96)   | feat: Mental Wellness Tracking System (M3)                 | P0       | ✅ Complete    | Epic          |
-| [#95](https://github.com/Asoingbob225/CSC510/issues/95)   | subtask(frontend): Meal Logging Interface                  | P0       | ✅ Complete    | -             |
-| [#94](https://github.com/Asoingbob225/CSC510/issues/94)   | subtask(backend): Meal Logging API                         | P0       | ✅ Complete    | Oct 26        |
-| [#72](https://github.com/Asoingbob225/CSC510/issues/72)   | feat(backend): Implement Data Management API for Allergens | P0       | ✅ Complete    | Oct 26        |
-| [#71](https://github.com/Asoingbob225/CSC510/issues/71)   | feat(frontend): Implement Data Management UI for Allergens | P0       | ✅ Complete    | Oct 26        |
-| [#70](https://github.com/Asoingbob225/CSC510/issues/70)   | feat: Admin Data Management for Allergens                  | P0       | ✅ Complete    | Oct 26        |
+| Issue                                                     | Title                                                      | Priority | Status      | Merged/Closed |
+| --------------------------------------------------------- | ---------------------------------------------------------- | -------- | ----------- | ------------- |
+| [#104](https://github.com/Asoingbob225/CSC510/issues/104) | test: Mental Wellness Tracking Tests                       | P0       | ✅ Complete | PR #125       |
+| [#103](https://github.com/Asoingbob225/CSC510/issues/103) | test: Meal & Goal Tracking Tests                           | P0       | 📝 To Do    | -             |
+| [#102](https://github.com/Asoingbob225/CSC510/issues/102) | feat(frontend): Admin Audit Log Dashboard UI               | P1       | ✅ Complete | PR #124       |
+| [#101](https://github.com/Asoingbob225/CSC510/issues/101) | feat(backend): Admin Audit Log System                      | P1       | ✅ Complete | PR #124       |
+| [#100](https://github.com/Asoingbob225/CSC510/issues/100) | feat: Admin Audit Log System                               | P1       | ✅ Complete | PR #124       |
+| [#99](https://github.com/Asoingbob225/CSC510/issues/99)   | subtask(frontend): Goal & Mood Tracking UI                 | P0       | ✅ Complete | -             |
+| [#98](https://github.com/Asoingbob225/CSC510/issues/98)   | subtask(backend): Mood/Stress/Sleep Logging API            | P0       | ✅ Complete | PR #117       |
+| [#97](https://github.com/Asoingbob225/CSC510/issues/97)   | subtask(backend): Goal Tracking API                        | P0       | ✅ Complete | PR #114       |
+| [#96](https://github.com/Asoingbob225/CSC510/issues/96)   | feat: Mental Wellness Tracking System (M3)                 | P0       | ✅ Complete | Epic          |
+| [#95](https://github.com/Asoingbob225/CSC510/issues/95)   | subtask(frontend): Meal Logging Interface                  | P0       | ✅ Complete | -             |
+| [#94](https://github.com/Asoingbob225/CSC510/issues/94)   | subtask(backend): Meal Logging API                         | P0       | ✅ Complete | Oct 26        |
+| [#72](https://github.com/Asoingbob225/CSC510/issues/72)   | feat(backend): Implement Data Management API for Allergens | P0       | ✅ Complete | Oct 26        |
+| [#71](https://github.com/Asoingbob225/CSC510/issues/71)   | feat(frontend): Implement Data Management UI for Allergens | P0       | ✅ Complete | Oct 26        |
+| [#70](https://github.com/Asoingbob225/CSC510/issues/70)   | feat: Admin Data Management for Allergens                  | P0       | ✅ Complete | Oct 26        |
 
 **Progress**: 14/14 issues complete (100%)
 

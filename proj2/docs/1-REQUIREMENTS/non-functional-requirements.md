@@ -17,6 +17,7 @@ This document specifies the non-functional requirements for the Eatsential AI-po
 **Total NFRs**: 23 (19 original + 4 Mental Wellness additions)
 
 **New Mental Wellness NFRs**:
+
 - NFR-007A: Mental Health Data Privacy
 - NFR-020: AI/LLM Performance
 - NFR-021: AI Safety and Validation
@@ -739,8 +740,7 @@ This document specifies the non-functional requirements for the Eatsential AI-po
 
 ## Document Revision History
 
-| Version | Date       | Author           | Changes                                                                                             |
-| ------- | ---------- | ---------------- | --------------------------------------------------------------------------------------------------- |
-| 1.0     | 2025-10-18 | Development Team | Initial non-functional requirements specification                                                   |
+| Version | Date       | Author           | Changes                                                                                                           |
+| ------- | ---------- | ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 1.0     | 2025-10-18 | Development Team | Initial non-functional requirements specification                                                                 |
 | 2.0     | 2025-10-25 | Development Team | Added Mental Wellness NFRs: Mental health data privacy (NFR-007A), AI performance and safety (NFR-020 to NFR-023) |
-

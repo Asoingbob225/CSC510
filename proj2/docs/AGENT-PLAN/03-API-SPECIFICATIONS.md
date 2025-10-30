@@ -1,6 +1,7 @@
 # API Specifications
 
 **⚠️ Note**: This is a quick reference for AI agents. For detailed API documentation, see:
+
 - **Comprehensive API Docs**: `/docs/2-DESIGN/api-design.md`
 - **Implementation Status**: `/docs/3-IMPLEMENTATION/implementation-status.md`
 

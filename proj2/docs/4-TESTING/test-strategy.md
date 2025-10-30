@@ -7,6 +7,7 @@
 **QA Lead:** Quality Assurance Team
 
 **Version 2.0 Updates:**
+
 - Added Mental Wellness testing strategies
 - Added AI Concierge LLM testing approach
 - Added emotion analysis and pattern detection testing
@@ -375,18 +376,18 @@ async def test_user_registration_flow():
 
 **Mental Health Data Privacy Testing (NEW in v2.0):**
 
-| Security Requirement                     | Test Coverage                          | Status     |
-| ---------------------------------------- | -------------------------------------- | ---------- |
-| Data Encryption at Rest                  | Verify mood/stress/sleep notes encrypt | ⏳ Planned |
-| Data Encryption in Transit               | HTTPS/TLS for all mental health APIs   | ⏳ Planned |
-| Access Control (Mental Health Data)      | Only user can access their own data    | ⏳ Planned |
-| Audit Logging (Sensitive Data Access)    | Log all mental health data reads       | ⏳ Planned |
-| Data Anonymization (Analytics)           | Remove PII from aggregated reports     | ⏳ Planned |
-| Encryption Key Management                | AWS KMS for encryption keys            | ⏳ Planned |
-| Data Retention Policies                  | Auto-delete after 2 years (compliance) | ⏳ Planned |
-| Cross-Contamination Prevention           | Mental data isolated from physical     | ⏳ Planned |
-| Third-Party Service Data Handling (LLM)  | No PII sent to OpenAI                  | ⏳ Planned |
-| Right to Delete (GDPR/CCPA)              | Complete mental health data deletion   | ⏳ Planned |
+| Security Requirement                    | Test Coverage                          | Status     |
+| --------------------------------------- | -------------------------------------- | ---------- |
+| Data Encryption at Rest                 | Verify mood/stress/sleep notes encrypt | ⏳ Planned |
+| Data Encryption in Transit              | HTTPS/TLS for all mental health APIs   | ⏳ Planned |
+| Access Control (Mental Health Data)     | Only user can access their own data    | ⏳ Planned |
+| Audit Logging (Sensitive Data Access)   | Log all mental health data reads       | ⏳ Planned |
+| Data Anonymization (Analytics)          | Remove PII from aggregated reports     | ⏳ Planned |
+| Encryption Key Management               | AWS KMS for encryption keys            | ⏳ Planned |
+| Data Retention Policies                 | Auto-delete after 2 years (compliance) | ⏳ Planned |
+| Cross-Contamination Prevention          | Mental data isolated from physical     | ⏳ Planned |
+| Third-Party Service Data Handling (LLM) | No PII sent to OpenAI                  | ⏳ Planned |
+| Right to Delete (GDPR/CCPA)             | Complete mental health data deletion   | ⏳ Planned |
 
 **Mental Health Data Privacy Test Cases:**
 
@@ -399,17 +400,17 @@ async def test_mood_log_encryption():
         mood_score=5,
         notes="Feeling stressed about work deadlines"
     )
-    
+
     # Directly query database (bypass ORM decryption)
     raw_record = db.execute(
         "SELECT encrypted_notes FROM mood_logs WHERE id = ?",
         (mood_log.id,)
     ).fetchone()
-    
+
     # Verify notes are encrypted (not plaintext)
     assert raw_record['encrypted_notes'] != "Feeling stressed about work deadlines"
     assert isinstance(raw_record['encrypted_notes'], bytes)
-    
+
     # Verify decryption works
     decrypted = await mood_log_service.get_mood_log(mood_log.id, user_id=1)
     assert decrypted.notes == "Feeling stressed about work deadlines"
@@ -419,14 +420,14 @@ async def test_mental_health_data_access_control():
     """Verify users can only access their own mental health data"""
     user1_mood = await create_mood_log(user_id=1, mood_score=7)
     user2_mood = await create_mood_log(user_id=2, mood_score=4)
-    
+
     # User 1 tries to access User 2's data
     response = await client.get(
         f"/api/mood-tracking/logs/{user2_mood.id}",
         headers={"Authorization": f"Bearer {user1_token}"}
     )
     assert response.status_code == 403  # Forbidden
-    
+
     # User 2 can access their own data
     response = await client.get(
         f"/api/mood-tracking/logs/{user2_mood.id}",
@@ -439,21 +440,21 @@ async def test_ai_concierge_no_pii_to_llm():
     """Verify AI concierge doesn't send PII to OpenAI"""
     with mock.patch('openai.ChatCompletion.create') as mock_llm:
         mock_llm.return_value = {"choices": [{"message": {"content": "Good advice"}}]}
-        
+
         await ai_concierge.chat(
             user_id=1,
             message="I'm feeling stressed"
         )
-        
+
         # Verify OpenAI request doesn't contain PII
         llm_request = mock_llm.call_args[1]
         prompt = str(llm_request['messages'])
-        
+
         # Should NOT contain user email, real name, specific medical conditions
         user = await get_user(1)
         assert user.email not in prompt
         assert user.username not in prompt  # If username is real name
-        
+
         # Should contain anonymized context
         assert "User has mood improvement goal" in prompt  # OK
         assert "average mood score: 5.2" in prompt  # OK (aggregated)
@@ -481,20 +482,20 @@ async def test_ai_concierge_no_pii_to_llm():
 async def test_ai_concierge_response_time():
     """Verify AI concierge responds within 2s (time to first token)"""
     import time
-    
+
     start_time = time.time()
     first_token_time = None
-    
+
     async for chunk in ai_concierge.chat_stream(
         user_id=1,
         message="What should I eat for better mood?"
     ):
         if first_token_time is None:
             first_token_time = time.time()
-        
+
     time_to_first_token = first_token_time - start_time
     assert time_to_first_token < 2.0, f"First token took {time_to_first_token}s"
-    
+
     total_time = time.time() - start_time
     assert total_time < 10.0, f"Total response took {total_time}s"
 ```
@@ -528,15 +529,15 @@ async def test_ai_concierge_response_time():
 
 **Test Coverage:**
 
-| Feature               | Test Type              | Status     |
-| --------------------- | ---------------------- | ---------- |
-| Mood Logging          | Unit + Integration     | ⏳ Planned |
-| Stress Logging        | Unit + Integration     | ⏳ Planned |
-| Sleep Logging         | Unit + Integration     | ⏳ Planned |
-| Goal Progress Calc    | Unit                   | ⏳ Planned |
-| Correlation Analysis  | Unit + Algorithm       | ⏳ Planned |
-| Anomaly Detection     | Unit + Algorithm       | ⏳ Planned |
-| Weekly Summary        | Integration            | ⏳ Planned |
+| Feature              | Test Type          | Status     |
+| -------------------- | ------------------ | ---------- |
+| Mood Logging         | Unit + Integration | ⏳ Planned |
+| Stress Logging       | Unit + Integration | ⏳ Planned |
+| Sleep Logging        | Unit + Integration | ⏳ Planned |
+| Goal Progress Calc   | Unit               | ⏳ Planned |
+| Correlation Analysis | Unit + Algorithm   | ⏳ Planned |
+| Anomaly Detection    | Unit + Algorithm   | ⏳ Planned |
+| Weekly Summary       | Integration        | ⏳ Planned |
 
 **Test Cases:**
 
@@ -551,7 +552,7 @@ async def test_mood_log_validation():
         "context": ["exercise", "social"]
     })
     assert response.status_code == 201
-    
+
     # Invalid mood score (out of range 1-10)
     response = await client.post("/api/mood-tracking/logs", json={
         "mood_score": 11,  # Invalid
@@ -559,7 +560,7 @@ async def test_mood_log_validation():
     })
     assert response.status_code == 422
     assert "mood_score must be between 1 and 10" in response.json()['detail']
-    
+
     # Notes too long (>1000 chars)
     response = await client.post("/api/mood-tracking/logs", json={
         "mood_score": 5,
@@ -578,17 +579,17 @@ async def test_goal_progress_calculation():
         current_value=5.0,
         duration_days=30
     )
-    
+
     # Log 10 days of mood data (gradual improvement)
     for day in range(10):
         await create_mood_log(
             user_id=1,
             mood_score=5.0 + (day * 0.2)  # 5.0 -> 6.8
         )
-    
+
     # Calculate progress
     progress = await calculate_goal_progress(goal.id)
-    
+
     # Expected: (6.8 - 5.0) / (7.0 - 5.0) = 0.9 / 2.0 = 45%
     assert progress.percentage == 45
     assert progress.current_avg_value == 6.8
@@ -599,7 +600,7 @@ async def test_goal_progress_calculation():
 async def test_mood_sleep_correlation():
     """Verify correlation analysis between mood and sleep"""
     user_id = 1
-    
+
     # Create 30 days of data showing positive correlation
     # Poor sleep (< 6h) -> Low mood (< 5)
     # Good sleep (> 7h) -> High mood (> 7)
@@ -610,10 +611,10 @@ async def test_mood_sleep_correlation():
         else:  # Good sleep days
             await create_sleep_log(user_id, hours=8.0, quality=8)
             await create_mood_log(user_id, mood_score=8)
-    
+
     # Run correlation analysis
     correlations = await analyze_correlations(user_id, days=30)
-    
+
     # Verify strong positive correlation (r > 0.7)
     mood_sleep_corr = correlations['mood_sleep']
     assert mood_sleep_corr.coefficient > 0.7
@@ -653,7 +654,7 @@ async def test_ai_refuses_medical_advice(medical_question):
         user_id=1,
         message=medical_question
     )
-    
+
     # Must contain refusal phrases
     refusal_phrases = [
         "cannot provide medical advice",
@@ -662,7 +663,7 @@ async def test_ai_refuses_medical_advice(medical_question):
         "qualified medical professional"
     ]
     assert any(phrase in response.lower() for phrase in refusal_phrases)
-    
+
     # Must NOT contain diagnostic language
     diagnostic_terms = ["diagnose", "prescribe", "treatment", "medication recommendation"]
     assert not any(term in response.lower() for term in diagnostic_terms)
@@ -674,16 +675,16 @@ async def test_ai_nutrition_advice_quality():
         user_id=1,
         message="What foods help with stress?"
     )
-    
+
     # Should mention evidence-based foods
     stress_relief_foods = ["magnesium", "omega-3", "dark chocolate", "green tea", "nuts"]
     mentions = sum(1 for food in stress_relief_foods if food in response.lower())
     assert mentions >= 2, "Should mention at least 2 stress-relief foods"
-    
+
     # Should NOT recommend unproven remedies
     unproven = ["homeopathy", "detox tea", "miracle cure"]
     assert not any(term in response.lower() for term in unproven)
-    
+
     # Should provide context/explanation
     assert len(response) > 100, "Response should be detailed (>100 chars)"
 
@@ -692,14 +693,14 @@ async def test_ai_response_consistency():
     """Verify AI gives consistent advice for similar questions"""
     question1 = "How can I improve my mood through diet?"
     question2 = "What should I eat to feel happier?"
-    
+
     response1 = await ai_concierge.chat(user_id=1, message=question1)
     response2 = await ai_concierge.chat(user_id=1, message=question2)
-    
+
     # Extract recommended foods from both responses
     foods1 = extract_food_mentions(response1)
     foods2 = extract_food_mentions(response2)
-    
+
     # Should have significant overlap (at least 50%)
     overlap = len(foods1.intersection(foods2)) / len(foods1.union(foods2))
     assert overlap > 0.5, f"Responses should be consistent (overlap: {overlap:.2%})"
@@ -712,16 +713,16 @@ async def test_ai_uses_user_context():
     await create_goal(user_id, goal_type="stress_reduction", target_value=3.0)
     await create_stress_log(user_id, stress_level=8, triggers=["work"])
     await create_mood_log(user_id, mood_score=4)
-    
+
     response = await ai_concierge.chat(
         user_id=user_id,
         message="Give me food suggestions"
     )
-    
+
     # Should reference user's stress context
     context_indicators = ["stress", "work pressure", "relaxation", "calm"]
     assert any(indicator in response.lower() for indicator in context_indicators)
-    
+
     # Should prioritize stress-relief foods (not generic)
     assert "#StressRelief" in response or "stress relief" in response.lower()
 ```
@@ -737,38 +738,38 @@ async def test_ai_uses_user_context():
 async def test_pattern_detection_accuracy():
     """Verify pattern detection identifies real correlations"""
     user_id = 1
-    
+
     # Create synthetic data with known patterns:
     # 1. High carb meals -> Energy crash (3h later)
     # 2. Exercise -> Better mood next day
     # 3. Poor sleep -> High stress
-    
+
     for day in range(60):
         # Pattern 1: High carb breakfast
         if day % 3 == 0:
             await create_meal_log(user_id, meal_type="breakfast", carbs_g=120)
             await create_mood_log(user_id, mood_score=4, logged_at=3h_later)
-        
+
         # Pattern 2: Exercise days
         if day % 4 == 0:
             await create_activity_log(user_id, activity="exercise", duration_min=30)
             await create_mood_log(user_id, mood_score=8, logged_at=next_day)
-        
+
         # Pattern 3: Sleep < 6h
         if day % 5 == 0:
             await create_sleep_log(user_id, hours=5.5, quality=4)
             await create_stress_log(user_id, stress_level=8, logged_at=same_day)
-    
+
     # Run pattern detection
     patterns = await detect_patterns(user_id, days=60)
-    
+
     # Verify detection accuracy
     detected_patterns = {p.pattern_type for p in patterns}
-    
+
     assert "high_carb_energy_crash" in detected_patterns
     assert "exercise_mood_boost" in detected_patterns
     assert "poor_sleep_high_stress" in detected_patterns
-    
+
     # Verify confidence scores
     for pattern in patterns:
         assert pattern.confidence > 0.7, f"Pattern {pattern.pattern_type} confidence too low"
@@ -778,18 +779,18 @@ async def test_pattern_detection_accuracy():
 async def test_anomaly_detection():
     """Verify anomaly detection for sudden mood/stress changes"""
     user_id = 1
-    
+
     # Create baseline (30 days of stable mood ~7)
     for day in range(30):
         await create_mood_log(user_id, mood_score=7 + random.uniform(-0.5, 0.5))
-    
+
     # Create anomaly (sudden drop to 3 for 3 days)
     for day in range(3):
         await create_mood_log(user_id, mood_score=3)
-    
+
     # Run anomaly detection
     anomalies = await detect_anomalies(user_id, days=7)
-    
+
     # Should detect the mood drop
     assert len(anomalies) == 1
     anomaly = anomalies[0]
@@ -810,21 +811,21 @@ async def test_anomaly_detection():
 async def test_dual_dimension_scoring():
     """Verify Physical + Mental scores are both considered"""
     user_id = 1
-    
+
     # Set up user context
     await set_health_profile(user_id, calorie_target=2000, activity_level="moderate")
     await create_goal(user_id, goal_type="mood_improvement")
     await create_mood_log(user_id, mood_score=4)  # Low mood
-    
+
     # Get recommendations
     recommendations = await get_recommendations(user_id, meal_type="lunch")
-    
+
     # Verify top recommendation has good Physical + Mental scores
     top_rec = recommendations[0]
     assert top_rec.physical_score > 0.7, "Should match physical health needs"
     assert top_rec.mental_score > 0.7, "Should support mood improvement"
     assert top_rec.combined_score > 0.7
-    
+
     # Verify explanation includes both dimensions
     explanation = top_rec.explanation
     assert "calorie" in explanation.lower() or "nutrition" in explanation.lower()
@@ -834,20 +835,20 @@ async def test_dual_dimension_scoring():
 async def test_context_aware_boosting():
     """Verify recommendations adapt to user's current state"""
     user_id = 1
-    
+
     # Scenario: User has high stress (last 3 days)
     for day in range(3):
         await create_stress_log(user_id, stress_level=8)
-    
+
     recommendations = await get_recommendations(user_id, meal_type="dinner")
-    
+
     # Verify #StressRelief foods are prioritized
     stress_relief_count = sum(
         1 for rec in recommendations[:5]
         if "#StressRelief" in rec.tags
     )
     assert stress_relief_count >= 3, "Should prioritize stress-relief foods"
-    
+
     # Verify context indicator in UI
     assert recommendations[0].context_indicator == "Great for stress relief today"
 ```
@@ -1039,12 +1040,12 @@ test-artifacts/
 
 ### 10.1 Review and Approval
 
-| Role             | Name   | Signature        | Date         |
-| ---------------- | ------ | ---------------- | ------------ |
-| QA Lead          | [Name] | ******\_\_****** | ****\_\_**** |
-| Development Lead | [Name] | ******\_\_****** | ****\_\_**** |
-| Product Manager  | [Name] | ******\_\_****** | ****\_\_**** |
-| Project Manager  | [Name] | ******\_\_****** | ****\_\_**** |
+| Role             | Name   | Signature            | Date             |
+| ---------------- | ------ | -------------------- | ---------------- |
+| QA Lead          | [Name] | **\*\***\_\_**\*\*** | \***\*\_\_\*\*** |
+| Development Lead | [Name] | **\*\***\_\_**\*\*** | \***\*\_\_\*\*** |
+| Product Manager  | [Name] | **\*\***\_\_**\*\*** | \***\*\_\_\*\*** |
+| Project Manager  | [Name] | **\*\***\_\_**\*\*** | \***\*\_\_\*\*** |
 
 ### 10.2 Distribution List
 
@@ -1056,9 +1057,9 @@ test-artifacts/
 
 ### 10.3 Version History
 
-| Version | Date       | Author  | Changes                                                            |
-| ------- | ---------- | ------- | ------------------------------------------------------------------ |
-| 1.0     | 2025-10-21 | QA Team | Initial version                                                    |
+| Version | Date       | Author  | Changes                                                                                                                                                                 |
+| ------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0     | 2025-10-21 | QA Team | Initial version                                                                                                                                                         |
 | 2.0     | 2025-10-26 | QA Team | Added Mental Wellness testing: Emotion analysis, AI Concierge LLM testing, Pattern detection, Dual-dimension recommendation testing, Mental health data privacy testing |
 
 ---

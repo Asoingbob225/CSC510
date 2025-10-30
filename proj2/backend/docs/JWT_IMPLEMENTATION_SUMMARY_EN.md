@@ -101,14 +101,14 @@ curl http://localhost:8000/users/me \
 const loginResponse = await fetch('/api/auth/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password })
+  body: JSON.stringify({ email, password }),
 });
 const { access_token } = await loginResponse.json();
 localStorage.setItem('token', access_token);
 
 // Access protected API
 const response = await fetch('/users/me', {
-  headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 });
 ```
 

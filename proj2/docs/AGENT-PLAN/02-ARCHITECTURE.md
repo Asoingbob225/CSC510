@@ -60,23 +60,17 @@ The system is designed to evolve into a microservices architecture as it scales:
 
 ### Backend Application (Monolithic)
 
-
-
 - **Technology**: FastAPI + Python 3.11+
 
 - **Development**: Uvicorn server on port 8000
 
 - **Application Structure**:
 
-
-
 #### Core Layer
 
 - **`core/config.py`** - Application-wide configurations
 
 - **`core/dependencies.py`** - Dependency injection for database sessions, etc.
-
-
 
 #### Data Layer
 
@@ -85,8 +79,6 @@ The system is designed to evolve into a microservices architecture as it scales:
 - **`models/models.py`** - SQLAlchemy ORM models
 
 - **`schemas/schemas.py`** - Pydantic schemas for validation
-
-
 
 #### Service Layer
 
@@ -98,25 +90,18 @@ The system is designed to evolve into a microservices architecture as it scales:
 
 - **`services/emailer_ses.py`** - AWS SES implementation for email sending
 
-
-
 #### Utility Layer
 
 - **`utils/auth_util.py`** - Authentication-related utilities (password hashing, token generation)
 
-
-
 #### Routers Layer
 
 - **`/api/auth/*`** - Authentication endpoints
-
   - `POST /api/auth/register` - User registration
 
   - `GET /api/auth/verify-email/{token}` - Email verification
 
   - `POST /api/auth/resend-verification` - Resend verification email
-
-
 
 #### Middleware
 

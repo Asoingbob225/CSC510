@@ -647,7 +647,7 @@ async def add_security_headers(request: Request, call_next):
 
 ### 8.4 Data Protection
 
-```python
+````python
 # Never expose sensitive data
 from eatsential.schemas.user import UserResponse
 
@@ -702,7 +702,7 @@ const debouncedSearch = useMemo(
   loading="lazy"
   decoding="async"
 />
-```
+````
 
 ### 9.2 Backend Performance
 

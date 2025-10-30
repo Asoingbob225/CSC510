@@ -49,19 +49,16 @@ This project uses [Ollama](https://ollama.com/) as the default embedding model p
 **Ollama Setup Steps:**
 
 1. **Install Ollama**
-
    - Download and install Ollama from: https://ollama.com/download
    - Start the Ollama service on your machine.
 
 2. **Download the embedding model**
-
    - For example, to use `nomic-embed-text`:
      ```bash
      ollama pull nomic-embed-text
      ```
 
 3. **Configure Ollama in Dify**
-
    - Go to Dify Admin Panel → Model Management → Embedding Models.
    - Add a new embedding model provider, select "Ollama" and fill in the required details (host, port, model name, etc).
    - Test the connection to ensure Dify can access your local Ollama service.
