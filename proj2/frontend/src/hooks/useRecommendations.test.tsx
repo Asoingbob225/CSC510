@@ -7,8 +7,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { useMealRecommendations } from './useRecommendations';
-import { recommendationApi } from '@/lib/api';
-import type { MealRecommendationResponse } from '@/lib/api';
+import { recommendationApi, type MealRecommendationResponse } from '@/lib/api';
 
 // Mock the API
 vi.mock('@/lib/api', () => ({
@@ -29,26 +28,28 @@ const createTestQueryClient = () =>
 
 const createWrapper = () => {
   const queryClient = createTestQueryClient();
-  // eslint-disable-next-line react/display-name
-  return ({ children }: { children: ReactNode }) => (
+  const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  Wrapper.displayName = 'QueryClientWrapper';
+  return Wrapper;
 };
 
 describe('useMealRecommendations', () => {
   const mockUserId = 'user-123';
   const mockRecommendations: MealRecommendationResponse = {
-    user_id: mockUserId,
-    recommendations: [
+    items: [
       {
-        menu_item_id: 'item-1',
+        item_id: 'item-1',
+        name: 'Vibrant Quinoa Bowl',
         score: 0.95,
-        explanation: 'Restaurant: Healthy Bites, 450 cal',
+        explanation: 'Restaurant: Healthy Bites; 450 kcal; Mood boost blend',
       },
       {
-        menu_item_id: 'item-2',
+        item_id: 'item-2',
+        name: 'Green Garden Wrap',
         score: 0.85,
-        explanation: 'Restaurant: Green Garden, 380 cal',
+        explanation: 'Restaurant: Green Garden; 380 kcal; Light lunch option',
       },
     ],
   };
@@ -71,10 +72,11 @@ describe('useMealRecommendations', () => {
     });
 
     expect(result.current.data).toEqual(mockRecommendations);
-    expect(result.current.data?.recommendations).toHaveLength(2);
+    expect('items' in (result.current.data || {})).toBe(true);
   });
 
-  // Note: Skipping due to retry configuration conflicts in test environment
+  // Note: Error handling with tanstack-query in test environment is complex
+  // This test is simplified and more comprehensive error testing should be done in E2E tests
   it.skip('handles API errors', async () => {
     const errorMessage = 'Failed to fetch recommendations';
     vi.mocked(recommendationApi.getMealRecommendations).mockRejectedValue(new Error(errorMessage));
@@ -83,6 +85,15 @@ describe('useMealRecommendations', () => {
       wrapper: createWrapper(),
     });
 
+    // Wait for loading to finish
+    await waitFor(
+      () => {
+        expect(result.current.isLoading).toBe(false);
+      },
+      { timeout: 3000 }
+    );
+
+    // Now check for error state
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
     });
@@ -91,19 +102,38 @@ describe('useMealRecommendations', () => {
     expect((result.current.error as Error).message).toBe(errorMessage);
   });
 
-  it('passes constraints to API', async () => {
-    const constraints = { max_price: 20, cuisine: 'japanese' };
+  it('passes filters and mode to API after sanitizing payload', async () => {
+    const options = { mode: 'llm' as const, filters: { cuisine: ['japanese', 'thai', ''] } };
     vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(mockRecommendations);
 
-    renderHook(() => useMealRecommendations(mockUserId, constraints), {
+    renderHook(() => useMealRecommendations(mockUserId, options), {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => {
-      expect(recommendationApi.getMealRecommendations).toHaveBeenCalledWith(
-        mockUserId,
-        constraints
-      );
+      expect(recommendationApi.getMealRecommendations).toHaveBeenCalledWith(mockUserId, {
+        mode: 'llm',
+        filters: { cuisine: ['japanese', 'thai'] },
+      });
+    });
+  });
+
+  it('normalizes baseline options and preserves diet values', async () => {
+    const options = {
+      mode: 'baseline' as const,
+      filters: { cuisine: ['italian', 'mexican', ''], diet: ['vegetarian'] },
+    };
+    vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(mockRecommendations);
+
+    renderHook(() => useMealRecommendations(mockUserId, options), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(recommendationApi.getMealRecommendations).toHaveBeenCalledWith(mockUserId, {
+        mode: 'baseline',
+        filters: { cuisine: ['italian', 'mexican'], diet: ['vegetarian'] },
+      });
     });
   });
 
@@ -161,12 +191,18 @@ describe('useMealRecommendations', () => {
     vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(mockRecommendations);
 
     const { result: result1 } = renderHook(
-      () => useMealRecommendations(mockUserId, { max_price: 10 }),
+      () =>
+        useMealRecommendations(mockUserId, {
+          filters: { diet: ['vegan'] },
+        }),
       { wrapper: createWrapper() }
     );
 
     const { result: result2 } = renderHook(
-      () => useMealRecommendations(mockUserId, { max_price: 20 }),
+      () =>
+        useMealRecommendations(mockUserId, {
+          filters: { diet: ['keto'] },
+        }),
       { wrapper: createWrapper() }
     );
 
@@ -178,10 +214,10 @@ describe('useMealRecommendations', () => {
     // Both should have been called (different cache keys)
     expect(recommendationApi.getMealRecommendations).toHaveBeenCalledTimes(2);
     expect(recommendationApi.getMealRecommendations).toHaveBeenCalledWith(mockUserId, {
-      max_price: 10,
+      filters: { diet: ['vegan'] },
     });
     expect(recommendationApi.getMealRecommendations).toHaveBeenCalledWith(mockUserId, {
-      max_price: 20,
+      filters: { diet: ['keto'] },
     });
   });
 
