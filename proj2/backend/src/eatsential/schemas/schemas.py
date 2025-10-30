@@ -756,6 +756,29 @@ class RecommendationRequest(BaseModel):
     constraints: Optional[dict] = None
 
 
+class RestaurantInfo(BaseModel):
+    """Restaurant information for recommendations."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
+    cuisine: Optional[str] = None
+    is_active: bool = True
+
+
+class MenuItemInfo(BaseModel):
+    """Menu item information for recommendations."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
+    description: Optional[str] = None
+    price: Optional[float] = None
+    calories: Optional[float] = None
+
+
 class RecommendationItem(BaseModel):
     """A single recommended menu item with score and short explanation."""
 
@@ -764,6 +787,8 @@ class RecommendationItem(BaseModel):
     menu_item_id: str
     score: float
     explanation: str
+    menu_item: Optional[MenuItemInfo] = None
+    restaurant: Optional[RestaurantInfo] = None
 
 
 class RecommendationResponse(BaseModel):

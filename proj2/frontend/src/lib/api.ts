@@ -749,10 +749,28 @@ export interface MealRecommendationRequest {
   };
 }
 
+export interface RestaurantInfo {
+  id: string;
+  name: string;
+  cuisine?: string;
+  address?: string;
+  is_active: boolean;
+}
+
+export interface MenuItemInfo {
+  id: string;
+  name: string;
+  description?: string;
+  price?: number;
+  calories?: number;
+}
+
 export interface RecommendationItem {
   menu_item_id: string;
   score: number;
   explanation: string;
+  menu_item?: MenuItemInfo;
+  restaurant?: RestaurantInfo;
 }
 
 export interface MealRecommendationResponse {
