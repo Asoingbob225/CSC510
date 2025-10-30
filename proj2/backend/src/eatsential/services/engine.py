@@ -539,7 +539,12 @@ class RecommendationService:
             if not item:
                 continue
 
-            name = entry.get("name") or getattr(item, "name", "")
+            name_raw = entry.get("name")
+            if isinstance(name_raw, str) and name_raw:
+                name = name_raw
+            else:
+                name = getattr(item, "name", "")
+
             raw_score = entry.get("score", 0.0)
             try:
                 if isinstance(raw_score, (int, float, str)):
@@ -550,8 +555,16 @@ class RecommendationService:
                 score = 0.0
             score = max(0.0, min(score, 1.0))
 
-            explanation = entry.get("explanation") or ""
-            explanation = explanation.strip() or "Selected by LLM ranking"
+            explanation_raw = entry.get("explanation")
+            if isinstance(explanation_raw, str):
+                explanation_candidate = explanation_raw
+            elif explanation_raw is None:
+                explanation_candidate = ""
+            else:
+                explanation_candidate = str(explanation_raw)
+            explanation = (
+                explanation_candidate.strip() or "Selected by LLM ranking"
+            )
 
             recommendations.append(
                 RecommendedItem(
@@ -753,10 +766,12 @@ class RecommendationService:
     # Utility helpers
     # ------------------------------------------------------------------ #
 
-    def _decimal_to_float(self, value: Decimal | None) -> float | None:
+    def _decimal_to_float(self, value: Decimal | float | None) -> float | None:
         """Convert Decimal values to float for serialization."""
         if value is None:
             return None
+        if isinstance(value, Decimal):
+            return float(value)
         return float(value)
 
     def _price_in_range(
@@ -779,11 +794,11 @@ class RecommendationService:
 
     def _average_price(self, items: Sequence[MenuItem]) -> float | None:
         """Compute average price for a set of menu items."""
-        prices = [
-            self._decimal_to_float(item.price)
-            for item in items
-            if self._decimal_to_float(item.price) is not None
-        ]
+        prices: list[float] = []
+        for item in items:
+            price_val = self._decimal_to_float(item.price)
+            if price_val is not None:
+                prices.append(price_val)
         if not prices:
             return None
         return sum(prices) / len(prices)

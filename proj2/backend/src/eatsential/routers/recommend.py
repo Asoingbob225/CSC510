@@ -2,21 +2,36 @@
 
 from __future__ import annotations
 
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
 from ..models.models import UserDB
-from ..schemas.recommendation_schemas import (
+from ..schemas.schemas import (
+    RecommendationItem,
     RecommendationRequest,
     RecommendationResponse,
 )
-from ..services.auth_service import get_current_user
-from ..services.engine import RecommendationService
+from ..services.recommend_service import RecommendService
 
 router = APIRouter(prefix="/recommend", tags=["recommendations"])
+
+
+def _load_user(db: Session, user_id: str) -> UserDB:
+    user = db.query(UserDB).filter(UserDB.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    return user
+
+
+def _to_response(
+    user_id: str,
+    items: list[RecommendationItem],
+) -> RecommendationResponse:
+    return RecommendationResponse(user_id=user_id, recommendations=items)
 
 
 @router.post(
@@ -26,24 +41,17 @@ router = APIRouter(prefix="/recommend", tags=["recommendations"])
 )
 def recommend_meal(
     request: RecommendationRequest,
-    current_user: Annotated[UserDB, Depends(get_current_user)],
     db: Session = Depends(get_db),
 ) -> RecommendationResponse:
-    """Return personalized meal recommendations for the authenticated user."""
-    service = RecommendationService(db)
+    """Return personalized meal recommendations using the legacy scorer."""
+    _load_user(db, request.user_id)
 
-    try:
-        return service.get_meal_recommendations(user=current_user, request=request)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
-        ) from exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Unable to generate meal recommendations: {exc!s}",
-        ) from exc
+    legacy_service = RecommendService(db)
+    recommendations = legacy_service.recommend_meals(
+        user_id=request.user_id,
+        constraints=request.constraints,
+    )
+    return _to_response(request.user_id, recommendations)
 
 
 @router.post(
@@ -53,24 +61,14 @@ def recommend_meal(
 )
 def recommend_restaurant(
     request: RecommendationRequest,
-    current_user: Annotated[UserDB, Depends(get_current_user)],
     db: Session = Depends(get_db),
 ) -> RecommendationResponse:
-    """Return personalized restaurant recommendations for the authenticated user."""
-    service = RecommendationService(db)
+    """Return restaurant recommendations using the legacy scorer."""
+    _load_user(db, request.user_id)
 
-    try:
-        return service.get_restaurant_recommendations(
-            user=current_user,
-            request=request,
-        )
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
-        ) from exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Unable to generate restaurant recommendations: {exc!s}",
-        ) from exc
+    legacy_service = RecommendService(db)
+    recommendations = legacy_service.recommend_meals(
+        user_id=request.user_id,
+        constraints=request.constraints,
+    )
+    return _to_response(request.user_id, recommendations)

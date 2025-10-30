@@ -33,6 +33,7 @@ dev = [
     "pytest>=8.3.4",
     "pytest-cov>=6.0.0",
     "coverage>=7.6.10",
+    "pyright>=1.1.407",
 ]
 test = [
     "pytest>=7.0.0",
