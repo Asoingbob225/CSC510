@@ -14,7 +14,7 @@ from typing import Optional
 from sqlalchemy.orm import Session, selectinload
 
 from ..models.models import HealthProfileDB, MenuItem, Restaurant, UserAllergyDB, UserDB
-from ..schemas.schemas import RecommendationItem
+from ..schemas.schemas import MenuItemInfo, RecommendationItem, RestaurantInfo
 
 
 class RecommendService:
@@ -143,11 +143,31 @@ class RecommendService:
         recommendations = []
         for item in menu_items:
             score, explanation = self._score_menu_item(item, user_context)
+
+            # Create menu item info
+            menu_item_info = MenuItemInfo(
+                id=item.id,
+                name=item.name,
+                description=item.description,
+                price=item.price,
+                calories=item.calories,
+            )
+
+            # Create restaurant info
+            restaurant_info = RestaurantInfo(
+                id=item.restaurant.id,
+                name=item.restaurant.name,
+                cuisine=item.restaurant.cuisine,
+                is_active=item.restaurant.is_active,
+            )
+
             recommendations.append(
                 RecommendationItem(
                     menu_item_id=item.id,
                     score=score,
                     explanation=explanation,
+                    menu_item=menu_item_info,
+                    restaurant=restaurant_info,
                 )
             )
 

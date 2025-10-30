@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, RefreshCw, Sparkles, UtensilsCrossed } from 'lucide-react';
 import { useMealRecommendations } from '@/hooks/useRecommendations';
+import { RestaurantInfo } from './RestaurantInfo';
 import type { RecommendationItem } from '@/lib/api';
 
 interface RecommendationCarouselProps {
@@ -166,6 +167,14 @@ export function RecommendationCarousel({ userId, constraints }: RecommendationCa
               </span>
             </div>
           </div>
+
+          {/* Restaurant and Menu Item Information */}
+          {currentRecommendation.restaurant && (
+            <RestaurantInfo
+              restaurant={currentRecommendation.restaurant}
+              menuItem={currentRecommendation.menu_item}
+            />
+          )}
 
           {/* Navigation Controls */}
           <div className="flex items-center justify-between">
