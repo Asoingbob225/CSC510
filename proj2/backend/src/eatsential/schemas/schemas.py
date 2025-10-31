@@ -744,4 +744,3 @@ class WellnessLogsResponse(BaseModel):
     stress_logs: list[StressLogResponse] = []
     sleep_logs: list[SleepLogResponse] = []
     total_count: int
-
