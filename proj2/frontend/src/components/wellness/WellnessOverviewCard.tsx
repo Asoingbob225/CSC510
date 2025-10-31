@@ -66,8 +66,6 @@ export function WellnessOverviewCard() {
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    console.log('Chart data:', days); // Debug log
-    console.log('Week logs:', weekLogs); // Debug log
     return days;
   }, [weekLogs]);
 

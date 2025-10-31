@@ -149,7 +149,7 @@ export function QuickMealDrawer({ open, onOpenChange }: QuickMealDrawerProps) {
           <DrawerDescription>Log a single food item quickly</DrawerDescription>
         </DrawerHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-4 p-4 sm:w-2xl">
           {/* Meal Type and Time */}
           <div className="grid gap-4 md:grid-cols-2">
             <FieldGroup>
@@ -199,7 +199,6 @@ export function QuickMealDrawer({ open, onOpenChange }: QuickMealDrawerProps) {
                         setIsMealDateOpen(false);
                       }
                     }}
-                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
@@ -285,14 +284,18 @@ export function QuickMealDrawer({ open, onOpenChange }: QuickMealDrawerProps) {
           </div>
 
           <DrawerFooter>
-            <Button type="submit" disabled={isPending} className="w-full">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
-                  Logging...
+                  Submitting...
                 </>
               ) : (
-                'Log Meal'
+                'Submit'
               )}
             </Button>
             <DrawerClose asChild>

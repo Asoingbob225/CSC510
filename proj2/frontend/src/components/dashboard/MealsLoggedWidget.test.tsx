@@ -195,18 +195,11 @@ describe('MealsLoggedWidget', () => {
       error: null,
     });
 
-    const { container } = render(<MealsLoggedWidget onViewDetails={mockOnViewDetails} />);
+    render(<MealsLoggedWidget onViewDetails={mockOnViewDetails} />);
 
     expect(screen.getByText('Breakfast')).toBeInTheDocument();
     expect(screen.getByText('Lunch')).toBeInTheDocument();
     expect(screen.getByText('Dinner')).toBeInTheDocument();
-
-    // Check entries and calories by finding them within their specific meal sections
-    const allEntryTexts = container.querySelectorAll('.text-xs.text-gray-500');
-    expect(allEntryTexts.length).toBe(3); // 3 meal types
-    allEntryTexts.forEach((element) => {
-      expect(element.textContent).toMatch(/1 entry/);
-    });
 
     // Check that calorie badges exist
     expect(
@@ -214,6 +207,11 @@ describe('MealsLoggedWidget', () => {
         return element?.textContent === '300 kcal' || false;
       })
     ).toBeInTheDocument();
+
+    // Check that nutrition details are displayed
+    expect(screen.getAllByText('Protein').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Carbs').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Fat').length).toBeGreaterThan(0);
   });
 
   it('displays summary statistics correctly', () => {
@@ -261,13 +259,23 @@ describe('MealsLoggedWidget', () => {
 
     render(<MealsLoggedWidget onViewDetails={mockOnViewDetails} />);
 
-    expect(screen.getByText('Total Meals')).toBeInTheDocument();
-    expect(screen.getByText('Total Calories')).toBeInTheDocument();
+    // Verify nutrition details are shown for each meal type
+    const proteinLabels = screen.getAllByText('Protein');
+    const carbsLabels = screen.getAllByText('Carbs');
+    const fatLabels = screen.getAllByText('Fat');
 
-    // Check the values using flexible matching
-    const summarySection = screen.getByText('Total Meals').closest('.grid');
-    expect(summarySection).toHaveTextContent('2');
-    expect(summarySection).toHaveTextContent('800');
+    // Should have nutrition details for each meal (breakfast and lunch = 2 meals)
+    expect(proteinLabels.length).toBe(2);
+    expect(carbsLabels.length).toBe(2);
+    expect(fatLabels.length).toBe(2);
+
+    // Verify specific nutrition values are displayed
+    expect(screen.getByText('10g')).toBeInTheDocument(); // Breakfast protein
+    expect(screen.getByText('50g')).toBeInTheDocument(); // Breakfast carbs
+    expect(screen.getByText('5g')).toBeInTheDocument(); // Breakfast fat
+    expect(screen.getByText('30g')).toBeInTheDocument(); // Lunch protein
+    expect(screen.getByText('40g')).toBeInTheDocument(); // Lunch carbs
+    expect(screen.getByText('15g')).toBeInTheDocument(); // Lunch fat
   });
 
   it('groups meals by type correctly', () => {

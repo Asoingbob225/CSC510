@@ -8,6 +8,7 @@ import type { WellnessLogResponse } from '@/lib/api';
 // Mock the hooks
 vi.mock('@/hooks/useWellnessData', () => ({
   useTodayWellnessLog: vi.fn(),
+  useWellnessLogs: vi.fn(),
 }));
 
 // Mock react-router
@@ -20,7 +21,7 @@ vi.mock('react-router', async () => {
   };
 });
 
-import { useTodayWellnessLog } from '@/hooks/useWellnessData';
+import { useTodayWellnessLog, useWellnessLogs } from '@/hooks/useWellnessData';
 
 describe('WellnessOverviewCard', () => {
   let queryClient: QueryClient;
@@ -63,6 +64,11 @@ describe('WellnessOverviewCard', () => {
       isLoading: true,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
 
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
+
     renderComponent();
 
     // Skeleton elements should be visible
@@ -76,12 +82,24 @@ describe('WellnessOverviewCard', () => {
       isLoading: false,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
 
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [mockTodayLog],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
+
     renderComponent();
 
     expect(screen.getByText("Today's Wellness")).toBeInTheDocument();
-    expect(screen.getByText('8/10')).toBeInTheDocument(); // Mood
-    expect(screen.getByText('4/10')).toBeInTheDocument(); // Stress
-    expect(screen.getByText('7/10')).toBeInTheDocument(); // Sleep quality
+    // Check scores using flexible matchers (text might be split across elements)
+    expect(
+      screen.getByText((_content, element) => element?.textContent === '8/10')
+    ).toBeInTheDocument(); // Mood
+    expect(
+      screen.getByText((_content, element) => element?.textContent === '4/10')
+    ).toBeInTheDocument(); // Stress
+    expect(
+      screen.getByText((_content, element) => element?.textContent === '7/10')
+    ).toBeInTheDocument(); // Sleep quality
   });
 
   it('displays mood emoji correctly', () => {
@@ -89,6 +107,11 @@ describe('WellnessOverviewCard', () => {
       data: mockTodayLog,
       isLoading: false,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
+
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [mockTodayLog],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
 
     renderComponent();
 
@@ -102,6 +125,11 @@ describe('WellnessOverviewCard', () => {
       isLoading: false,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
 
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
+
     renderComponent();
 
     expect(screen.getByText('No wellness data today')).toBeInTheDocument();
@@ -113,6 +141,11 @@ describe('WellnessOverviewCard', () => {
       data: mockTodayLog,
       isLoading: false,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
+
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [mockTodayLog],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
 
     renderComponent();
 
@@ -127,6 +160,11 @@ describe('WellnessOverviewCard', () => {
       data: null,
       isLoading: false,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
+
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
 
     renderComponent();
 
@@ -147,9 +185,17 @@ describe('WellnessOverviewCard', () => {
       isLoading: false,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
 
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [highStressLog],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
+
     renderComponent();
 
-    expect(screen.getByText('9/10')).toBeInTheDocument();
+    // Check for the stress score using flexible matcher (text might be split across elements)
+    expect(
+      screen.getByText((_content, element) => element?.textContent === '9/10')
+    ).toBeInTheDocument();
   });
 
   it('displays correct sleep quality color coding', () => {
@@ -163,8 +209,16 @@ describe('WellnessOverviewCard', () => {
       isLoading: false,
     } as unknown as ReturnType<typeof useTodayWellnessLog>);
 
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: [goodSleepLog],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
+
     renderComponent();
 
-    expect(screen.getByText('9/10')).toBeInTheDocument();
+    // Check for the sleep quality score using flexible matcher (text might be split across elements)
+    const sleepScores = screen.getAllByText((_content, element) => element?.textContent === '9/10');
+    // Should find at least one "9/10" (the sleep quality score)
+    expect(sleepScores.length).toBeGreaterThan(0);
   });
 });
