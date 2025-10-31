@@ -7,7 +7,7 @@ import {
   DailyCalorieGoal,
   MacronutrientBalance,
   LogMealWidget,
-  DailySummaryWidget,
+  MealsLoggedWidget,
 } from '@/components/dashboard';
 import apiClient, { getAuthToken } from '@/lib/api';
 
@@ -41,14 +41,6 @@ function Dashboard() {
     verifyToken();
   }, [navigate]);
 
-  // Handler for scrolling to meal logging section
-  const handleLogMeal = () => {
-    const mealSection = document.getElementById('meal-logging-section');
-    if (mealSection) {
-      mealSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   // Handler for navigating to detailed daily view
   const handleViewDailyDetails = () => {
     navigate('/daily-log');
@@ -78,16 +70,19 @@ function Dashboard() {
           </p>
         </div>
 
-        {/* Primary Widgets Grid - Daily Goals & Macros */}
-        <div className="mb-8 grid gap-6 lg:grid-cols-2">
+        {/* Primary Widgets Grid - Daily Goals & Nutrition */}
+        <div className="mb-8 grid gap-6 lg:grid-cols-3">
+          {/* Small Cards: Calorie Goal & Macros */}
           <DailyCalorieGoal />
           <MacronutrientBalance />
+
+          {/* Large Card: Meals Logged */}
+          <MealsLoggedWidget onViewDetails={handleViewDailyDetails} />
         </div>
 
-        {/* Secondary Widgets - Log Meal & Daily Summary */}
-        <div className="mb-8 grid gap-6 lg:grid-cols-3">
-          <LogMealWidget onLogMeal={handleLogMeal} />
-          <DailySummaryWidget onViewDetails={handleViewDailyDetails} />
+        {/* Log Meal Widget */}
+        <div className="mb-8">
+          <LogMealWidget />
         </div>
 
         {/* Wellness Overview Card */}

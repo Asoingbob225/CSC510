@@ -65,7 +65,7 @@ export function DailySummaryWidget({ onViewDetails }: DailySummaryWidgetProps) {
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Calendar className="size-5 text-green-600" />
-              Daily Summary
+              Daily Meal Summary
             </CardTitle>
             <CardDescription>{formatTodayDate()}</CardDescription>
           </div>

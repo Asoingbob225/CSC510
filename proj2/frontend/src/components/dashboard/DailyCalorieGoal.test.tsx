@@ -6,7 +6,6 @@ import * as useDailyNutritionModule from '@/hooks/useDailyNutrition';
 // Mock the hook
 vi.mock('@/hooks/useDailyNutrition', () => ({
   useDailyNutrition: vi.fn(),
-  formatTodayDate: vi.fn(() => 'October 31, 2025'),
 }));
 
 describe('DailyCalorieGoal', () => {
@@ -45,11 +44,12 @@ describe('DailyCalorieGoal', () => {
 
     render(<DailyCalorieGoal />);
 
-    expect(screen.getByText('Daily Calorie Goal')).toBeInTheDocument();
-    expect(screen.getByText('October 31, 2025')).toBeInTheDocument();
+    // Check title
+    expect(screen.getByText('Calories')).toBeInTheDocument();
+    // Check calorie values
     expect(screen.getByText('1200')).toBeInTheDocument();
-    expect(screen.getByText('/ 2000 kcal')).toBeInTheDocument();
-    expect(screen.getByText('800 left')).toBeInTheDocument();
+    expect(screen.getByText('/ 2000')).toBeInTheDocument();
+    expect(screen.getByText('800 kcal remaining')).toBeInTheDocument();
   });
 
   it('shows over-goal state when calories exceed target', () => {
@@ -72,26 +72,6 @@ describe('DailyCalorieGoal', () => {
     expect(screen.getByText(/Over by 500 kcal/i)).toBeInTheDocument();
   });
 
-  it('displays meal statistics correctly', () => {
-    vi.mocked(useDailyNutritionModule.useDailyNutrition).mockReturnValue({
-      data: {
-        totalCalories: 1800,
-        totalProtein: 90,
-        totalCarbs: 200,
-        totalFat: 60,
-        mealCount: 3,
-        meals: [],
-      },
-      isLoading: false,
-      error: null,
-    });
-
-    render(<DailyCalorieGoal />);
-
-    expect(screen.getByText('3')).toBeInTheDocument(); // Meals logged
-    expect(screen.getByText('600')).toBeInTheDocument(); // Avg per meal (1800/3)
-  });
-
   it('handles zero meals correctly', () => {
     vi.mocked(useDailyNutritionModule.useDailyNutrition).mockReturnValue({
       data: {
@@ -108,8 +88,8 @@ describe('DailyCalorieGoal', () => {
 
     render(<DailyCalorieGoal />);
 
-    expect(screen.getByText('/ 2000 kcal')).toBeInTheDocument();
-    expect(screen.getByText('2000 left')).toBeInTheDocument();
+    expect(screen.getByText('/ 2000')).toBeInTheDocument();
+    expect(screen.getByText('2000 kcal remaining')).toBeInTheDocument();
     expect(screen.getByText('0% of daily goal')).toBeInTheDocument();
   });
 
