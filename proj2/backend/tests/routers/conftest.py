@@ -1,6 +1,10 @@
 """Shared fixtures for router API tests."""
 
+from __future__ import annotations
+
+import json
 from collections.abc import Iterator
+from typing import Any
 
 import pytest
 from sqlalchemy.orm import Session
@@ -18,6 +22,62 @@ from src.eatsential.models.models import (
     UserDB,
 )
 from src.eatsential.utils.auth_util import create_access_token
+
+
+class _MockLLMResponse:
+    """Mock response object for LLM API calls in router tests."""
+
+    def __init__(self, items: list[MenuItem] | list[Restaurant]) -> None:
+        # Generate mock recommendations based on items
+        recommendations = [
+            {
+                "item_id": str(item.id),
+                "name": item.name,
+                "score": 0.9 - (i * 0.1),
+                "explanation": f"Recommended: {item.name}",
+            }
+            for i, item in enumerate(items[:5])
+        ]
+        self.text = json.dumps(recommendations)
+
+
+class _MockLLMClient:
+    """Mock LLM client for router tests."""
+
+    def __init__(self) -> None:
+        self.models = _MockModels()
+
+
+class _MockModels:
+    """Mock models interface."""
+
+    def generate_content(
+        self, *, model: str, contents: Any, config: Any = None
+    ) -> _MockLLMResponse:
+        # Return empty mock response - will trigger baseline fallback
+        return _MockLLMResponse([])
+
+
+@pytest.fixture(autouse=True)
+def mock_llm_client_for_routers(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Automatically mock LLM client for all router tests to avoid API calls.
+
+    This fixture runs automatically for all router tests, ensuring that:
+    1. Tests don't require a real GEMINI_API_KEY
+    2. Tests don't make actual API calls to Google Gemini
+    3. LLM mode tests will fallback to baseline (empty LLM response)
+    4. GitHub CI can run tests without API key secrets
+    """
+    from src.eatsential.services.engine import RecommendationService
+
+    def mock_get_llm_client(self: RecommendationService) -> _MockLLMClient:
+        return _MockLLMClient()
+
+    monkeypatch.setattr(
+        RecommendationService,
+        "_get_llm_client",
+        mock_get_llm_client,
+    )
 
 
 def create_auth_headers(user: UserDB) -> dict[str, str]:
