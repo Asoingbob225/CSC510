@@ -16,8 +16,8 @@ export function LogMealWidget() {
               <UtensilsCrossed className="size-8 text-purple-600" />
             </div>
             <div className="text-left">
-              <h3 className="mb-1 text-xl font-bold text-gray-900">Log a Meal</h3>
-              <p className="text-sm text-gray-600">Track your nutrition quickly</p>
+              <h3 className="mb-1 text-xl font-bold text-nowrap text-gray-900">Log a Meal</h3>
+              <p className="text-sm text-gray-600">Track your nutrition</p>
             </div>
           </div>
           <Button
