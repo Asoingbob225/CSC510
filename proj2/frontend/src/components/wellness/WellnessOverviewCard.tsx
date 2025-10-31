@@ -28,30 +28,43 @@ export function WellnessOverviewCard() {
 
   // Prepare chart data for the last 7 days
   const chartData = useMemo(() => {
-    const days = [];
+    if (!weekLogs || weekLogs.length === 0) return [];
+
     const today = new Date().toISOString().split('T')[0];
 
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+    // Group logs by date
+    const logsByDate = new Map<
+      string,
+      {
+        mood?: number;
+        stress?: number;
+        sleep?: number;
+        isToday: boolean;
+      }
+    >();
 
-      // Find logs for this date - each type might be in a separate log entry
-      const dayLogs = weekLogs?.filter((log) => log.log_date?.startsWith(dateStr)) || [];
+    // Process all logs and group by date
+    weekLogs.forEach((log) => {
+      const dateStr = log.log_date?.split('T')[0];
+      if (!dateStr) return;
 
-      // Extract values from different log entries
-      const moodLog = dayLogs.find((log) => log.mood_score !== undefined);
-      const stressLog = dayLogs.find((log) => log.stress_level !== undefined);
-      const sleepLog = dayLogs.find((log) => log.quality_score !== undefined);
+      if (!logsByDate.has(dateStr)) {
+        logsByDate.set(dateStr, { isToday: dateStr === today });
+      }
 
-      days.push({
-        date: dateStr,
-        isToday: dateStr === today,
-        mood: moodLog?.mood_score ?? null,
-        stress: stressLog?.stress_level ?? null,
-        sleep: sleepLog?.quality_score ?? null,
-      });
-    }
+      const dayData = logsByDate.get(dateStr)!;
+      if (log.mood_score !== undefined) dayData.mood = log.mood_score;
+      if (log.stress_level !== undefined) dayData.stress = log.stress_level;
+      if (log.quality_score !== undefined) dayData.sleep = log.quality_score;
+    });
+
+    // Convert to array and sort by date (oldest first for left-to-right display)
+    const days = Array.from(logsByDate.entries())
+      .map(([date, data]) => ({
+        date,
+        ...data,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     console.log('Chart data:', days); // Debug log
     console.log('Week logs:', weekLogs); // Debug log
@@ -113,6 +126,63 @@ export function WellnessOverviewCard() {
     return <circle cx={cx} cy={cy} r={2} fill="hsl(215, 20%, 65%)" fillOpacity={0.5} />;
   };
 
+  // Wellness metric row component
+  const WellnessMetricRow = ({
+    icon: Icon,
+    iconBgColor,
+    iconColor,
+    label,
+    dataKey,
+    strokeColor,
+    value,
+    valueColorClass,
+    emoji,
+  }: {
+    icon: React.ComponentType<{ className?: string }>;
+    iconBgColor: string;
+    iconColor: string;
+    label: string;
+    dataKey: 'mood' | 'stress' | 'sleep';
+    strokeColor: string;
+    value?: number | null;
+    valueColorClass?: string;
+    emoji?: string;
+  }) => (
+    <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
+      <div
+        className={`flex size-10 shrink-0 items-center justify-center rounded-full ${iconBgColor}`}
+      >
+        <Icon className={`size-5 ${iconColor}`} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-medium text-muted-foreground">{label}</p>
+        <div className="mt-1 h-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+              <Line
+                type="monotone"
+                dataKey={dataKey}
+                stroke={strokeColor}
+                strokeWidth={2}
+                dot={(props) => (
+                  <CustomDot {...props} dataKey={dataKey} activeColor={strokeColor} />
+                )}
+                connectNulls
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        <span className={`text-2xl font-bold ${valueColorClass || 'text-foreground'}`}>
+          {value || '-'}
+        </span>
+        <span className="text-xs text-muted-foreground">/10</span>
+      </div>
+      {emoji && <span className="text-2xl">{emoji}</span>}
+    </div>
+  );
+
   if (logLoading || weekLoading) {
     return (
       <Card>
@@ -158,101 +228,40 @@ export function WellnessOverviewCard() {
         {todayLog && (todayLog.mood_score || todayLog.stress_level || todayLog.quality_score) ? (
           <div className="space-y-3">
             {/* Mood Row */}
-            <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-blue-50">
-                <Smile className="size-5 text-blue-600" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-muted-foreground">Mood</p>
-                <div className="mt-1 h-8">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-                      <Line
-                        type="monotone"
-                        dataKey="mood"
-                        stroke="hsl(221, 83%, 53%)"
-                        strokeWidth={2}
-                        dot={(props) => (
-                          <CustomDot {...props} dataKey="mood" activeColor="hsl(221, 83%, 53%)" />
-                        )}
-                        connectNulls
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className="flex shrink-0 flex-col items-end gap-1">
-                <span className="text-2xl font-bold text-foreground">
-                  {todayLog.mood_score || '-'}
-                </span>
-                <span className="text-xs text-muted-foreground">/10</span>
-              </div>
-              <span className="text-2xl">{getMoodEmoji(todayLog.mood_score)}</span>
-            </div>
+            <WellnessMetricRow
+              icon={Smile}
+              iconBgColor="bg-blue-50"
+              iconColor="text-blue-600"
+              label="Mood"
+              dataKey="mood"
+              strokeColor="hsl(221, 83%, 53%)"
+              value={todayLog.mood_score}
+              emoji={getMoodEmoji(todayLog.mood_score)}
+            />
 
             {/* Stress Row */}
-            <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-50">
-                <Brain className="size-5 text-orange-600" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-muted-foreground">Stress</p>
-                <div className="mt-1 h-8">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
-                      <Line
-                        type="monotone"
-                        dataKey="stress"
-                        stroke="hsl(25, 95%, 53%)"
-                        strokeWidth={2}
-                        dot={(props) => (
-                          <CustomDot {...props} dataKey="stress" activeColor="hsl(25, 95%, 53%)" />
-                        )}
-                        connectNulls
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className="flex shrink-0 flex-col items-end gap-1">
-                <span className={`text-2xl font-bold ${getStressColor(todayLog.stress_level)}`}>
-                  {todayLog.stress_level || '-'}
-                </span>
-                <span className="text-xs text-muted-foreground">/10</span>
-              </div>
-            </div>
+            <WellnessMetricRow
+              icon={Brain}
+              iconBgColor="bg-orange-50"
+              iconColor="text-orange-600"
+              label="Stress"
+              dataKey="stress"
+              strokeColor="hsl(25, 95%, 53%)"
+              value={todayLog.stress_level}
+              valueColorClass={getStressColor(todayLog.stress_level)}
+            />
 
             {/* Sleep Row */}
-            <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-purple-50">
-                <Moon className="size-5 text-purple-600" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-muted-foreground">Sleep</p>
-                <div className="mt-1 h-8">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
-                      <Line
-                        type="monotone"
-                        dataKey="sleep"
-                        stroke="hsl(271, 91%, 65%)"
-                        strokeWidth={2}
-                        dot={(props) => (
-                          <CustomDot {...props} dataKey="sleep" activeColor="hsl(271, 91%, 65%)" />
-                        )}
-                        connectNulls
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className="flex shrink-0 flex-col items-end gap-1">
-                <span className={`text-2xl font-bold ${getSleepColor(todayLog.quality_score)}`}>
-                  {todayLog.quality_score || '-'}
-                </span>
-                <span className="text-xs text-muted-foreground">/10</span>
-              </div>
-            </div>
+            <WellnessMetricRow
+              icon={Moon}
+              iconBgColor="bg-purple-50"
+              iconColor="text-purple-600"
+              label="Sleep"
+              dataKey="sleep"
+              strokeColor="hsl(271, 91%, 65%)"
+              value={todayLog.quality_score}
+              valueColorClass={getSleepColor(todayLog.quality_score)}
+            />
           </div>
         ) : (
           <div className="rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center">
