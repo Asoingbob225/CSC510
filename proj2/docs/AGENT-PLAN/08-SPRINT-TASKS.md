@@ -1,8 +1,8 @@
 # Sprint Tasks
 
 **Document Version**: 2.0 (Dual-Dimension Health Platform)  
-**Last Updated**: October 29, 2025  
-**Current Milestone**: v0.3 - Tracking System (60% Complete)
+**Last Updated**: October 30, 2025  
+**Current Milestone**: v0.4 - AI Recommendation Engine (80% Complete)
 
 ---
 
@@ -103,38 +103,31 @@ This document tracks development tasks across all milestones, organized by modul
 
 ### Milestone: v0.4 - AI Recommendation Engine (Future)
 
-| Issue                                                     | Title                                        | Priority | Status      | Notes   |
-| --------------------------------------------------------- | -------------------------------------------- | -------- | ----------- | ------- |
-| [#109](https://github.com/Asoingbob225/CSC510/issues/109) | test: Recommendation Algorithm Tests         | P1       | ✅ Complete | PR #123 |
-| [#108](https://github.com/Asoingbob225/CSC510/issues/108) | subtask(frontend): Recommendation Display UI | P0       | ✅ Complete | PR #TBD |
-| [#107](https://github.com/Asoingbob225/CSC510/issues/107) | subtask(backend): Recommendation API         | P0       | ✅ Complete | PR #TBD |
-| [#106](https://github.com/Asoingbob225/CSC510/issues/106) | subtask(backend): Basic Scoring Algorithm    | P0       | 📝 To Do    | -       |
-| [#105](https://github.com/Asoingbob225/CSC510/issues/105) | feat: Basic Recommendation Engine (M4)       | P0       | 📝 To Do    | Epic    |
+| Issue                                                     | Title                                                       | Priority | Status      | Notes             |
+| --------------------------------------------------------- | ----------------------------------------------------------- | -------- | ----------- | ----------------- |
+| [#109](https://github.com/Asoingbob225/CSC510/issues/109) | test: Recommendation Algorithm Tests                        | P1       | ✅ Complete | PR #123           |
+| [#108](https://github.com/Asoingbob225/CSC510/issues/108) | subtask(frontend): Recommendation Display UI                | P0       | ✅ Complete | PR #TBD           |
+| [#107](https://github.com/Asoingbob225/CSC510/issues/107) | subtask(backend): Recommendation API                        | P0       | ✅ Complete | PR #TBD           |
+| [#106](https://github.com/Asoingbob225/CSC510/issues/106) | subtask(backend): Deterministic Fallback + Baseline Ranking | P0       | ✅ Complete | PR #TBD (this PR) |
+| [#105](https://github.com/Asoingbob225/CSC510/issues/105) | feat: Basic Recommendation Engine (M4)                      | P0       | 📝 To Do    | Epic              |
 
-**Progress**: 3/5 issues complete (60%)
+**Progress**: 4/5 issues complete (80%)
 
 ---
 
 ## 🎯 Current Focus
 
-**Active Milestone**: v0.3 - Tracking System  
-**Completion**: 100% (14/14 issues)  
+**Active Milestone**: v0.4 - AI Recommendation Engine  
+**Completion**: 80% (4/5 issues)  
 **Remaining**:
 
-- #103: Meal & Goal Tracking Tests (P0)
+- #105: Basic Recommendation Engine (P0, Epic)
 
 **Recent Completions**:
 
-- ✅ #104: Mental Wellness Tracking Tests (PR #125)
-- ✅ #122: Mental Wellness Tracking UI (PR #122)
-- ✅ #117: Mood/Stress/Sleep Logging API (PR #117)
-- ✅ #114: Goal Tracking API (PR #114)
-- #104: Mental Wellness Tests ✅
-- #102: Admin Audit Log UI ✅
-- #101: Admin Audit Log Backend ✅
-- #99: Mental Wellness UI ✅
-- #98: Mental Wellness API ✅
-- #97: Goal Tracking API ✅
+- ✅ #106: Deterministic Fallback + Baseline Ranking (this PR)
+- ✅ #107: Recommendation API (PR #TBD)
+- ✅ #108: Recommendation Display UI (PR #TBD)
 
 ---
 
@@ -142,17 +135,16 @@ This document tracks development tasks across all milestones, organized by modul
 
 ### Task Status Summary
 
-- **Total Issues (v0.3)**: 14
-- **Completed**: 13 (93%)
+- **Total Issues (v0.4)**: 5
+- **Completed**: 4 (80%)
 - **In Progress**: 0
-- **To Do**: 1 (#103)
+- **To Do**: 1 (#105)
 
-### Module Breakdown (v0.3)
+### Module Breakdown (v0.4)
 
-- **Frontend**: 3 issues (3 completed, 0 in progress)
-- **Backend**: 6 issues (6 completed)
-- **Admin**: 3 issues (3 completed)
-- **Testing**: 2 issues (1 completed, 1 to do)
+- **Backend**: 3 issues (2 completed, 1 to do)
+- **Frontend**: 1 issue (1 completed)
+- **Testing**: 1 issue (1 completed)
 
 ---
 
@@ -1154,9 +1146,9 @@ Notes:
 
 ### Task Status Summary (M4)
 
-- Total Issues (M4): 14 (7 open, 7 closed)
-- Open: #105, #106, #108, #109, #81, #82, #83
-- Closed to date: #76, #77, #78, #79, #80, #107, #129
+- Total Issues (M4): 14 (2 open, 12 closed)
+- Open: #105, #109
+- Closed to date: #76, #77, #78, #79, #80, #81, #82, #83, #106, #107, #108, #129
 
 ### Carryover From v0.3 (to include in M4)
 
@@ -1210,7 +1202,7 @@ Constraints and Targets:
 
 #### BE-04-002: Deterministic Fallback + Baseline Ranking
 
-**Status**: ⏳ Not Started  
+**Status**: ✅ Complete  
 **Dependencies**: BE-04-001  
 **Module**: `backend/src/eatsential/services/recsys`  
 **Priority**: P0
@@ -1224,6 +1216,11 @@ Constraints and Targets:
 
 - Deterministic ordering on identical inputs
 - Unit tests cover allergen filtering and score normalization
+
+**Implementation Notes**:
+
+- Baseline sort now orders by `score` and `item_id` for deterministic ties (`proj2/backend/src/eatsential/services/engine.py:400`, `:471`, `:573`).
+- Added regression coverage for Gemini success and fallback modes (`proj2/backend/tests/services/test_recommendation_engine.py:1`).
 
 **Related**: [#106](https://github.com/Asoingbob225/CSC510/issues/106)
 
@@ -1432,5 +1429,5 @@ Constraints and Targets:
 
 ---
 
-**Last Updated**: October 29, 2025  
+**Last Updated**: October 30, 2025  
 **Next Review**: Mid v0.4 milestone (AI recsys)
