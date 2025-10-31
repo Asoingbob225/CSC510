@@ -49,7 +49,7 @@ function DailyLog() {
         </div>
 
         <div className="mb-6">
-          <h2 className="mb-2 text-2xl font-bold text-gray-800">Daily Meal Log</h2>
+          <h2 className="mb-2 text-3xl font-bold text-gray-800">Daily Meal Log</h2>
           <p className="text-gray-600">View and manage all your meals for today</p>
         </div>
 

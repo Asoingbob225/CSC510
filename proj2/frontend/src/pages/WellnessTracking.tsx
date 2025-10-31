@@ -25,7 +25,7 @@ function WellnessTrackingPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
         <div className="text-center">
           <Activity className="mx-auto mb-4 size-12 animate-pulse text-blue-500" />
           <div className="text-lg text-gray-600">Loading wellness data...</div>
@@ -35,7 +35,7 @@ function WellnessTrackingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50">
       <DashboardNavbar />
 
       {/* Main Content */}
@@ -56,7 +56,6 @@ function WellnessTrackingPage() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="mb-2 flex items-center gap-3 text-3xl font-bold text-gray-800">
-              <Activity className="size-8 text-blue-600" />
               Wellness Tracking
             </h1>
             <p className="text-gray-600">
