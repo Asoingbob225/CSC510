@@ -38,6 +38,16 @@ describe('RecommendationCarousel', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Get Recommendations')).toBeInTheDocument();
     expect(screen.getByText('Recommendation Engine')).toBeInTheDocument();
+
+    // Verify toggle groups for dietary restrictions and cuisines are present
+    expect(screen.getByText('Dietary Restrictions')).toBeInTheDocument();
+    expect(screen.getByText('Preferred Cuisines')).toBeInTheDocument();
+
+    // Verify some common options are rendered
+    expect(screen.getByText('vegetarian')).toBeInTheDocument();
+    expect(screen.getByText('vegan')).toBeInTheDocument();
+    expect(screen.getByText('italian')).toBeInTheDocument();
+    expect(screen.getByText('chinese')).toBeInTheDocument();
   });
 
   it('NOTE: Recommendation display after clicking Get Recommendations should be tested in E2E tests', () => {

@@ -2,17 +2,10 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Progress } from '@/components/ui/progress';
-import { ChefHat, RefreshCw, SlidersHorizontal, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { ChefHat, RefreshCw, Sparkles, UtensilsCrossed, Eraser, Bot, Baseline } from 'lucide-react';
 import { useMealRecommendations } from '@/hooks/useRecommendations';
 import type {
   MealRecommendationResponse,
@@ -45,6 +38,21 @@ const priceRanges = [
   { value: '$$$$', label: 'Fine Dining ($$$$)' },
 ] as const;
 
+// Common dietary preferences
+const COMMON_DIETS = ['vegetarian', 'vegan', 'gluten-free', 'dairy-free', 'keto', 'paleo'] as const;
+
+// Common cuisines
+const COMMON_CUISINES = [
+  'italian',
+  'chinese',
+  'japanese',
+  'mexican',
+  'indian',
+  'thai',
+  'american',
+  'mediterranean',
+] as const;
+
 const clampScore = (value: unknown): number => {
   const parsed =
     typeof value === 'number' ? value : typeof value === 'string' ? Number.parseFloat(value) : 0;
@@ -53,12 +61,6 @@ const clampScore = (value: unknown): number => {
   }
   return Math.min(1, Math.max(0, parsed));
 };
-
-const parseDelimitedList = (value: string): string[] =>
-  value
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter((entry) => entry.length > 0);
 
 const extractRestaurant = (explanation: string, fallback?: string): string | undefined => {
   const match = explanation.match(/restaurant[:\s-]+([^;,\n]+)/i);
@@ -182,12 +184,12 @@ export function RecommendationCarousel({
     initialFilters
   );
   const [formState, setFormState] = useState<{
-    diet: string;
-    cuisine: string;
+    diet: string[];
+    cuisine: string[];
     priceRange: string;
   }>(() => ({
-    diet: initialFilters?.diet?.join(', ') ?? '',
-    cuisine: initialFilters?.cuisine?.join(', ') ?? '',
+    diet: initialFilters?.diet ?? [],
+    cuisine: initialFilters?.cuisine ?? [],
     priceRange: initialFilters?.price_range ?? '',
   }));
 
@@ -200,7 +202,7 @@ export function RecommendationCarousel({
     return { mode, filters };
   }, [mode, appliedFilters]);
 
-  const { data, isLoading, isError, error, refetch, isFetching } = useMealRecommendations(
+  const { data, isLoading, isError, error, refetch } = useMealRecommendations(
     userId,
     appliedOptions,
     hasRequestedRecommendations // Only fetch when user requests
@@ -208,11 +210,33 @@ export function RecommendationCarousel({
 
   const recommendations = useMemo(() => normalizeRecommendationResponse(data), [data]);
 
+  const handleApplyFilters = () => {
+    const filters: RecommendationFiltersPayload = {};
+
+    if (formState.diet.length > 0) {
+      filters.diet = formState.diet;
+    }
+    if (formState.cuisine.length > 0) {
+      filters.cuisine = formState.cuisine;
+    }
+    if (formState.priceRange) {
+      filters.price_range = formState.priceRange as RecommendationFiltersPayload['price_range'];
+    }
+
+    setAppliedFilters(Object.keys(filters).length > 0 ? filters : undefined);
+  };
+
   const handleGetRecommendations = () => {
+    handleApplyFilters();
     setHasRequestedRecommendations(true);
     if (hasRequestedRecommendations) {
       void refetch();
     }
+  };
+
+  const handleUpdateRecommendations = () => {
+    handleApplyFilters();
+    void refetch();
   };
 
   const handleRefresh = () => {
@@ -223,32 +247,12 @@ export function RecommendationCarousel({
     setMode(nextMode);
   };
 
-  const handleApplyFilters = (event: React.FormEvent) => {
-    event.preventDefault();
-    const filters: RecommendationFiltersPayload = {};
-    const dietList = parseDelimitedList(formState.diet);
-    const cuisineList = parseDelimitedList(formState.cuisine);
-
-    if (dietList.length > 0) {
-      filters.diet = dietList;
-    }
-    if (cuisineList.length > 0) {
-      filters.cuisine = cuisineList;
-    }
-    if (formState.priceRange) {
-      filters.price_range = formState.priceRange as RecommendationFiltersPayload['price_range'];
-    }
-
-    setAppliedFilters(Object.keys(filters).length > 0 ? filters : undefined);
-  };
-
   const handleClearFilters = () => {
     setFormState({
-      diet: '',
-      cuisine: '',
+      diet: [],
+      cuisine: [],
       priceRange: '',
     });
-    setAppliedFilters(undefined);
   };
 
   // Initial state - user hasn't requested recommendations yet
@@ -277,8 +281,19 @@ export function RecommendationCarousel({
                     size="sm"
                     variant={mode === option ? 'default' : 'outline'}
                     onClick={() => setMode(option)}
+                    className="gap-2"
                   >
-                    {option === 'llm' ? 'AI Powered' : 'Basic'}
+                    {option === 'llm' ? (
+                      <>
+                        <Bot className="h-4 w-4" />
+                        AI Powered
+                      </>
+                    ) : (
+                      <>
+                        <Baseline className="h-4 w-4" />
+                        Basic
+                      </>
+                    )}
                   </Button>
                 ))}
               </div>
@@ -290,46 +305,76 @@ export function RecommendationCarousel({
             </div>
 
             {/* Filters Form */}
-            <form onSubmit={handleApplyFilters} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="diet">Dietary Restrictions (comma-separated)</Label>
-                <Input
-                  id="diet"
-                  placeholder="e.g., vegetarian, gluten-free"
+                <Label>Dietary Restrictions</Label>
+                <ToggleGroup
+                  type="multiple"
                   value={formState.diet}
-                  onChange={(e) => setFormState((prev) => ({ ...prev, diet: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cuisine">Preferred Cuisines (comma-separated)</Label>
-                <Input
-                  id="cuisine"
-                  placeholder="e.g., Italian, Mexican, Japanese"
-                  value={formState.cuisine}
-                  onChange={(e) => setFormState((prev) => ({ ...prev, cuisine: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="priceRange">Price Range</Label>
-                <Select
-                  value={formState.priceRange || undefined}
-                  onValueChange={(value) =>
-                    setFormState((prev) => ({ ...prev, priceRange: value }))
-                  }
+                  onValueChange={(value) => setFormState((prev) => ({ ...prev, diet: value }))}
+                  className="flex-wrap justify-start"
+                  variant="outline"
+                  spacing={2}
+                  size="sm"
                 >
-                  <SelectTrigger id="priceRange">
-                    <SelectValue placeholder="Any price range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {priceRanges.map((range) => (
-                      <SelectItem key={range.value} value={range.value}>
-                        {range.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {COMMON_DIETS.map((diet) => (
+                    <ToggleGroupItem
+                      key={diet}
+                      value={diet}
+                      className="capitalize data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                    >
+                      {diet}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Preferred Cuisines</Label>
+                <ToggleGroup
+                  type="multiple"
+                  value={formState.cuisine}
+                  onValueChange={(value) => setFormState((prev) => ({ ...prev, cuisine: value }))}
+                  className="flex-wrap justify-start"
+                  variant="outline"
+                  spacing={2}
+                  size="sm"
+                >
+                  {COMMON_CUISINES.map((cuisine) => (
+                    <ToggleGroupItem
+                      key={cuisine}
+                      value={cuisine}
+                      className="capitalize data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                    >
+                      {cuisine}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Price Range</Label>
+                <ToggleGroup
+                  type="single"
+                  value={formState.priceRange}
+                  onValueChange={(value) =>
+                    setFormState((prev) => ({ ...prev, priceRange: value || '' }))
+                  }
+                  className="flex-wrap justify-start"
+                  variant="outline"
+                  spacing={2}
+                  size="sm"
+                >
+                  {priceRanges.map((range) => (
+                    <ToggleGroupItem
+                      key={range.value}
+                      value={range.value}
+                      className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                    >
+                      {range.label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
               </div>
 
               <div className="flex gap-2">
@@ -338,15 +383,18 @@ export function RecommendationCarousel({
                   variant="outline"
                   size="sm"
                   onClick={handleClearFilters}
-                  disabled={!formState.diet && !formState.cuisine && !formState.priceRange}
+                  disabled={
+                    formState.diet.length === 0 &&
+                    formState.cuisine.length === 0 &&
+                    !formState.priceRange
+                  }
+                  className="gap-2"
                 >
+                  <Eraser className="h-4 w-4" />
                   Clear Filters
                 </Button>
-                <Button type="submit" size="sm">
-                  Apply Filters
-                </Button>
               </div>
-            </form>
+            </div>
 
             {/* Get Recommendations Button */}
             <div className="border-t pt-4">
@@ -460,98 +508,132 @@ export function RecommendationCarousel({
                 size="sm"
                 variant={mode === option ? 'default' : 'outline'}
                 onClick={() => handleModeSelect(option)}
+                className="gap-2"
               >
-                {option === 'llm' ? 'LLM' : 'Baseline'}
+                {option === 'llm' ? (
+                  <>
+                    <Bot className="h-4 w-4" />
+                    AI
+                  </>
+                ) : (
+                  <>
+                    <Baseline className="h-4 w-4" />
+                    Baseline
+                  </>
+                )}
               </Button>
             ))}
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleRefresh}
-              aria-label="Refresh recommendations"
-            >
-              <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
-            </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <form
-          className="grid gap-4 rounded-lg border bg-muted/20 p-4 md:grid-cols-4"
-          onSubmit={handleApplyFilters}
+        <div
+          className="grid gap-4 rounded-lg border bg-muted/20 p-4"
           aria-label="Recommendation filters"
         >
           <div className="space-y-2">
-            <Label htmlFor="diet-filter">Diet tags</Label>
-            <Input
-              id="diet-filter"
+            <Label>Dietary Restrictions</Label>
+            <ToggleGroup
+              type="multiple"
               value={formState.diet}
-              onChange={(event) => setFormState((prev) => ({ ...prev, diet: event.target.value }))}
-              placeholder="e.g. vegan, gluten-free"
-              aria-describedby="diet-filter-hint"
-            />
-            <p id="diet-filter-hint" className="text-xs text-muted-foreground">
-              Separate multiple tags with commas.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cuisine-filter">Preferred cuisines</Label>
-            <Input
-              id="cuisine-filter"
-              value={formState.cuisine}
-              onChange={(event) =>
-                setFormState((prev) => ({
-                  ...prev,
-                  cuisine: event.target.value,
-                }))
-              }
-              placeholder="e.g. japanese, mediterranean"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="price-filter">Price focus</Label>
-            <Select
-              value={formState.priceRange || 'any'}
-              onValueChange={(value) =>
-                setFormState((prev) => ({
-                  ...prev,
-                  priceRange: value === 'any' ? '' : value,
-                }))
-              }
-            >
-              <SelectTrigger id="price-filter">
-                <SelectValue placeholder="Any budget" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any budget</SelectItem>
-                {priceRanges.map((range) => (
-                  <SelectItem key={range.value} value={range.value}>
-                    {range.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-end justify-end gap-2">
-            <Button
-              type="button"
+              onValueChange={(value) => setFormState((prev) => ({ ...prev, diet: value }))}
+              className="flex-wrap justify-start"
               variant="outline"
+              spacing={2}
               size="sm"
-              onClick={handleClearFilters}
-              aria-label="Clear filters"
             >
-              Clear
-            </Button>
-            <Button type="submit" size="sm" className="gap-2">
-              <SlidersHorizontal className="h-4 w-4" />
-              Apply
-            </Button>
+              {COMMON_DIETS.map((diet) => (
+                <ToggleGroupItem
+                  key={diet}
+                  value={diet}
+                  className="capitalize data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {diet}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           </div>
-        </form>
+
+          <div className="space-y-2">
+            <Label>Preferred Cuisines</Label>
+            <ToggleGroup
+              type="multiple"
+              value={formState.cuisine}
+              onValueChange={(value) => setFormState((prev) => ({ ...prev, cuisine: value }))}
+              className="flex-wrap justify-start"
+              variant="outline"
+              spacing={2}
+              size="sm"
+            >
+              {COMMON_CUISINES.map((cuisine) => (
+                <ToggleGroupItem
+                  key={cuisine}
+                  value={cuisine}
+                  className="capitalize data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {cuisine}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Price Range</Label>
+              <ToggleGroup
+                type="single"
+                value={formState.priceRange}
+                onValueChange={(value) =>
+                  setFormState((prev) => ({ ...prev, priceRange: value || '' }))
+                }
+                className="flex-wrap justify-start"
+                variant="outline"
+                spacing={2}
+                size="sm"
+              >
+                {priceRanges.map((range) => (
+                  <ToggleGroupItem
+                    key={range.value}
+                    value={range.value}
+                    className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  >
+                    {range.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            </div>
+
+            <div className="flex items-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleClearFilters}
+                disabled={
+                  formState.diet.length === 0 &&
+                  formState.cuisine.length === 0 &&
+                  !formState.priceRange
+                }
+                className="gap-2"
+                aria-label="Clear filters"
+              >
+                <Eraser className="h-4 w-4" />
+                Clear Filters
+              </Button>
+              <Button
+                type="button"
+                variant="default"
+                size="sm"
+                onClick={handleUpdateRecommendations}
+                className="gap-2"
+                aria-label="Update recommendations"
+              >
+                <Sparkles className="h-4 w-4" />
+                Update
+              </Button>
+            </div>
+          </div>
+        </div>
 
         {appliedFilters && (
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

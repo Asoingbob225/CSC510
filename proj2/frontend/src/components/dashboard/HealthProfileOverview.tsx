@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { User, Ruler, Weight, Heart, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { User, Weight, Heart, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
