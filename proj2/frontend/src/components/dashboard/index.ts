@@ -4,3 +4,4 @@ export { LogMealWidget } from './LogMealWidget';
 export { MealsLoggedWidget } from './MealsLoggedWidget';
 export { QuickMealDrawer } from './QuickMealDrawer';
 export { DailySummaryWidget } from './DailySummaryWidget';
+export { HealthProfileOverview } from './HealthProfileOverview';

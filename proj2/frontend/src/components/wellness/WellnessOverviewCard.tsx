@@ -205,7 +205,7 @@ export function WellnessOverviewCard() {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2 text-xl">
-              <Activity className="size-5 text-purple-600" />
+              <Activity className="size-5 text-blue-600" />
               Today&apos;s Wellness
             </CardTitle>
             <CardDescription>Track your mental and physical wellness</CardDescription>

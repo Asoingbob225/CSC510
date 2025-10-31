@@ -47,7 +47,7 @@ describe('Dashboard', () => {
     expect(screen.getByText('Eatsential')).toBeInTheDocument();
   });
 
-  it('renders placeholder cards', async () => {
+  it('renders dashboard widgets', async () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -58,14 +58,10 @@ describe('Dashboard', () => {
 
     // Wait for verification to complete
     await waitFor(() => {
-      expect(screen.getByText('My Recipes')).toBeInTheDocument();
+      expect(screen.getByText('Log a Meal')).toBeInTheDocument();
     });
 
-    // Use getAllByText for text that appears multiple times (in navbar and content)
-    const mealPlansElements = screen.getAllByText('Meal Plans');
-    expect(mealPlansElements.length).toBeGreaterThan(0);
-
-    expect(screen.getByText('Shopping List')).toBeInTheDocument();
+    expect(screen.getByText('Health Profile')).toBeInTheDocument();
   });
 
   it('has a logout button', async () => {

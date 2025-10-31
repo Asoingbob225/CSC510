@@ -29,9 +29,7 @@ describe('LogMealWidget', () => {
     );
 
     expect(screen.getByText('Log a Meal')).toBeInTheDocument();
-    expect(
-      screen.getByText(/Track your nutrition by logging what you've eaten today/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Track your nutrition quickly/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add Meal/i })).toBeInTheDocument();
   });
 
@@ -53,16 +51,5 @@ describe('LogMealWidget', () => {
 
     // Drawer should now be open
     expect(screen.getByTestId('quick-meal-drawer')).toHaveTextContent('Drawer Open');
-  });
-
-  it('displays helper text', () => {
-    const queryClient = createTestQueryClient();
-    render(
-      <QueryClientProvider client={queryClient}>
-        <LogMealWidget />
-      </QueryClientProvider>
-    );
-
-    expect(screen.getByText(/Takes less than a minute to log your meal/i)).toBeInTheDocument();
   });
 });

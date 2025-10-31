@@ -61,7 +61,7 @@ export function MealsLoggedWidget({ onViewDetails }: MealsLoggedWidgetProps) {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2 text-xl">
-              <Calendar className="size-5 text-emerald-600" />
+              <Calendar className="size-5 text-purple-600" />
               Meals Logged Today
             </CardTitle>
             <CardDescription>{formatTodayDate()}</CardDescription>
@@ -101,13 +101,13 @@ export function MealsLoggedWidget({ onViewDetails }: MealsLoggedWidgetProps) {
                 return (
                   <div
                     key={mealType}
-                    className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-emerald-300 hover:shadow-sm"
+                    className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-purple-300 hover:shadow-sm"
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-lg bg-emerald-50 p-2">
-                          <Icon className="size-5 text-emerald-600" />
+                        <div className="rounded-lg bg-purple-50 p-2">
+                          <Icon className="size-5 text-purple-600" />
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">{MEAL_TYPE_LABELS[mealType]}</p>
