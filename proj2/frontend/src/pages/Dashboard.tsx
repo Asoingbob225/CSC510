@@ -1,40 +1,20 @@
 import { useNavigate } from 'react-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { WellnessOverviewCard } from '@/components/wellness';
 import { RecommendationCarousel } from '@/components/recommendations/RecommendationCarousel';
-import { QuickMealLogger } from '@/components/meals/QuickMealLogger';
-import { MealHistory } from '@/components/meals/MealHistory';
+import {
+  DailyCalorieGoal,
+  MacronutrientBalance,
+  LogMealWidget,
+  DailySummaryWidget,
+} from '@/components/dashboard';
 import apiClient, { getAuthToken } from '@/lib/api';
-import { useMeals } from '@/hooks/useMeals';
 
 function Dashboard() {
   const navigate = useNavigate();
   const [isVerifying, setIsVerifying] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-
-  const { data: mealSuggestionData } = useMeals(
-    {
-      page: 1,
-      page_size: 50,
-    },
-    { enabled: !isVerifying }
-  );
-
-  const foodSuggestions = useMemo(() => {
-    if (!mealSuggestionData?.meals) {
-      return [];
-    }
-    const suggestions = new Set<string>();
-    mealSuggestionData.meals.forEach((meal) => {
-      meal.food_items.forEach((item) => {
-        if (item.food_name) {
-          suggestions.add(item.food_name);
-        }
-      });
-    });
-    return Array.from(suggestions).sort((a, b) => a.localeCompare(b));
-  }, [mealSuggestionData]);
 
   // Verify if token is valid
   useEffect(() => {
@@ -61,6 +41,19 @@ function Dashboard() {
     verifyToken();
   }, [navigate]);
 
+  // Handler for scrolling to meal logging section
+  const handleLogMeal = () => {
+    const mealSection = document.getElementById('meal-logging-section');
+    if (mealSection) {
+      mealSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Handler for navigating to detailed daily view
+  const handleViewDailyDetails = () => {
+    navigate('/daily-log');
+  };
+
   // Show loading state while verifying
   if (isVerifying) {
     return (
@@ -85,7 +78,19 @@ function Dashboard() {
           </p>
         </div>
 
-        {/* Wellness Overview Card - Featured */}
+        {/* Primary Widgets Grid - Daily Goals & Macros */}
+        <div className="mb-8 grid gap-6 lg:grid-cols-2">
+          <DailyCalorieGoal />
+          <MacronutrientBalance />
+        </div>
+
+        {/* Secondary Widgets - Log Meal & Daily Summary */}
+        <div className="mb-8 grid gap-6 lg:grid-cols-3">
+          <LogMealWidget onLogMeal={handleLogMeal} />
+          <DailySummaryWidget onViewDetails={handleViewDailyDetails} />
+        </div>
+
+        {/* Wellness Overview Card */}
         <div className="mb-8">
           <WellnessOverviewCard />
         </div>
@@ -96,12 +101,6 @@ function Dashboard() {
             <RecommendationCarousel userId={userId} />
           </div>
         )}
-
-        {/* Meal Logging and History */}
-        <div className="mb-8 space-y-6">
-          <QuickMealLogger foodSuggestions={foodSuggestions} />
-          <MealHistory />
-        </div>
 
         {/* Other Dashboard Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
