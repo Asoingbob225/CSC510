@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { Activity, AlertCircle } from 'lucide-react';
+import { Activity, AlertCircle, ArrowLeft } from 'lucide-react';
 import { getAuthToken } from '@/lib/api';
 import { useWellnessChartData } from '@/hooks/useWellnessData';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { MoodLogWidget, StressLogWidget, SleepLogWidget } from '@/components/wellness/mental';
 import { GoalForm, GoalsList, WellnessChart } from '@/components/wellness/shared';
+import { Button } from '@/components/ui/button';
 
 function WellnessTrackingPage() {
   const navigate = useNavigate();
@@ -39,6 +40,18 @@ function WellnessTrackingPage() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-6 flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/dashboard')}
+            className="gap-2"
+          >
+            <ArrowLeft className="size-4" />
+            Back to Dashboard
+          </Button>
+        </div>
+
         {/* Page Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>

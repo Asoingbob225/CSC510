@@ -16,7 +16,7 @@ import {
 import apiClient, { clearAuthToken } from '@/lib/api';
 import { User, LogOut, Heart, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 
 interface UserInfo {
   email: string;
@@ -27,6 +27,7 @@ interface UserInfo {
 
 export function DashboardNavbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
   useEffect(() => {
@@ -87,7 +88,9 @@ export function DashboardNavbar() {
               <NavigationMenuList className="gap-2">
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
+                    className={`rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100 ${
+                      location.pathname === '/dashboard' ? 'bg-emerald-100 text-emerald-700' : ''
+                    }`}
                     href="/dashboard"
                   >
                     Dashboard
@@ -96,7 +99,11 @@ export function DashboardNavbar() {
 
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
+                    className={`rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100 ${
+                      location.pathname === '/wellness-tracking'
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : ''
+                    }`}
                     href="/wellness-tracking"
                   >
                     Wellness

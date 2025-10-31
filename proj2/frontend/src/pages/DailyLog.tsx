@@ -55,8 +55,8 @@ function DailyLog() {
 
         {/* Meal Logging and History */}
         <div id="meal-logging-section" className="space-y-6">
-          <QuickMealLogger foodSuggestions={foodSuggestions} />
           <MealHistory />
+          <QuickMealLogger foodSuggestions={foodSuggestions} />
         </div>
       </main>
     </div>

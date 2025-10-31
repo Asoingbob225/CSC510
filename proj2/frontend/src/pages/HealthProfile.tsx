@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { User, AlertCircle } from 'lucide-react';
+import { User, AlertCircle, ArrowLeft } from 'lucide-react';
 import { healthProfileApi, getAuthToken, type HealthProfile, type Allergen } from '@/lib/api';
 import { BasicInfoCard, AllergiesCard, DietaryPreferencesCard } from '@/components/health-profile';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
+import { Button } from '@/components/ui/button';
 
 function HealthProfilePage() {
   const navigate = useNavigate();
@@ -78,7 +79,19 @@ function HealthProfilePage() {
       <DashboardNavbar />
 
       {/* Main Content */}
-      <main className="mx-auto max-w-6xl px-6 py-12">
+      <main className="mx-auto max-w-7xl px-6 py-12">
+        <div className="mb-6 flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/dashboard')}
+            className="gap-2"
+          >
+            <ArrowLeft className="size-4" />
+            Back to Dashboard
+          </Button>
+        </div>
+
         <h1 className="mb-8 text-2xl font-bold text-gray-800">My Health Profile</h1>
         {error && (
           <div className="mb-6 flex items-center gap-3 rounded-3xl bg-red-50 px-6 py-4 shadow-lg">

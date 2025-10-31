@@ -422,4 +422,66 @@ describe('DashboardNavbar', () => {
       // Component should render without errors even when role is missing
     });
   });
+
+  describe('Active Route Highlighting', () => {
+    it('highlights Dashboard link when on /dashboard route', async () => {
+      vi.spyOn(api.default, 'get').mockResolvedValue({
+        data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
+      });
+
+      render(
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <DashboardNavbar />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const dashboardLink = screen.getByText('Dashboard').closest('a');
+      expect(dashboardLink).toHaveClass('bg-emerald-100', 'text-emerald-700');
+    });
+
+    it('highlights Wellness link when on /wellness-tracking route', async () => {
+      vi.spyOn(api.default, 'get').mockResolvedValue({
+        data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
+      });
+
+      render(
+        <MemoryRouter initialEntries={['/wellness-tracking']}>
+          <DashboardNavbar />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const wellnessLink = screen.getByText('Wellness').closest('a');
+      expect(wellnessLink).toHaveClass('bg-emerald-100', 'text-emerald-700');
+    });
+
+    it('does not highlight links when on other routes', async () => {
+      vi.spyOn(api.default, 'get').mockResolvedValue({
+        data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
+      });
+
+      render(
+        <MemoryRouter initialEntries={['/health-profile']}>
+          <DashboardNavbar />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const dashboardLink = screen.getByText('Dashboard').closest('a');
+      const wellnessLink = screen.getByText('Wellness').closest('a');
+
+      expect(dashboardLink).not.toHaveClass('bg-emerald-100');
+      expect(wellnessLink).not.toHaveClass('bg-emerald-100');
+    });
+  });
 });
