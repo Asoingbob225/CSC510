@@ -740,13 +740,18 @@ export const mealApi = {
 };
 
 // Meal Recommendation API Types
-export interface MealRecommendationRequest {
-  user_id: string;
-  constraints?: {
-    max_calories?: number;
-    max_price?: number;
-    [key: string]: unknown;
-  };
+export type RecommendationMode = 'llm' | 'baseline';
+
+export interface RecommendationFiltersPayload {
+  diet?: string[];
+  cuisine?: string[];
+  price_range?: '$' | '$$' | '$$$' | '$$$$';
+}
+
+export interface RecommendationQueryOptions {
+  mode?: RecommendationMode;
+  filters?: RecommendationFiltersPayload;
+  legacyConstraints?: Record<string, unknown>;
 }
 
 export interface RestaurantInfo {
@@ -765,7 +770,7 @@ export interface MenuItemInfo {
   calories?: number;
 }
 
-export interface RecommendationItem {
+export interface RecommendationItemLegacy {
   menu_item_id: string;
   score: number;
   explanation: string;
@@ -773,21 +778,50 @@ export interface RecommendationItem {
   restaurant?: RestaurantInfo;
 }
 
-export interface MealRecommendationResponse {
+export interface MealRecommendationResponseLegacy {
   user_id?: string;
-  recommendations: RecommendationItem[];
+  recommendations: RecommendationItemLegacy[];
 }
+
+export interface RecommendationItemV2 {
+  item_id: string;
+  name: string;
+  score: number;
+  explanation: string;
+  [key: string]: unknown;
+}
+
+export interface MealRecommendationResponseV2 {
+  items: RecommendationItemV2[];
+}
+
+export type MealRecommendationResponse =
+  | MealRecommendationResponseV2
+  | MealRecommendationResponseLegacy;
 
 // Meal Recommendation API
 export const recommendationApi = {
   getMealRecommendations: async (
-    userId: string,
-    constraints?: Record<string, unknown>
+    _userId: string,
+    options?: RecommendationQueryOptions
   ): Promise<MealRecommendationResponse> => {
-    const response = await apiClient.post<MealRecommendationResponse>('/recommend/meal', {
-      user_id: userId,
-      constraints: constraints || {},
-    });
+    const payload: Record<string, unknown> = {};
+
+    // Default to LLM mode unless explicitly overridden
+    payload.mode = options?.mode ?? 'llm';
+
+    if (options?.filters) {
+      payload.filters = options.filters;
+    }
+
+    if (options?.legacyConstraints) {
+      payload.constraints = options.legacyConstraints;
+    }
+
+    const response = await apiClient.post<MealRecommendationResponse>(
+      '/recommend/meal',
+      Object.keys(payload).length > 0 ? payload : undefined
+    );
     return response.data;
   },
 };

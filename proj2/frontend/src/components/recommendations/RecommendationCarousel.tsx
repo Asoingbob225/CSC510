@@ -1,37 +1,243 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, RefreshCw, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
+import { ChefHat, RefreshCw, SlidersHorizontal, Sparkles, UtensilsCrossed } from 'lucide-react';
 import { useMealRecommendations } from '@/hooks/useRecommendations';
-import { RestaurantInfo } from './RestaurantInfo';
-import type { RecommendationItem } from '@/lib/api';
+import type {
+  MealRecommendationResponse,
+  RecommendationFiltersPayload,
+  RecommendationMode,
+} from '@/lib/api';
 
 interface RecommendationCarouselProps {
   userId: string;
-  constraints?: Record<string, unknown>;
+  initialFilters?: RecommendationFiltersPayload;
+  initialMode?: RecommendationMode;
 }
 
-export function RecommendationCarousel({ userId, constraints }: RecommendationCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+interface NormalizedRecommendation {
+  id: string;
+  name: string;
+  score: number;
+  explanation: string;
+  highlights: string[];
+  restaurant?: string;
+  description?: string;
+  price?: number;
+  calories?: number;
+}
 
-  // Use TanStack Query for data fetching
-  const { data, isLoading, isError, error, refetch } = useMealRecommendations(userId, constraints);
+const priceRanges = [
+  { value: '$', label: 'Budget ($)' },
+  { value: '$$', label: 'Casual ($$)' },
+  { value: '$$$', label: 'Premium ($$$)' },
+  { value: '$$$$', label: 'Fine Dining ($$$$)' },
+] as const;
 
-  const recommendations = data?.recommendations || [];
+const clampScore = (value: unknown): number => {
+  const parsed =
+    typeof value === 'number' ? value : typeof value === 'string' ? Number.parseFloat(value) : 0;
+  if (!Number.isFinite(parsed)) {
+    return 0;
+  }
+  return Math.min(1, Math.max(0, parsed));
+};
 
-  // Reset index when recommendations change
+const parseDelimitedList = (value: string): string[] =>
+  value
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+
+const extractRestaurant = (explanation: string, fallback?: string): string | undefined => {
+  const match = explanation.match(/restaurant[:\s-]+([^;,\n]+)/i);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  return fallback;
+};
+
+const splitHighlights = (explanation: string): string[] => {
+  if (!explanation) {
+    return [];
+  }
+
+  const segments = explanation
+    .split(/[\n;]+/)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  if (segments.length > 1) {
+    return segments;
+  }
+
+  return explanation
+    .split(',')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+};
+
+const normalizeRecommendationResponse = (
+  data?: MealRecommendationResponse
+): NormalizedRecommendation[] => {
+  if (!data) {
+    return [];
+  }
+
+  if ('items' in data) {
+    return data.items.map((item) => {
+      const record = item as Record<string, unknown>;
+      const score = clampScore(item.score);
+      const explanation = item.explanation?.trim() ?? '';
+      const restaurantField = (() => {
+        const direct = record.restaurant;
+        if (typeof direct === 'string') {
+          return direct;
+        }
+        if (direct && typeof direct === 'object' && 'name' in direct) {
+          const maybeName = (direct as Record<string, unknown>).name;
+          if (typeof maybeName === 'string') {
+            return maybeName;
+          }
+        }
+        const restaurantNameField = record.restaurant_name;
+        if (typeof restaurantNameField === 'string') {
+          return restaurantNameField;
+        }
+        return undefined;
+      })();
+
+      const restaurant = extractRestaurant(explanation, restaurantField);
+      const highlights = splitHighlights(explanation).filter(
+        (entry) => !entry.toLowerCase().startsWith('restaurant')
+      );
+
+      return {
+        id: String(item.item_id),
+        name: item.name?.trim() || 'Recommended item',
+        score,
+        explanation,
+        highlights,
+        restaurant,
+        description: typeof record.description === 'string' ? record.description : undefined,
+        price:
+          typeof record.price === 'number'
+            ? record.price
+            : typeof record.price === 'string'
+              ? Number.parseFloat(record.price)
+              : undefined,
+        calories:
+          typeof record.calories === 'number'
+            ? record.calories
+            : typeof record.calories === 'string'
+              ? Number.parseFloat(record.calories)
+              : undefined,
+      };
+    });
+  }
+
+  if ('recommendations' in data) {
+    return data.recommendations.map((item) => {
+      const explanation = item.explanation?.trim() ?? '';
+      const restaurantName = extractRestaurant(explanation, item.restaurant?.name);
+      const highlights = splitHighlights(explanation).filter(
+        (entry) => !entry.toLowerCase().startsWith('restaurant')
+      );
+
+      return {
+        id: String(item.menu_item_id),
+        name: item.menu_item?.name ?? 'Recommended item',
+        score: clampScore(item.score),
+        explanation,
+        highlights,
+        restaurant: restaurantName,
+        description: item.menu_item?.description,
+        price: item.menu_item?.price ?? undefined,
+        calories: item.menu_item?.calories ?? undefined,
+      };
+    });
+  }
+
+  return [];
+};
+
+export function RecommendationCarousel({
+  userId,
+  initialFilters,
+  initialMode = 'llm',
+}: RecommendationCarouselProps) {
+  const [mode, setMode] = useState<RecommendationMode>(initialMode);
+  const [appliedFilters, setAppliedFilters] = useState<RecommendationFiltersPayload | undefined>(
+    initialFilters
+  );
+  const [formState, setFormState] = useState<{
+    diet: string;
+    cuisine: string;
+    priceRange: string;
+  }>(() => ({
+    diet: initialFilters?.diet?.join(', ') ?? '',
+    cuisine: initialFilters?.cuisine?.join(', ') ?? '',
+    priceRange: initialFilters?.price_range ?? '',
+  }));
+
+  const appliedOptions = useMemo(() => {
+    const filters =
+      appliedFilters && Object.keys(appliedFilters).length > 0 ? appliedFilters : undefined;
+    return { mode, filters };
+  }, [mode, appliedFilters]);
+
+  const { data, isLoading, isError, error, refetch, isFetching } = useMealRecommendations(
+    userId,
+    appliedOptions
+  );
+
+  const recommendations = useMemo(() => normalizeRecommendationResponse(data), [data]);
+
   const handleRefresh = () => {
-    setCurrentIndex(0);
-    refetch();
+    void refetch();
   };
 
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : recommendations.length - 1));
+  const handleModeSelect = (nextMode: RecommendationMode) => {
+    setMode(nextMode);
   };
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev < recommendations.length - 1 ? prev + 1 : 0));
+  const handleApplyFilters = (event: React.FormEvent) => {
+    event.preventDefault();
+    const filters: RecommendationFiltersPayload = {};
+    const dietList = parseDelimitedList(formState.diet);
+    const cuisineList = parseDelimitedList(formState.cuisine);
+
+    if (dietList.length > 0) {
+      filters.diet = dietList;
+    }
+    if (cuisineList.length > 0) {
+      filters.cuisine = cuisineList;
+    }
+    if (formState.priceRange) {
+      filters.price_range = formState.priceRange as RecommendationFiltersPayload['price_range'];
+    }
+
+    setAppliedFilters(Object.keys(filters).length > 0 ? filters : undefined);
+  };
+
+  const handleClearFilters = () => {
+    setFormState({
+      diet: '',
+      cuisine: '',
+      priceRange: '',
+    });
+    setAppliedFilters(undefined);
   };
 
   // Loading state
@@ -47,7 +253,7 @@ export function RecommendationCarousel({ userId, constraints }: RecommendationCa
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-12">
-            <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+            <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         </CardContent>
       </Card>
@@ -93,9 +299,9 @@ export function RecommendationCarousel({ userId, constraints }: RecommendationCa
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center gap-4 py-8">
-            <UtensilsCrossed className="h-12 w-12 text-gray-300" />
-            <p className="text-center text-sm text-gray-600">
-              Complete your health profile to get personalized meal recommendations!
+            <UtensilsCrossed className="h-12 w-12 text-muted-foreground" />
+            <p className="text-center text-sm text-muted-foreground">
+              Complete your health profile or adjust the filters to see personalized meal ideas.
             </p>
             <Button onClick={handleRefresh} variant="outline" size="sm">
               <RefreshCw className="mr-2 h-4 w-4" />
@@ -107,99 +313,213 @@ export function RecommendationCarousel({ userId, constraints }: RecommendationCa
     );
   }
 
-  const currentRecommendation: RecommendationItem = recommendations[currentIndex];
-  const scorePercentage = Math.round(currentRecommendation.score * 100);
-
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-3">
+            <Sparkles className="mt-1 h-5 w-5 text-primary" />
             <div>
               <CardTitle>Meal Recommendations</CardTitle>
-              <CardDescription>Personalized suggestions based on your profile</CardDescription>
+              <CardDescription>
+                Personalized suggestions powered by{' '}
+                {mode === 'llm' ? 'LLM insights' : 'baseline heuristics'}
+              </CardDescription>
             </div>
           </div>
-          <Button onClick={handleRefresh} variant="ghost" size="sm">
-            <RefreshCw className="h-4 w-4" />
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase">Engine</span>
+            {(['llm', 'baseline'] as RecommendationMode[]).map((option) => (
+              <Button
+                key={option}
+                type="button"
+                size="sm"
+                variant={mode === option ? 'default' : 'outline'}
+                onClick={() => handleModeSelect(option)}
+              >
+                {option === 'llm' ? 'LLM' : 'Baseline'}
+              </Button>
+            ))}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleRefresh}
+              aria-label="Refresh recommendations"
+            >
+              <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {/* Recommendation Card */}
-          <div className="rounded-lg border bg-linear-to-br from-muted/50 to-muted/30 p-6 shadow-sm">
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-2">
-                  <Badge variant="secondary" className="font-mono text-xs">
-                    ID: {currentRecommendation.menu_item_id.slice(0, 8)}...
-                  </Badge>
-                  <Badge
-                    variant={scorePercentage >= 80 ? 'default' : 'secondary'}
-                    className="font-semibold"
-                  >
-                    {scorePercentage}% Match
-                  </Badge>
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-900">
-                  {currentRecommendation.explanation}
-                </h3>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
-                    <div
-                      className="h-full rounded-full bg-green-500 transition-all duration-300"
-                      style={{ width: `${scorePercentage}%` }}
-                    />
+      <CardContent className="space-y-6">
+        <form
+          className="grid gap-4 rounded-lg border bg-muted/20 p-4 md:grid-cols-4"
+          onSubmit={handleApplyFilters}
+          aria-label="Recommendation filters"
+        >
+          <div className="space-y-2">
+            <Label htmlFor="diet-filter">Diet tags</Label>
+            <Input
+              id="diet-filter"
+              value={formState.diet}
+              onChange={(event) => setFormState((prev) => ({ ...prev, diet: event.target.value }))}
+              placeholder="e.g. vegan, gluten-free"
+              aria-describedby="diet-filter-hint"
+            />
+            <p id="diet-filter-hint" className="text-xs text-muted-foreground">
+              Separate multiple tags with commas.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cuisine-filter">Preferred cuisines</Label>
+            <Input
+              id="cuisine-filter"
+              value={formState.cuisine}
+              onChange={(event) =>
+                setFormState((prev) => ({
+                  ...prev,
+                  cuisine: event.target.value,
+                }))
+              }
+              placeholder="e.g. japanese, mediterranean"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price-filter">Price focus</Label>
+            <Select
+              value={formState.priceRange || 'any'}
+              onValueChange={(value) =>
+                setFormState((prev) => ({
+                  ...prev,
+                  priceRange: value === 'any' ? '' : value,
+                }))
+              }
+            >
+              <SelectTrigger id="price-filter">
+                <SelectValue placeholder="Any budget" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any budget</SelectItem>
+                {priceRanges.map((range) => (
+                  <SelectItem key={range.value} value={range.value}>
+                    {range.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-end justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleClearFilters}
+              aria-label="Clear filters"
+            >
+              Clear
+            </Button>
+            <Button type="submit" size="sm" className="gap-2">
+              <SlidersHorizontal className="h-4 w-4" />
+              Apply
+            </Button>
+          </div>
+        </form>
+
+        {appliedFilters && (
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="font-semibold uppercase">Active filters:</span>
+            {appliedFilters.diet?.map((diet) => (
+              <Badge key={`diet-${diet}`} variant="secondary">
+                Diet: {diet}
+              </Badge>
+            ))}
+            {appliedFilters.cuisine?.map((cuisine) => (
+              <Badge key={`cuisine-${cuisine}`} variant="secondary">
+                Cuisine: {cuisine}
+              </Badge>
+            ))}
+            {appliedFilters.price_range && (
+              <Badge variant="secondary">Price: {appliedFilters.price_range}</Badge>
+            )}
+          </div>
+        )}
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {recommendations.map((item) => {
+            const scorePercent = Math.round(item.score * 100);
+            const metaBadges = [
+              item.price !== undefined ? `$${item.price.toFixed(2)}` : undefined,
+              item.calories !== undefined ? `${Math.round(item.calories)} kcal` : undefined,
+            ].filter(Boolean) as string[];
+
+            return (
+              <div
+                key={item.id}
+                className="flex h-full flex-col rounded-lg border bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
+              >
+                <div className="mb-4 flex items-start justify-between gap-2">
+                  <div>
+                    <div className="mb-1 flex items-center gap-2">
+                      <Badge variant="outline" className="font-mono text-xs">
+                        #{item.id.slice(0, 8)}
+                      </Badge>
+                      <Badge
+                        variant={scorePercent >= 80 ? 'default' : 'secondary'}
+                        className="text-xs font-semibold"
+                      >
+                        {scorePercent}% match
+                      </Badge>
+                    </div>
+                    <p className="text-base font-semibold">{item.name}</p>
+                    {item.restaurant && (
+                      <p className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <ChefHat className="h-4 w-4" />
+                        {item.restaurant}
+                      </p>
+                    )}
                   </div>
-                  <span className="text-sm font-medium text-gray-600">
-                    Score: {currentRecommendation.score.toFixed(2)}
-                  </span>
+                </div>
+
+                <div className="mb-4 space-y-2">
+                  <Progress value={scorePercent} className="h-2 bg-muted" />
+                  <p className="text-xs text-muted-foreground">Score: {item.score.toFixed(2)}</p>
+                </div>
+
+                {item.description && (
+                  <p className="mb-3 line-clamp-3 text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
+                )}
+
+                {metaBadges.length > 0 && (
+                  <div className="mb-3 flex flex-wrap gap-2">
+                    {metaBadges.map((label) => (
+                      <Badge key={`${item.id}-${label}`} variant="secondary">
+                        {label}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {item.highlights.length > 0 && (
+                  <ul className="mb-4 space-y-1 text-sm text-muted-foreground">
+                    {item.highlights.map((highlight, index) => (
+                      <li key={`${item.id}-highlight-${index}`}>• {highlight}</li>
+                    ))}
+                  </ul>
+                )}
+
+                <div className="mt-auto flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Reasoned by {mode === 'llm' ? 'LLM' : 'baseline'} engine</span>
+                  <span>{item.explanation ? 'Explainer available' : 'No explanation'}</span>
                 </div>
               </div>
-            </div>
-
-            {/* Additional metadata if available */}
-            <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-              <span className="rounded-md bg-background/80 px-2 py-1">
-                Menu Item ID: {currentRecommendation.menu_item_id}
-              </span>
-            </div>
-          </div>
-
-          {/* Restaurant and Menu Item Information */}
-          {currentRecommendation.restaurant && (
-            <RestaurantInfo
-              restaurant={currentRecommendation.restaurant}
-              menuItem={currentRecommendation.menu_item}
-            />
-          )}
-
-          {/* Navigation Controls */}
-          <div className="flex items-center justify-between">
-            <Button
-              onClick={handlePrevious}
-              variant="outline"
-              size="sm"
-              disabled={recommendations.length <= 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
-            </Button>
-            <span className="text-sm text-gray-600">
-              {currentIndex + 1} of {recommendations.length}
-            </span>
-            <Button
-              onClick={handleNext}
-              variant="outline"
-              size="sm"
-              disabled={recommendations.length <= 1}
-            >
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
