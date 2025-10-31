@@ -191,6 +191,9 @@ export function RecommendationCarousel({
     priceRange: initialFilters?.price_range ?? '',
   }));
 
+  // Track whether user has manually requested recommendations
+  const [hasRequestedRecommendations, setHasRequestedRecommendations] = useState(false);
+
   const appliedOptions = useMemo(() => {
     const filters =
       appliedFilters && Object.keys(appliedFilters).length > 0 ? appliedFilters : undefined;
@@ -199,10 +202,18 @@ export function RecommendationCarousel({
 
   const { data, isLoading, isError, error, refetch, isFetching } = useMealRecommendations(
     userId,
-    appliedOptions
+    appliedOptions,
+    hasRequestedRecommendations // Only fetch when user requests
   );
 
   const recommendations = useMemo(() => normalizeRecommendationResponse(data), [data]);
+
+  const handleGetRecommendations = () => {
+    setHasRequestedRecommendations(true);
+    if (hasRequestedRecommendations) {
+      void refetch();
+    }
+  };
 
   const handleRefresh = () => {
     void refetch();
@@ -239,6 +250,119 @@ export function RecommendationCarousel({
     });
     setAppliedFilters(undefined);
   };
+
+  // Initial state - user hasn't requested recommendations yet
+  if (!hasRequestedRecommendations) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <CardTitle>Meal Recommendations</CardTitle>
+          </div>
+          <CardDescription>
+            Get personalized meal suggestions based on your preferences
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {/* Mode Selection */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Recommendation Engine</Label>
+              <div className="flex gap-2">
+                {(['llm', 'baseline'] as RecommendationMode[]).map((option) => (
+                  <Button
+                    key={option}
+                    type="button"
+                    size="sm"
+                    variant={mode === option ? 'default' : 'outline'}
+                    onClick={() => setMode(option)}
+                  >
+                    {option === 'llm' ? 'AI Powered' : 'Basic'}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {mode === 'llm'
+                  ? 'Use advanced AI to analyze your preferences and health profile'
+                  : 'Quick recommendations based on basic criteria'}
+              </p>
+            </div>
+
+            {/* Filters Form */}
+            <form onSubmit={handleApplyFilters} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="diet">Dietary Restrictions (comma-separated)</Label>
+                <Input
+                  id="diet"
+                  placeholder="e.g., vegetarian, gluten-free"
+                  value={formState.diet}
+                  onChange={(e) => setFormState((prev) => ({ ...prev, diet: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="cuisine">Preferred Cuisines (comma-separated)</Label>
+                <Input
+                  id="cuisine"
+                  placeholder="e.g., Italian, Mexican, Japanese"
+                  value={formState.cuisine}
+                  onChange={(e) => setFormState((prev) => ({ ...prev, cuisine: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="priceRange">Price Range</Label>
+                <Select
+                  value={formState.priceRange || undefined}
+                  onValueChange={(value) =>
+                    setFormState((prev) => ({ ...prev, priceRange: value }))
+                  }
+                >
+                  <SelectTrigger id="priceRange">
+                    <SelectValue placeholder="Any price range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priceRanges.map((range) => (
+                      <SelectItem key={range.value} value={range.value}>
+                        {range.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearFilters}
+                  disabled={!formState.diet && !formState.cuisine && !formState.priceRange}
+                >
+                  Clear Filters
+                </Button>
+                <Button type="submit" size="sm">
+                  Apply Filters
+                </Button>
+              </div>
+            </form>
+
+            {/* Get Recommendations Button */}
+            <div className="border-t pt-4">
+              <Button onClick={handleGetRecommendations} className="w-full" size="lg">
+                <ChefHat className="mr-2 h-5 w-5" />
+                Get Recommendations
+              </Button>
+              <p className="mt-2 text-center text-xs text-muted-foreground">
+                Click to get personalized meal suggestions
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Loading state
   if (isLoading) {
