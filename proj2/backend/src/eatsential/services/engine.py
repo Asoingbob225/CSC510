@@ -400,7 +400,7 @@ class RecommendationService:
                 )
             )
 
-        results.sort(key=lambda rec: rec.score, reverse=True)
+        results.sort(key=lambda rec: (-rec.score, rec.item_id))
         return results
 
     def _get_baseline_restaurants(
@@ -471,7 +471,7 @@ class RecommendationService:
                 )
             )
 
-        results.sort(key=lambda rec: rec.score, reverse=True)
+        results.sort(key=lambda rec: (-rec.score, rec.item_id))
         return results
 
     # ------------------------------------------------------------------ #
@@ -573,7 +573,7 @@ class RecommendationService:
                 )
             )
 
-        recommendations.sort(key=lambda rec: rec.score, reverse=True)
+        recommendations.sort(key=lambda rec: (-rec.score, rec.item_id))
         return recommendations
 
     def _build_prompt(

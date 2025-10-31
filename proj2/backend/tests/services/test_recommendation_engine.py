@@ -1195,3 +1195,124 @@ def test_llm_temperature_configuration(monkeypatch: pytest.MonkeyPatch, db: Sess
     monkeypatch.setenv("GEMINI_TEMPERATURE", "invalid")
     service3 = RecommendationService(db, llm_api_key="test-key")
     assert service3.llm_temperature == 0.2  # Should default to 0.2
+
+
+def test_deterministic_baseline_ordering(db: Session):
+    """Test that baseline recommendations produce stable, deterministic ordering."""
+    user = UserDB(
+        id="deterministic_user",
+        email="deterministic@test.com",
+        username="deterministicuser",
+        password_hash="hashed",
+        email_verified=True,
+    )
+    restaurant = Restaurant(
+        id="deterministic_restaurant",
+        name="Deterministic Diner",
+        cuisine="American",
+        is_active=True,
+    )
+    db.add_all([user, restaurant])
+    db.flush()
+
+    # Create items with identical scores (same price, calories, etc.)
+    items = [
+        MenuItem(
+            id=f"item_{i}",
+            restaurant_id=restaurant.id,
+            name=f"Item {i}",
+            description="Same description",
+            calories=500.0,
+            price=15.0,
+        )
+        for i in range(5)
+    ]
+    db.add_all(items)
+    db.commit()
+
+    service = RecommendationService(db, max_results=10)
+
+    # Run the same recommendation request multiple times
+    results = []
+    for _ in range(3):
+        response = service.get_meal_recommendations(
+            user=user, request=RecommendationRequest(mode="baseline")
+        )
+        results.append([item.item_id for item in response.items])
+
+    # All runs should produce the same ordering
+    assert results[0] == results[1] == results[2]
+
+    # Verify items are sorted by score (desc) then by item_id (asc) for tie-breaking
+    response = service.get_meal_recommendations(
+        user=user, request=RecommendationRequest(mode="baseline")
+    )
+    scores = [item.score for item in response.items]
+
+    # Scores should be in descending order
+    assert scores == sorted(scores, reverse=True)
+
+    # For items with the same score, item_ids should be in ascending order
+    for i in range(len(response.items) - 1):
+        if response.items[i].score == response.items[i + 1].score:
+            assert response.items[i].item_id < response.items[i + 1].item_id
+
+
+def test_deterministic_restaurant_ordering(db: Session):
+    """Test that restaurant recommendations produce stable ordering."""
+    user = UserDB(
+        id="rest_deterministic_user",
+        email="restdet@test.com",
+        username="restdetuser",
+        password_hash="hashed",
+        email_verified=True,
+    )
+    db.add(user)
+    db.flush()
+
+    # Create restaurants with similar characteristics
+    restaurants = []
+    for i in range(5):
+        restaurant = Restaurant(
+            id=f"restaurant_{i}",
+            name=f"Restaurant {i}",
+            cuisine="Italian",
+            is_active=True,
+        )
+        restaurants.append(restaurant)
+        db.add(restaurant)
+    db.flush()
+
+    # Add one menu item to each restaurant with identical properties
+    for restaurant in restaurants:
+        item = MenuItem(
+            id=f"menu_{restaurant.id}",
+            restaurant_id=restaurant.id,
+            name="Pasta",
+            description="Classic pasta",
+            calories=600.0,
+            price=18.0,
+        )
+        db.add(item)
+    db.commit()
+
+    service = RecommendationService(db, max_results=10)
+
+    # Run multiple times
+    results = []
+    for _ in range(3):
+        response = service.get_restaurant_recommendations(
+            user=user, request=RecommendationRequest(mode="baseline")
+        )
+        results.append([item.item_id for item in response.items])
+
+    # Should produce identical ordering
+    assert results[0] == results[1] == results[2]
+
+    # Verify tie-breaking by item_id
+    response = service.get_restaurant_recommendations(
+        user=user, request=RecommendationRequest(mode="baseline")
+    )
+    for i in range(len(response.items) - 1):
+        if response.items[i].score == response.items[i + 1].score:
+            assert response.items[i].item_id < response.items[i + 1].item_id
