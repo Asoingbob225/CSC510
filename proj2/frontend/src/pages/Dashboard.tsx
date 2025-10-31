@@ -74,21 +74,20 @@ function Dashboard() {
         <div className="mb-8 grid gap-6 lg:grid-cols-3">
           {/* Small Cards: Calorie Goal & Macros */}
           <DailyCalorieGoal />
-          <MacronutrientBalance />
 
           {/* Large Card: Meals Logged */}
           <MealsLoggedWidget onViewDetails={handleViewDailyDetails} />
-        </div>
 
-        {/* Log Meal Widget */}
-        <div className="mb-8">
+          <MacronutrientBalance />
+          <WellnessOverviewCard />
           <LogMealWidget />
         </div>
 
+        {/* Log Meal Widget */}
+        <div className="mb-8"></div>
+
         {/* Wellness Overview Card */}
-        <div className="mb-8">
-          <WellnessOverviewCard />
-        </div>
+        <div className="mb-8"></div>
 
         {/* Meal Recommendations */}
         {userId && (
