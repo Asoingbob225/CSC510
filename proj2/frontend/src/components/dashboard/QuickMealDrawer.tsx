@@ -149,13 +149,16 @@ export function QuickMealDrawer({ open, onOpenChange }: QuickMealDrawerProps) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent>
+      <DrawerContent className="max-h-[95vh]">
         <DrawerHeader>
           <DrawerTitle>Quick Meal Log</DrawerTitle>
           <DrawerDescription>Log a single food item quickly</DrawerDescription>
         </DrawerHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-4 p-4 sm:w-2xl">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="mx-auto w-full space-y-4 overflow-y-auto px-4 sm:max-w-2xl"
+        >
           {/* Meal Type and Time */}
           <div className="grid gap-4 md:grid-cols-2">
             <FieldGroup>
@@ -335,7 +338,7 @@ export function QuickMealDrawer({ open, onOpenChange }: QuickMealDrawerProps) {
             </FieldGroup>
           </div>
 
-          <DrawerFooter>
+          <DrawerFooter className="px-0">
             <Button
               type="submit"
               disabled={isPending}
