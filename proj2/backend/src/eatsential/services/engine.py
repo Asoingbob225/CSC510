@@ -255,7 +255,10 @@ class RecommendationService:
         return (
             self.db.query(MenuItem)
             .join(Restaurant)
-            .options(selectinload(MenuItem.restaurant))
+            .options(
+                selectinload(MenuItem.restaurant),
+                selectinload(MenuItem.allergens),
+            )
             .filter(Restaurant.is_active.is_(True))
             .all()
         )
@@ -264,7 +267,9 @@ class RecommendationService:
         """Fetch restaurant candidates with their menu items."""
         return (
             self.db.query(Restaurant)
-            .options(selectinload(Restaurant.menu_items))
+            .options(
+                selectinload(Restaurant.menu_items).selectinload(MenuItem.allergens)
+            )
             .filter(Restaurant.is_active.is_(True))
             .all()
         )
@@ -278,12 +283,27 @@ class RecommendationService:
         context: _UserContext,
         items: Sequence[MenuItem],
     ) -> list[MenuItem]:
-        """Filter menu items that violate allergy or strict dietary rules."""
+        """Filter menu items that violate allergy or strict dietary rules.
+        
+        Uses two-tier allergen checking:
+        1. Database relationships (MenuItem.allergens) - most reliable
+        2. Text-based fallback for items without allergen data
+        """
         if not context.allergies and not context.strict_dietary_preferences:
             return list(items)
 
         safe_items: list[MenuItem] = []
         for item in items:
+            # Tier 1: Check database allergen relationships (most reliable)
+            if context.allergies and item.allergens:
+                item_allergen_names = {allergen.name.lower() for allergen in item.allergens}
+                user_allergen_set = set(context.allergies)
+                if item_allergen_names & user_allergen_set:
+                    # Item contains user allergen via database relationship
+                    continue
+            
+            # Tier 2: Fallback to text-based checking for items without allergen data
+            # or for additional safety
             text = f"{item.name} {item.description or ''}".lower()
             if self._contains_allergen(text, context.allergies):
                 continue
