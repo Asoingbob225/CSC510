@@ -348,3 +348,248 @@ def test_apply_constraints(db: Session, test_restaurants):
             assert item.calories <= 500
         if item.price is not None:
             assert item.price <= 15.00
+
+
+def test_allergen_filtering_basic(db: Session, test_user: UserDB):
+    """Test that menu items with user allergens are filtered out."""
+    # Create allergen
+    peanut_allergen = AllergenDB(
+        id="allergen_peanut_test",
+        name="Peanut",
+        category="Nuts",
+        description="Peanut allergen",
+    )
+    db.add(peanut_allergen)
+    db.flush()
+
+    # Create health profile with peanut allergy
+    health_profile = HealthProfileDB(
+        id="health_profile_allergy_test",
+        user_id=test_user.id,
+        height_cm=175.0,
+        weight_kg=70.0,
+        activity_level=ActivityLevel.MODERATE,
+        metabolic_rate=2000,
+    )
+    db.add(health_profile)
+    db.flush()
+
+    allergy = UserAllergyDB(
+        id="allergy_test",
+        health_profile_id=health_profile.id,
+        allergen_id=peanut_allergen.id,
+        severity=AllergySeverity.SEVERE,
+    )
+    db.add(allergy)
+    db.commit()
+
+    # Create restaurant and menu items
+    restaurant = Restaurant(
+        id="rest_allergen_test",
+        name="Test Restaurant",
+        cuisine="Mixed",
+        is_active=True,
+    )
+    db.add(restaurant)
+    db.flush()
+
+    # Safe item (no allergens)
+    safe_item = MenuItem(
+        id="item_safe",
+        restaurant_id=restaurant.id,
+        name="Grilled Chicken",
+        description="Plain grilled chicken",
+        calories=300.0,
+        price=10.99,
+    )
+
+    # Unsafe item (contains peanut)
+    unsafe_item = MenuItem(
+        id="item_peanut",
+        restaurant_id=restaurant.id,
+        name="Peanut Butter Sandwich",
+        description="Contains peanut butter",
+        calories=400.0,
+        price=8.99,
+    )
+    unsafe_item.allergens.append(peanut_allergen)
+
+    db.add_all([safe_item, unsafe_item])
+    db.commit()
+
+    # Get recommendations
+    service = RecommendService(db)
+    recommendations = service.recommend_meals(test_user.id)
+
+    # Check that unsafe item is not in recommendations
+    recommended_ids = [rec.menu_item_id for rec in recommendations]
+    assert "item_safe" in recommended_ids, "Safe item should be recommended"
+    assert "item_peanut" not in recommended_ids, "Peanut item should be filtered out"
+
+
+def test_allergen_filtering_multiple_allergens(db: Session, test_user: UserDB):
+    """Test filtering with multiple allergens."""
+    # Create multiple allergens
+    peanut = AllergenDB(
+        id="allergen_peanut_multi",
+        name="Peanut",
+        category="Nuts",
+    )
+    shellfish = AllergenDB(
+        id="allergen_shellfish",
+        name="Shellfish",
+        category="Seafood",
+    )
+    db.add_all([peanut, shellfish])
+    db.flush()
+
+    # User allergic to both
+    health_profile = HealthProfileDB(
+        id="health_profile_multi_allergy",
+        user_id=test_user.id,
+        height_cm=175.0,
+        weight_kg=70.0,
+        activity_level=ActivityLevel.MODERATE,
+        metabolic_rate=2000,
+    )
+    db.add(health_profile)
+    db.flush()
+
+    allergy1 = UserAllergyDB(
+        id="allergy_peanut_multi",
+        health_profile_id=health_profile.id,
+        allergen_id=peanut.id,
+        severity=AllergySeverity.SEVERE,
+    )
+    allergy2 = UserAllergyDB(
+        id="allergy_shellfish",
+        health_profile_id=health_profile.id,
+        allergen_id=shellfish.id,
+        severity=AllergySeverity.MODERATE,
+    )
+    db.add_all([allergy1, allergy2])
+    db.commit()
+
+    # Create restaurant and items
+    restaurant = Restaurant(
+        id="rest_multi_allergen",
+        name="Seafood Restaurant",
+        cuisine="Seafood",
+        is_active=True,
+    )
+    db.add(restaurant)
+    db.flush()
+
+    safe_item = MenuItem(
+        id="item_chicken_multi",
+        restaurant_id=restaurant.id,
+        name="Chicken Breast",
+        calories=300.0,
+        price=12.99,
+    )
+
+    peanut_item = MenuItem(
+        id="item_peanut_dish",
+        restaurant_id=restaurant.id,
+        name="Thai Peanut Noodles",
+        calories=500.0,
+        price=11.99,
+    )
+    peanut_item.allergens.append(peanut)
+
+    shellfish_item = MenuItem(
+        id="item_shrimp",
+        restaurant_id=restaurant.id,
+        name="Shrimp Scampi",
+        calories=450.0,
+        price=15.99,
+    )
+    shellfish_item.allergens.append(shellfish)
+
+    both_allergens_item = MenuItem(
+        id="item_pad_thai",
+        restaurant_id=restaurant.id,
+        name="Pad Thai with Shrimp",
+        calories=600.0,
+        price=13.99,
+    )
+    both_allergens_item.allergens.extend([peanut, shellfish])
+
+    db.add_all([safe_item, peanut_item, shellfish_item, both_allergens_item])
+    db.commit()
+
+    # Get recommendations
+    service = RecommendService(db)
+    recommendations = service.recommend_meals(test_user.id)
+
+    # Only safe item should be recommended
+    recommended_ids = [rec.menu_item_id for rec in recommendations]
+    assert "item_chicken_multi" in recommended_ids
+    assert "item_peanut_dish" not in recommended_ids
+    assert "item_shrimp" not in recommended_ids
+    assert "item_pad_thai" not in recommended_ids
+
+
+def test_allergen_score_explanation(db: Session, test_user: UserDB):
+    """Test that allergen items get score=0 with proper explanation."""
+    # Create allergen
+    milk_allergen = AllergenDB(
+        id="allergen_milk",
+        name="Milk",
+        category="Dairy",
+    )
+    db.add(milk_allergen)
+    db.flush()
+
+    # Create health profile with milk allergy
+    health_profile = HealthProfileDB(
+        id="health_profile_milk",
+        user_id=test_user.id,
+        height_cm=175.0,
+        weight_kg=70.0,
+        activity_level=ActivityLevel.MODERATE,
+        metabolic_rate=2000,
+    )
+    db.add(health_profile)
+    db.flush()
+
+    allergy = UserAllergyDB(
+        id="allergy_milk",
+        health_profile_id=health_profile.id,
+        allergen_id=milk_allergen.id,
+        severity=AllergySeverity.MILD,
+    )
+    db.add(allergy)
+    db.commit()
+
+    # Create restaurant and menu item with milk
+    restaurant = Restaurant(
+        id="rest_dairy",
+        name="Dairy Restaurant",
+        cuisine="American",
+        is_active=True,
+    )
+    db.add(restaurant)
+    db.flush()
+
+    dairy_item = MenuItem(
+        id="item_mac_cheese",
+        restaurant_id=restaurant.id,
+        name="Mac and Cheese",
+        calories=450.0,
+        price=9.99,
+    )
+    dairy_item.allergens.append(milk_allergen)
+    db.add(dairy_item)
+    db.commit()
+
+    # Test scoring
+    service = RecommendService(db)
+    user_context = service.get_user_context(test_user.id)
+
+    db.refresh(dairy_item)  # Refresh to load allergens relationship
+    score, explanation = service._score_menu_item(dairy_item, user_context)
+
+    assert score == 0.0, "Item with allergen should have score 0.0"
+    assert "allergen" in explanation.lower(), "Explanation should mention allergen"
+    assert "milk" in explanation.lower(), "Explanation should mention milk"

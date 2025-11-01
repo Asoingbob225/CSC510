@@ -127,9 +127,13 @@ class RecommendService:
         # Get user context
         user_context = self.get_user_context(user_id)
 
-        # Get all active menu items from active restaurants
+        # Get all active menu items from active restaurants with allergens preloaded
         menu_items = (
-            self.db.query(MenuItem).join(Restaurant).filter(Restaurant.is_active).all()
+            self.db.query(MenuItem)
+            .join(Restaurant)
+            .filter(Restaurant.is_active)
+            .options(selectinload(MenuItem.allergens))
+            .all()
         )
 
         if not menu_items:
@@ -143,6 +147,10 @@ class RecommendService:
         recommendations = []
         for item in menu_items:
             score, explanation = self._score_menu_item(item, user_context)
+
+            # Skip items with allergens (score = 0.0)
+            if score == 0.0:
+                continue
 
             # Create menu item info
             menu_item_info = MenuItemInfo(
@@ -216,7 +224,8 @@ class RecommendService:
     ) -> tuple[float, str]:
         """Score a menu item based on user context and generate explanation.
 
-        Scoring algorithm (v1 - naive implementation):
+        Scoring algorithm with allergen filtering:
+        - If item contains user allergen: score = 0.0 (filtered out)
         - Base score: 0.5
         - Has nutritional data (calories): +0.3
         - Has price: +0.2
@@ -230,6 +239,24 @@ class RecommendService:
             Tuple of (score, explanation)
 
         """
+        # CRITICAL SAFETY CHECK: Filter out items with user allergens
+        user_allergens = user_context.get("allergies", [])
+        if user_allergens and item.allergens:
+            # Get set of user's allergen names for efficient lookup
+            user_allergen_names = {
+                allergy["name"].lower() for allergy in user_allergens
+            }
+            # Get set of menu item's allergen names
+            item_allergen_names = {allergen.name.lower() for allergen in item.allergens}
+
+            # Check for intersection (any matching allergen)
+            matching_allergens = user_allergen_names & item_allergen_names
+            if matching_allergens:
+                # Item contains user allergen - mark as unsafe
+                allergen_list = ", ".join(sorted(matching_allergens))
+                return 0.0, f"⚠️ Contains allergen(s): {allergen_list}"
+
+        # Item is safe - proceed with normal scoring
         score = 0.5
         explanation_parts = [f"Restaurant: {item.restaurant.name}"]
 

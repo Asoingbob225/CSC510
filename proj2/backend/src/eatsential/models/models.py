@@ -4,7 +4,17 @@ from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Numeric, String, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Numeric,
+    String,
+    Table,
+    Text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..db.database import Base
@@ -147,6 +157,23 @@ class HealthProfileDB(Base):
     )
 
 
+# ============================================================================
+# Menu Item - Allergen Association Table (defined early for use in models)
+# ============================================================================
+
+menu_item_allergens = Table(
+    "menu_item_allergens",
+    Base.metadata,
+    Column("menu_item_id", String, ForeignKey("menu_items.id"), primary_key=True),
+    Column("allergen_id", String, ForeignKey("allergen_database.id"), primary_key=True),
+)
+
+
+# ============================================================================
+# Allergen Models
+# ============================================================================
+
+
 class AllergenDB(Base):
     """SQLAlchemy model for allergen database table"""
 
@@ -167,6 +194,9 @@ class AllergenDB(Base):
     # Relationships
     user_allergies: Mapped[list["UserAllergyDB"]] = relationship(
         "UserAllergyDB", back_populates="allergen"
+    )
+    menu_items: Mapped[list["MenuItem"]] = relationship(
+        "MenuItem", secondary=menu_item_allergens, back_populates="allergens"
     )
 
 
@@ -516,6 +546,11 @@ class Restaurant(Base):
     )
 
 
+# ============================================================================
+# MenuItem Model
+# ============================================================================
+
+
 class MenuItem(Base):
     """SQLAlchemy model representing a single menu item for a restaurant."""
 
@@ -538,6 +573,9 @@ class MenuItem(Base):
     # Relationships
     restaurant: Mapped["Restaurant"] = relationship(
         "Restaurant", back_populates="menu_items"
+    )
+    allergens: Mapped[list["AllergenDB"]] = relationship(
+        "AllergenDB", secondary=menu_item_allergens, back_populates="menu_items"
     )
 
 
