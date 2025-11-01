@@ -11,26 +11,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Line, LineChart, ResponsiveContainer } from 'recharts';
+import { utcToLocalDate } from '@/lib/dateUtils';
 
 export function WellnessOverviewCard() {
   const navigate = useNavigate();
   const { data: todayLog, isLoading: logLoading } = useTodayWellnessLog();
 
-  // Get last 7 days of wellness data
+  // Get last 7 days of wellness data (in local timezone)
   const endDate = new Date();
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - 6); // Last 7 days including today
 
+  // Format dates as YYYY-MM-DD in local timezone
+  const formatLocalDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const { data: weekLogs, isLoading: weekLoading } = useWellnessLogs({
-    start_date: startDate.toISOString().split('T')[0],
-    end_date: endDate.toISOString().split('T')[0],
+    start_date: formatLocalDate(startDate),
+    end_date: formatLocalDate(endDate),
   });
 
   // Prepare chart data for the last 7 days
   const chartData = useMemo(() => {
     if (!weekLogs || weekLogs.length === 0) return [];
 
-    const today = new Date().toISOString().split('T')[0];
+    // Get today's local date
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
     // Group logs by date
     const logsByDate = new Map<
@@ -45,8 +56,9 @@ export function WellnessOverviewCard() {
 
     // Process all logs and group by date
     weekLogs.forEach((log) => {
-      const dateStr = log.log_date?.split('T')[0];
-      if (!dateStr) return;
+      // Convert UTC datetime to local date
+      if (!log.occurred_at_utc) return;
+      const dateStr = utcToLocalDate(log.occurred_at_utc);
 
       if (!logsByDate.has(dateStr)) {
         logsByDate.set(dateStr, { isToday: dateStr === today });

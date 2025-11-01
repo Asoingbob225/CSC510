@@ -59,6 +59,7 @@ function WellnessChart({ data, metric, title, showLegend = true }: WellnessChart
 
     // Get last 7 days
     const last7Days = sortedData.slice(-7);
+    console.log('Last 7 days data:', sortedData);
 
     // Y scale: 0-10
     const yMin = 0;
@@ -73,8 +74,9 @@ function WellnessChart({ data, metric, title, showLegend = true }: WellnessChart
 
     // X labels (dates)
     const calculatedXLabels = last7Days.map((point, index) => {
-      const date = new Date(point.date);
-      const label = `${date.getMonth() + 1}/${date.getDate()}`;
+      // Parse YYYY-MM-DD date string directly to avoid timezone issues
+      const [_year, month, day] = point.date.split('-').map(Number);
+      const label = `${month}/${day}`;
       const x = padding.left + (index / Math.max(last7Days.length - 1, 1)) * chartWidth;
       return { label, x };
     });

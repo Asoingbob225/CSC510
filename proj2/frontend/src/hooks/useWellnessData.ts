@@ -13,6 +13,7 @@ import {
   type WellnessLogResponse,
 } from '@/lib/api';
 import { toast } from 'sonner';
+import { utcToLocalDate } from '@/lib/dateUtils';
 
 // Query keys for wellness data
 export const wellnessKeys = {
@@ -43,19 +44,31 @@ export function useWellnessLogs(params?: { start_date?: string; end_date?: strin
  * Returns separate logs for mood, stress, and sleep
  */
 export function useTodayWellnessLog() {
-  const today = new Date().toISOString().split('T')[0];
+  // Get today's date range in UTC (start of day to end of day)
+  const now = new Date();
+
+  // Start of today in UTC (00:00:00)
+  const startOfDayUTC = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0)
+  );
+
+  // End of today in UTC (23:59:59.999)
+  const endOfDayUTC = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999)
+  );
 
   return useQuery({
-    queryKey: wellnessKeys.todayLog(today),
+    queryKey: wellnessKeys.todayLog(startOfDayUTC.toISOString()),
     queryFn: async () => {
       const logs = await wellnessApi.getWellnessLogs({
-        start_date: today,
-        end_date: today,
+        start_date: startOfDayUTC.toISOString(),
+        end_date: endOfDayUTC.toISOString(),
       });
       // Ensure logs is an array before accessing
       const logsArray = Array.isArray(logs) ? logs : [];
 
-      // Find each type of log for today
+      // Backend already filters by UTC datetime, no need for additional filtering
+      // Just find each type of log
       const moodLog = logsArray.find((log) => log.mood_score !== undefined);
       const stressLog = logsArray.find((log) => log.stress_level !== undefined);
       const sleepLog = logsArray.find((log) => log.quality_score !== undefined);
@@ -66,7 +79,8 @@ export function useTodayWellnessLog() {
         stress_level: stressLog?.stress_level,
         quality_score: sleepLog?.quality_score,
         duration_hours: sleepLog?.duration_hours,
-        log_date: today,
+        occurred_at_utc:
+          moodLog?.occurred_at_utc || stressLog?.occurred_at_utc || sleepLog?.occurred_at_utc,
       };
     },
     staleTime: 1000 * 60 * 2, // 2 minutes for today's data
@@ -159,17 +173,26 @@ export function useCreateSleepLog() {
  * Transform wellness logs into chart data format
  */
 export function useWellnessChartData(days = 7) {
-  const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
+  // Calculate date range in UTC
+  const now = new Date();
+
+  // Start date: beginning of (today - days) in UTC
+  const startDate = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - days, 0, 0, 0, 0)
+  );
+
+  // End date: end of today in UTC
+  const endDate = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999)
+  );
 
   const {
     data: logs,
     isLoading,
     error,
   } = useWellnessLogs({
-    start_date: startDate.toISOString().split('T')[0],
-    end_date: endDate.toISOString().split('T')[0],
+    start_date: startDate.toISOString(),
+    end_date: endDate.toISOString(),
   });
 
   const chartData = {
@@ -180,14 +203,17 @@ export function useWellnessChartData(days = 7) {
 
   if (logs && logs.length > 0) {
     logs.forEach((log: WellnessLogResponse) => {
+      // Convert UTC datetime to local date for grouping
+      const localDate = utcToLocalDate(log.occurred_at_utc);
+
       if (log.mood_score !== undefined && log.mood_score !== null) {
-        chartData.mood.push({ date: log.log_date, value: log.mood_score });
+        chartData.mood.push({ date: localDate, value: log.mood_score });
       }
       if (log.stress_level !== undefined && log.stress_level !== null) {
-        chartData.stress.push({ date: log.log_date, value: log.stress_level });
+        chartData.stress.push({ date: localDate, value: log.stress_level });
       }
       if (log.quality_score !== undefined && log.quality_score !== null) {
-        chartData.sleep.push({ date: log.log_date, value: log.quality_score });
+        chartData.sleep.push({ date: localDate, value: log.quality_score });
       }
     });
   }

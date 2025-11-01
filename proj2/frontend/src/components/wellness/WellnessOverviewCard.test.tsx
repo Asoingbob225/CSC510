@@ -33,8 +33,9 @@ describe('WellnessOverviewCard', () => {
     stress_level: 4,
     quality_score: 7,
     duration_hours: 7.5,
-    log_date: new Date().toISOString().split('T')[0],
+    occurred_at_utc: new Date().toISOString(),
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
 
   beforeEach(() => {

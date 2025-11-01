@@ -511,20 +511,20 @@ export const adminApi = {
 
 // Mental Wellness API Types
 export interface MoodLogCreate {
-  log_date: string; // YYYY-MM-DD format (required)
+  occurred_at: string; // ISO8601 with timezone (e.g., new Date().toISOString())
   mood_score: number; // 1-10
   notes?: string;
 }
 
 export interface StressLogCreate {
-  log_date: string; // YYYY-MM-DD format (required)
+  occurred_at: string; // ISO8601 with timezone (e.g., new Date().toISOString())
   stress_level: number; // 1-10
   triggers?: string;
   notes?: string;
 }
 
 export interface SleepLogCreate {
-  log_date: string; // YYYY-MM-DD format
+  occurred_at: string; // ISO8601 with timezone (e.g., new Date().toISOString())
   duration_hours: number; // Sleep duration in hours
   quality_score: number; // Sleep quality from 1 to 10
   notes?: string;
@@ -548,8 +548,9 @@ export interface WellnessLogResponse {
   quality_score?: number; // Sleep quality score 1-10
   notes?: string;
   triggers?: string;
-  log_date: string;
+  occurred_at_utc: string; // UTC datetime from backend
   created_at: string;
+  updated_at: string;
 }
 
 export interface WellnessLogsResponse {
@@ -637,7 +638,9 @@ export const wellnessApi = {
     });
 
     // Sort by date (newest first)
-    return allLogs.sort((a, b) => new Date(b.log_date).getTime() - new Date(a.log_date).getTime());
+    return allLogs.sort(
+      (a, b) => new Date(b.occurred_at_utc).getTime() - new Date(a.occurred_at_utc).getTime()
+    );
   },
 
   // Goals

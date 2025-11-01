@@ -319,8 +319,8 @@ class MentalWellnessService:
     def get_wellness_logs(
         db: Session,
         user_id: str,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
         log_type: Optional[LogType] = None,
     ) -> tuple[list[MoodLogResponse], list[StressLogResponse], list[SleepLogResponse]]:
         """Get wellness logs for a user with optional filters.
@@ -328,8 +328,8 @@ class MentalWellnessService:
         Args:
             db: Database session
             user_id: User ID
-            start_date: Optional start date filter
-            end_date: Optional end date filter
+            start_date: Optional start datetime filter (UTC)
+            end_date: Optional end datetime filter (UTC)
             log_type: Optional log type filter ('mood', 'stress', 'sleep')
 
         Returns:
@@ -345,8 +345,14 @@ class MentalWellnessService:
             query = db.query(MoodLogDB).filter(MoodLogDB.user_id == user_id)
 
             if start_date:
+                # Ensure start_date is timezone-aware UTC
+                if start_date.tzinfo is None:
+                    start_date = start_date.replace(tzinfo=timezone.utc)
                 query = query.filter(MoodLogDB.occurred_at_utc >= start_date)
             if end_date:
+                # Ensure end_date is timezone-aware UTC
+                if end_date.tzinfo is None:
+                    end_date = end_date.replace(tzinfo=timezone.utc)
                 query = query.filter(MoodLogDB.occurred_at_utc <= end_date)
 
             db_mood_logs = query.order_by(desc(MoodLogDB.occurred_at_utc)).all()
@@ -370,8 +376,14 @@ class MentalWellnessService:
             query = db.query(StressLogDB).filter(StressLogDB.user_id == user_id)
 
             if start_date:
+                # Ensure start_date is timezone-aware UTC
+                if start_date.tzinfo is None:
+                    start_date = start_date.replace(tzinfo=timezone.utc)
                 query = query.filter(StressLogDB.occurred_at_utc >= start_date)
             if end_date:
+                # Ensure end_date is timezone-aware UTC
+                if end_date.tzinfo is None:
+                    end_date = end_date.replace(tzinfo=timezone.utc)
                 query = query.filter(StressLogDB.occurred_at_utc <= end_date)
 
             db_stress_logs = query.order_by(desc(StressLogDB.occurred_at_utc)).all()
@@ -396,8 +408,14 @@ class MentalWellnessService:
             query = db.query(SleepLogDB).filter(SleepLogDB.user_id == user_id)
 
             if start_date:
+                # Ensure start_date is timezone-aware UTC
+                if start_date.tzinfo is None:
+                    start_date = start_date.replace(tzinfo=timezone.utc)
                 query = query.filter(SleepLogDB.occurred_at_utc >= start_date)
             if end_date:
+                # Ensure end_date is timezone-aware UTC
+                if end_date.tzinfo is None:
+                    end_date = end_date.replace(tzinfo=timezone.utc)
                 query = query.filter(SleepLogDB.occurred_at_utc <= end_date)
 
             db_sleep_logs = query.order_by(desc(SleepLogDB.occurred_at_utc)).all()

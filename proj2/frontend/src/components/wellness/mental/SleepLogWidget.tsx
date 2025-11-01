@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Moon } from 'lucide-react';
 import { z } from 'zod';
 import { type SleepLogCreate } from '@/lib/api';
+import { getCurrentTimestamp } from '@/lib/dateUtils';
 import { useCreateSleepLog } from '@/hooks/useWellnessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,11 +39,11 @@ function SleepLogWidget({ onSubmit }: SleepLogWidgetProps) {
         notes: notes.trim() || undefined,
       });
 
-      // Get today's date in YYYY-MM-DD format
-      const today = new Date().toISOString().split('T')[0];
+      // Get today's date in ISO8601 format with timezone
+      const occurredAt = getCurrentTimestamp();
 
       const sleepData: SleepLogCreate = {
-        log_date: today,
+        occurred_at: occurredAt,
         duration_hours: formData.duration_hours,
         quality_score: formData.quality_score,
         notes: formData.notes,

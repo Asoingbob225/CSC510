@@ -1,6 +1,6 @@
 """API routes for mental wellness logging (mood, stress, sleep)."""
 
-from datetime import date
+from datetime import datetime
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -217,8 +217,12 @@ def create_sleep_log(
 def get_wellness_logs(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    start_date: Optional[date] = Query(None, description="Filter by start date"),
-    end_date: Optional[date] = Query(None, description="Filter by end date"),
+    start_date: Optional[datetime] = Query(
+        None, description="Filter by start datetime (ISO 8601 format, UTC)"
+    ),
+    end_date: Optional[datetime] = Query(
+        None, description="Filter by end datetime (ISO 8601 format, UTC)"
+    ),
     log_type: Optional[LogType] = Query(
         None, description="Filter by type: 'mood', 'stress', or 'sleep'"
     ),
@@ -228,8 +232,8 @@ def get_wellness_logs(
     Args:
         current_user: Authenticated user
         db: Database session
-        start_date: Optional start date filter
-        end_date: Optional end date filter
+        start_date: Optional start datetime filter (UTC)
+        end_date: Optional end datetime filter (UTC)
         log_type: Optional log type filter ('mood', 'stress', 'sleep')
 
     Returns:

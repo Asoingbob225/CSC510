@@ -10,6 +10,7 @@ from pydantic import (
     EmailStr,
     Field,
     computed_field,
+    field_serializer,
     field_validator,
     model_validator,
 )
@@ -648,6 +649,17 @@ class MoodLogResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+    @field_serializer("occurred_at_utc", "created_at", "updated_at")
+    def serialize_datetime(self, dt: datetime) -> str:
+        """Serialize datetime as UTC ISO8601 string with Z suffix."""
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            dt = dt.replace(tzinfo=timezone.utc)
+        else:
+            # Convert to UTC if it has timezone info
+            dt = dt.astimezone(timezone.utc)
+        return dt.isoformat().replace("+00:00", "Z")
+
 
 class StressLogCreate(BaseModel):
     """Schema for creating a stress log"""
@@ -711,6 +723,17 @@ class StressLogResponse(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+    @field_serializer("occurred_at_utc", "created_at", "updated_at")
+    def serialize_datetime(self, dt: datetime) -> str:
+        """Serialize datetime as UTC ISO8601 string with Z suffix."""
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            dt = dt.replace(tzinfo=timezone.utc)
+        else:
+            # Convert to UTC if it has timezone info
+            dt = dt.astimezone(timezone.utc)
+        return dt.isoformat().replace("+00:00", "Z")
 
 
 class SleepLogCreate(BaseModel):
@@ -777,6 +800,17 @@ class SleepLogResponse(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+    @field_serializer("occurred_at_utc", "created_at", "updated_at")
+    def serialize_datetime(self, dt: datetime) -> str:
+        """Serialize datetime as UTC ISO8601 string with Z suffix."""
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            dt = dt.replace(tzinfo=timezone.utc)
+        else:
+            # Convert to UTC if it has timezone info
+            dt = dt.astimezone(timezone.utc)
+        return dt.isoformat().replace("+00:00", "Z")
 
 
 class WellnessLogsResponse(BaseModel):
