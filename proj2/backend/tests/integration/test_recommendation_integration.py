@@ -35,7 +35,6 @@ from src.eatsential.models.models import (
     UserDB,
 )
 from src.eatsential.schemas.recommendation_schemas import (
-    RecommendationFilters,
     RecommendationRequest,
 )
 from src.eatsential.services.engine import RecommendationService
@@ -269,7 +268,10 @@ class TestEndToEndRecommendationFlow:
     """Test complete recommendation flow from request to response."""
 
     def test_complete_meal_recommendation_flow(
-        self, db: Session, integration_user_with_full_profile: UserDB, diverse_restaurant_data: list[Restaurant]
+        self,
+        db: Session,
+        integration_user_with_full_profile: UserDB,
+        diverse_restaurant_data: list[Restaurant],
     ):
         """Test full meal recommendation flow with user context."""
         service = RecommendationService(db, max_results=5)
@@ -295,7 +297,10 @@ class TestEndToEndRecommendationFlow:
             assert len(item.explanation) > 0
 
     def test_complete_restaurant_recommendation_flow(
-        self, db: Session, integration_user_with_full_profile: UserDB, diverse_restaurant_data: list[Restaurant]
+        self,
+        db: Session,
+        integration_user_with_full_profile: UserDB,
+        diverse_restaurant_data: list[Restaurant],
     ):
         """Test full restaurant recommendation flow."""
         service = RecommendationService(db, max_results=3)
@@ -346,13 +351,18 @@ class TestTopNSortingAccuracy:
     """Test that top N items are sorted correctly by score."""
 
     def test_top_5_sorting_accuracy(
-        self, db: Session, integration_user: UserDB, diverse_restaurant_data: list[Restaurant]
+        self,
+        db: Session,
+        integration_user: UserDB,
+        diverse_restaurant_data: list[Restaurant],
     ):
         """Test that top 5 results are sorted by score descending."""
         service = RecommendationService(db, max_results=5)
         request = RecommendationRequest(mode="baseline")
 
-        response = service.get_meal_recommendations(user=integration_user, request=request)
+        response = service.get_meal_recommendations(
+            user=integration_user, request=request
+        )
 
         # Extract scores
         scores = [item.score for item in response.items]
@@ -361,13 +371,18 @@ class TestTopNSortingAccuracy:
         assert scores == sorted(scores, reverse=True)
 
     def test_top_10_sorting_accuracy(
-        self, db: Session, integration_user: UserDB, diverse_restaurant_data: list[Restaurant]
+        self,
+        db: Session,
+        integration_user: UserDB,
+        diverse_restaurant_data: list[Restaurant],
     ):
         """Test that top 10 results are sorted correctly."""
         service = RecommendationService(db, max_results=10)
         request = RecommendationRequest(mode="baseline")
 
-        response = service.get_meal_recommendations(user=integration_user, request=request)
+        response = service.get_meal_recommendations(
+            user=integration_user, request=request
+        )
 
         # Extract scores
         scores = [item.score for item in response.items]
@@ -380,15 +395,22 @@ class TestTopNSortingAccuracy:
         assert len(item_ids) == len(set(item_ids))
 
     def test_consistent_scoring_across_calls(
-        self, db: Session, integration_user: UserDB, diverse_restaurant_data: list[Restaurant]
+        self,
+        db: Session,
+        integration_user: UserDB,
+        diverse_restaurant_data: list[Restaurant],
     ):
         """Test that scoring is deterministic for same inputs."""
         service = RecommendationService(db, max_results=5)
         request = RecommendationRequest(mode="baseline")
 
         # Get recommendations twice
-        response1 = service.get_meal_recommendations(user=integration_user, request=request)
-        response2 = service.get_meal_recommendations(user=integration_user, request=request)
+        response1 = service.get_meal_recommendations(
+            user=integration_user, request=request
+        )
+        response2 = service.get_meal_recommendations(
+            user=integration_user, request=request
+        )
 
         # Verify same results
         assert len(response1.items) == len(response2.items)
@@ -451,15 +473,15 @@ class TestSampleUserValidation:
         service = RecommendationService(db, max_results=5)
         request = RecommendationRequest(mode="baseline")
 
-        response = service.get_meal_recommendations(
+        service.get_meal_recommendations(
             user=integration_user_with_full_profile, request=request
         )
-
         # Verify recommendations include tryptophan-related items
         # (They should appear due to keyword matching in descriptions)
         all_items = service._get_menu_item_candidates()
         tryptophan_items = [
-            item for item in all_items 
+            item
+            for item in all_items
             if "tryptophan" in f"{item.name} {item.description}".lower()
         ]
         assert len(tryptophan_items) > 0
@@ -515,36 +537,39 @@ class TestSampleUserValidation:
         service = RecommendationService(db, max_results=5)
         request = RecommendationRequest(mode="baseline")
 
-        response = service.get_meal_recommendations(
+        service.get_meal_recommendations(
             user=integration_user_with_full_profile, request=request
         )
-
         # Verify recommendations include magnesium-related items
         all_items = service._get_menu_item_candidates()
         magnesium_items = [
-            item for item in all_items 
+            item
+            for item in all_items
             if "magnesium" in f"{item.name} {item.description}".lower()
         ]
         assert len(magnesium_items) > 0
 
     def test_user_with_calorie_target_gets_matching_foods(
-        self, db: Session, integration_user_with_full_profile: UserDB, diverse_restaurant_data: list[Restaurant]
+        self,
+        db: Session,
+        integration_user_with_full_profile: UserDB,
+        diverse_restaurant_data: list[Restaurant],
     ):
         """Test that users with calorie targets get appropriately sized meals."""
         # User already has a 600 cal target from fixture
         service = RecommendationService(db, max_results=10)
         request = RecommendationRequest(mode="baseline")
 
-        response = service.get_meal_recommendations(
+        service.get_meal_recommendations(
             user=integration_user_with_full_profile, request=request
         )
-
         # Get all recommended items and check their calorie content
         # Items within the calorie goal should be preferred
         all_candidates = service._get_menu_item_candidates()
-        
         # Items under 600 calories should be present in recommendations
-        low_cal_items = [item for item in all_candidates if item.calories and item.calories <= 600.0]
+        low_cal_items = [
+            item for item in all_candidates if item.calories and item.calories <= 600.0
+        ]
         assert len(low_cal_items) > 0
 
 
@@ -556,7 +581,9 @@ class TestEdgeCases:
         service = RecommendationService(db, max_results=5)
         request = RecommendationRequest(mode="baseline")
 
-        response = service.get_meal_recommendations(user=integration_user, request=request)
+        response = service.get_meal_recommendations(
+            user=integration_user, request=request
+        )
 
         # Should return empty list without errors
         assert response.items == []
@@ -574,7 +601,9 @@ class TestEdgeCases:
         db.commit()
 
         # Create some menu items
-        rest = Restaurant(id="test_rest", name="Test", cuisine="American", is_active=True)
+        rest = Restaurant(
+            id="test_rest", name="Test", cuisine="American", is_active=True
+        )
         db.add(rest)
         db.flush()
         item = MenuItem(
@@ -598,7 +627,7 @@ class TestEdgeCases:
     def test_invalid_user_data(self, db: Session):
         """Test handling of invalid user data."""
         service = RecommendationService(db)
-        
+
         # Create user that doesn't exist in context loading
         fake_user = UserDB(
             id="nonexistent_user",
@@ -607,7 +636,7 @@ class TestEdgeCases:
             password_hash="hash",
             email_verified=True,
         )
-        
+
         # Should raise error for non-existent user
         with pytest.raises(ValueError, match="User not found"):
             service._load_user_context(fake_user)
@@ -618,7 +647,9 @@ class TestEdgeCases:
         """Test when all items are filtered out by safety rules."""
         # User has vegetarian strict preference
         # Create only meat items
-        rest = Restaurant(id="meat_rest", name="Steakhouse", cuisine="American", is_active=True)
+        rest = Restaurant(
+            id="meat_rest", name="Steakhouse", cuisine="American", is_active=True
+        )
         db.add(rest)
         db.flush()
 
@@ -658,7 +689,10 @@ class TestPerformance:
     """Test performance requirements."""
 
     def test_response_time_under_5_seconds(
-        self, db: Session, integration_user_with_full_profile: UserDB, diverse_restaurant_data: list[Restaurant]
+        self,
+        db: Session,
+        integration_user_with_full_profile: UserDB,
+        diverse_restaurant_data: list[Restaurant],
     ):
         """Test that recommendation response time is under 5 seconds."""
         service = RecommendationService(db, max_results=10)
@@ -679,7 +713,9 @@ class TestPerformance:
     def test_performance_with_large_menu(self, db: Session, integration_user: UserDB):
         """Test performance with a large number of menu items."""
         # Create restaurant with many items
-        rest = Restaurant(id="large_rest", name="Big Menu", cuisine="American", is_active=True)
+        rest = Restaurant(
+            id="large_rest", name="Big Menu", cuisine="American", is_active=True
+        )
         db.add(rest)
         db.flush()
 
@@ -702,7 +738,9 @@ class TestPerformance:
         request = RecommendationRequest(mode="baseline")
 
         start_time = time.time()
-        response = service.get_meal_recommendations(user=integration_user, request=request)
+        response = service.get_meal_recommendations(
+            user=integration_user, request=request
+        )
         end_time = time.time()
 
         elapsed_time = end_time - start_time
@@ -748,7 +786,9 @@ class TestPerformance:
         request = RecommendationRequest(mode="baseline")
 
         start_time = time.time()
-        response = service.get_restaurant_recommendations(user=integration_user, request=request)
+        response = service.get_restaurant_recommendations(
+            user=integration_user, request=request
+        )
         end_time = time.time()
 
         elapsed_time = end_time - start_time

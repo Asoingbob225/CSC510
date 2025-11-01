@@ -129,7 +129,10 @@ class TestPhysicalScoring:
     """Test physical health-based scoring logic."""
 
     def test_calorie_goal_scoring(
-        self, db: Session, scoring_user_with_profile: UserDB, sample_menu_items: list[MenuItem]
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        sample_menu_items: list[MenuItem],
     ):
         """Test that items matching calorie goals receive higher scores."""
         # Add a calorie goal
@@ -152,18 +155,16 @@ class TestPhysicalScoring:
         context = service._load_user_context(scoring_user_with_profile)
 
         # Test items within calorie goal
-        low_cal_item = sample_menu_items[0]  # 250 cal
-        mid_cal_item = sample_menu_items[1]  # 450 cal
-        high_cal_item = sample_menu_items[4]  # 900 cal
-
-        # Items within goal should be supported
         assert service._supports_calorie_goal(context.health_goals, 250.0) is True
         assert service._supports_calorie_goal(context.health_goals, 450.0) is True
         # Items exceeding goal should not be supported
         assert service._supports_calorie_goal(context.health_goals, 900.0) is False
 
     def test_protein_goal_keyword_matching(
-        self, db: Session, scoring_user_with_profile: UserDB, sample_menu_items: list[MenuItem]
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        sample_menu_items: list[MenuItem],
     ):
         """Test that protein goals boost items with protein keywords."""
         # Add a protein goal
@@ -189,11 +190,18 @@ class TestPhysicalScoring:
         protein_text = "high protein chicken and quinoa bowl"
         normal_text = "fresh green salad with vegetables"
 
-        assert service._mentions_goal_keywords(protein_text, context.health_goals) is True
-        assert service._mentions_goal_keywords(normal_text, context.health_goals) is False
+        assert (
+            service._mentions_goal_keywords(protein_text, context.health_goals) is True
+        )
+        assert (
+            service._mentions_goal_keywords(normal_text, context.health_goals) is False
+        )
 
     def test_fiber_goal_keyword_matching(
-        self, db: Session, scoring_user_with_profile: UserDB, sample_menu_items: list[MenuItem]
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        sample_menu_items: list[MenuItem],
     ):
         """Test that fiber goals boost items with fiber keywords."""
         # Add a fiber goal
@@ -220,10 +228,15 @@ class TestPhysicalScoring:
         normal_text = "fresh green salad"
 
         assert service._mentions_goal_keywords(fiber_text, context.health_goals) is True
-        assert service._mentions_goal_keywords(normal_text, context.health_goals) is False
+        assert (
+            service._mentions_goal_keywords(normal_text, context.health_goals) is False
+        )
 
     def test_sodium_goal_keyword_matching(
-        self, db: Session, scoring_user_with_profile: UserDB, sample_menu_items: list[MenuItem]
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        sample_menu_items: list[MenuItem],
     ):
         """Test that sodium reduction goals boost low-sodium items."""
         # Add a sodium reduction goal
@@ -249,8 +262,13 @@ class TestPhysicalScoring:
         low_sodium_text = "heart-healthy meal with low sodium content"
         normal_text = "fresh green salad"
 
-        assert service._mentions_goal_keywords(low_sodium_text, context.health_goals) is True
-        assert service._mentions_goal_keywords(normal_text, context.health_goals) is False
+        assert (
+            service._mentions_goal_keywords(low_sodium_text, context.health_goals)
+            is True
+        )
+        assert (
+            service._mentions_goal_keywords(normal_text, context.health_goals) is False
+        )
 
 
 class TestMentalWellnessScoring:
@@ -262,7 +280,10 @@ class TestMentalWellnessScoring:
     """
 
     def test_tryptophan_items_for_low_mood(
-        self, db: Session, scoring_user_with_profile: UserDB, scoring_restaurant: Restaurant
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        scoring_restaurant: Restaurant,
     ):
         """Test that tryptophan-rich foods are recommended for low mood."""
         # Create tryptophan-rich menu items
@@ -295,11 +316,11 @@ class TestMentalWellnessScoring:
         db.add_all(tryptophan_items)
         db.commit()
 
-        service = RecommendationService(db, max_results=10)
-        
+        # service = RecommendationService(db, max_results=10)
+
         # Get all menu items
-        all_items = service._get_menu_item_candidates()
-        
+        # all_items = service._get_menu_item_candidates()
+
         # Verify tryptophan-related items can be identified by keywords
         tryptophan_keywords = ["tryptophan", "turkey", "salmon", "chicken"]
         for item in tryptophan_items:
@@ -307,7 +328,10 @@ class TestMentalWellnessScoring:
             assert any(keyword in item_text for keyword in tryptophan_keywords)
 
     def test_magnesium_items_for_high_stress(
-        self, db: Session, scoring_user_with_profile: UserDB, scoring_restaurant: Restaurant
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        scoring_restaurant: Restaurant,
     ):
         """Test that magnesium-rich foods are recommended for high stress."""
         # Create magnesium-rich menu items
@@ -340,11 +364,11 @@ class TestMentalWellnessScoring:
         db.add_all(magnesium_items)
         db.commit()
 
-        service = RecommendationService(db, max_results=10)
-        
+        # service = RecommendationService(db, max_results=10)
+
         # Get all menu items
-        all_items = service._get_menu_item_candidates()
-        
+        # all_items = service._get_menu_item_candidates()
+
         # Verify magnesium-related items can be identified by keywords
         magnesium_keywords = ["magnesium", "spinach", "almonds", "almond", "avocado"]
         for item in magnesium_items:
@@ -356,7 +380,10 @@ class TestCombinedScoringFormula:
     """Test the combined scoring formula that integrates multiple factors."""
 
     def test_baseline_scoring_components(
-        self, db: Session, scoring_user_with_profile: UserDB, sample_menu_items: list[MenuItem]
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        sample_menu_items: list[MenuItem],
     ):
         """Test that baseline scoring includes all expected components."""
         service = RecommendationService(db, max_results=10)
@@ -364,38 +391,52 @@ class TestCombinedScoringFormula:
         filters = RecommendationFilters()
 
         # Get baseline recommendations
-        recommendations = service._get_baseline_meals(context, sample_menu_items, filters)
+        recommendations = service._get_baseline_meals(
+            context, sample_menu_items, filters
+        )
 
         # Verify all items are scored
         assert len(recommendations) == len(sample_menu_items)
-        
+
         # Verify scores are within valid range
         for rec in recommendations:
             assert 0.0 <= rec.score <= 1.0
             assert rec.explanation  # Should have explanation
 
     def test_score_ranking_order(
-        self, db: Session, scoring_user_with_profile: UserDB, sample_menu_items: list[MenuItem]
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        sample_menu_items: list[MenuItem],
     ):
         """Test that items are ranked by score in descending order."""
         service = RecommendationService(db, max_results=10)
         context = service._load_user_context(scoring_user_with_profile)
         filters = RecommendationFilters()
 
-        recommendations = service._get_baseline_meals(context, sample_menu_items, filters)
+        recommendations = service._get_baseline_meals(
+            context, sample_menu_items, filters
+        )
 
         # Verify descending score order
         scores = [rec.score for rec in recommendations]
         assert scores == sorted(scores, reverse=True)
 
     def test_cuisine_preference_scoring_boost(
-        self, db: Session, scoring_user_with_profile: UserDB, scoring_restaurant: Restaurant
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        scoring_restaurant: Restaurant,
     ):
         """Test that preferred cuisines receive scoring boosts."""
         # Add Italian cuisine preference
         from src.eatsential.models.models import DietaryPreferenceDB, PreferenceType
-        
-        profile = db.query(HealthProfileDB).filter_by(user_id=scoring_user_with_profile.id).first()
+
+        profile = (
+            db.query(HealthProfileDB)
+            .filter_by(user_id=scoring_user_with_profile.id)
+            .first()
+        )
         pref = DietaryPreferenceDB(
             id="italian_pref",
             health_profile_id=profile.id,
@@ -451,14 +492,21 @@ class TestCombinedScoringFormula:
         recommendations = service._get_baseline_meals(context, all_items, filters)
 
         # Find scores
-        italian_score = next(r.score for r in recommendations if r.item_id == "italian_item")
-        other_score = next(r.score for r in recommendations if r.item_id == "other_item")
+        italian_score = next(
+            r.score for r in recommendations if r.item_id == "italian_item"
+        )
+        other_score = next(
+            r.score for r in recommendations if r.item_id == "other_item"
+        )
 
         # Italian item should have higher score due to cuisine preference
         assert italian_score > other_score
 
     def test_price_range_filter_scoring(
-        self, db: Session, scoring_user_with_profile: UserDB, sample_menu_items: list[MenuItem]
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        sample_menu_items: list[MenuItem],
     ):
         """Test that price range filters affect scoring."""
         service = RecommendationService(db, max_results=10)
@@ -484,13 +532,24 @@ class TestContextRulesApplication:
     """Test application of safety and context rules."""
 
     def test_allergen_filtering(
-        self, db: Session, scoring_user_with_profile: UserDB, scoring_restaurant: Restaurant
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        scoring_restaurant: Restaurant,
     ):
         """Test that items with allergens are filtered out."""
-        from src.eatsential.models.models import AllergenDB, UserAllergyDB, AllergySeverity
+        from src.eatsential.models.models import (
+            AllergenDB,
+            AllergySeverity,
+            UserAllergyDB,
+        )
 
         # Add peanut allergy
-        profile = db.query(HealthProfileDB).filter_by(user_id=scoring_user_with_profile.id).first()
+        profile = (
+            db.query(HealthProfileDB)
+            .filter_by(user_id=scoring_user_with_profile.id)
+            .first()
+        )
         allergen = AllergenDB(
             id="peanut_allergen",
             name="peanut",
@@ -541,13 +600,20 @@ class TestContextRulesApplication:
         assert filtered_items[0].id == "safe_item"
 
     def test_strict_dietary_preference_filtering(
-        self, db: Session, scoring_user_with_profile: UserDB, scoring_restaurant: Restaurant
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        scoring_restaurant: Restaurant,
     ):
         """Test that strict dietary preferences filter out non-compliant items."""
         from src.eatsential.models.models import DietaryPreferenceDB, PreferenceType
 
         # Add strict vegan preference
-        profile = db.query(HealthProfileDB).filter_by(user_id=scoring_user_with_profile.id).first()
+        profile = (
+            db.query(HealthProfileDB)
+            .filter_by(user_id=scoring_user_with_profile.id)
+            .first()
+        )
         pref = DietaryPreferenceDB(
             id="vegan_pref",
             health_profile_id=profile.id,
@@ -589,7 +655,9 @@ class TestContextRulesApplication:
         assert len(filtered_items) == 1
         assert filtered_items[0].id == "vegan_item"
 
-    def test_empty_food_database_edge_case(self, db: Session, scoring_user_with_profile: UserDB):
+    def test_empty_food_database_edge_case(
+        self, db: Session, scoring_user_with_profile: UserDB
+    ):
         """Test handling of empty food database."""
         service = RecommendationService(db, max_results=10)
         context = service._load_user_context(scoring_user_with_profile)
@@ -601,13 +669,20 @@ class TestContextRulesApplication:
         assert recommendations == []
 
     def test_no_matching_items_after_filtering(
-        self, db: Session, scoring_user_with_profile: UserDB, scoring_restaurant: Restaurant
+        self,
+        db: Session,
+        scoring_user_with_profile: UserDB,
+        scoring_restaurant: Restaurant,
     ):
         """Test behavior when all items are filtered out."""
         from src.eatsential.models.models import DietaryPreferenceDB, PreferenceType
 
         # Add strict vegan preference
-        profile = db.query(HealthProfileDB).filter_by(user_id=scoring_user_with_profile.id).first()
+        profile = (
+            db.query(HealthProfileDB)
+            .filter_by(user_id=scoring_user_with_profile.id)
+            .first()
+        )
         pref = DietaryPreferenceDB(
             id="vegan_strict",
             health_profile_id=profile.id,

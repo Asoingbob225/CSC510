@@ -234,7 +234,7 @@ describe('RecommendationCarousel', () => {
         {
           item_id: 'cal-item-1',
           name: 'Light Garden Bowl',
-          score: 0.90,
+          score: 0.9,
           explanation: 'Matches calorie goal; 350 kcal; High in vegetables',
           calories: 350,
           price: 9.99,
@@ -314,7 +314,7 @@ describe('RecommendationCarousel', () => {
         {
           item_id: 'rest-item-1',
           name: 'Italian Pasta',
-          score: 0.90,
+          score: 0.9,
           explanation: 'Restaurant: Bella Italia; Cuisine: Italian; 520 kcal',
           calories: 520,
           price: 14.99,

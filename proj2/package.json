@@ -7,6 +7,7 @@
     "@types/bun": "latest",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
+    "concurrently": "^9.2.1",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
@@ -32,8 +33,5 @@
   },
   "workspaces": [
     "frontend"
-  ],
-  "dependencies": {
-    "concurrently": "^9.2.1"
-  }
+  ]
 }
