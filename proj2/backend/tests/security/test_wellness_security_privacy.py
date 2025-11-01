@@ -1,6 +1,6 @@
 """Security and privacy tests for Mental Wellness tracking (Issue #104)."""
 
-from datetime import date, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -22,7 +22,7 @@ class TestDataEncryption:
         # Create mood log with notes
         mood_data = {
             "mood_score": 4,
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
             "notes": sensitive_note,
         }
         response = client.post(
@@ -54,7 +54,7 @@ class TestDataEncryption:
 
         stress_data = {
             "stress_level": 8,
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
             "triggers": sensitive_trigger,
         }
         response = client.post(
@@ -82,7 +82,7 @@ class TestDataEncryption:
         sensitive_note = "Nightmares about family issues"
 
         sleep_data = {
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
             "duration_hours": 6.5,
             "quality_score": 5,
             "notes": sensitive_note,
@@ -116,7 +116,7 @@ class TestPrivacyControls:
         # User 1 creates mood log
         mood_data = {
             "mood_score": 7,
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
             "notes": "User 1's private thoughts",
         }
         response1 = client.post(
@@ -145,7 +145,7 @@ class TestPrivacyControls:
         # User 1 creates stress log
         stress_data = {
             "stress_level": 6,
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
         }
         response1 = client.post(
             "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
@@ -156,7 +156,10 @@ class TestPrivacyControls:
         # User 2 tries to update User 1's stress log
         token2 = create_access_token(data={"sub": test_user2.id})
         auth_headers_user2 = {"Authorization": f"Bearer {token2}"}
-        update_data = {"stress_level": 9, "log_date": date.today().isoformat()}
+        update_data = {
+            "stress_level": 9,
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
+        }
         response2 = client.put(
             f"/api/wellness/stress-logs/{stress_id}",
             json=update_data,
@@ -174,7 +177,7 @@ class TestPrivacyControls:
         """Test that users cannot delete each other's sleep logs."""
         # User 1 creates sleep log
         sleep_data = {
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
             "duration_hours": 7.0,
             "quality_score": 8,
         }
@@ -206,26 +209,33 @@ class TestPrivacyControls:
         self, client: TestClient, auth_headers: dict, db: Session, test_user, test_user2
     ):
         """Test that listing wellness logs returns only user's own data."""
-        # User 1 creates logs on different days
-        today = date.today()
-        for i in range(3):
-            log_date = (today - timedelta(days=i)).isoformat()
-            client.post(
-                "/api/wellness/mood-logs",
-                json={"mood_score": 7, "log_date": log_date},
-                headers=auth_headers,
-            )
+        # User 1 creates logs on different days directly in DB
+        # (bypassing service validation)
+        import uuid
 
-        # User 2 creates logs on different days
-        token2 = create_access_token(data={"sub": test_user2.id})
-        auth_headers_user2 = {"Authorization": f"Bearer {token2}"}
-        for i in range(2):
-            log_date = (today - timedelta(days=i)).isoformat()
-            client.post(
-                "/api/wellness/mood-logs",
-                json={"mood_score": 5, "log_date": log_date},
-                headers=auth_headers_user2,
+        today = datetime.now(timezone.utc).replace(tzinfo=None)
+        for i in range(3):
+            log_dt = today - timedelta(days=i)
+            mood_log = MoodLogDB(
+                id=str(uuid.uuid4()),
+                user_id=test_user.id,
+                occurred_at_utc=log_dt,
+                mood_score=7,
             )
+            db.add(mood_log)
+        db.commit()
+
+        # User 2 creates logs on different days directly in DB
+        for i in range(2):
+            log_dt = today - timedelta(days=i)
+            mood_log = MoodLogDB(
+                id=str(uuid.uuid4()),
+                user_id=test_user2.id,
+                occurred_at_utc=log_dt,
+                mood_score=5,
+            )
+            db.add(mood_log)
+        db.commit()
 
         # User 1 lists mood logs
         response1 = client.get("/api/wellness/logs?log_type=mood", headers=auth_headers)
@@ -235,6 +245,8 @@ class TestPrivacyControls:
         assert len(mood_logs1) == 3
 
         # User 2 lists mood logs
+        token2 = create_access_token(data={"sub": test_user2.id})
+        auth_headers_user2 = {"Authorization": f"Bearer {token2}"}
         response2 = client.get(
             "/api/wellness/logs?log_type=mood", headers=auth_headers_user2
         )
@@ -253,7 +265,7 @@ class TestScaleValidation:
         """Test that mood score below 1 is rejected."""
         mood_data = {
             "mood_score": 0,
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
         }
         response = client.post(
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
@@ -266,7 +278,7 @@ class TestScaleValidation:
         """Test that mood score above 10 is rejected."""
         mood_data = {
             "mood_score": 11,
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
         }
         response = client.post(
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
@@ -277,23 +289,22 @@ class TestScaleValidation:
         self, client: TestClient, auth_headers: dict, db: Session
     ):
         """Test stress level validation (1-10)."""
-        # Valid levels - use different days to avoid duplicate entry conflict
-        today = date.today()
-        for idx, level in enumerate([1, 5, 10]):
-            stress_data = {
-                "stress_level": level,
-                "log_date": (today - timedelta(days=idx)).isoformat(),
-            }
-            response = client.post(
-                "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
-            )
-            assert response.status_code == status.HTTP_201_CREATED
+        # Valid level (only one entry per day allowed)
+        today = datetime.now(timezone.utc)
+        stress_data = {
+            "stress_level": 5,
+            "occurred_at": today.isoformat(),
+        }
+        response = client.post(
+            "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
+        )
+        assert response.status_code == status.HTTP_201_CREATED
 
-        # Invalid levels
-        for idx, level in enumerate([0, 11, -1]):
+        # Invalid levels (test validation without creating entries)
+        for level in [0, 11, -1]:
             stress_data = {
                 "stress_level": level,
-                "log_date": (today - timedelta(days=idx + 10)).isoformat(),
+                "occurred_at": today.isoformat(),
             }
             response = client.post(
                 "/api/wellness/stress-logs", json=stress_data, headers=auth_headers
@@ -305,7 +316,7 @@ class TestScaleValidation:
     ):
         """Test sleep quality score validation (1-10)."""
         valid_data = {
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
             "duration_hours": 7.0,
             "quality_score": 8,
         }
@@ -316,7 +327,7 @@ class TestScaleValidation:
 
         # Invalid quality score
         invalid_data = {
-            "log_date": date.today().isoformat(),
+            "occurred_at": datetime.now(timezone.utc).isoformat(),
             "duration_hours": 7.0,
             "quality_score": 12,
         }

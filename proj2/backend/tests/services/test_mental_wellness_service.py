@@ -1,12 +1,12 @@
 """Unit tests for MentalWellnessService."""
 
 import uuid
-from datetime import date, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from sqlalchemy.orm import Session
 
-from src.eatsential.models.models import UserDB
+from src.eatsential.models.models import MoodLogDB, UserDB
 from src.eatsential.schemas.schemas import (
     MoodLogCreate,
     MoodLogUpdate,
@@ -56,16 +56,18 @@ class TestLogMood:
 
     def test_log_mood_success(self, db: Session, test_user: UserDB):
         """Test logging a mood successfully."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         mood_data = MoodLogCreate(
-            log_date=today, mood_score=8, notes="Feeling great today!"
+            occurred_at=today, mood_score=8, notes="Feeling great today!"
         )
 
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         assert mood_log.id is not None
         assert mood_log.user_id == test_user.id
-        assert mood_log.log_date == today
+        assert mood_log.occurred_at_utc.date() == today.date()
         assert int(mood_log.mood_score) == 8
         assert mood_log.encrypted_notes is not None
         # Verify notes are encrypted
@@ -74,28 +76,34 @@ class TestLogMood:
 
     def test_log_mood_without_notes(self, db: Session, test_user: UserDB):
         """Test logging mood without notes."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=7)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=7, notes=None)
 
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         assert mood_log.encrypted_notes is None
 
     def test_log_mood_min_score(self, db: Session, test_user: UserDB):
         """Test logging mood with minimum score (1)."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=1)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=1, notes=None)
 
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         assert int(mood_log.mood_score) == 1
 
     def test_log_mood_max_score(self, db: Session, test_user: UserDB):
         """Test logging mood with maximum score (10)."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=10)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=10, notes=None)
 
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         assert int(mood_log.mood_score) == 10
 
@@ -105,19 +113,21 @@ class TestLogStress:
 
     def test_log_stress_success(self, db: Session, test_user: UserDB):
         """Test logging stress successfully."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         stress_data = StressLogCreate(
-            log_date=today,
+            occurred_at=today,
             stress_level=6,
             triggers="Work deadline",
             notes="Tight deadline approaching",
         )
 
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         assert stress_log.id is not None
         assert stress_log.user_id == test_user.id
-        assert stress_log.log_date == today
+        assert stress_log.occurred_at_utc.date() == today.date()
         assert int(stress_log.stress_level) == 6
         assert stress_log.encrypted_triggers is not None
         assert stress_log.encrypted_notes is not None
@@ -129,24 +139,28 @@ class TestLogStress:
 
     def test_log_stress_without_notes(self, db: Session, test_user: UserDB):
         """Test logging stress without notes."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         stress_data = StressLogCreate(
-            log_date=today, stress_level=5, triggers="Traffic"
+            occurred_at=today, stress_level=5, triggers="Traffic", notes=None
         )
 
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         assert stress_log.encrypted_triggers is not None
         assert stress_log.encrypted_notes is None
 
     def test_log_stress_without_triggers(self, db: Session, test_user: UserDB):
         """Test logging stress without triggers."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         stress_data = StressLogCreate(
-            log_date=today, stress_level=4, notes="General anxiety"
+            occurred_at=today, stress_level=4, notes="General anxiety", triggers=None
         )
 
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         assert stress_log.encrypted_triggers is None
         assert stress_log.encrypted_notes is not None
@@ -157,19 +171,21 @@ class TestLogSleep:
 
     def test_log_sleep_success(self, db: Session, test_user: UserDB):
         """Test logging sleep successfully."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         sleep_data = SleepLogCreate(
-            log_date=today,
+            occurred_at=today,
             duration_hours=7.5,
             quality_score=8,
             notes="Good night's sleep",
         )
 
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         assert sleep_log.id is not None
         assert sleep_log.user_id == test_user.id
-        assert sleep_log.log_date == today
+        assert sleep_log.occurred_at_utc.date() == today.date()
         assert float(sleep_log.duration_hours) == 7.5
         assert int(sleep_log.quality_score) == 8
         assert sleep_log.encrypted_notes is not None
@@ -179,30 +195,40 @@ class TestLogSleep:
 
     def test_log_sleep_without_notes(self, db: Session, test_user: UserDB):
         """Test logging sleep without notes."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=6.0, quality_score=7)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=6.0, quality_score=7, notes=None
+        )
 
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         assert sleep_log.encrypted_notes is None
 
     def test_log_sleep_short_duration(self, db: Session, test_user: UserDB):
         """Test logging short sleep duration."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=4.0, quality_score=4)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=4.0, quality_score=4, notes=None
+        )
 
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         assert float(sleep_log.duration_hours) == 4.0
 
     def test_log_sleep_long_duration(self, db: Session, test_user: UserDB):
         """Test logging long sleep duration."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         sleep_data = SleepLogCreate(
-            log_date=today, duration_hours=10.0, quality_score=9
+            occurred_at=today, duration_hours=10.0, quality_score=9, notes=None
         )
 
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         assert float(sleep_log.duration_hours) == 10.0
 
@@ -212,9 +238,11 @@ class TestGetMoodLogById:
 
     def test_get_mood_log_success(self, db: Session, test_user: UserDB):
         """Test retrieving a mood log by ID."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=7, notes="Test note")
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=7, notes="Test note")
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         retrieved = MentalWellnessService.get_mood_log_by_id(
             db, test_user.id, mood_log.id
@@ -236,9 +264,11 @@ class TestGetMoodLogById:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user isolation - cannot access another user's mood log."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=8)
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=8, notes=None)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         # Try to access with different user
         retrieved = MentalWellnessService.get_mood_log_by_id(
@@ -253,11 +283,13 @@ class TestGetStressLogById:
 
     def test_get_stress_log_success(self, db: Session, test_user: UserDB):
         """Test retrieving a stress log by ID."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         stress_data = StressLogCreate(
-            log_date=today, stress_level=5, triggers="Test trigger"
+            occurred_at=today, stress_level=5, triggers="Test trigger", notes=None
         )
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         retrieved = MentalWellnessService.get_stress_log_by_id(
             db, test_user.id, stress_log.id
@@ -271,9 +303,13 @@ class TestGetStressLogById:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user isolation for stress logs."""
-        today = date.today()
-        stress_data = StressLogCreate(log_date=today, stress_level=6)
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        today = datetime.now(timezone.utc)
+        stress_data = StressLogCreate(
+            occurred_at=today, stress_level=6, triggers=None, notes=None
+        )
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         retrieved = MentalWellnessService.get_stress_log_by_id(
             db, test_user_2.id, stress_log.id
@@ -287,9 +323,13 @@ class TestGetSleepLogById:
 
     def test_get_sleep_log_success(self, db: Session, test_user: UserDB):
         """Test retrieving a sleep log by ID."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=8)
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=7.0, quality_score=8, notes=None
+        )
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         retrieved = MentalWellnessService.get_sleep_log_by_id(
             db, test_user.id, sleep_log.id
@@ -303,9 +343,13 @@ class TestGetSleepLogById:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user isolation for sleep logs."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=6.0, quality_score=6)
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=6.0, quality_score=6, notes=None
+        )
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         retrieved = MentalWellnessService.get_sleep_log_by_id(
             db, test_user_2.id, sleep_log.id
@@ -319,17 +363,21 @@ class TestGetWellnessLogs:
 
     def test_get_all_wellness_logs(self, db: Session, test_user: UserDB):
         """Test retrieving all wellness logs."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
 
         # Create logs
-        mood_data = MoodLogCreate(log_date=today, mood_score=7)
-        MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=7, notes=None)
+        MentalWellnessService.log_mood(db, test_user.id, mood_data, test_user)
 
-        stress_data = StressLogCreate(log_date=today, stress_level=5)
-        MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        stress_data = StressLogCreate(
+            occurred_at=today, stress_level=5, triggers=None, notes=None
+        )
+        MentalWellnessService.log_stress(db, test_user.id, stress_data, test_user)
 
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=8)
-        MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=7.0, quality_score=8, notes=None
+        )
+        MentalWellnessService.log_sleep(db, test_user.id, sleep_data, test_user)
 
         # Retrieve all
         mood_logs, stress_logs, sleep_logs = MentalWellnessService.get_wellness_logs(
@@ -342,20 +390,31 @@ class TestGetWellnessLogs:
 
     def test_get_wellness_logs_with_date_range(self, db: Session, test_user: UserDB):
         """Test retrieving logs with date range filter."""
-        today = date.today()
+        today = datetime.now(timezone.utc).replace(tzinfo=None)
         yesterday = today - timedelta(days=1)
         two_days_ago = today - timedelta(days=2)
 
-        # Create logs on different dates
-        MentalWellnessService.log_mood(
-            db, test_user.id, MoodLogCreate(log_date=two_days_ago, mood_score=6)
+        # Create logs on different dates directly in DB (bypassing service validation)
+        mood_log_1 = MoodLogDB(
+            id=str(uuid.uuid4()),
+            user_id=test_user.id,
+            occurred_at_utc=two_days_ago,
+            mood_score=6,
         )
-        MentalWellnessService.log_mood(
-            db, test_user.id, MoodLogCreate(log_date=yesterday, mood_score=7)
+        mood_log_2 = MoodLogDB(
+            id=str(uuid.uuid4()),
+            user_id=test_user.id,
+            occurred_at_utc=yesterday,
+            mood_score=7,
         )
-        MentalWellnessService.log_mood(
-            db, test_user.id, MoodLogCreate(log_date=today, mood_score=8)
+        mood_log_3 = MoodLogDB(
+            id=str(uuid.uuid4()),
+            user_id=test_user.id,
+            occurred_at_utc=today,
+            mood_score=8,
         )
+        db.add_all([mood_log_1, mood_log_2, mood_log_3])
+        db.commit()
 
         # Get logs from yesterday onwards
         mood_logs, stress_logs, sleep_logs = MentalWellnessService.get_wellness_logs(
@@ -368,11 +427,13 @@ class TestGetWellnessLogs:
 
     def test_get_wellness_logs_decrypts_data(self, db: Session, test_user: UserDB):
         """Test that get_wellness_logs decrypts sensitive data."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
 
         # Create log with notes
-        mood_data = MoodLogCreate(log_date=today, mood_score=8, notes="Decryption test")
-        MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        mood_data = MoodLogCreate(
+            occurred_at=today, mood_score=8, notes="Decryption test"
+        )
+        MentalWellnessService.log_mood(db, test_user.id, mood_data, test_user)
 
         # Retrieve
         mood_logs, _, _ = MentalWellnessService.get_wellness_logs(db, test_user.id)
@@ -384,19 +445,30 @@ class TestGetWellnessLogs:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user isolation in get_wellness_logs."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
 
         # Create logs for user 1
         MentalWellnessService.log_mood(
-            db, test_user.id, MoodLogCreate(log_date=today, mood_score=7)
+            db,
+            test_user.id,
+            MoodLogCreate(occurred_at=today, mood_score=7, notes=None),
+            test_user,
         )
         MentalWellnessService.log_stress(
-            db, test_user.id, StressLogCreate(log_date=today, stress_level=5)
+            db,
+            test_user.id,
+            StressLogCreate(
+                occurred_at=today, stress_level=5, triggers=None, notes=None
+            ),
+            test_user,
         )
 
         # Create logs for user 2
         MentalWellnessService.log_mood(
-            db, test_user_2.id, MoodLogCreate(log_date=today, mood_score=9)
+            db,
+            test_user_2.id,
+            MoodLogCreate(occurred_at=today, mood_score=9, notes=None),
+            test_user_2,
         )
 
         # User 2 should only see their own logs
@@ -415,9 +487,11 @@ class TestUpdateMoodLog:
 
     def test_update_mood_log_success(self, db: Session, test_user: UserDB):
         """Test updating a mood log."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=7, notes="Original")
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=7, notes="Original")
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         # Update
         update_data = MoodLogUpdate(mood_score=8, notes="Updated note")
@@ -432,16 +506,18 @@ class TestUpdateMoodLog:
 
     def test_update_mood_log_partial(self, db: Session, test_user: UserDB):
         """Test partial update of mood log."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=6, notes="Original")
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=6, notes="Original")
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         # Update only score
-        update_data = MoodLogUpdate(mood_score=7)
+        update_data = MoodLogUpdate(mood_score=7, notes=None)
         updated = MentalWellnessService.update_mood_log(
             db, test_user.id, mood_log.id, update_data
         )
-
+        assert updated is not None
         assert int(updated.mood_score) == 7
         decrypted = decrypt_sensitive_data(updated.encrypted_notes)
         assert decrypted == "Original"  # Notes unchanged
@@ -450,12 +526,14 @@ class TestUpdateMoodLog:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user cannot update another user's mood log."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=7)
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=7, notes=None)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         # Try to update with different user
-        update_data = MoodLogUpdate(mood_score=10)
+        update_data = MoodLogUpdate(mood_score=10, notes=None)
         updated = MentalWellnessService.update_mood_log(
             db, test_user_2.id, mood_log.id, update_data
         )
@@ -468,14 +546,18 @@ class TestUpdateStressLog:
 
     def test_update_stress_log_success(self, db: Session, test_user: UserDB):
         """Test updating a stress log."""
-        today = date.today()
+        today = datetime.now(timezone.utc)
         stress_data = StressLogCreate(
-            log_date=today, stress_level=6, triggers="Original trigger"
+            occurred_at=today, stress_level=6, triggers="Original trigger", notes=None
         )
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         # Update
-        update_data = StressLogUpdate(stress_level=4, triggers="Updated trigger")
+        update_data = StressLogUpdate(
+            stress_level=4, triggers="Updated trigger", notes=None
+        )
         updated = MentalWellnessService.update_stress_log(
             db, test_user.id, stress_log.id, update_data
         )
@@ -489,11 +571,15 @@ class TestUpdateStressLog:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user cannot update another user's stress log."""
-        today = date.today()
-        stress_data = StressLogCreate(log_date=today, stress_level=5)
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        today = datetime.now(timezone.utc)
+        stress_data = StressLogCreate(
+            occurred_at=today, stress_level=5, triggers=None, notes=None
+        )
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
-        update_data = StressLogUpdate(stress_level=10)
+        update_data = StressLogUpdate(stress_level=10, triggers=None, notes=None)
         updated = MentalWellnessService.update_stress_log(
             db, test_user_2.id, stress_log.id, update_data
         )
@@ -506,12 +592,16 @@ class TestUpdateSleepLog:
 
     def test_update_sleep_log_success(self, db: Session, test_user: UserDB):
         """Test updating a sleep log."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=6.0, quality_score=6)
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=6.0, quality_score=6, notes=None
+        )
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         # Update
-        update_data = SleepLogUpdate(duration_hours=7.5, quality_score=8)
+        update_data = SleepLogUpdate(duration_hours=7.5, quality_score=8, notes=None)
         updated = MentalWellnessService.update_sleep_log(
             db, test_user.id, sleep_log.id, update_data
         )
@@ -524,11 +614,15 @@ class TestUpdateSleepLog:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user cannot update another user's sleep log."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=7)
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=7.0, quality_score=7, notes=None
+        )
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
-        update_data = SleepLogUpdate(quality_score=10)
+        update_data = SleepLogUpdate(duration_hours=None, quality_score=10, notes=None)
         updated = MentalWellnessService.update_sleep_log(
             db, test_user_2.id, sleep_log.id, update_data
         )
@@ -541,9 +635,11 @@ class TestDeleteMoodLog:
 
     def test_delete_mood_log_success(self, db: Session, test_user: UserDB):
         """Test deleting a mood log."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=7)
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=7, notes=None)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         # Delete
         result = MentalWellnessService.delete_mood_log(db, test_user.id, mood_log.id)
@@ -567,9 +663,11 @@ class TestDeleteMoodLog:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user cannot delete another user's mood log."""
-        today = date.today()
-        mood_data = MoodLogCreate(log_date=today, mood_score=7)
-        mood_log = MentalWellnessService.log_mood(db, test_user.id, mood_data)
+        today = datetime.now(timezone.utc)
+        mood_data = MoodLogCreate(occurred_at=today, mood_score=7, notes=None)
+        mood_log = MentalWellnessService.log_mood(
+            db, test_user.id, mood_data, test_user
+        )
 
         # Try to delete with different user
         result = MentalWellnessService.delete_mood_log(db, test_user_2.id, mood_log.id)
@@ -588,9 +686,13 @@ class TestDeleteStressLog:
 
     def test_delete_stress_log_success(self, db: Session, test_user: UserDB):
         """Test deleting a stress log."""
-        today = date.today()
-        stress_data = StressLogCreate(log_date=today, stress_level=5)
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        today = datetime.now(timezone.utc)
+        stress_data = StressLogCreate(
+            occurred_at=today, stress_level=5, triggers=None, notes=None
+        )
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         result = MentalWellnessService.delete_stress_log(
             db, test_user.id, stress_log.id
@@ -602,9 +704,13 @@ class TestDeleteStressLog:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user cannot delete another user's stress log."""
-        today = date.today()
-        stress_data = StressLogCreate(log_date=today, stress_level=5)
-        stress_log = MentalWellnessService.log_stress(db, test_user.id, stress_data)
+        today = datetime.now(timezone.utc)
+        stress_data = StressLogCreate(
+            occurred_at=today, stress_level=5, triggers=None, notes=None
+        )
+        stress_log = MentalWellnessService.log_stress(
+            db, test_user.id, stress_data, test_user
+        )
 
         result = MentalWellnessService.delete_stress_log(
             db, test_user_2.id, stress_log.id
@@ -618,9 +724,13 @@ class TestDeleteSleepLog:
 
     def test_delete_sleep_log_success(self, db: Session, test_user: UserDB):
         """Test deleting a sleep log."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=7)
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=7.0, quality_score=7, notes=None
+        )
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         result = MentalWellnessService.delete_sleep_log(db, test_user.id, sleep_log.id)
 
@@ -630,9 +740,13 @@ class TestDeleteSleepLog:
         self, db: Session, test_user: UserDB, test_user_2: UserDB
     ):
         """Test user cannot delete another user's sleep log."""
-        today = date.today()
-        sleep_data = SleepLogCreate(log_date=today, duration_hours=7.0, quality_score=7)
-        sleep_log = MentalWellnessService.log_sleep(db, test_user.id, sleep_data)
+        today = datetime.now(timezone.utc)
+        sleep_data = SleepLogCreate(
+            occurred_at=today, duration_hours=7.0, quality_score=7, notes=None
+        )
+        sleep_log = MentalWellnessService.log_sleep(
+            db, test_user.id, sleep_data, test_user
+        )
 
         result = MentalWellnessService.delete_sleep_log(
             db, test_user_2.id, sleep_log.id
