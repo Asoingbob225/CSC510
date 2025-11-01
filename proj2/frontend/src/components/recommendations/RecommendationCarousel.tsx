@@ -258,7 +258,7 @@ export function RecommendationCarousel({
   // Initial state - user hasn't requested recommendations yet
   if (!hasRequestedRecommendations) {
     return (
-      <Card className="border-gray-100 bg-linear-to-br from-white to-emerald-50/30">
+      <Card className="border-gray-100 bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -423,7 +423,7 @@ export function RecommendationCarousel({
   // Loading state
   if (isLoading) {
     return (
-      <Card className="bg-linear-to-br from-white to-emerald-50/30">
+      <Card className="bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -443,7 +443,7 @@ export function RecommendationCarousel({
   // Error state
   if (isError) {
     return (
-      <Card className="bg-linear-to-br from-white to-emerald-50/30">
+      <Card className="bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -504,7 +504,7 @@ export function RecommendationCarousel({
   }
 
   return (
-    <Card className="border-gray-100 bg-linear-to-br from-white to-emerald-50/30">
+    <Card className="border-gray-100 bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
       <CardHeader>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-3">
