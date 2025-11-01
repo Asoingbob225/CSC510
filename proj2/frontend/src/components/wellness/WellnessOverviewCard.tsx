@@ -263,8 +263,8 @@ export function WellnessOverviewCard() {
           </div>
         ) : (
           <div className="rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center">
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-purple-100">
-              <Activity className="size-8 text-purple-600" />
+            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-blue-100">
+              <Activity className="size-8 text-blue-600" />
             </div>
             <h3 className="mb-2 text-sm font-semibold text-gray-900">No wellness data today</h3>
             <p className="mb-4 text-xs text-gray-600">
@@ -273,7 +273,7 @@ export function WellnessOverviewCard() {
             <Button
               onClick={() => navigate('/wellness-tracking')}
               size="sm"
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-blue-600 hover:bg-blue-700"
             >
               Log Your First Entry
             </Button>
