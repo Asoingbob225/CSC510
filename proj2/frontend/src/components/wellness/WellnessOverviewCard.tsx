@@ -81,16 +81,6 @@ export function WellnessOverviewCard() {
     return days;
   }, [weekLogs]);
 
-  // Get mood emoji
-  const getMoodEmoji = (score?: number | null) => {
-    if (!score) return '❓';
-    if (score >= 9) return '🤩';
-    if (score >= 7) return '😊';
-    if (score >= 5) return '😐';
-    if (score >= 3) return '😕';
-    return '😢';
-  };
-
   // Get stress color
   const getStressColor = (level?: number | null) => {
     if (!level) return 'text-gray-400';
@@ -146,7 +136,6 @@ export function WellnessOverviewCard() {
     strokeColor,
     value,
     valueColorClass,
-    emoji,
   }: {
     icon: React.ComponentType<{ className?: string }>;
     iconBgColor: string;
@@ -156,7 +145,6 @@ export function WellnessOverviewCard() {
     strokeColor: string;
     value?: number | null;
     valueColorClass?: string;
-    emoji?: string;
   }) => (
     <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
       <div
@@ -189,7 +177,6 @@ export function WellnessOverviewCard() {
         </span>
         <span className="text-xs text-muted-foreground">/10</span>
       </div>
-      {emoji && <span className="text-2xl">{emoji}</span>}
     </div>
   );
 
@@ -246,7 +233,6 @@ export function WellnessOverviewCard() {
               dataKey="mood"
               strokeColor="hsl(221, 83%, 53%)"
               value={todayLog.mood_score}
-              emoji={getMoodEmoji(todayLog.mood_score)}
             />
 
             {/* Stress Row */}

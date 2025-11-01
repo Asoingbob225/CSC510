@@ -118,13 +118,14 @@ export function HealthProfileOverview() {
             <span className="font-medium">Allergies:</span>
           </div>
           {topAllergies.length > 0 ? (
-            <div className="ml-6 flex flex-wrap justify-end-safe space-y-1">
+            <div className="ml-6 flex flex-wrap items-center justify-end-safe space-y-1">
               {topAllergies.map((allergy) => (
-                <div key={allergy.id} className="flex items-center gap-2 text-xs text-gray-600">
-                  <span className="rounded-full bg-red-100 px-2 py-0.5 font-medium text-red-700">
-                    {getAllergenName(allergy.allergen_id)}
-                  </span>
-                </div>
+                <span
+                  key={allergy.id}
+                  className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700"
+                >
+                  {getAllergenName(allergy.allergen_id)}
+                </span>
               ))}
               {hasMoreAllergies && (
                 <p className="text-xs text-gray-500 italic">
