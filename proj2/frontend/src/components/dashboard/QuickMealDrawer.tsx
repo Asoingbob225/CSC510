@@ -121,10 +121,16 @@ export function QuickMealDrawer({ open, onOpenChange }: QuickMealDrawerProps) {
     },
   });
 
+  const parseMealTimeValue = (value?: string): Date | undefined => {
+    if (!value) return undefined;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+  };
+
   const onSubmit = (data: QuickMealFormValues) => {
     const payload = {
       meal_type: data.meal_type,
-      meal_time: data.meal_time,
+      meal_time: new Date(data.meal_time).toISOString(),
       food_items: [
         {
           food_name: data.food_name,
@@ -176,32 +182,78 @@ export function QuickMealDrawer({ open, onOpenChange }: QuickMealDrawerProps) {
 
             <FieldGroup>
               <FieldLabel>Meal Time</FieldLabel>
-              <Popover open={isMealDateOpen} onOpenChange={setIsMealDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !mealTime && 'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 size-4" />
-                    {mealTime ? format(new Date(mealTime), 'PPP HH:mm') : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={mealTime ? new Date(mealTime) : undefined}
-                    onSelect={(date) => {
-                      if (date) {
-                        setValue('meal_time', format(date, "yyyy-MM-dd'T'HH:mm"));
-                        setIsMealDateOpen(false);
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Popover open={isMealDateOpen} onOpenChange={setIsMealDateOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        'w-full justify-start text-left font-normal sm:max-w-[220px]',
+                        !mealTime && 'text-muted-foreground'
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 size-4" />
+                      {mealTime ? format(new Date(mealTime), 'PPP') : 'Select date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={parseMealTimeValue(mealTime)}
+                      onSelect={(date) => {
+                        if (date) {
+                          const selectedDate = parseMealTimeValue(mealTime);
+                          const next = new Date(date);
+                          const baseline = selectedDate ?? new Date();
+                          next.setHours(baseline.getHours(), baseline.getMinutes(), 0, 0);
+                          setValue('meal_time', format(next, "yyyy-MM-dd'T'HH:mm"));
+                          setIsMealDateOpen(false);
+                        }
+                      }}
+                      disabled={(date) => date > new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:max-w-[180px]">
+                  <Input
+                    type="time"
+                    step={60}
+                    value={
+                      mealTime ? format(parseMealTimeValue(mealTime) ?? new Date(), 'HH:mm') : ''
+                    }
+                    onChange={(event) => {
+                      const time = event.target.value;
+                      if (!time) {
+                        const selectedDate = parseMealTimeValue(mealTime);
+                        if (selectedDate) {
+                          const reset = new Date(selectedDate);
+                          reset.setHours(0, 0, 0, 0);
+                          setValue('meal_time', format(reset, "yyyy-MM-dd'T'HH:mm"));
+                        }
+                        return;
                       }
+
+                      const [hoursStr, minutesStr] = time.split(':');
+                      const hours = Number(hoursStr);
+                      const minutes = Number(minutesStr);
+
+                      if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                        return;
+                      }
+
+                      const base = parseMealTimeValue(mealTime) ?? new Date();
+                      const next = new Date(base);
+                      next.setHours(hours, minutes, 0, 0);
+                      setValue('meal_time', format(next, "yyyy-MM-dd'T'HH:mm"));
                     }}
+                    className={cn(
+                      'appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none',
+                      'w-full sm:w-auto sm:max-w-[140px]'
+                    )}
                   />
-                </PopoverContent>
-              </Popover>
+                </div>
+              </div>
               {errors.meal_time && <FieldError>{errors.meal_time.message}</FieldError>}
             </FieldGroup>
           </div>
