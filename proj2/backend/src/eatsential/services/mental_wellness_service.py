@@ -1,13 +1,14 @@
 """Mental wellness logging service for mood, stress, and sleep tracking."""
 
 import uuid
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import and_, desc
 from sqlalchemy.orm import Session
 
-from ..models.models import LogType, MoodLogDB, SleepLogDB, StressLogDB
+from ..models.models import LogType, MoodLogDB, SleepLogDB, StressLogDB, UserDB
 from ..schemas.schemas import (
     MoodLogCreate,
     MoodLogResponse,
@@ -22,51 +23,90 @@ from ..schemas.schemas import (
 from ..utils.security import decrypt_sensitive_data, encrypt_sensitive_data
 
 
+def get_local_date(dt_utc: datetime, user_tz: str) -> date:
+    """Convert UTC datetime to local date in user's timezone.
+
+    Args:
+        dt_utc: Datetime in UTC (naive or aware)
+        user_tz: IANA timezone string (e.g., "America/New_York")
+
+    Returns:
+        Local date in user's timezone
+
+    """
+    # Ensure dt_utc is timezone-aware UTC
+    if dt_utc.tzinfo is None:
+        dt_utc = dt_utc.replace(tzinfo=timezone.utc)
+    else:
+        dt_utc = dt_utc.astimezone(timezone.utc)
+
+    # Convert to user's local timezone
+    tz = ZoneInfo(user_tz)
+    dt_local = dt_utc.astimezone(tz)
+
+    return dt_local.date()
+
+
 class MentalWellnessService:
     """Service class for mental wellness logging operations"""
 
     @staticmethod
-    def log_mood(db: Session, user_id: str, mood_data: MoodLogCreate) -> MoodLogDB:
+    def log_mood(
+        db: Session, user_id: str, mood_data: MoodLogCreate, user: UserDB
+    ) -> MoodLogDB:
         """Create a new mood log entry.
 
         Args:
             db: Database session
             user_id: User ID
             mood_data: Mood log creation data
+            user: User database object (contains timezone)
 
         Returns:
             Created mood log database object
 
         Raises:
-            ValueError: If a mood log already exists for this date
+            ValueError: If a mood log already exists for this local date,
+                       or if occurred_at is not on user's local today
 
         """
-        # Check if a log already exists for this date
-        existing_log = (
-            db.query(MoodLogDB)
-            .filter(
-                and_(
-                    MoodLogDB.user_id == user_id,
-                    MoodLogDB.log_date == mood_data.log_date,
-                )
-            )
-            .first()
-        )
+        user_tz = user.timezone
+        occurred_at_utc = mood_data.occurred_at.astimezone(timezone.utc)
 
-        if existing_log:
+        # Validate: occurred_at must be on user's local calendar today
+        tz = ZoneInfo(user_tz)
+        now_local = datetime.now(timezone.utc).astimezone(tz)
+        occurred_local = occurred_at_utc.astimezone(tz)
+
+        if occurred_local.date() != now_local.date():
             raise ValueError(
-                f"A mood log already exists for {mood_data.log_date}. "
-                "Please update the existing entry or delete it first."
+                f"occurred_at must be on user's local calendar today "
+                f"({now_local.date()}), but got {occurred_local.date()}"
             )
+
+        # Check if a log already exists for this local date
+        # We need to find all logs on the same local date
+        local_date = occurred_local.date()
+
+        # Query all mood logs for this user and check their local dates
+        existing_logs = db.query(MoodLogDB).filter(MoodLogDB.user_id == user_id).all()
+
+        for log in existing_logs:
+            log_local_date = get_local_date(log.occurred_at_utc, user_tz)
+            if log_local_date == local_date:
+                raise ValueError(
+                    f"A mood log already exists for {local_date}. "
+                    "Please update the existing entry or delete it first."
+                )
 
         # Encrypt notes if provided
         encrypted_notes = encrypt_sensitive_data(mood_data.notes)
 
-        # Create mood log record
+        # Create mood log record (store as naive UTC)
         db_mood_log = MoodLogDB(
             id=str(uuid.uuid4()),
             user_id=user_id,
-            log_date=mood_data.log_date,
+            occurred_at_utc=occurred_at_utc.replace(tzinfo=None),
             mood_score=mood_data.mood_score,
             encrypted_notes=encrypted_notes,
         )
@@ -79,7 +119,7 @@ class MentalWellnessService:
 
     @staticmethod
     def log_stress(
-        db: Session, user_id: str, stress_data: StressLogCreate
+        db: Session, user_id: str, stress_data: StressLogCreate, user: UserDB
     ) -> StressLogDB:
         """Create a new stress log entry.
 
@@ -87,41 +127,54 @@ class MentalWellnessService:
             db: Database session
             user_id: User ID
             stress_data: Stress log creation data
+            user: User database object (contains timezone)
 
         Returns:
             Created stress log database object
 
         Raises:
-            ValueError: If a stress log already exists for this date
+            ValueError: If a stress log already exists for this local date,
+                       or if occurred_at is not on user's local today
 
         """
-        # Check if a log already exists for this date
-        existing_log = (
-            db.query(StressLogDB)
-            .filter(
-                and_(
-                    StressLogDB.user_id == user_id,
-                    StressLogDB.log_date == stress_data.log_date,
-                )
+        user_tz = user.timezone
+        occurred_at_utc = stress_data.occurred_at.astimezone(timezone.utc)
+
+        # Validate: occurred_at must be on user's local calendar today
+        tz = ZoneInfo(user_tz)
+        now_local = datetime.now(timezone.utc).astimezone(tz)
+        occurred_local = occurred_at_utc.astimezone(tz)
+
+        if occurred_local.date() != now_local.date():
+            raise ValueError(
+                f"occurred_at must be on user's local calendar today "
+                f"({now_local.date()}), but got {occurred_local.date()}"
             )
-            .first()
+
+        # Check if a log already exists for this local date
+        local_date = occurred_local.date()
+
+        existing_logs = (
+            db.query(StressLogDB).filter(StressLogDB.user_id == user_id).all()
         )
 
-        if existing_log:
-            raise ValueError(
-                f"A stress log already exists for {stress_data.log_date}. "
-                "Please update the existing entry or delete it first."
-            )
+        for log in existing_logs:
+            log_local_date = get_local_date(log.occurred_at_utc, user_tz)
+            if log_local_date == local_date:
+                raise ValueError(
+                    f"A stress log already exists for {local_date}. "
+                    "Please update the existing entry or delete it first."
+                )
 
         # Encrypt sensitive data if provided
         encrypted_triggers = encrypt_sensitive_data(stress_data.triggers)
         encrypted_notes = encrypt_sensitive_data(stress_data.notes)
 
-        # Create stress log record
+        # Create stress log record (store as naive UTC)
         db_stress_log = StressLogDB(
             id=str(uuid.uuid4()),
             user_id=user_id,
-            log_date=stress_data.log_date,
+            occurred_at_utc=occurred_at_utc.replace(tzinfo=None),
             stress_level=stress_data.stress_level,
             encrypted_triggers=encrypted_triggers,
             encrypted_notes=encrypted_notes,
@@ -134,47 +187,60 @@ class MentalWellnessService:
         return db_stress_log
 
     @staticmethod
-    def log_sleep(db: Session, user_id: str, sleep_data: SleepLogCreate) -> SleepLogDB:
+    def log_sleep(
+        db: Session, user_id: str, sleep_data: SleepLogCreate, user: UserDB
+    ) -> SleepLogDB:
         """Create a new sleep log entry.
 
         Args:
             db: Database session
             user_id: User ID
             sleep_data: Sleep log creation data
+            user: User database object (contains timezone)
 
         Returns:
             Created sleep log database object
 
         Raises:
-            ValueError: If a sleep log already exists for this date
+            ValueError: If a sleep log already exists for this local date,
+                       or if occurred_at is not on user's local today
 
         """
-        # Check if a log already exists for this date
-        existing_log = (
-            db.query(SleepLogDB)
-            .filter(
-                and_(
-                    SleepLogDB.user_id == user_id,
-                    SleepLogDB.log_date == sleep_data.log_date,
-                )
-            )
-            .first()
-        )
+        user_tz = user.timezone
+        occurred_at_utc = sleep_data.occurred_at.astimezone(timezone.utc)
 
-        if existing_log:
+        # Validate: occurred_at must be on user's local calendar today
+        tz = ZoneInfo(user_tz)
+        now_local = datetime.now(timezone.utc).astimezone(tz)
+        occurred_local = occurred_at_utc.astimezone(tz)
+
+        if occurred_local.date() != now_local.date():
             raise ValueError(
-                f"A sleep log already exists for {sleep_data.log_date}. "
-                "Please update the existing entry or delete it first."
+                f"occurred_at must be on user's local calendar today "
+                f"({now_local.date()}), but got {occurred_local.date()}"
             )
+
+        # Check if a log already exists for this local date
+        local_date = occurred_local.date()
+
+        existing_logs = db.query(SleepLogDB).filter(SleepLogDB.user_id == user_id).all()
+
+        for log in existing_logs:
+            log_local_date = get_local_date(log.occurred_at_utc, user_tz)
+            if log_local_date == local_date:
+                raise ValueError(
+                    f"A sleep log already exists for {local_date}. "
+                    "Please update the existing entry or delete it first."
+                )
 
         # Encrypt notes if provided
         encrypted_notes = encrypt_sensitive_data(sleep_data.notes)
 
-        # Create sleep log record
+        # Create sleep log record (store as naive UTC)
         db_sleep_log = SleepLogDB(
             id=str(uuid.uuid4()),
             user_id=user_id,
-            log_date=sleep_data.log_date,
+            occurred_at_utc=occurred_at_utc.replace(tzinfo=None),
             duration_hours=sleep_data.duration_hours,
             quality_score=sleep_data.quality_score,
             encrypted_notes=encrypted_notes,
@@ -279,11 +345,11 @@ class MentalWellnessService:
             query = db.query(MoodLogDB).filter(MoodLogDB.user_id == user_id)
 
             if start_date:
-                query = query.filter(MoodLogDB.log_date >= start_date)
+                query = query.filter(MoodLogDB.occurred_at_utc >= start_date)
             if end_date:
-                query = query.filter(MoodLogDB.log_date <= end_date)
+                query = query.filter(MoodLogDB.occurred_at_utc <= end_date)
 
-            db_mood_logs = query.order_by(desc(MoodLogDB.log_date)).all()
+            db_mood_logs = query.order_by(desc(MoodLogDB.occurred_at_utc)).all()
 
             # Decrypt and convert to response objects
             for log in db_mood_logs:
@@ -291,7 +357,7 @@ class MentalWellnessService:
                     MoodLogResponse(
                         id=log.id,
                         user_id=log.user_id,
-                        log_date=log.log_date,
+                        occurred_at_utc=log.occurred_at_utc,
                         mood_score=int(log.mood_score),
                         notes=decrypt_sensitive_data(log.encrypted_notes),
                         created_at=log.created_at,
@@ -304,11 +370,11 @@ class MentalWellnessService:
             query = db.query(StressLogDB).filter(StressLogDB.user_id == user_id)
 
             if start_date:
-                query = query.filter(StressLogDB.log_date >= start_date)
+                query = query.filter(StressLogDB.occurred_at_utc >= start_date)
             if end_date:
-                query = query.filter(StressLogDB.log_date <= end_date)
+                query = query.filter(StressLogDB.occurred_at_utc <= end_date)
 
-            db_stress_logs = query.order_by(desc(StressLogDB.log_date)).all()
+            db_stress_logs = query.order_by(desc(StressLogDB.occurred_at_utc)).all()
 
             # Decrypt and convert to response objects
             for log in db_stress_logs:
@@ -316,7 +382,7 @@ class MentalWellnessService:
                     StressLogResponse(
                         id=log.id,
                         user_id=log.user_id,
-                        log_date=log.log_date,
+                        occurred_at_utc=log.occurred_at_utc,
                         stress_level=int(log.stress_level),
                         triggers=decrypt_sensitive_data(log.encrypted_triggers),
                         notes=decrypt_sensitive_data(log.encrypted_notes),
@@ -330,11 +396,11 @@ class MentalWellnessService:
             query = db.query(SleepLogDB).filter(SleepLogDB.user_id == user_id)
 
             if start_date:
-                query = query.filter(SleepLogDB.log_date >= start_date)
+                query = query.filter(SleepLogDB.occurred_at_utc >= start_date)
             if end_date:
-                query = query.filter(SleepLogDB.log_date <= end_date)
+                query = query.filter(SleepLogDB.occurred_at_utc <= end_date)
 
-            db_sleep_logs = query.order_by(desc(SleepLogDB.log_date)).all()
+            db_sleep_logs = query.order_by(desc(SleepLogDB.occurred_at_utc)).all()
 
             # Decrypt and convert to response objects
             for log in db_sleep_logs:
@@ -342,7 +408,7 @@ class MentalWellnessService:
                     SleepLogResponse(
                         id=log.id,
                         user_id=log.user_id,
-                        log_date=log.log_date,
+                        occurred_at_utc=log.occurred_at_utc,
                         duration_hours=float(log.duration_hours),
                         quality_score=int(log.quality_score),
                         notes=decrypt_sensitive_data(log.encrypted_notes),

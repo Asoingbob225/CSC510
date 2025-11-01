@@ -58,6 +58,9 @@ class UserDB(Base):
     role: Mapped[str] = mapped_column(
         String, nullable=False, default=UserRole.USER, index=True
     )
+    timezone: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="America/New_York"
+    )
 
     # Relationships
     health_profile: Mapped[Optional["HealthProfileDB"]] = relationship(
@@ -407,7 +410,9 @@ class MoodLogDB(Base):
     )
 
     # Mood Data
-    log_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    occurred_at_utc: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False, index=True
+    )
     mood_score: Mapped[int] = mapped_column(Numeric(2, 0), nullable=False)  # 1-10 scale
 
     # Encrypted sensitive data (optional notes)
@@ -436,7 +441,9 @@ class StressLogDB(Base):
     )
 
     # Stress Data
-    log_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    occurred_at_utc: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False, index=True
+    )
     stress_level: Mapped[int] = mapped_column(
         Numeric(2, 0), nullable=False
     )  # 1-10 scale
@@ -468,7 +475,9 @@ class SleepLogDB(Base):
     )
 
     # Sleep Data
-    log_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    occurred_at_utc: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False, index=True
+    )
     duration_hours: Mapped[float] = mapped_column(Numeric(4, 2), nullable=False)
     quality_score: Mapped[int] = mapped_column(
         Numeric(2, 0), nullable=False

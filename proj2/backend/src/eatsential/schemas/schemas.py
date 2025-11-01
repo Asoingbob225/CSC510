@@ -1,7 +1,7 @@
 """Pydantic schemas for API request/response validation."""
 
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from typing import Annotated, Optional
 
 from pydantic import (
@@ -11,6 +11,7 @@ from pydantic import (
     Field,
     computed_field,
     field_validator,
+    model_validator,
 )
 
 from ..models.models import (
@@ -585,27 +586,44 @@ class GoalProgressResponse(BaseModel):
 # Mental Wellness Schemas
 # ============================================================================
 
+# Allow small time skew for clock synchronization
+ALLOWED_FUTURE_SKEW = timedelta(minutes=5)
+
 
 class MoodLogCreate(BaseModel):
     """Schema for creating a mood log"""
 
-    log_date: date
+    occurred_at: datetime = Field(
+        ..., description="When the mood occurred (ISO8601 with timezone)"
+    )
     mood_score: int = Field(..., ge=1, le=10, description="Mood score from 1 to 10")
     notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
 
-    @field_validator("log_date")
+    @field_validator("occurred_at")
     @classmethod
-    def validate_log_date(cls, v: date) -> date:
-        """Validate log date is within last 7 days"""
-        today = date.today()
-        days_diff = (today - v).days
+    def validate_occurred_at(cls, v: datetime) -> datetime:
+        """Validate occurred_at is timezone-aware and not in the future"""
+        if v.tzinfo is None or v.tzinfo.utcoffset(v) is None:
+            raise ValueError("occurred_at must be timezone-aware ISO8601")
 
-        if days_diff < 0:
-            raise ValueError("Cannot log mood for future dates")
-        if days_diff > 7:
-            raise ValueError("Cannot log mood older than 7 days")
+        # Convert to UTC for comparison
+        v_utc = v.astimezone(timezone.utc)
+        now_utc = datetime.now(timezone.utc)
+
+        # Allow small skew for clock synchronization
+        if v_utc - now_utc > ALLOWED_FUTURE_SKEW:
+            raise ValueError("occurred_at cannot be in the future")
 
         return v
+
+    @model_validator(mode="after")
+    def validate_same_local_today(self) -> "MoodLogCreate":
+        """Validate that occurred_at is on user's local calendar today.
+
+        Note: This requires user_tz to be injected by the service layer.
+        """
+        # This validation will be done in the service layer with user_tz
+        return self
 
 
 class MoodLogUpdate(BaseModel):
@@ -622,38 +640,50 @@ class MoodLogResponse(BaseModel):
 
     id: str
     user_id: str
-    log_date: date
+    occurred_at_utc: datetime
     mood_score: int
     notes: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class StressLogCreate(BaseModel):
     """Schema for creating a stress log"""
 
-    log_date: date
+    occurred_at: datetime = Field(
+        ..., description="When the stress occurred (ISO8601 with timezone)"
+    )
     stress_level: int = Field(..., ge=1, le=10, description="Stress level from 1 to 10")
     triggers: Optional[str] = Field(
         None, max_length=1000, description="Optional stress triggers"
     )
     notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
 
-    @field_validator("log_date")
+    @field_validator("occurred_at")
     @classmethod
-    def validate_log_date(cls, v: date) -> date:
-        """Validate log date is within last 7 days"""
-        today = date.today()
-        days_diff = (today - v).days
+    def validate_occurred_at(cls, v: datetime) -> datetime:
+        """Validate occurred_at is timezone-aware and not in the future"""
+        if v.tzinfo is None or v.tzinfo.utcoffset(v) is None:
+            raise ValueError("occurred_at must be timezone-aware ISO8601")
 
-        if days_diff < 0:
-            raise ValueError("Cannot log stress for future dates")
-        if days_diff > 7:
-            raise ValueError("Cannot log stress older than 7 days")
+        v_utc = v.astimezone(timezone.utc)
+        now_utc = datetime.now(timezone.utc)
+
+        if v_utc - now_utc > ALLOWED_FUTURE_SKEW:
+            raise ValueError("occurred_at cannot be in the future")
 
         return v
+
+    @model_validator(mode="after")
+    def validate_same_local_today(self) -> "StressLogCreate":
+        """Validate that occurred_at is on user's local calendar today.
+
+        Note: This requires user_tz to be injected by the service layer.
+        """
+        # This validation will be done in the service layer with user_tz
+        return self
 
 
 class StressLogUpdate(BaseModel):
@@ -673,20 +703,22 @@ class StressLogResponse(BaseModel):
 
     id: str
     user_id: str
-    log_date: date
+    occurred_at_utc: datetime
     stress_level: int
     triggers: Optional[str] = None
     notes: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SleepLogCreate(BaseModel):
     """Schema for creating a sleep log"""
 
-    log_date: date
+    occurred_at: datetime = Field(
+        ..., description="When the sleep occurred (ISO8601 with timezone)"
+    )
     duration_hours: float = Field(
         ..., gt=0, le=24, description="Sleep duration in hours"
     )
@@ -695,19 +727,29 @@ class SleepLogCreate(BaseModel):
     )
     notes: Optional[str] = Field(None, max_length=1000, description="Optional notes")
 
-    @field_validator("log_date")
+    @field_validator("occurred_at")
     @classmethod
-    def validate_log_date(cls, v: date) -> date:
-        """Validate log date is within last 7 days"""
-        today = date.today()
-        days_diff = (today - v).days
+    def validate_occurred_at(cls, v: datetime) -> datetime:
+        """Validate occurred_at is timezone-aware and not in the future"""
+        if v.tzinfo is None or v.tzinfo.utcoffset(v) is None:
+            raise ValueError("occurred_at must be timezone-aware ISO8601")
 
-        if days_diff < 0:
-            raise ValueError("Cannot log sleep for future dates")
-        if days_diff > 7:
-            raise ValueError("Cannot log sleep older than 7 days")
+        v_utc = v.astimezone(timezone.utc)
+        now_utc = datetime.now(timezone.utc)
+
+        if v_utc - now_utc > ALLOWED_FUTURE_SKEW:
+            raise ValueError("occurred_at cannot be in the future")
 
         return v
+
+    @model_validator(mode="after")
+    def validate_same_local_today(self) -> "SleepLogCreate":
+        """Validate that occurred_at is on user's local calendar today.
+
+        Note: This requires user_tz to be injected by the service layer.
+        """
+        # This validation will be done in the service layer with user_tz
+        return self
 
 
 class SleepLogUpdate(BaseModel):
@@ -727,14 +769,14 @@ class SleepLogResponse(BaseModel):
 
     id: str
     user_id: str
-    log_date: date
+    occurred_at_utc: datetime
     duration_hours: float
     quality_score: int
     notes: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class WellnessLogsResponse(BaseModel):
