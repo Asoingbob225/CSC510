@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Activity, AlertCircle, ArrowLeft } from 'lucide-react';
 import { getAuthToken } from '@/lib/api';
-import { useWellnessChartData } from '@/hooks/useWellnessData';
+import { useWellnessChartData, useTodayWellnessLog } from '@/hooks/useWellnessData';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { MoodLogWidget, StressLogWidget, SleepLogWidget } from '@/components/wellness/mental';
 import { GoalForm, GoalsList, WellnessChart } from '@/components/wellness/shared';
@@ -14,6 +14,9 @@ function WellnessTrackingPage() {
   // Fetch chart data (last 7 days)
   const { data: chartData, isLoading, error } = useWellnessChartData(7);
 
+  // Fetch today's wellness log to check if data exists
+  const { data: todayLog } = useTodayWellnessLog();
+
   // Check auth
   useEffect(() => {
     const token = getAuthToken();
@@ -22,6 +25,10 @@ function WellnessTrackingPage() {
       return;
     }
   }, [navigate]);
+
+  // Check if today already has wellness data
+  const hasDataToday =
+    todayLog && (todayLog.mood_score || todayLog.stress_level || todayLog.quality_score);
 
   if (isLoading) {
     return (
@@ -71,15 +78,17 @@ function WellnessTrackingPage() {
           </div>
         )}
 
-        {/* Quick Log Widgets */}
-        <section className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">Daily Check-in</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <MoodLogWidget />
-            <StressLogWidget />
-            <SleepLogWidget />
-          </div>
-        </section>
+        {/* Quick Log Widgets - Only show if no data exists for today */}
+        {!hasDataToday && (
+          <section className="mb-8">
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">Daily Check-in</h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <MoodLogWidget />
+              <StressLogWidget />
+              <SleepLogWidget />
+            </div>
+          </section>
+        )}
 
         {/* Trend Charts */}
         <section className="mb-8">

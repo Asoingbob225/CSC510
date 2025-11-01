@@ -1,5 +1,15 @@
 import { useMemo } from 'react';
-import { TrendingUp, Activity, Brain, Moon } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Activity, Brain, Moon } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface DataPoint {
@@ -39,18 +49,9 @@ function WellnessChart({ data, metric, title, showLegend = true }: WellnessChart
   const config = METRIC_CONFIG[metric];
   const Icon = config.icon;
 
-  // Chart dimensions
-  const width = 600;
-  const height = 300;
-  const padding = useMemo(() => ({ top: 20, right: 20, bottom: 50, left: 50 }), []);
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
-
-  // Calculate scales
-  const { points, xLabels, yTicks } = useMemo(() => {
-    if (data.length === 0) {
-      return { points: [], xLabels: [], yTicks: [0, 5, 10] };
-    }
+  // Prepare chart data (last 7 days)
+  const chartData = useMemo(() => {
+    if (data.length === 0) return [];
 
     // Sort data by date
     const sortedData = [...data].sort(
@@ -59,91 +60,75 @@ function WellnessChart({ data, metric, title, showLegend = true }: WellnessChart
 
     // Get last 7 days
     const last7Days = sortedData.slice(-7);
-    console.log('Last 7 days data:', sortedData);
 
-    // Y scale: 0-10
-    const yMin = 0;
-    const yMax = 10;
-
-    // Calculate points
-    const calculatedPoints = last7Days.map((point, index) => {
-      const x = padding.left + (index / Math.max(last7Days.length - 1, 1)) * chartWidth;
-      const y = padding.top + chartHeight - ((point.value - yMin) / (yMax - yMin)) * chartHeight;
-      return { x, y, value: point.value, date: point.date };
-    });
-
-    // X labels (dates)
-    const calculatedXLabels = last7Days.map((point, index) => {
-      // Parse YYYY-MM-DD date string directly to avoid timezone issues
+    // Format data for recharts
+    return last7Days.map((point) => {
+      // Parse YYYY-MM-DD date string
       const [_year, month, day] = point.date.split('-').map(Number);
-      const label = `${month}/${day}`;
-      const x = padding.left + (index / Math.max(last7Days.length - 1, 1)) * chartWidth;
-      return { label, x };
+      return {
+        date: point.date,
+        displayDate: `${month}/${day}`,
+        value: point.value,
+      };
     });
-
-    // Y ticks
-    const calculatedYTicks = [0, 2, 4, 6, 8, 10];
-
-    return {
-      points: calculatedPoints,
-      xLabels: calculatedXLabels,
-      yTicks: calculatedYTicks,
-    };
-  }, [data, chartWidth, chartHeight, padding.top, padding.left]);
-
-  // Generate path for line
-  const linePath = useMemo(() => {
-    if (points.length === 0) return '';
-
-    return points
-      .map((point, index) => {
-        if (index === 0) {
-          return `M ${point.x} ${point.y}`;
-        }
-        return `L ${point.x} ${point.y}`;
-      })
-      .join(' ');
-  }, [points]);
-
-  // Generate path for area (gradient fill)
-  const areaPath = useMemo(() => {
-    if (points.length === 0) return '';
-
-    const bottomY = padding.top + chartHeight;
-    let path = `M ${points[0].x} ${bottomY}`;
-
-    points.forEach((point) => {
-      path += ` L ${point.x} ${point.y}`;
-    });
-
-    path += ` L ${points[points.length - 1].x} ${bottomY} Z`;
-    return path;
-  }, [points, chartHeight, padding.top]);
+  }, [data]);
 
   // Calculate average
   const average = useMemo(() => {
-    if (data.length === 0) return 0;
-    const sum = data.reduce((acc, point) => acc + point.value, 0);
-    return (sum / data.length).toFixed(1);
-  }, [data]);
+    if (chartData.length === 0) return 0;
+    const sum = chartData.reduce((acc, point) => acc + point.value, 0);
+    return (sum / chartData.length).toFixed(1);
+  }, [chartData]);
 
-  // Calculate trend
+  // Calculate trend (compare today's value with average)
   const trend = useMemo(() => {
-    if (points.length < 2) return 'stable';
-    const firstValue = points[0].value;
-    const lastValue = points[points.length - 1].value;
-    const change = lastValue - firstValue;
+    if (chartData.length === 0) return 'stable';
+
+    const avg = typeof average === 'string' ? parseFloat(average) : average;
+    const todayValue = chartData[chartData.length - 1].value;
+    const diff = todayValue - avg;
 
     if (metric === 'stress') {
-      // For stress, decreasing is good
-      return change < -0.5 ? 'improving' : change > 0.5 ? 'worsening' : 'stable';
+      // For stress, lower than average is good
+      return diff < -0.5 ? 'improving' : diff > 0.5 ? 'worsening' : 'stable';
     } else {
-      // For mood and sleep, increasing is good
-      return change > 0.5 ? 'improving' : change < -0.5 ? 'worsening' : 'stable';
+      // For mood and sleep, higher than average is good
+      return diff > 0.5 ? 'improving' : diff < -0.5 ? 'worsening' : 'stable';
     }
-  }, [points, metric]);
+  }, [chartData, average, metric]);
 
-  if (data.length === 0) {
+  // Get trend icon based on metric and trend state
+  const getTrendIcon = () => {
+    if (trend === 'stable') return Minus;
+
+    // For stress: improving = down, worsening = up
+    // For mood/sleep: improving = up, worsening = down
+    if (metric === 'stress') {
+      return trend === 'improving' ? TrendingDown : TrendingUp;
+    } else {
+      return trend === 'improving' ? TrendingUp : TrendingDown;
+    }
+  };
+
+  const TrendIcon = getTrendIcon();
+
+  // Custom tooltip
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="rounded-lg border bg-background p-2 shadow-lg">
+          <p className="text-xs font-medium text-muted-foreground">{payload[0].payload.date}</p>
+          <p className="text-sm font-bold" style={{ color: config.color }}>
+            {config.label}: {payload[0].value}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  if (chartData.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -167,18 +152,12 @@ function WellnessChart({ data, metric, title, showLegend = true }: WellnessChart
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Icon className="size-5" style={{ color: config.color }} />
-            {title || `${config.label} Trend (7 Days)`}
+            {title || <>{config.label} Trend</>}
           </CardTitle>
           {showLegend && (
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-1">
-                <span className="text-gray-600">Avg:</span>
-                <span className="font-semibold" style={{ color: config.color }}>
-                  {average}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <TrendingUp
+                <TrendIcon
                   className={`size-4 ${
                     trend === 'improving'
                       ? 'text-green-500'
@@ -208,108 +187,62 @@ function WellnessChart({ data, metric, title, showLegend = true }: WellnessChart
         </div>
       </CardHeader>
       <CardContent>
-        <svg
-          width="100%"
-          height={height}
-          viewBox={`0 0 ${width} ${height}`}
-          className="overflow-visible"
-        >
-          {/* Grid lines (horizontal) */}
-          {yTicks.map((tick) => {
-            const y = padding.top + chartHeight - (tick / 10) * chartHeight;
-            return (
-              <g key={tick}>
-                <line
-                  x1={padding.left}
-                  y1={y}
-                  x2={padding.left + chartWidth}
-                  y2={y}
-                  stroke="#e5e7eb"
-                  strokeWidth="1"
-                />
-                <text
-                  x={padding.left - 10}
-                  y={y}
-                  textAnchor="end"
-                  alignmentBaseline="middle"
-                  className="fill-gray-500 text-xs"
-                >
-                  {tick}
-                </text>
-              </g>
-            );
-          })}
-
-          {/* Area gradient fill */}
-          <defs>
-            <linearGradient id={`gradient-${metric}`} x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor={config.color} stopOpacity="0.3" />
-              <stop offset="100%" stopColor={config.color} stopOpacity="0.05" />
-            </linearGradient>
-          </defs>
-
-          {/* Area path */}
-          <path d={areaPath} fill={`url(#gradient-${metric})`} />
-
-          {/* Line path */}
-          <path
-            d={linePath}
-            fill="none"
-            stroke={config.color}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {/* Data points */}
-          {points.map((point, index) => (
-            <g key={index}>
-              <circle
-                cx={point.x}
-                cy={point.y}
-                r="4"
-                fill="white"
-                stroke={config.color}
-                strokeWidth="2"
-              />
-              <title>{`${point.date}: ${point.value}`}</title>
-            </g>
-          ))}
-
-          {/* X axis labels */}
-          {xLabels.map((label, index) => (
-            <text
-              key={index}
-              x={label.x}
-              y={padding.top + chartHeight + 20}
-              textAnchor="middle"
-              className="fill-gray-600 text-xs"
-            >
-              {label.label}
-            </text>
-          ))}
-
-          {/* Y axis label */}
-          <text
-            x={padding.left - 35}
-            y={padding.top + chartHeight / 2}
-            textAnchor="middle"
-            transform={`rotate(-90 ${padding.left - 35} ${padding.top + chartHeight / 2})`}
-            className="fill-gray-600 text-xs font-medium"
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart
+            data={chartData}
+            margin={{
+              top: 10,
+              right: 10,
+              left: 0,
+              bottom: 0,
+            }}
           >
-            {config.yAxisLabel}
-          </text>
-
-          {/* X axis label */}
-          <text
-            x={padding.left + chartWidth / 2}
-            y={height - 10}
-            textAnchor="middle"
-            className="fill-gray-600 text-xs font-medium"
-          >
-            Date
-          </text>
-        </svg>
+            <defs>
+              <linearGradient id={`gradient-${metric}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={config.color} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={config.color} stopOpacity={0.05} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis
+              dataKey="displayDate"
+              tick={{ fill: '#9ca3af', fontSize: 13 }}
+              tickLine={{ stroke: '#d1d5db' }}
+            />
+            <YAxis
+              domain={[0, 10]}
+              ticks={[0, 2, 4, 6, 8, 10]}
+              tick={{ fill: '#9ca3af', fontSize: 13 }}
+              tickLine={{ stroke: '#d1d5db' }}
+              width={40}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            {/* Average reference line */}
+            <ReferenceLine
+              y={typeof average === 'string' ? parseFloat(average) : average}
+              stroke={config.color}
+              strokeDasharray="5 5"
+              strokeOpacity={0.4}
+              strokeWidth={1.5}
+              label={{
+                value: `Avg: ${average}`,
+                position: 'insideTopRight',
+                fill: config.color,
+                fontSize: 11,
+                opacity: 0.7,
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke={config.color}
+              strokeWidth={2}
+              fill={`url(#gradient-${metric})`}
+              animationDuration={800}
+              animationEasing="ease-in-out"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
