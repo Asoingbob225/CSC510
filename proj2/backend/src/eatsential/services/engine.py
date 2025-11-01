@@ -284,7 +284,7 @@ class RecommendationService:
         items: Sequence[MenuItem],
     ) -> list[MenuItem]:
         """Filter menu items that violate allergy or strict dietary rules.
-        
+
         Uses two-tier allergen checking:
         1. Database relationships (MenuItem.allergens) - most reliable
         2. Text-based fallback for items without allergen data
@@ -296,12 +296,14 @@ class RecommendationService:
         for item in items:
             # Tier 1: Check database allergen relationships (most reliable)
             if context.allergies and item.allergens:
-                item_allergen_names = {allergen.name.lower() for allergen in item.allergens}
+                item_allergen_names = {
+                    allergen.name.lower() for allergen in item.allergens
+                }
                 user_allergen_set = set(context.allergies)
                 if item_allergen_names & user_allergen_set:
                     # Item contains user allergen via database relationship
                     continue
-            
+
             # Tier 2: Fallback to text-based checking for items without allergen data
             # or for additional safety
             text = f"{item.name} {item.description or ''}".lower()
