@@ -57,6 +57,7 @@ The application will now be running:
 
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8000
+- Backend API Docs: http://localhost:8000/docs
 
 ## 🚀 Project Status & Roadmap
 
@@ -99,32 +100,6 @@ This project is licensed under the GNU Affero General Public License v3.0 (AGPL-
 
 This project is registered with Zenodo for academic citation and archival purposes. If you use this project in your research or work, please cite it using the DOI badge above.
 
-### How to Complete Zenodo Registration
+## Need help?
 
-⚠️ **Note:** The DOI badge currently shows a placeholder (`XXXXXXX`). To obtain an actual DOI, the repository owner needs to complete the following steps:
-
-1. **Connect GitHub to Zenodo:**
-   - Visit [Zenodo](https://zenodo.org/) and log in with your GitHub account
-   - Go to your Zenodo account settings and navigate to the GitHub section
-   - Find the `Asoingbob225/CSC510` repository and flip the toggle to enable it
-
-2. **Create a Release:**
-   - Go to the GitHub repository's releases page
-   - Click "Create a new release"
-   - Tag the release appropriately (e.g., `v1.0.0`, `proj2-v1.0.0`)
-   - Provide a release title and description
-   - Publish the release
-
-3. **Get Your DOI:**
-   - After publishing the release, Zenodo will automatically create a DOI
-   - Visit your Zenodo uploads page to find the new DOI
-   - The DOI will be in the format: `10.5281/zenodo.XXXXXXX` where `XXXXXXX` is your unique identifier
-
-4. **Update the Badge:**
-   - Replace `XXXXXXX` in the DOI badge at the top of this README with your actual Zenodo DOI number
-   - The badge URLs should be updated to:
-     - Badge image: `https://zenodo.org/badge/DOI/10.5281/zenodo.YOUR_DOI.svg`
-     - Badge link: `https://doi.org/10.5281/zenodo.YOUR_DOI`
-
-The `.zenodo.json` file in this directory contains metadata that Zenodo will use to properly describe your project, including title, description, authors, license, and keywords.
-
+Feel free to open an issue to discuss with us.
