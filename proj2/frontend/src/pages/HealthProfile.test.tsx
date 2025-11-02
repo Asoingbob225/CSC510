@@ -245,10 +245,8 @@ describe('HealthProfile Component', () => {
     });
 
     // Verify the Dashboard link is present in the navbar
-    const dashboardLinks = screen.getAllByText('Dashboard');
-    expect(dashboardLinks.length).toBeGreaterThan(0);
-    const navLink = dashboardLinks.find((el) => el.tagName === 'A');
-    expect(navLink).toHaveAttribute('href', '/dashboard');
+    const dashboardLink = screen.getByText('Dashboard').closest('a');
+    expect(dashboardLink).toHaveAttribute('href', '/dashboard');
   });
 
   it('logs out and navigates to home when logout is clicked', async () => {

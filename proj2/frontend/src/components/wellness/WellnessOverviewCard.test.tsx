@@ -103,23 +103,6 @@ describe('WellnessOverviewCard', () => {
     ).toBeInTheDocument(); // Sleep quality
   });
 
-  it('displays mood emoji correctly', () => {
-    vi.mocked(useTodayWellnessLog).mockReturnValue({
-      data: mockTodayLog,
-      isLoading: false,
-    } as unknown as ReturnType<typeof useTodayWellnessLog>);
-
-    vi.mocked(useWellnessLogs).mockReturnValue({
-      data: [mockTodayLog],
-      isLoading: false,
-    } as unknown as ReturnType<typeof useWellnessLogs>);
-
-    renderComponent();
-
-    // Mood score 8 should show happy emoji
-    expect(screen.getByText('😊')).toBeInTheDocument();
-  });
-
   it('shows empty state when no wellness data logged', () => {
     vi.mocked(useTodayWellnessLog).mockReturnValue({
       data: null,

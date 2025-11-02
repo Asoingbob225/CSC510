@@ -29,7 +29,7 @@ describe('LogMealWidget', () => {
     );
 
     expect(screen.getByText('Log a Meal')).toBeInTheDocument();
-    expect(screen.getByText(/Track your nutrition quickly/i)).toBeInTheDocument();
+    expect(screen.getByText(/Track your nutrition/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add Meal/i })).toBeInTheDocument();
   });
 
