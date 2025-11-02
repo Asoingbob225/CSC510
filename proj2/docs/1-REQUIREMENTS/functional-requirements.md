@@ -1474,7 +1474,7 @@ This document specifies the complete functional requirements for the Eatsential 
 
 ## Module 6: Mental Wellness Management (FR-076 to FR-085)
 
-> **Note**: This module represents NEW functionality to implement the **Mental Wellness** dimension of Eatsential's dual-dimension health approach. All requirements in this module are currently **Not Implemented**.
+> **Note**: This module implements the **Mental Wellness** dimension of Eatsential's dual-dimension health approach. Core features (FR-076~079, FR-082, FR-083) are **Implemented** in v0.3-v0.4. Advanced features (FR-080, FR-081, FR-085) are **Partially Implemented**. Future features (FR-084) are planned for v0.5+.
 
 ### FR-076: Mental Wellness Goal Setting
 
@@ -2010,11 +2010,11 @@ Physical Fitness:
 
 ## Module 8: Dual-Dimension Recommendation Engine (FR-089 to FR-091)
 
-> **Note**: This module implements the core innovation of Eatsential - recommendations that simultaneously optimize for both physical fitness goals AND mental wellness objectives. All requirements are currently **Not Implemented**.
+> **Note**: This module implements the core innovation of Eatsential - recommendations that simultaneously optimize for both physical fitness goals AND mental wellness objectives. All core requirements (FR-089~091) are **Implemented** in v0.4.
 
 ### FR-089: Dual-Dimension Meal Scoring
 
-**Status**: ❌ **Not Implemented** - NEW FEATURE
+**Status**: ✅ **Implemented** (v0.4)
 
 **Priority**: Critical | **Complexity**: High  
 **Description**: System shall score meal recommendations based on both physical health goals (calories, macros, allergies) and mental wellness goals (mood, stress, sleep).
@@ -2053,7 +2053,7 @@ Total Score: 87.5/100
 
 ### FR-090: Context-Aware Recommendations
 
-**Status**: ❌ **Not Implemented** - NEW FEATURE
+**Status**: ✅ **Implemented** (v0.4)
 
 **Priority**: Critical | **Complexity**: High  
 **Description**: System shall provide context-aware meal recommendations based on current mood, stress level, time of day, and recent activity.
@@ -2091,7 +2091,7 @@ Total Score: 87.5/100
 
 ### FR-091: Goal Balancing Algorithm
 
-**Status**: ❌ **Not Implemented** - NEW FEATURE
+**Status**: ✅ **Implemented** (v0.4)
 
 **Priority**: Important | **Complexity**: High  
 **Description**: System shall intelligently balance competing physical and mental wellness goals when they conflict.
