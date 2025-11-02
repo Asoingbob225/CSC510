@@ -74,8 +74,6 @@
 | Question 14.2 | Do you have a contributions policy? | ✅ | `proj2/CONTRIBUTING.md` defines process and expectations |
 | Question 14.3 | Is your contributions policy publicly available? | ✅ | Policy is in-repo and public (`proj2/CONTRIBUTING.md`) |
 | Question 14.4 | Do contributors keep the copyright/IP of their contributions? | ✅ | proj2/CONTRIBUTING.md specifies that contributions are licensed under the project's AGPL-3.0 License. This means (in the absence of a CLA) that contributors retain their copyright.
-
- |
 | **Q15 - Licensing** | | | |
 | Question 15.1 | Does your website and documentation clearly state the copyright owners of your software and documentation? | ❌ | Owners not clearly stated; license present but no explicit copyright owner list |
 | Question 15.2 | Does each of your source code files include a copyright statement? | ❌ | Source files generally lack per-file copyright headers |
