@@ -56,7 +56,7 @@
 | Question 11.8 | Do you have tests that can be run after your software has been built or deployed to show whether the build or deployment has been successful? | ✅ | CI runs tests; build artifacts verified in `test-coverage.yml` |
 | **Q12 - Testing** | | | |
 | Question 12.1 | Do you have an automated test suite for your software? | ✅ | Frontend/Backend tests present (`proj2/frontend`, `proj2/backend/tests/`) |
-| Question 12.2 | Do you have a framework to periodically (e.g. nightly) run your tests on the latest version of the source code? | ❌ | No scheduled nightly runs found; CI triggers on push/PR only |
+| Question 12.2 | Do you have a framework to periodically (e.g. nightly) run your tests on the latest version of the source code? | ✅ | Nightly test runs configured in `.github/workflows/nightly-tests.yml` (scheduled at 2:00 AM UTC daily) |
 | Question 12.3 | Do you use continuous integration, automatically running tests whenever changes are made to your source code? | ✅ | GitHub Actions run tests on push/PR (`.github/workflows/test-coverage.yml`) |
 | Question 12.4 | Are your test results publicly visible? | ✅ | CI badges and Codecov integration in `proj2/README.md` |
 | Question 12.5 | Are all manually-run tests documented? | ✅ | Test strategy and docs in `proj2/docs/4-TESTING/` and backend `proj2/backend/tests/README.md` |
