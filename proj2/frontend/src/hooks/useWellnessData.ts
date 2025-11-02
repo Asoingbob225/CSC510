@@ -44,36 +44,45 @@ export function useWellnessLogs(params?: { start_date?: string; end_date?: strin
  * Returns separate logs for mood, stress, and sleep
  */
 export function useTodayWellnessLog() {
-  // Get today's date range in UTC (start of day to end of day)
+  // Get today's date range in LOCAL time, then convert to UTC for API
   const now = new Date();
 
-  // Start of today in UTC (00:00:00)
-  const startOfDayUTC = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0)
+  // Start of today in LOCAL time (00:00:00)
+  const startOfDayLocal = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0,
+    0
   );
 
-  // End of today in UTC (23:59:59.999)
-  const endOfDayUTC = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999)
+  // End of today in LOCAL time (23:59:59.999)
+  const endOfDayLocal = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+    999
   );
 
   return useQuery({
-    queryKey: wellnessKeys.todayLog(startOfDayUTC.toISOString()),
+    queryKey: wellnessKeys.todayLog(startOfDayLocal.toISOString()),
     queryFn: async () => {
       const logs = await wellnessApi.getWellnessLogs({
-        start_date: startOfDayUTC.toISOString(),
-        end_date: endOfDayUTC.toISOString(),
+        start_date: startOfDayLocal.toISOString(),
+        end_date: endOfDayLocal.toISOString(),
       });
       // Ensure logs is an array before accessing
       const logsArray = Array.isArray(logs) ? logs : [];
 
-      // Backend already filters by UTC datetime, no need for additional filtering
-      // Just find each type of log
       const moodLog = logsArray.find((log) => log.mood_score !== undefined);
       const stressLog = logsArray.find((log) => log.stress_level !== undefined);
       const sleepLog = logsArray.find((log) => log.quality_score !== undefined);
 
-      // Return combined data from all three logs
       return {
         mood_score: moodLog?.mood_score,
         stress_level: stressLog?.stress_level,
@@ -173,17 +182,29 @@ export function useCreateSleepLog() {
  * Transform wellness logs into chart data format
  */
 export function useWellnessChartData(days = 7) {
-  // Calculate date range in UTC
+  // Calculate date range in LOCAL time
   const now = new Date();
 
-  // Start date: beginning of (today - days) in UTC
+  // Start date: beginning of (today - days) in LOCAL time
   const startDate = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - days, 0, 0, 0, 0)
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() - days,
+    0,
+    0,
+    0,
+    0
   );
 
-  // End date: end of today in UTC
+  // End date: end of today in LOCAL time
   const endDate = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999)
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+    999
   );
 
   const {
@@ -203,7 +224,6 @@ export function useWellnessChartData(days = 7) {
 
   if (logs && logs.length > 0) {
     logs.forEach((log: WellnessLogResponse) => {
-      // Convert UTC datetime to local date for grouping
       const localDate = utcToLocalDate(log.occurred_at_utc);
 
       if (log.mood_score !== undefined && log.mood_score !== null) {
