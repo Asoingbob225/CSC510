@@ -1059,6 +1059,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 
 ## UC-021: Set Mental Wellness Goals
 
+**Status**: ✅ **Implemented** (v0.3)
+
 **Primary Actor**: User  
 **Goal**: Define personal mental wellness objectives and track progress  
 **Preconditions**: User has verified account and completed initial profile  
@@ -1117,6 +1119,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 
 ## UC-022: Log Daily Mood
 
+**Status**: ✅ **Implemented** (v0.3)
+
 **Primary Actor**: User  
 **Goal**: Record current mood state with context for pattern analysis  
 **Preconditions**: User has active account  
@@ -1174,6 +1178,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-023: Track Stress Levels
+
+**Status**: ✅ **Implemented** (v0.3)
 
 **ID**: UC-023  
 **Primary Actor**: User  
@@ -1249,6 +1255,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 
 ## UC-024: Monitor Sleep Quality
 
+**Status**: ✅ **Implemented** (v0.3)
+
 **ID**: UC-024  
 **Primary Actor**: User  
 **Goal**: Track sleep duration, quality, and factors affecting rest
@@ -1322,6 +1330,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-025: View Mental Wellness Dashboard
+
+**Status**: ✅ **Implemented** (v0.3)
 
 **ID**: UC-025  
 **Primary Actor**: User  
@@ -1694,6 +1704,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 
 ## UC-030: Chat with AI Health Concierge
 
+**Status**: ❌ **Not Implemented** (v0.5+ planned)
+
 **ID**: UC-030  
 **Primary Actor**: User  
 **Goal**: Have natural conversation about nutrition, wellness, and meal planning
@@ -1784,6 +1796,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 
 ## UC-031: Get AI-Powered Wellness Insights
 
+**Status**: ❌ **Not Implemented** (v0.5+ planned)
+
 **ID**: UC-031  
 **Primary Actor**: System (automated)  
 **Secondary Actor**: User  
@@ -1864,6 +1878,8 @@ This document defines the detailed use cases for the Eatsential AI-powered preci
 ---
 
 ## UC-032: Adjust Plans via Conversation
+
+**Status**: ❌ **Not Implemented** (v0.5+ planned)
 
 **ID**: UC-032  
 **Primary Actor**: User  
