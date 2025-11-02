@@ -28,7 +28,7 @@ function WellnessTrackingPage() {
 
   // Check if today already has wellness data
   const hasDataToday =
-    todayLog && (todayLog.mood_score || todayLog.stress_level || todayLog.quality_score);
+    todayLog && (todayLog.mood_score && todayLog.stress_level && todayLog.quality_score);
 
   if (isLoading) {
     return (
