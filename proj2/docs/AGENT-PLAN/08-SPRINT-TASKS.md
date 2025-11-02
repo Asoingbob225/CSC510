@@ -109,22 +109,21 @@ This document tracks development tasks across all milestones, organized by modul
 | [#108](https://github.com/Asoingbob225/CSC510/issues/108) | subtask(frontend): Recommendation Display UI                | P0       | ✅ Complete | PR #TBD           |
 | [#107](https://github.com/Asoingbob225/CSC510/issues/107) | subtask(backend): Recommendation API                        | P0       | ✅ Complete | PR #TBD           |
 | [#106](https://github.com/Asoingbob225/CSC510/issues/106) | subtask(backend): Deterministic Fallback + Baseline Ranking | P0       | ✅ Complete | PR #TBD (this PR) |
-| [#105](https://github.com/Asoingbob225/CSC510/issues/105) | feat: Basic Recommendation Engine (M4)                      | P0       | 📝 To Do    | Epic              |
+| [#105](https://github.com/Asoingbob225/CSC510/issues/105) | feat: Basic Recommendation Engine (M4)                      | P0       | ✅ Complete | PR #162           |
 
-**Progress**: 4/5 issues complete (80%)
+**Progress**: 5/5 issues complete (100%)
 
 ---
 
 ## 🎯 Current Focus
 
 **Active Milestone**: v0.4 - AI Recommendation Engine  
-**Completion**: 80% (4/5 issues)  
-**Remaining**:
-
-- #105: Basic Recommendation Engine (P0, Epic)
+**Completion**: 100% (5/5 issues)  
+**Remaining**: None
 
 **Recent Completions**:
 
+- ✅ #105: Basic Recommendation Engine (PR #162)
 - ✅ #106: Deterministic Fallback + Baseline Ranking (this PR)
 - ✅ #107: Recommendation API (PR #TBD)
 - ✅ #108: Recommendation Display UI (PR #TBD)
@@ -136,9 +135,9 @@ This document tracks development tasks across all milestones, organized by modul
 ### Task Status Summary
 
 - **Total Issues (v0.4)**: 5
-- **Completed**: 4 (80%)
+- **Completed**: 5 (100%)
 - **In Progress**: 0
-- **To Do**: 1 (#105)
+- **To Do**: 0
 
 ### Module Breakdown (v0.4)
 
@@ -1146,9 +1145,9 @@ Notes:
 
 ### Task Status Summary (M4)
 
-- Total Issues (M4): 14 (2 open, 12 closed)
-- Open: #105, #109
-- Closed to date: #76, #77, #78, #79, #80, #81, #82, #83, #106, #107, #108, #129
+- Total Issues (M4): 14 (0 open, 14 closed)
+- Open: none
+- Closed to date: #76, #77, #78, #79, #80, #81, #82, #83, #105, #106, #107, #108, #109, #129
 
 ### Carryover From v0.3 (to include in M4)
 
