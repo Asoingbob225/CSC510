@@ -48,26 +48,10 @@ export function useTodayWellnessLog() {
   const now = new Date();
 
   // Start of today in LOCAL time (00:00:00)
-  const startOfDayLocal = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    0,
-    0,
-    0,
-    0
-  );
+  const startOfDayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
 
   // End of today in LOCAL time (23:59:59.999)
-  const endOfDayLocal = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    23,
-    59,
-    59,
-    999
-  );
+  const endOfDayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
   return useQuery({
     queryKey: wellnessKeys.todayLog(startOfDayLocal.toISOString()),
@@ -186,26 +170,10 @@ export function useWellnessChartData(days = 7) {
   const now = new Date();
 
   // Start date: beginning of (today - days) in LOCAL time
-  const startDate = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() - days,
-    0,
-    0,
-    0,
-    0
-  );
+  const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - days, 0, 0, 0, 0);
 
   // End date: end of today in LOCAL time
-  const endDate = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    23,
-    59,
-    59,
-    999
-  );
+  const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
   const {
     data: logs,
