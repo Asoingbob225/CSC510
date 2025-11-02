@@ -1,50 +1,46 @@
-# Repository Rubric (project2 only)
+# **Repository Rubric (project2 only)**
 
 Each team starts with full marks but **loses** 0.33 marks for missing items:
 
 <!-- prettier-ignore-start -->
-|Notes|Evidence|Score|
-|-----|---------|--|
-|Workload is spread over the whole team (one team member is often Xtimes more productive than the others... --| |
-but nevertheless, here is a track record that everyone is contributing a lot)|evidence in GH| |
-|Number of commits|in GH| |
-|Number of commits: by different people|in GH| |
-|Issues reports: there are **many**| |
-|Issues are being closed|evidence in GH| |
-|Docs: doco generated, format not ugly |in GH| |
-|Docs: what: point descriptions of each class/function (in isolation)| | |
-|Docs: how: for common use cases X,Y,Z mini-tutorials showing worked examples on how to do X,Y,Z|doc page entries| | |
-|Docs: why: docs tell a story, motivate the whole thing, deliver a punchline that makes you want to rush out and use the thing| |
-|Docs: short video, animated, hosted on your repo. That convinces people why they want to work on your code.| |
-|Use of version control tools| |
-|Test cases exist|dozens of tests and those test cases are more than 30% of the code base| |
-|Test cases are routinely executed|E.g. travis-com.com or github actions or something| |
-|Issues are discussed before they are closed|even if you discuss in slack, need a sumamry statement here| |
-|Chat channel: exists|Link or screenshots| |
-|Test cases: a large proportion of the issues related to handling failing cases.|If a test case fails, open an issue and fix it| |
-|Evidence that the whole team is using the same tools: everyone can get to all tools and files| |
-|Evidence that the whole team is using the same tools (e.g. config files in the repo, updated by lots of different people)| |
-|Evidence that the whole team is using the same tools (e.g. tutor can ask anyone to share screen, they demonstrate the system running on their computer)| |
-|Evidence that the members of the team are working across multiple places in the code base| |
-|Short release cycles | (hard to see in short projects) project members are committing often enough so that everyone can get your work| |
-|The file .gitignore lists what files should not be saved to the repo. See [examples](https://github.com/github/gitignore)|in GH| |
-|The file INSTALL.md lists how to install the code|in GH| |
-|The file LICENSE.md lists rules of usage for this repo|in GH| |
-|The file CODE-OF-CONDUCT.md lists rules of behavior for this repo; e.g. see [example](https://github.com/probot/template/blob/master/CODE_OF_CONDUCT.md)|in GH| |
-|The file CONTRIBUTING.md lists coding standards and lots of tips on how to extend the system without screwing things up; e.g. see [example](https://github.com/probot/template/blob/master/CONTRIBUTING.md)|in GH| |
-|The file README.md contains all the following|in GH| |
-|Video|2min video of new functionality, showing a significant delta from prior.| |
-|DOI badge: exists. To get a Digitial Object Indentifier, regiser the project at [Zenodo](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content). DOI badges look like this: ![Zenodo doi badge](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.1234567-blue.svg) |in GH|  |
-|Badges showing your style checkers |config files in GH showing your config, badges in README| |
-|Badges showing your code formatters. |config files in GH showing your this formatter's  config, badges in README||
-|Badges showing your syntax checkers. |config files iin  GH showing this checker's config, badges in README  ||
-|Badges showing your code coverage tools|config files in GH, badges in README| |
-|Badges showing any other Other automated analysis tools|config files in GH, badges in README||
-| ||
+
+| Notes | Evidence | Score |
+| ----- | ----- | ----- |
+| Workload is spread over the whole team (one team member is often Xtimes more productive than the others... \-- |  |  |
+| but nevertheless, here is a track record that everyone is contributing a lot) | Manually verified (GH History) | 3 |
+| Number of commits | Manually verified (GH History) | 3 |
+| Number of commits: by different people | Manually verified (GH History) | 3 |
+| Issues reports: there are **many** | Manually verified (GH History) & `proj2/.github/issue_template/` | 3 |
+| Issues are being closed | Manually verified (GH History) | 3 |
+| Docs: doco generated, format not ugly | `proj2/docs/` directory (Very detailed) | 3 |
+| Docs: what: point descriptions of each class/function (in isolation) | `proj2/docs/2-DESIGN/api-design.md`, `proj2/docs/AGENT-PLAN/03-API-SPECIFICATIONS.md` | 3 |
+| Docs: how: for common use cases X,Y,Z mini-tutorials showing worked examples on how to do X,Y,Z | `proj2/docs/1-REQUIREMENTS/use-cases.md`, `proj2/backend/docs/ADMIN_SYSTEM_GUIDE.md` | 3 |
+| Docs: why: docs tell a story, motivate the whole thing, deliver a punchline that makes you want to rush out and use the thing | `proj2/docs/System_Introduction.md`, `proj2/docs/5-PROJECT-MANAGEMENT/project-charter.md` | 3 |
+| Docs: short video, animated, hosted on your repo. That convinces people why they want to work on your code. | Video file not found in repo | 0 ⚠️ |
+| Use of version control tools | `proj2/docs/3-IMPLEMENTATION/git-workflow.md`, `proj2/.github/pull_request_template.md` | 3 |
+| Test cases exist | `proj2/backend/tests/`, `proj2/frontend/src/**/*.test.tsx` (Numerous test files) | 3 |
+| Test cases are routinely executed | `proj2/.github/workflows/test-coverage.yml` | 3 |
+| Issues are discussed before they are closed | Manually verified (GH History) | 3 |
+| Chat channel: exists | GitHub Issues & Discord | 3 |
+| Test cases: a large proportion of the issues related to handling failing cases. | Manually verified (GH History) | ? |
+| Evidence that the whole team is using the same tools: everyone can get to all tools and files | External verification needed | 3 |
+| Evidence that the whole team is using the same tools (e.g. config files in the repo, updated by lots of different people) | `proj2/backend/pyproject.toml`, `proj2/frontend/package.json`, `proj2/.prettierrc` | 3 |
+| Evidence that the whole team is using the same tools (e.g. tutor can ask anyone to share screen, they demonstrate the system running on their computer) | External verification needed | ⚠️ |
+| Evidence that the members of the team are working across multiple places in the code base | Manually verified (GH History) | 3 |
+| Short release cycles | Manually verified (frequent commits) | 3 |
+| The file .gitignore lists what files should not be saved to the repo. See [examples](https://github.com/github/gitignore) | `proj2/.gitignore`, `proj2/backend/.gitignore`, `proj2/frontend/.gitignore` | 3 |
+| The file INSTALL.md lists how to install the code | `proj2/INSTALL.md` | 3 |
+| The file LICENSE.md lists rules of usage for this repo | `proj2/LICENSE` | 3 |
+| The file CODE-OF-CONDUCT.md lists rules of behavior for this repo; e.g. see [example](https://github.com/probot/template/blob/master/CODE_OF_CONDUCT.md) | `proj2/CODE_OF_CONDUCT.md` | 3 |
+| The file CONTRIBUTING.md lists coding standards and lots of tips on how to extend the system without screwing things up; e.g. see [example](https://github.com/probot/template/blob/master/CONTRIBUTING.md) | `proj2/CONTRIBUTING.md`, `proj2/docs/3-IMPLEMENTATION/coding-standards.md` | 3 |
+| The file README.md contains all the following | `proj2/README.md` | 3 |
+| Video | 2min video of new functionality, showing a significant delta from prior. | 0 ⚠️ |
+| DOI badge: exists. To get a Digitial Object Indentifier, regiser the project at [Zenodo](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content). DOI badges look like this: | `proj2/.zenodo.json` (file exists, setup for DOI) | 3 |
+| Badges showing your style checkers | `proj2/.github/workflows/linter.yml`, `proj2/backend/ruff.toml`, `proj2/frontend/eslint.config.js` | 3 |
+| Badges showing your code formatters. | `proj2/.github/workflows/format-check.yml`, `proj2/.prettierrc` | 3 |
+| Badges showing your syntax checkers. | (Same as style checkers) `proj2/.github/workflows/linter.yml` | 3 |
+| Badges showing your code coverage tools | `proj2/.github/workflows/test-coverage.yml`, `codecov.yml`, `.coveragerc` | 3 |
+| Badges showing any other Other automated analysis tools | `proj2/.github/dependabot.yml` | 3 |
+| **TOTAL SCORE (Scorable Items)** |  |  |
+
 <!-- prettier-ignore-end -->
-
-- **Column 1**: Required points (see table above and ).
-- **Column 2**: Supporting evidence (e.g., links to GitHub, documentation, reports).
-- **Column 3**: Self-assessment score (0 = none, 1 = a little, 2 = somewhat, 3 = a lot).
-- At the buttom, show the sum of Column 3.
-

@@ -41,8 +41,8 @@
 | Question 9.2 | Does your documentation adhere to appropriate accessibility conventions or standards? | ✅ | All with Markdown format, which can be converted to HTML to provide accessability |
 | **Q10 - Source Code Management** | | | |
 | Question 10.1 | Is your source code stored in a repository under revision control? | ✅ | Git repository with GitHub CI configured (`.github/workflows/`) |
-| Question 10.2 | Is each source code release a snapshot of the repository? | ❌ | No formal releases/tags found; |
-| Question 10.3 | Are releases tagged in the repository? | ❌ | No tags/releases referenced in repo content |
+| Question 10.2 | Is each source code release a snapshot of the repository? | ✅ | Used Github Release and tags |
+| Question 10.3 | Are releases tagged in the repository? | ✅ | Used Github Release and tags |
 | Question 10.4 | Is there a branch of the repository that is always stable (i.e. tests always pass, code always builds successfully)? | ✅ | CI runs on `main` (`.github/workflows/test-coverage.yml`) enforcing stability |
 | Question 10.5 | Do you back up your repository? | ✅ | Hosted on GitHub (redundant remote copy) |
 | **Q11 - Building & Installing** | | | |
