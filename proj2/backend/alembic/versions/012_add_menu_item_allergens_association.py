@@ -1,7 +1,7 @@
 """Add menu_item_allergens association table
 
-Revision ID: 08d3e2054895
-Revises: 206c2802d4a4
+Revision ID: 012_add_menu_item_allergens_association
+Revises: 011_merge_multiple_heads
 Create Date: 2025-11-01 14:00:23.673068
 
 """
@@ -14,8 +14,8 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "08d3e2054895"
-down_revision: Union[str, Sequence[str], None] = "206c2802d4a4"
+revision: str = "012_add_menu_item_allergens_association"
+down_revision: Union[str, Sequence[str], None] = "011_merge_multiple_heads"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
