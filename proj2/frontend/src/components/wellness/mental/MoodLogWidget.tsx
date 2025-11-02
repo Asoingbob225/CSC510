@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Smile } from 'lucide-react';
 import { z } from 'zod';
 import { type MoodLogCreate } from '@/lib/api';
+import { getCurrentTimestamp } from '@/lib/dateUtils';
 import { useCreateMoodLog } from '@/hooks/useWellnessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,11 +36,11 @@ function MoodLogWidget({ onSubmit }: MoodLogWidgetProps) {
         notes: notes.trim() || undefined,
       });
 
-      // Get today's date in YYYY-MM-DD format
-      const today = new Date().toISOString().split('T')[0];
+      // Get current timestamp with timezone
+      const occurredAt = getCurrentTimestamp();
 
       const moodData: MoodLogCreate = {
-        log_date: today,
+        occurred_at: occurredAt,
         mood_score: formData.mood_score,
         notes: formData.notes,
       };

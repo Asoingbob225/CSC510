@@ -49,8 +49,7 @@ describe('DashboardNavbar', () => {
       );
 
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
-      expect(screen.getByText('Recipes')).toBeInTheDocument();
-      expect(screen.getByText('Meal Plans')).toBeInTheDocument();
+      expect(screen.getByText('Wellness')).toBeInTheDocument();
 
       // Wait for async state updates to complete
       await waitFor(() => {
@@ -227,9 +226,8 @@ describe('DashboardNavbar', () => {
         </MemoryRouter>
       );
 
-      const dashboardLinks = screen.getAllByText('Dashboard');
-      const navLink = dashboardLinks.find((el) => el.tagName === 'A');
-      expect(navLink).toHaveAttribute('href', '/dashboard');
+      const dashboardLink = screen.getByText('Dashboard').closest('a');
+      expect(dashboardLink).toHaveAttribute('href', '/dashboard');
 
       // Wait for async state updates to complete
       await waitFor(() => {
@@ -237,7 +235,7 @@ describe('DashboardNavbar', () => {
       });
     });
 
-    it('has correct href for Recipes link', async () => {
+    it('has correct href for Wellness link', async () => {
       vi.spyOn(api.default, 'get').mockResolvedValue({
         data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
       });
@@ -248,28 +246,8 @@ describe('DashboardNavbar', () => {
         </MemoryRouter>
       );
 
-      const recipesLink = screen.getByText('Recipes');
-      expect(recipesLink).toHaveAttribute('href', '#recipes');
-
-      // Wait for async state updates to complete
-      await waitFor(() => {
-        expect(screen.getByText('John Doe')).toBeInTheDocument();
-      });
-    });
-
-    it('has correct href for Meal Plans link', async () => {
-      vi.spyOn(api.default, 'get').mockResolvedValue({
-        data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
-      });
-
-      render(
-        <MemoryRouter>
-          <DashboardNavbar />
-        </MemoryRouter>
-      );
-
-      const mealPlansLink = screen.getByText('Meal Plans');
-      expect(mealPlansLink).toHaveAttribute('href', '#meal-plans');
+      const wellnessLink = screen.getByText('Wellness').closest('a');
+      expect(wellnessLink).toHaveAttribute('href', '/wellness-tracking');
 
       // Wait for async state updates to complete
       await waitFor(() => {
@@ -420,6 +398,68 @@ describe('DashboardNavbar', () => {
       });
 
       // Component should render without errors even when role is missing
+    });
+  });
+
+  describe('Active Route Highlighting', () => {
+    it('highlights Dashboard link when on /dashboard route', async () => {
+      vi.spyOn(api.default, 'get').mockResolvedValue({
+        data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
+      });
+
+      render(
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <DashboardNavbar />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const dashboardLink = screen.getByText('Dashboard').closest('a');
+      expect(dashboardLink).toHaveClass('bg-emerald-100', 'text-emerald-700');
+    });
+
+    it('highlights Wellness link when on /wellness-tracking route', async () => {
+      vi.spyOn(api.default, 'get').mockResolvedValue({
+        data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
+      });
+
+      render(
+        <MemoryRouter initialEntries={['/wellness-tracking']}>
+          <DashboardNavbar />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const wellnessLink = screen.getByText('Wellness').closest('a');
+      expect(wellnessLink).toHaveClass('bg-blue-100', 'text-blue-700');
+    });
+
+    it('does not highlight links when on other routes', async () => {
+      vi.spyOn(api.default, 'get').mockResolvedValue({
+        data: { email: 'test@example.com', first_name: 'John', last_name: 'Doe' },
+      });
+
+      render(
+        <MemoryRouter initialEntries={['/health-profile']}>
+          <DashboardNavbar />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      const dashboardLink = screen.getByText('Dashboard').closest('a');
+      const wellnessLink = screen.getByText('Wellness').closest('a');
+
+      expect(dashboardLink).not.toHaveClass('bg-emerald-100');
+      expect(wellnessLink).not.toHaveClass('bg-blue-100');
     });
   });
 });

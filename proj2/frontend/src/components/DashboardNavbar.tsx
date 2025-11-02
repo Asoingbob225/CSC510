@@ -14,9 +14,9 @@ import {
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
 import apiClient, { clearAuthToken } from '@/lib/api';
-import { User, LogOut, Heart, Shield } from 'lucide-react';
+import { User, LogOut, Heart, Shield, Gauge, Calendar, Activity, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 
 interface UserInfo {
   email: string;
@@ -27,6 +27,7 @@ interface UserInfo {
 
 export function DashboardNavbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
   useEffect(() => {
@@ -87,28 +88,41 @@ export function DashboardNavbar() {
               <NavigationMenuList className="gap-2">
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
+                    className={`rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100 ${
+                      location.pathname === '/dashboard' ? 'bg-emerald-100 text-emerald-700' : ''
+                    }`}
                     href="/dashboard"
                   >
-                    Dashboard
+                    <div className="flex items-center">
+                      <Gauge className="mr-1 size-4" />
+                      Dashboard
+                    </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
+                    className={`rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100 ${
+                      location.pathname === '/wellness-tracking' ? 'bg-blue-100 text-blue-700' : ''
+                    }`}
                     href="/wellness-tracking"
                   >
-                    Wellness
+                    <div className="flex items-center">
+                      <Activity className="mr-1 size-4" />
+                      Wellness
+                    </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
-                    href="#recipes"
+                    className={`${location.pathname === '/daily-log' ? 'bg-purple-100 text-purple-700' : ''} rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100`}
+                    href="/daily-log"
                   >
-                    Recipes
+                    <div className="flex items-center">
+                      <Calendar className="mr-1 size-4" />
+                      Daily Meal
+                    </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
@@ -117,7 +131,10 @@ export function DashboardNavbar() {
                     className="rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-100"
                     href="#meal-plans"
                   >
-                    Meal Plans
+                    <div className="flex items-center">
+                      <Search className="mr-1 size-4" />
+                      Explore More
+                    </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>

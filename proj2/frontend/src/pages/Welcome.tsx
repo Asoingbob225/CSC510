@@ -249,7 +249,7 @@ function Welcome() {
                   </li>
                 </ul>
               </div>
-              <div className="relative overflow-hidden rounded-3xl bg-white p-[1px] shadow-lg">
+              <div className="relative overflow-hidden rounded-3xl bg-white p-px shadow-lg">
                 <div className="flex h-full flex-col justify-between rounded-3xl p-10 text-slate-700">
                   <div>
                     <p className="text-xs font-semibold tracking-[0.3em] text-emerald-500 uppercase">

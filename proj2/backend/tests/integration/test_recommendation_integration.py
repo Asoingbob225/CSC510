@@ -427,11 +427,13 @@ class TestSampleUserValidation:
     ):
         """Test that users with low mood get tryptophan-rich food recommendations."""
         # Add low mood log
-        today = date.today()
+        from datetime import datetime, timezone
+
+        today_dt = datetime.now(timezone.utc).replace(tzinfo=None)
         mood_log = MoodLogDB(
             id="low_mood_log",
             user_id=integration_user_with_full_profile.id,
-            log_date=today,
+            occurred_at_utc=today_dt,
             mood_score=3,  # Low mood (1-10 scale)
             encrypted_notes="Feeling down today",
         )
@@ -491,11 +493,13 @@ class TestSampleUserValidation:
     ):
         """Test that users with high stress get magnesium-rich food recommendations."""
         # Add high stress log
-        today = date.today()
+        from datetime import datetime, timezone
+
+        today_dt = datetime.now(timezone.utc).replace(tzinfo=None)
         stress_log = StressLogDB(
             id="high_stress_log",
             user_id=integration_user_with_full_profile.id,
-            log_date=today,
+            occurred_at_utc=today_dt,
             stress_level=8,  # High stress (1-10 scale)
             encrypted_notes="Very stressful day",
         )

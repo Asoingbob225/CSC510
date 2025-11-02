@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Brain } from 'lucide-react';
 import { z } from 'zod';
 import { type StressLogCreate } from '@/lib/api';
+import { getCurrentTimestamp } from '@/lib/dateUtils';
 import { useCreateStressLog } from '@/hooks/useWellnessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,11 +39,11 @@ function StressLogWidget({ onSubmit }: StressLogWidgetProps) {
         notes: notes.trim() || undefined,
       });
 
-      // Get today's date in YYYY-MM-DD format
-      const today = new Date().toISOString().split('T')[0];
+      // Get today's date in ISO8601 format with timezone
+      const occurredAt = getCurrentTimestamp();
 
       const stressData: StressLogCreate = {
-        log_date: today,
+        occurred_at: occurredAt,
         stress_level: formData.stress_level,
         triggers: formData.triggers,
         notes: formData.notes,

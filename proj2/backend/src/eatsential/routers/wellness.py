@@ -1,13 +1,13 @@
 """API routes for mental wellness logging (mood, stress, sleep)."""
 
-from datetime import date
+from datetime import datetime
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..db.database import get_db
-from ..models.models import LogType
+from ..models.models import LogType, UserDB
 from ..schemas.schemas import (
     MoodLogCreate,
     MoodLogResponse,
@@ -53,7 +53,14 @@ def create_mood_log(
 
     """
     try:
-        db_log = MentalWellnessService.log_mood(db, current_user.id, mood_data)
+        # Get full user object from database for timezone info
+        user_db = db.query(UserDB).filter(UserDB.id == current_user.id).first()
+        if not user_db:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        db_log = MentalWellnessService.log_mood(db, current_user.id, mood_data, user_db)
 
         # Convert to response with decrypted notes
         from ..utils.security import decrypt_sensitive_data
@@ -61,7 +68,7 @@ def create_mood_log(
         return MoodLogResponse(
             id=db_log.id,
             user_id=db_log.user_id,
-            log_date=db_log.log_date,
+            occurred_at_utc=db_log.occurred_at_utc,
             mood_score=int(db_log.mood_score),
             notes=decrypt_sensitive_data(db_log.encrypted_notes),
             created_at=db_log.created_at,
@@ -107,7 +114,16 @@ def create_stress_log(
 
     """
     try:
-        db_log = MentalWellnessService.log_stress(db, current_user.id, stress_data)
+        # Get full user object from database for timezone info
+        user_db = db.query(UserDB).filter(UserDB.id == current_user.id).first()
+        if not user_db:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        db_log = MentalWellnessService.log_stress(
+            db, current_user.id, stress_data, user_db
+        )
 
         # Convert to response with decrypted data
         from ..utils.security import decrypt_sensitive_data
@@ -115,7 +131,7 @@ def create_stress_log(
         return StressLogResponse(
             id=db_log.id,
             user_id=db_log.user_id,
-            log_date=db_log.log_date,
+            occurred_at_utc=db_log.occurred_at_utc,
             stress_level=int(db_log.stress_level),
             triggers=decrypt_sensitive_data(db_log.encrypted_triggers),
             notes=decrypt_sensitive_data(db_log.encrypted_notes),
@@ -160,7 +176,16 @@ def create_sleep_log(
 
     """
     try:
-        db_log = MentalWellnessService.log_sleep(db, current_user.id, sleep_data)
+        # Get full user object from database for timezone info
+        user_db = db.query(UserDB).filter(UserDB.id == current_user.id).first()
+        if not user_db:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        db_log = MentalWellnessService.log_sleep(
+            db, current_user.id, sleep_data, user_db
+        )
 
         # Convert to response with decrypted notes
         from ..utils.security import decrypt_sensitive_data
@@ -168,7 +193,7 @@ def create_sleep_log(
         return SleepLogResponse(
             id=db_log.id,
             user_id=db_log.user_id,
-            log_date=db_log.log_date,
+            occurred_at_utc=db_log.occurred_at_utc,
             duration_hours=float(db_log.duration_hours),
             quality_score=int(db_log.quality_score),
             notes=decrypt_sensitive_data(db_log.encrypted_notes),
@@ -192,8 +217,12 @@ def create_sleep_log(
 def get_wellness_logs(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
     db: Session = Depends(get_db),
-    start_date: Optional[date] = Query(None, description="Filter by start date"),
-    end_date: Optional[date] = Query(None, description="Filter by end date"),
+    start_date: Optional[datetime] = Query(
+        None, description="Filter by start datetime (ISO 8601 format, UTC)"
+    ),
+    end_date: Optional[datetime] = Query(
+        None, description="Filter by end datetime (ISO 8601 format, UTC)"
+    ),
     log_type: Optional[LogType] = Query(
         None, description="Filter by type: 'mood', 'stress', or 'sleep'"
     ),
@@ -203,8 +232,8 @@ def get_wellness_logs(
     Args:
         current_user: Authenticated user
         db: Database session
-        start_date: Optional start date filter
-        end_date: Optional end date filter
+        start_date: Optional start datetime filter (UTC)
+        end_date: Optional end datetime filter (UTC)
         log_type: Optional log type filter ('mood', 'stress', 'sleep')
 
     Returns:
@@ -266,7 +295,7 @@ def get_mood_log(
     return MoodLogResponse(
         id=db_log.id,
         user_id=db_log.user_id,
-        log_date=db_log.log_date,
+        occurred_at_utc=db_log.occurred_at_utc,
         mood_score=int(db_log.mood_score),
         notes=decrypt_sensitive_data(db_log.encrypted_notes),
         created_at=db_log.created_at,
@@ -309,7 +338,7 @@ def update_mood_log(
     return MoodLogResponse(
         id=db_log.id,
         user_id=db_log.user_id,
-        log_date=db_log.log_date,
+        occurred_at_utc=db_log.occurred_at_utc,
         mood_score=int(db_log.mood_score),
         notes=decrypt_sensitive_data(db_log.encrypted_notes),
         created_at=db_log.created_at,
@@ -372,7 +401,7 @@ def get_stress_log(
     return StressLogResponse(
         id=db_log.id,
         user_id=db_log.user_id,
-        log_date=db_log.log_date,
+        occurred_at_utc=db_log.occurred_at_utc,
         stress_level=int(db_log.stress_level),
         triggers=decrypt_sensitive_data(db_log.encrypted_triggers),
         notes=decrypt_sensitive_data(db_log.encrypted_notes),
@@ -416,7 +445,7 @@ def update_stress_log(
     return StressLogResponse(
         id=db_log.id,
         user_id=db_log.user_id,
-        log_date=db_log.log_date,
+        occurred_at_utc=db_log.occurred_at_utc,
         stress_level=int(db_log.stress_level),
         triggers=decrypt_sensitive_data(db_log.encrypted_triggers),
         notes=decrypt_sensitive_data(db_log.encrypted_notes),
@@ -480,7 +509,7 @@ def get_sleep_log(
     return SleepLogResponse(
         id=db_log.id,
         user_id=db_log.user_id,
-        log_date=db_log.log_date,
+        occurred_at_utc=db_log.occurred_at_utc,
         duration_hours=float(db_log.duration_hours),
         quality_score=int(db_log.quality_score),
         notes=decrypt_sensitive_data(db_log.encrypted_notes),
@@ -524,7 +553,7 @@ def update_sleep_log(
     return SleepLogResponse(
         id=db_log.id,
         user_id=db_log.user_id,
-        log_date=db_log.log_date,
+        occurred_at_utc=db_log.occurred_at_utc,
         duration_hours=float(db_log.duration_hours),
         quality_score=int(db_log.quality_score),
         notes=decrypt_sensitive_data(db_log.encrypted_notes),

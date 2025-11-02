@@ -79,8 +79,9 @@ describe('MoodLogWidget', () => {
       id: '1',
       user_id: 'user1',
       mood_score: 7,
-      log_date: new Date().toISOString().split('T')[0],
+      occurred_at_utc: new Date().toISOString(),
       created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       notes: 'Feeling good',
     });
 
@@ -104,7 +105,7 @@ describe('MoodLogWidget', () => {
         expect.objectContaining({
           mood_score: 7, // 5 (default) + 2 (arrow presses) = 7
           notes: 'Feeling good',
-          log_date: expect.any(String),
+          occurred_at: expect.any(String),
         })
       );
     });
@@ -121,8 +122,9 @@ describe('MoodLogWidget', () => {
                 id: '1',
                 user_id: 'user1',
                 mood_score: 5,
-                log_date: new Date().toISOString().split('T')[0],
+                occurred_at_utc: new Date().toISOString(),
                 created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
               }),
             100
           )
@@ -146,8 +148,9 @@ describe('MoodLogWidget', () => {
       id: '1',
       user_id: 'user1',
       mood_score: 5,
-      log_date: new Date().toISOString().split('T')[0],
+      occurred_at_utc: new Date().toISOString(),
       created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     });
 
     const onSubmit = vi.fn();

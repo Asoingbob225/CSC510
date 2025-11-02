@@ -3,33 +3,83 @@
  * Shows today's wellness status and quick access to tracking
  */
 
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { Activity, TrendingUp, ArrowRight, Brain, Moon, Smile } from 'lucide-react';
-import { useTodayWellnessLog } from '@/hooks/useWellnessData';
-import { useActiveGoals } from '@/hooks/useGoalsData';
+import { Activity, ArrowRight, Brain, Moon, Smile } from 'lucide-react';
+import { useTodayWellnessLog, useWellnessLogs } from '@/hooks/useWellnessData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Progress } from '@/components/ui/progress';
-import { calculateGoalProgress } from '@/hooks/useGoalsData';
+import { Line, LineChart, ResponsiveContainer } from 'recharts';
+import { utcToLocalDate } from '@/lib/dateUtils';
 
 export function WellnessOverviewCard() {
   const navigate = useNavigate();
   const { data: todayLog, isLoading: logLoading } = useTodayWellnessLog();
-  const { data: activeGoals = [], isLoading: goalsLoading } = useActiveGoals();
 
-  const isLoading = logLoading || goalsLoading;
+  // Get last 7 days of wellness data (in local timezone)
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 6); // Last 7 days including today
 
-  // Get mood emoji
-  const getMoodEmoji = (score?: number | null) => {
-    if (!score) return '❓';
-    if (score >= 9) return '🤩';
-    if (score >= 7) return '😊';
-    if (score >= 5) return '😐';
-    if (score >= 3) return '😕';
-    return '😢';
+  // Format dates as YYYY-MM-DD in local timezone
+  const formatLocalDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
+
+  const { data: weekLogs, isLoading: weekLoading } = useWellnessLogs({
+    start_date: formatLocalDate(startDate),
+    end_date: formatLocalDate(endDate),
+  });
+
+  // Prepare chart data for the last 7 days
+  const chartData = useMemo(() => {
+    if (!weekLogs || weekLogs.length === 0) return [];
+
+    // Get today's local date
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    // Group logs by date
+    const logsByDate = new Map<
+      string,
+      {
+        mood?: number;
+        stress?: number;
+        sleep?: number;
+        isToday: boolean;
+      }
+    >();
+
+    // Process all logs and group by date
+    weekLogs.forEach((log) => {
+      // Convert UTC datetime to local date
+      if (!log.occurred_at_utc) return;
+      const dateStr = utcToLocalDate(log.occurred_at_utc);
+
+      if (!logsByDate.has(dateStr)) {
+        logsByDate.set(dateStr, { isToday: dateStr === today });
+      }
+
+      const dayData = logsByDate.get(dateStr)!;
+      if (log.mood_score !== undefined) dayData.mood = log.mood_score;
+      if (log.stress_level !== undefined) dayData.stress = log.stress_level;
+      if (log.quality_score !== undefined) dayData.sleep = log.quality_score;
+    });
+
+    // Convert to array and sort by date (oldest first for left-to-right display)
+    const days = Array.from(logsByDate.entries())
+      .map(([date, data]) => ({
+        date,
+        ...data,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    return days;
+  }, [weekLogs]);
 
   // Get stress color
   const getStressColor = (level?: number | null) => {
@@ -49,9 +99,90 @@ export function WellnessOverviewCard() {
     return 'text-red-600';
   };
 
-  if (isLoading) {
+  // Custom dot component for highlighting today's value
+  const CustomDot = (props: {
+    cx?: number;
+    cy?: number;
+    payload?: { isToday?: boolean };
+    dataKey?: string;
+    activeColor?: string;
+  }) => {
+    const { cx, cy, payload, activeColor } = props;
+    if (!cx || !cy || !payload) return null;
+
+    if (payload.isToday) {
+      return (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={4}
+          fill={activeColor}
+          stroke="white"
+          strokeWidth={2}
+          className="drop-shadow-md"
+        />
+      );
+    }
+    return <circle cx={cx} cy={cy} r={2} fill="hsl(215, 20%, 65%)" fillOpacity={0.5} />;
+  };
+
+  // Wellness metric row component
+  const WellnessMetricRow = ({
+    icon: Icon,
+    iconBgColor,
+    iconColor,
+    label,
+    dataKey,
+    strokeColor,
+    value,
+    valueColorClass,
+  }: {
+    icon: React.ComponentType<{ className?: string }>;
+    iconBgColor: string;
+    iconColor: string;
+    label: string;
+    dataKey: 'mood' | 'stress' | 'sleep';
+    strokeColor: string;
+    value?: number | null;
+    valueColorClass?: string;
+  }) => (
+    <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
+      <div
+        className={`flex size-10 shrink-0 items-center justify-center rounded-full ${iconBgColor}`}
+      >
+        <Icon className={`size-5 ${iconColor}`} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-medium text-muted-foreground">{label}</p>
+        <div className="mt-1 h-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+              <Line
+                type="monotone"
+                dataKey={dataKey}
+                stroke={strokeColor}
+                strokeWidth={2}
+                dot={(props) => (
+                  <CustomDot {...props} dataKey={dataKey} activeColor={strokeColor} />
+                )}
+                connectNulls
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        <span className={`text-2xl font-bold ${valueColorClass || 'text-foreground'}`}>
+          {value || '-'}
+        </span>
+        <span className="text-xs text-muted-foreground">/10</span>
+      </div>
+    </div>
+  );
+
+  if (logLoading || weekLoading) {
     return (
-      <Card className="col-span-full lg:col-span-2">
+      <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="space-y-1">
@@ -61,25 +192,22 @@ export function WellnessOverviewCard() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-          </div>
+          <Skeleton className="h-32 w-full" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="col-span-full transition-shadow hover:shadow-lg lg:col-span-2">
+    <Card className="transition-shadow hover:shadow-lg">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2 text-xl">
-              <Activity className="size-5 text-purple-600" />
-              Wellness Tracking
+              <Activity className="size-5 text-blue-600" />
+              Today&apos;s Wellness
             </CardTitle>
-            <CardDescription>Track your mental and physical wellness journey</CardDescription>
+            <CardDescription>Track your mental and physical wellness</CardDescription>
           </div>
           <Button
             variant="ghost"
@@ -93,166 +221,62 @@ export function WellnessOverviewCard() {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        {/* Today's Status */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-700">Today&apos;s Status</h3>
+      <CardContent className="space-y-4">
+        {todayLog && (todayLog.mood_score || todayLog.stress_level || todayLog.quality_score) ? (
+          <div className="space-y-3">
+            {/* Mood Row */}
+            <WellnessMetricRow
+              icon={Smile}
+              iconBgColor="bg-blue-50"
+              iconColor="text-blue-600"
+              label="Mood"
+              dataKey="mood"
+              strokeColor="hsl(221, 83%, 53%)"
+              value={todayLog.mood_score}
+            />
 
-          {todayLog && (todayLog.mood_score || todayLog.stress_level || todayLog.quality_score) ? (
-            <div className="grid gap-3 sm:grid-cols-3">
-              {/* Mood */}
-              <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-blue-100">
-                  <Smile className="size-5 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs font-medium text-gray-600">Mood</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-gray-900">
-                      {todayLog.mood_score || '-'}/10
-                    </span>
-                    <span className="text-xl">{getMoodEmoji(todayLog.mood_score)}</span>
-                  </div>
-                </div>
-              </div>
+            {/* Stress Row */}
+            <WellnessMetricRow
+              icon={Brain}
+              iconBgColor="bg-orange-50"
+              iconColor="text-orange-600"
+              label="Stress"
+              dataKey="stress"
+              strokeColor="hsl(25, 95%, 53%)"
+              value={todayLog.stress_level}
+              valueColorClass={getStressColor(todayLog.stress_level)}
+            />
 
-              {/* Stress */}
-              <div className="flex items-center gap-3 rounded-lg bg-orange-50 p-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-orange-100">
-                  <Brain className="size-5 text-orange-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs font-medium text-gray-600">Stress</p>
-                  <p className={`text-lg font-bold ${getStressColor(todayLog.stress_level)}`}>
-                    {todayLog.stress_level || '-'}/10
-                  </p>
-                </div>
-              </div>
-
-              {/* Sleep */}
-              <div className="flex items-center gap-3 rounded-lg bg-purple-50 p-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-purple-100">
-                  <Moon className="size-5 text-purple-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs font-medium text-gray-600">Sleep</p>
-                  <p className={`text-lg font-bold ${getSleepColor(todayLog.quality_score)}`}>
-                    {todayLog.quality_score || '-'}/10
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-6 text-center">
-              <p className="mb-3 text-sm text-gray-600">No wellness data logged today</p>
-              <Button
-                onClick={() => navigate('/wellness-tracking')}
-                size="sm"
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                Log Your First Entry
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Active Goals */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-700">Active Goals</h3>
-            {activeGoals.length > 0 && (
-              <Badge variant="secondary" className="text-xs">
-                {activeGoals.length} {activeGoals.length === 1 ? 'goal' : 'goals'}
-              </Badge>
-            )}
+            {/* Sleep Row */}
+            <WellnessMetricRow
+              icon={Moon}
+              iconBgColor="bg-purple-50"
+              iconColor="text-purple-600"
+              label="Sleep"
+              dataKey="sleep"
+              strokeColor="hsl(271, 91%, 65%)"
+              value={todayLog.quality_score}
+              valueColorClass={getSleepColor(todayLog.quality_score)}
+            />
           </div>
-
-          {activeGoals.length > 0 ? (
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {activeGoals.slice(0, 6).map((goal) => {
-                const formatTargetType = (targetType: string) => {
-                  return targetType
-                    .split('_')
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ');
-                };
-
-                return (
-                  <div
-                    key={goal.id}
-                    className="rounded-lg border border-gray-200 bg-white p-2.5 transition-all hover:border-purple-300 hover:shadow-sm"
-                  >
-                    <div className="mb-1.5 flex items-start justify-between gap-1">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-medium text-gray-900">
-                          {formatTargetType(goal.target_type)}
-                        </p>
-                        <p className="text-[10px] text-gray-500 capitalize">{goal.goal_type}</p>
-                      </div>
-                      <Badge
-                        variant="outline"
-                        className={`h-4 shrink-0 px-1.5 py-0 text-[10px] ${
-                          goal.status === 'active'
-                            ? 'border-blue-200 bg-blue-50 text-blue-700'
-                            : goal.status === 'completed'
-                              ? 'border-green-200 bg-green-50 text-green-700'
-                              : 'border-gray-200 bg-gray-50 text-gray-700'
-                        }`}
-                      >
-                        {goal.status}
-                      </Badge>
-                    </div>
-                    <div className="space-y-0.5">
-                      <div className="flex items-center justify-between text-[10px] text-gray-600">
-                        <span>Progress</span>
-                        <div className="flex items-center gap-0.5">
-                          <TrendingUp className="size-2.5" />
-                          <span className="font-medium">
-                            {calculateGoalProgress(goal).toFixed(0)}%
-                          </span>
-                        </div>
-                      </div>
-                      <Progress value={calculateGoalProgress(goal)} className="h-1" />
-                      <div className="flex items-center justify-between text-[10px] text-gray-500">
-                        <span>{goal.current_value}</span>
-                        <span>/ {goal.target_value}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+        ) : (
+          <div className="rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-blue-100">
+              <Activity className="size-8 text-blue-600" />
             </div>
-          ) : (
-            <div className="rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 p-4 text-center">
-              <p className="mb-2 text-sm text-gray-600">No active goals set</p>
-              <Button onClick={() => navigate('/wellness-tracking')} size="sm" variant="outline">
-                Set Your First Goal
-              </Button>
-            </div>
-          )}
-
-          {activeGoals.length > 6 && (
+            <h3 className="mb-2 text-sm font-semibold text-gray-900">No wellness data today</h3>
+            <p className="mb-4 text-xs text-gray-600">
+              Start tracking your mood, stress, and sleep to build better habits
+            </p>
             <Button
-              variant="link"
-              size="sm"
               onClick={() => navigate('/wellness-tracking')}
-              className="w-full text-xs text-purple-600 hover:text-purple-700"
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700"
             >
-              View {activeGoals.length - 6} more {activeGoals.length - 6 === 1 ? 'goal' : 'goals'}
+              Log Your First Entry
             </Button>
-          )}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="border-t border-gray-200 pt-4">
-          <Button
-            onClick={() => navigate('/wellness-tracking')}
-            className="w-full bg-emerald-500 text-white hover:bg-emerald-600"
-          >
-            <Activity className="mr-2 size-4" />
-            Go to Wellness Tracking
-          </Button>
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

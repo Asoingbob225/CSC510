@@ -2,17 +2,10 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Progress } from '@/components/ui/progress';
-import { ChefHat, RefreshCw, SlidersHorizontal, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { ChefHat, RefreshCw, Sparkles, UtensilsCrossed, Eraser, Bot, Baseline } from 'lucide-react';
 import { useMealRecommendations } from '@/hooks/useRecommendations';
 import type {
   MealRecommendationResponse,
@@ -45,6 +38,21 @@ const priceRanges = [
   { value: '$$$$', label: 'Fine Dining ($$$$)' },
 ] as const;
 
+// Common dietary preferences
+const COMMON_DIETS = ['vegetarian', 'vegan', 'gluten-free', 'dairy-free', 'keto', 'paleo'] as const;
+
+// Common cuisines
+const COMMON_CUISINES = [
+  'italian',
+  'chinese',
+  'japanese',
+  'mexican',
+  'indian',
+  'thai',
+  'american',
+  'mediterranean',
+] as const;
+
 const clampScore = (value: unknown): number => {
   const parsed =
     typeof value === 'number' ? value : typeof value === 'string' ? Number.parseFloat(value) : 0;
@@ -53,12 +61,6 @@ const clampScore = (value: unknown): number => {
   }
   return Math.min(1, Math.max(0, parsed));
 };
-
-const parseDelimitedList = (value: string): string[] =>
-  value
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter((entry) => entry.length > 0);
 
 const extractRestaurant = (explanation: string, fallback?: string): string | undefined => {
   const match = explanation.match(/restaurant[:\s-]+([^;,\n]+)/i);
@@ -182,14 +184,17 @@ export function RecommendationCarousel({
     initialFilters
   );
   const [formState, setFormState] = useState<{
-    diet: string;
-    cuisine: string;
+    diet: string[];
+    cuisine: string[];
     priceRange: string;
   }>(() => ({
-    diet: initialFilters?.diet?.join(', ') ?? '',
-    cuisine: initialFilters?.cuisine?.join(', ') ?? '',
+    diet: initialFilters?.diet ?? [],
+    cuisine: initialFilters?.cuisine ?? [],
     priceRange: initialFilters?.price_range ?? '',
   }));
+
+  // Track whether user has manually requested recommendations
+  const [hasRequestedRecommendations, setHasRequestedRecommendations] = useState(false);
 
   const appliedOptions = useMemo(() => {
     const filters =
@@ -199,10 +204,40 @@ export function RecommendationCarousel({
 
   const { data, isLoading, isError, error, refetch, isFetching } = useMealRecommendations(
     userId,
-    appliedOptions
+    appliedOptions,
+    hasRequestedRecommendations // Only fetch when user requests
   );
 
   const recommendations = useMemo(() => normalizeRecommendationResponse(data), [data]);
+
+  const handleApplyFilters = () => {
+    const filters: RecommendationFiltersPayload = {};
+
+    if (formState.diet.length > 0) {
+      filters.diet = formState.diet;
+    }
+    if (formState.cuisine.length > 0) {
+      filters.cuisine = formState.cuisine;
+    }
+    if (formState.priceRange) {
+      filters.price_range = formState.priceRange as RecommendationFiltersPayload['price_range'];
+    }
+
+    setAppliedFilters(Object.keys(filters).length > 0 ? filters : undefined);
+  };
+
+  const handleGetRecommendations = () => {
+    handleApplyFilters();
+    setHasRequestedRecommendations(true);
+    if (hasRequestedRecommendations) {
+      void refetch();
+    }
+  };
+
+  const handleUpdateRecommendations = () => {
+    handleApplyFilters();
+    void refetch();
+  };
 
   const handleRefresh = () => {
     void refetch();
@@ -212,48 +247,193 @@ export function RecommendationCarousel({
     setMode(nextMode);
   };
 
-  const handleApplyFilters = (event: React.FormEvent) => {
-    event.preventDefault();
-    const filters: RecommendationFiltersPayload = {};
-    const dietList = parseDelimitedList(formState.diet);
-    const cuisineList = parseDelimitedList(formState.cuisine);
-
-    if (dietList.length > 0) {
-      filters.diet = dietList;
-    }
-    if (cuisineList.length > 0) {
-      filters.cuisine = cuisineList;
-    }
-    if (formState.priceRange) {
-      filters.price_range = formState.priceRange as RecommendationFiltersPayload['price_range'];
-    }
-
-    setAppliedFilters(Object.keys(filters).length > 0 ? filters : undefined);
-  };
-
   const handleClearFilters = () => {
     setFormState({
-      diet: '',
-      cuisine: '',
+      diet: [],
+      cuisine: [],
       priceRange: '',
     });
-    setAppliedFilters(undefined);
   };
+
+  // Initial state - user hasn't requested recommendations yet
+  if (!hasRequestedRecommendations) {
+    return (
+      <Card className="border-gray-100 bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-emerald-600" />
+            <CardTitle>Meal Recommendations</CardTitle>
+          </div>
+          <CardDescription>
+            Get personalized meal suggestions based on your preferences
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {/* Mode Selection */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Recommendation Engine</Label>
+              <div className="flex gap-2">
+                {(['llm', 'baseline'] as RecommendationMode[]).map((option) => (
+                  <Button
+                    key={option}
+                    type="button"
+                    size="sm"
+                    variant={mode === option ? 'default' : 'outline'}
+                    onClick={() => setMode(option)}
+                    className={
+                      mode === option
+                        ? 'gap-2 bg-emerald-500 text-white hover:bg-emerald-600'
+                        : 'gap-2 border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }
+                  >
+                    {option === 'llm' ? (
+                      <>
+                        <Bot className="h-4 w-4" />
+                        AI Powered
+                      </>
+                    ) : (
+                      <>
+                        <Baseline className="h-4 w-4" />
+                        Basic
+                      </>
+                    )}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {mode === 'llm'
+                  ? 'Use advanced AI to analyze your preferences and health profile'
+                  : 'Quick recommendations based on basic criteria'}
+              </p>
+            </div>
+
+            {/* Filters Form */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Dietary Restrictions</Label>
+                <ToggleGroup
+                  type="multiple"
+                  value={formState.diet}
+                  onValueChange={(value) => setFormState((prev) => ({ ...prev, diet: value }))}
+                  className="flex-wrap justify-start"
+                  variant="outline"
+                  spacing={2}
+                  size="sm"
+                >
+                  {COMMON_DIETS.map((diet) => (
+                    <ToggleGroupItem
+                      key={diet}
+                      value={diet}
+                      className="border-gray-300 text-gray-700 capitalize hover:bg-gray-50 data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-500 data-[state=on]:text-white"
+                    >
+                      {diet}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Preferred Cuisines</Label>
+                <ToggleGroup
+                  type="multiple"
+                  value={formState.cuisine}
+                  onValueChange={(value) => setFormState((prev) => ({ ...prev, cuisine: value }))}
+                  className="flex-wrap justify-start"
+                  variant="outline"
+                  spacing={2}
+                  size="sm"
+                >
+                  {COMMON_CUISINES.map((cuisine) => (
+                    <ToggleGroupItem
+                      key={cuisine}
+                      value={cuisine}
+                      className="border-gray-300 text-gray-700 capitalize hover:bg-gray-50 data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-500 data-[state=on]:text-white"
+                    >
+                      {cuisine}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Price Range</Label>
+                <ToggleGroup
+                  type="single"
+                  value={formState.priceRange}
+                  onValueChange={(value) =>
+                    setFormState((prev) => ({ ...prev, priceRange: value || '' }))
+                  }
+                  className="flex-wrap justify-start"
+                  variant="outline"
+                  spacing={2}
+                  size="sm"
+                >
+                  {priceRanges.map((range) => (
+                    <ToggleGroupItem
+                      key={range.value}
+                      value={range.value}
+                      className="border-gray-300 text-gray-700 hover:bg-gray-50 data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-500 data-[state=on]:text-white"
+                    >
+                      {range.label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearFilters}
+                  disabled={
+                    formState.diet.length === 0 &&
+                    formState.cuisine.length === 0 &&
+                    !formState.priceRange
+                  }
+                  className="gap-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  <Eraser className="h-4 w-4" />
+                  Clear Filters
+                </Button>
+              </div>
+            </div>
+
+            {/* Get Recommendations Button */}
+            <div className="border-t border-gray-200 pt-4">
+              <Button
+                onClick={handleGetRecommendations}
+                className="w-full bg-emerald-500 text-white shadow-lg hover:bg-emerald-600"
+                size="lg"
+              >
+                <ChefHat className="mr-2 h-5 w-5" />
+                Get Recommendations
+              </Button>
+              <p className="mt-2 text-center text-xs text-muted-foreground">
+                Click to get personalized meal suggestions
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Loading state
   if (isLoading) {
     return (
-      <Card>
+      <Card className="bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Sparkles className="h-5 w-5 text-emerald-600" />
             <CardTitle>Meal Recommendations</CardTitle>
           </div>
           <CardDescription>Loading personalized recommendations...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-12">
-            <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+            <RefreshCw className="h-8 w-8 animate-spin text-gray-500" />
           </div>
         </CardContent>
       </Card>
@@ -263,10 +443,10 @@ export function RecommendationCarousel({
   // Error state
   if (isError) {
     return (
-      <Card>
+      <Card className="bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Sparkles className="h-5 w-5 text-emerald-600" />
             <CardTitle>Meal Recommendations</CardTitle>
           </div>
           <CardDescription>Unable to load recommendations</CardDescription>
@@ -276,7 +456,12 @@ export function RecommendationCarousel({
             <p className="text-sm text-red-600">
               {error instanceof Error ? error.message : 'Failed to load recommendations'}
             </p>
-            <Button onClick={handleRefresh} variant="outline" size="sm">
+            <Button
+              onClick={handleRefresh}
+              variant="outline"
+              size="sm"
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
               <RefreshCw className="mr-2 h-4 w-4" />
               Try Again
             </Button>
@@ -289,21 +474,26 @@ export function RecommendationCarousel({
   // Empty state
   if (recommendations.length === 0) {
     return (
-      <Card>
+      <Card className="bg-linear-to-br from-white to-emerald-50/30">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Sparkles className="h-5 w-5 text-emerald-600" />
             <CardTitle>Meal Recommendations</CardTitle>
           </div>
           <CardDescription>No recommendations available yet</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center gap-4 py-8">
-            <UtensilsCrossed className="h-12 w-12 text-muted-foreground" />
+            <UtensilsCrossed className="h-12 w-12 text-emerald-400" />
             <p className="text-center text-sm text-muted-foreground">
               Complete your health profile or adjust the filters to see personalized meal ideas.
             </p>
-            <Button onClick={handleRefresh} variant="outline" size="sm">
+            <Button
+              onClick={handleRefresh}
+              variant="outline"
+              size="sm"
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
               <RefreshCw className="mr-2 h-4 w-4" />
               Check Again
             </Button>
@@ -314,11 +504,11 @@ export function RecommendationCarousel({
   }
 
   return (
-    <Card>
+    <Card className="border-gray-100 bg-linear-to-br from-white to-emerald-50/30 transition-shadow hover:shadow-lg">
       <CardHeader>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-3">
-            <Sparkles className="mt-1 h-5 w-5 text-primary" />
+            <Sparkles className="mt-1 h-5 w-5 text-emerald-600" />
             <div>
               <CardTitle>Meal Recommendations</CardTitle>
               <CardDescription>
@@ -328,7 +518,7 @@ export function RecommendationCarousel({
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase">Engine</span>
+            <span className="text-xs font-medium text-gray-600 uppercase">Engine</span>
             {(['llm', 'baseline'] as RecommendationMode[]).map((option) => (
               <Button
                 key={option}
@@ -336,8 +526,23 @@ export function RecommendationCarousel({
                 size="sm"
                 variant={mode === option ? 'default' : 'outline'}
                 onClick={() => handleModeSelect(option)}
+                className={
+                  mode === option
+                    ? 'gap-2 bg-emerald-500 text-white hover:bg-emerald-600'
+                    : 'gap-2 border-gray-300 text-gray-700 hover:bg-gray-50'
+                }
               >
-                {option === 'llm' ? 'LLM' : 'Baseline'}
+                {option === 'llm' ? (
+                  <>
+                    <Bot className="h-4 w-4" />
+                    AI
+                  </>
+                ) : (
+                  <>
+                    <Baseline className="h-4 w-4" />
+                    Baseline
+                  </>
+                )}
               </Button>
             ))}
             <Button
@@ -346,6 +551,7 @@ export function RecommendationCarousel({
               size="sm"
               onClick={handleRefresh}
               aria-label="Refresh recommendations"
+              className="text-emerald-700 hover:bg-emerald-50"
             >
               <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
             </Button>
@@ -353,100 +559,110 @@ export function RecommendationCarousel({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <form
-          className="grid gap-4 rounded-lg border bg-muted/20 p-4 md:grid-cols-4"
-          onSubmit={handleApplyFilters}
-          aria-label="Recommendation filters"
-        >
+        <div className="grid gap-4 rounded-lg bg-white/80" aria-label="Recommendation filters">
           <div className="space-y-2">
-            <Label htmlFor="diet-filter">Diet tags</Label>
-            <Input
-              id="diet-filter"
+            <Label>Dietary Restrictions</Label>
+            <ToggleGroup
+              type="multiple"
               value={formState.diet}
-              onChange={(event) => setFormState((prev) => ({ ...prev, diet: event.target.value }))}
-              placeholder="e.g. vegan, gluten-free"
-              aria-describedby="diet-filter-hint"
-            />
-            <p id="diet-filter-hint" className="text-xs text-muted-foreground">
-              Separate multiple tags with commas.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cuisine-filter">Preferred cuisines</Label>
-            <Input
-              id="cuisine-filter"
-              value={formState.cuisine}
-              onChange={(event) =>
-                setFormState((prev) => ({
-                  ...prev,
-                  cuisine: event.target.value,
-                }))
-              }
-              placeholder="e.g. japanese, mediterranean"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="price-filter">Price focus</Label>
-            <Select
-              value={formState.priceRange || 'any'}
-              onValueChange={(value) =>
-                setFormState((prev) => ({
-                  ...prev,
-                  priceRange: value === 'any' ? '' : value,
-                }))
-              }
-            >
-              <SelectTrigger id="price-filter">
-                <SelectValue placeholder="Any budget" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any budget</SelectItem>
-                {priceRanges.map((range) => (
-                  <SelectItem key={range.value} value={range.value}>
-                    {range.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-end justify-end gap-2">
-            <Button
-              type="button"
+              onValueChange={(value) => setFormState((prev) => ({ ...prev, diet: value }))}
+              className="flex-wrap justify-start"
               variant="outline"
+              spacing={2}
               size="sm"
-              onClick={handleClearFilters}
-              aria-label="Clear filters"
             >
-              Clear
-            </Button>
-            <Button type="submit" size="sm" className="gap-2">
-              <SlidersHorizontal className="h-4 w-4" />
-              Apply
-            </Button>
+              {COMMON_DIETS.map((diet) => (
+                <ToggleGroupItem
+                  key={diet}
+                  value={diet}
+                  className="border-gray-300 text-gray-700 capitalize hover:bg-gray-50 data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-500 data-[state=on]:text-white"
+                >
+                  {diet}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           </div>
-        </form>
 
-        {appliedFilters && (
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span className="font-semibold uppercase">Active filters:</span>
-            {appliedFilters.diet?.map((diet) => (
-              <Badge key={`diet-${diet}`} variant="secondary">
-                Diet: {diet}
-              </Badge>
-            ))}
-            {appliedFilters.cuisine?.map((cuisine) => (
-              <Badge key={`cuisine-${cuisine}`} variant="secondary">
-                Cuisine: {cuisine}
-              </Badge>
-            ))}
-            {appliedFilters.price_range && (
-              <Badge variant="secondary">Price: {appliedFilters.price_range}</Badge>
-            )}
+          <div className="space-y-2">
+            <Label>Preferred Cuisines</Label>
+            <ToggleGroup
+              type="multiple"
+              value={formState.cuisine}
+              onValueChange={(value) => setFormState((prev) => ({ ...prev, cuisine: value }))}
+              className="flex-wrap justify-start"
+              variant="outline"
+              spacing={2}
+              size="sm"
+            >
+              {COMMON_CUISINES.map((cuisine) => (
+                <ToggleGroupItem
+                  key={cuisine}
+                  value={cuisine}
+                  className="border-gray-300 text-gray-700 capitalize hover:bg-gray-50 data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-500 data-[state=on]:text-white"
+                >
+                  {cuisine}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           </div>
-        )}
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Price Range</Label>
+              <ToggleGroup
+                type="single"
+                value={formState.priceRange}
+                onValueChange={(value) =>
+                  setFormState((prev) => ({ ...prev, priceRange: value || '' }))
+                }
+                className="flex-wrap justify-start"
+                variant="outline"
+                spacing={2}
+                size="sm"
+              >
+                {priceRanges.map((range) => (
+                  <ToggleGroupItem
+                    key={range.value}
+                    value={range.value}
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50 data-[state=on]:border-emerald-500 data-[state=on]:bg-emerald-500 data-[state=on]:text-white"
+                  >
+                    {range.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            </div>
+
+            <div className="flex items-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleClearFilters}
+                disabled={
+                  formState.diet.length === 0 &&
+                  formState.cuisine.length === 0 &&
+                  !formState.priceRange
+                }
+                className="gap-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+                aria-label="Clear filters"
+              >
+                <Eraser className="h-4 w-4" />
+                Clear Filters
+              </Button>
+              <Button
+                type="button"
+                variant="default"
+                size="sm"
+                onClick={handleUpdateRecommendations}
+                className="gap-2 bg-emerald-500 text-white hover:bg-emerald-600"
+                aria-label="Update recommendations"
+              >
+                <Sparkles className="h-4 w-4" />
+                Update
+              </Button>
+            </div>
+          </div>
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {recommendations.map((item) => {
@@ -464,29 +680,33 @@ export function RecommendationCarousel({
                 <div className="mb-4 flex items-start justify-between gap-2">
                   <div>
                     <div className="mb-1 flex items-center gap-2">
-                      <Badge variant="outline" className="font-mono text-xs">
-                        #{item.id.slice(0, 8)}
-                      </Badge>
                       <Badge
                         variant={scorePercent >= 80 ? 'default' : 'secondary'}
-                        className="text-xs font-semibold"
+                        className={
+                          scorePercent >= 80
+                            ? 'bg-emerald-500 text-xs font-semibold text-white'
+                            : 'bg-emerald-100 text-xs font-semibold text-emerald-800'
+                        }
                       >
                         {scorePercent}% match
                       </Badge>
                     </div>
-                    <p className="text-base font-semibold">{item.name}</p>
+                    <p className="text-base font-semibold text-gray-900">{item.name}</p>
                     {item.restaurant && (
                       <p className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <ChefHat className="h-4 w-4" />
+                        <ChefHat className="h-4 w-4 text-gray-500" />
                         {item.restaurant}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="mb-4 space-y-2">
-                  <Progress value={scorePercent} className="h-2 bg-muted" />
-                  <p className="text-xs text-muted-foreground">Score: {item.score.toFixed(2)}</p>
+                <div className="mb-2 *:space-y-2">
+                  <Progress
+                    value={scorePercent}
+                    className="h-2 bg-gray-100 [&>div]:bg-emerald-500"
+                  />
+                  <p className="text-xs text-muted-foreground">Explanation:</p>
                 </div>
 
                 {item.description && (
@@ -498,7 +718,11 @@ export function RecommendationCarousel({
                 {metaBadges.length > 0 && (
                   <div className="mb-3 flex flex-wrap gap-2">
                     {metaBadges.map((label) => (
-                      <Badge key={`${item.id}-${label}`} variant="secondary">
+                      <Badge
+                        key={`${item.id}-${label}`}
+                        variant="secondary"
+                        className="bg-emerald-50 text-gray-700"
+                      >
                         {label}
                       </Badge>
                     ))}

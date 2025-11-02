@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { Activity, AlertCircle } from 'lucide-react';
+import { Activity, AlertCircle, ArrowLeft } from 'lucide-react';
 import { getAuthToken } from '@/lib/api';
-import { useWellnessChartData } from '@/hooks/useWellnessData';
+import { useWellnessChartData, useTodayWellnessLog } from '@/hooks/useWellnessData';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { MoodLogWidget, StressLogWidget, SleepLogWidget } from '@/components/wellness/mental';
 import { GoalForm, GoalsList, WellnessChart } from '@/components/wellness/shared';
+import { Button } from '@/components/ui/button';
 
 function WellnessTrackingPage() {
   const navigate = useNavigate();
 
   // Fetch chart data (last 7 days)
   const { data: chartData, isLoading, error } = useWellnessChartData(7);
+
+  // Fetch today's wellness log to check if data exists
+  const { data: todayLog } = useTodayWellnessLog();
 
   // Check auth
   useEffect(() => {
@@ -22,9 +26,13 @@ function WellnessTrackingPage() {
     }
   }, [navigate]);
 
+  // Check if today already has wellness data
+  const hasDataToday =
+    todayLog && (todayLog.mood_score || todayLog.stress_level || todayLog.quality_score);
+
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-purple-50">
         <div className="text-center">
           <Activity className="mx-auto mb-4 size-12 animate-pulse text-blue-500" />
           <div className="text-lg text-gray-600">Loading wellness data...</div>
@@ -34,16 +42,27 @@ function WellnessTrackingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50">
       <DashboardNavbar />
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-6 flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/dashboard')}
+            className="gap-2"
+          >
+            <ArrowLeft className="size-4" />
+            Back to Dashboard
+          </Button>
+        </div>
+
         {/* Page Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="mb-2 flex items-center gap-3 text-3xl font-bold text-gray-800">
-              <Activity className="size-8 text-blue-600" />
               Wellness Tracking
             </h1>
             <p className="text-gray-600">
@@ -59,15 +78,17 @@ function WellnessTrackingPage() {
           </div>
         )}
 
-        {/* Quick Log Widgets */}
-        <section className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">Daily Check-in</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <MoodLogWidget />
-            <StressLogWidget />
-            <SleepLogWidget />
-          </div>
-        </section>
+        {/* Quick Log Widgets - Only show if no data exists for today */}
+        {!hasDataToday && (
+          <section className="mb-8">
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">Daily Check-in</h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <MoodLogWidget />
+              <StressLogWidget />
+              <SleepLogWidget />
+            </div>
+          </section>
+        )}
 
         {/* Trend Charts */}
         <section className="mb-8">

@@ -12,6 +12,7 @@ vi.mock('@/components/DashboardNavbar', () => ({
 // Mock the wellness hooks
 vi.mock('@/hooks/useWellnessData', () => ({
   useWellnessChartData: vi.fn(),
+  useTodayWellnessLog: vi.fn(),
   useCreateMoodLog: vi.fn(),
   useCreateStressLog: vi.fn(),
   useCreateSleepLog: vi.fn(),
@@ -45,7 +46,7 @@ vi.mock('@/components/wellness/shared/GoalsList', () => ({
   default: () => <div>GoalsList</div>,
 }));
 
-import { useWellnessChartData } from '@/hooks/useWellnessData';
+import { useWellnessChartData, useTodayWellnessLog } from '@/hooks/useWellnessData';
 import { useGoals, useCreateGoal } from '@/hooks/useGoalsData';
 
 describe('WellnessTrackingPage', () => {
@@ -77,6 +78,12 @@ describe('WellnessTrackingPage', () => {
       isLoading: false,
       error: null,
     });
+
+    vi.mocked(useTodayWellnessLog).mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+    } as never);
 
     vi.mocked(useGoals).mockReturnValue({
       data: [],
