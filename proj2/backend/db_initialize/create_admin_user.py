@@ -4,22 +4,22 @@ This script creates an admin user in the database.
 Run this script to create your first admin user for testing.
 
 Usage:
-    uv run python create_admin_user.py
+    cd /path/to/backend
+    uv run python db_initialize/create_admin_user.py
 """
 
 import sys
-from pathlib import Path
-
-# Add the src directory to the path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
-
 import uuid
+from pathlib import Path
 
 from passlib.hash import argon2
 from sqlalchemy.orm import Session
 
-from ..src.eatsential.db.database import Base, SessionLocal, engine
-from ..src.eatsential.models import AccountStatus, UserDB, UserRole
+# Add the src directory to the path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from eatsential.db.database import Base, SessionLocal, engine
+from eatsential.models import AccountStatus, UserDB, UserRole
 
 
 def create_admin_user(
