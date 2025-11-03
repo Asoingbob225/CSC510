@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { User, AlertCircle, ArrowLeft } from 'lucide-react';
+import { User, AlertCircle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { healthProfileApi, getAuthToken, type HealthProfile, type Allergen } from '@/lib/api';
 import { BasicInfoCard, AllergiesCard, DietaryPreferencesCard } from '@/components/health-profile';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
@@ -110,6 +110,14 @@ function HealthProfilePage() {
             <p className="mb-8 text-center text-gray-600">
               Create your health profile to get personalized dietary recommendations
             </p>
+            <Button
+              size="lg"
+              onClick={() => navigate('/health-profile-wizard')}
+              className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+            >
+              Create Health Profile
+              <ArrowRight className="size-4" />
+            </Button>
           </div>
         )}
 
