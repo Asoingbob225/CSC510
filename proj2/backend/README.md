@@ -316,3 +316,70 @@ Change the port when running:
 ```bash
 uv run uvicorn src.eatsential.index:app --reload --port 8001
 ```
+
+### Architecture Mismatch on Apple Silicon (arm64 vs x86_64)
+
+**Problem**: On Apple Silicon Macs, you may encounter `ImportError` with messages like:
+
+```
+ImportError: dlopen(...pydantic_core...): mach-o file, but is an incompatible architecture 
+(have 'arm64', need 'x86_64')
+```
+
+This occurs when Python packages with native extensions (like `pydantic_core`) are compiled for ARM64 architecture, but the Python interpreter is running in x86_64 (Rosetta) mode.
+
+**Root Cause**:
+- macOS Python is often a universal binary supporting both x86_64 and arm64
+- The active architecture depends on how Python is invoked
+- Package managers or shell wrappers may default to x86_64 mode
+- Virtual environments inherit the architecture from the parent Python process
+
+**Solution**:
+
+1. **Rebuild Virtual Environment with Explicit Architecture**:
+   ```bash
+   # Remove existing virtual environment
+   rm -rf .venv
+   
+   # Create new venv with explicit arm64 architecture
+   arch -arm64 python3 -m venv .venv
+   
+   # Reinstall all dependencies
+   uv sync
+   ```
+
+2. **Update Development Scripts** (Already done in `package.json`):
+   ```json
+   {
+     "scripts": {
+       "dev:backend": "cd backend && arch -arm64 uv run python -m fastapi dev src/eatsential/index.py"
+     }
+   }
+   ```
+
+3. **Verify Architecture**:
+   ```bash
+   # Check Python interpreter architecture
+   file .venv/bin/python
+   # Should show: Mach-O 64-bit executable arm64
+   
+   # Check compiled extension architecture
+   file .venv/lib/python*/site-packages/pydantic_core/*.so
+   # Should show: Mach-O 64-bit dynamically linked shared library arm64
+   
+   # Test imports
+   .venv/bin/python -c "import pydantic_core; print('✅ Success')"
+   ```
+
+**Prevention**:
+- Always use `arch -arm64` prefix when creating virtual environments on Apple Silicon
+- Use the updated `bun dev` or `npm run dev:backend` commands which include the architecture flag
+- If running Python commands directly, prefix with `arch -arm64`
+
+**Alternative**: If you need x86_64 mode for compatibility with other tools, ensure consistency:
+```bash
+# Create x86_64 environment (not recommended)
+arch -x86_64 python3 -m venv .venv
+arch -x86_64 uv sync
+```
+
