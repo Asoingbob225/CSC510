@@ -486,17 +486,32 @@ export function RecommendationCarousel({
           <div className="flex flex-col items-center gap-4 py-8">
             <UtensilsCrossed className="h-12 w-12 text-emerald-400" />
             <p className="text-center text-sm text-muted-foreground">
-              Complete your health profile or adjust the filters to see personalized meal ideas.
+              No meals match your current filters. Try adjusting your preferences or clearing
+              filters.
             </p>
-            <Button
-              onClick={handleRefresh}
-              variant="outline"
-              size="sm"
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Check Again
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  setHasRequestedRecommendations(false);
+                  handleClearFilters();
+                }}
+                variant="default"
+                size="sm"
+                className="gap-2 bg-emerald-500 text-white hover:bg-emerald-600"
+              >
+                <Eraser className="h-4 w-4" />
+                Adjust Filters
+              </Button>
+              <Button
+                onClick={handleRefresh}
+                variant="outline"
+                size="sm"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try Again
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
