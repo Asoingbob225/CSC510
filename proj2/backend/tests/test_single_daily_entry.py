@@ -187,28 +187,38 @@ def test_different_days_allowed(client: TestClient, auth_headers: dict, db):
     records directly in DB and verify the query works correctly.
     """
     import uuid
+    from zoneinfo import ZoneInfo
 
     from src.eatsential.models.models import MoodLogDB
 
     # Get test user
     test_user = db.query(UserDB).filter(UserDB.id == "wellness_test_user_id").first()
 
-    today = datetime.now(timezone.utc).replace(tzinfo=None)
-    yesterday = today - timedelta(days=1)
+    # User's timezone (default is America/New_York)
+    user_tz = ZoneInfo("America/New_York")
+    now_local = datetime.now(user_tz)
+
+    # Create a date that's definitely yesterday in local timezone
+    # We go back 2 days and set to noon to avoid edge cases
+    yesterday_local = (now_local - timedelta(days=2)).replace(
+        hour=12, minute=0, second=0, microsecond=0
+    )
+    yesterday_utc = yesterday_local.astimezone(timezone.utc).replace(tzinfo=None)
 
     # Create mood log for yesterday directly in DB
     mood_log_yesterday = MoodLogDB(
         id=str(uuid.uuid4()),
         user_id=test_user.id,
-        occurred_at_utc=yesterday,
+        occurred_at_utc=yesterday_utc,
         mood_score=7,
     )
     db.add(mood_log_yesterday)
     db.commit()
 
-    # Create mood log for today via API
+    # Create mood log for today via API (use current local time)
+    today_local = now_local.replace(hour=14, minute=0, second=0, microsecond=0)
     mood_data_today = {
-        "occurred_at": today.isoformat() + "Z",
+        "occurred_at": today_local.isoformat(),
         "mood_score": 8,
         "notes": "Today's mood",
     }

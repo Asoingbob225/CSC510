@@ -62,46 +62,289 @@ describe('RecommendationCarousel', () => {
     expect(screen.getByText('chinese')).toBeInTheDocument();
   });
 
-  it('NOTE: Recommendation display after clicking Get Recommendations should be tested in E2E tests', () => {
-    // Due to the complexity of simulating user click + async data fetch in unit tests,
-    // full flow testing is recommended for E2E
-    expect(true).toBe(true);
+  it('displays recommendations after clicking Get Recommendations button', async () => {
+    const user = userEvent.setup();
+    const mockResponse: MealRecommendationResponse = {
+      items: [
+        {
+          item_id: 'test-1',
+          name: 'Grilled Chicken Salad',
+          score: 0.92,
+          explanation: 'High protein, low carb; Perfect for your fitness goals',
+          calories: 350,
+          price: 12.99,
+        },
+        {
+          item_id: 'test-2',
+          name: 'Vegetarian Buddha Bowl',
+          score: 0.88,
+          explanation: 'Plant-based protein; Rich in fiber',
+          calories: 420,
+          price: 11.49,
+        },
+      ],
+    };
+
+    vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(mockResponse);
+
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    const getRecommendationsButton = screen.getByText('Get Recommendations');
+    await user.click(getRecommendationsButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Grilled Chicken Salad')).toBeInTheDocument();
+      expect(screen.getByText('Vegetarian Buddha Bowl')).toBeInTheDocument();
+    });
+
+    // Verify scores are displayed
+    expect(screen.getByText(/92% match/i)).toBeInTheDocument();
+    expect(screen.getByText(/88% match/i)).toBeInTheDocument();
   });
 
-  it('NOTE: Legacy recommendation data normalization should be tested in E2E tests', () => {
-    // Complex async data transformation and display is better suited for E2E testing
-    expect(true).toBe(true);
+  it('normalizes legacy recommendation response format', async () => {
+    const user = userEvent.setup();
+    const legacyResponse: MealRecommendationResponse = {
+      recommendations: [
+        {
+          menu_item_id: 'legacy-1',
+          score: 0.85,
+          explanation: 'Restaurant: Green Cafe; Healthy and delicious',
+          menu_item: {
+            id: 'menu-1',
+            name: 'Quinoa Power Bowl',
+            description: 'Packed with nutrients',
+            price: 13.99,
+            calories: 380,
+          },
+          restaurant: {
+            id: 'rest-1',
+            name: 'Green Cafe',
+            is_active: true,
+          },
+        },
+      ],
+    };
+
+    vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(legacyResponse);
+
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    const getRecommendationsButton = screen.getByText('Get Recommendations');
+    await user.click(getRecommendationsButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Quinoa Power Bowl')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Green Cafe')).toBeInTheDocument();
+    expect(screen.getByText(/85% match/i)).toBeInTheDocument();
   });
 
-  // Note: Simplified to avoid Radix UI Select component issues in test environment
-  // More comprehensive filter testing should be done in E2E tests
-  it('NOTE: Filter interactions with Select components should be tested in E2E tests', () => {
-    // This test is noted for E2E testing due to complexities with Radix UI Select in test environment
-    expect(true).toBe(true);
+  it('allows selecting dietary restriction filters', async () => {
+    const user = userEvent.setup();
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    // Find and click vegetarian toggle
+    const vegetarianToggle = screen.getByText('vegetarian');
+    await user.click(vegetarianToggle);
+
+    // Verify the toggle is selected (by checking aria-pressed or data-state)
+    expect(vegetarianToggle).toHaveAttribute('data-state', 'on');
+
+    // Click vegan toggle
+    const veganToggle = screen.getByText('vegan');
+    await user.click(veganToggle);
+    expect(veganToggle).toHaveAttribute('data-state', 'on');
   });
 
-  it('NOTE: Clear filters and mode switching should be tested in E2E tests', () => {
-    // These tests are noted for E2E testing due to complexities with component state in test environment
-    expect(true).toBe(true);
+  it('allows selecting cuisine preferences', async () => {
+    const user = userEvent.setup();
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    // Find and click italian toggle
+    const italianToggle = screen.getByText('italian');
+    await user.click(italianToggle);
+    expect(italianToggle).toHaveAttribute('data-state', 'on');
+
+    // Click chinese toggle
+    const chineseToggle = screen.getByText('chinese');
+    await user.click(chineseToggle);
+    expect(chineseToggle).toHaveAttribute('data-state', 'on');
   });
 
-  it('NOTE: Empty state after fetching should be tested in E2E tests', () => {
-    // Empty state is shown after user requests recommendations but none are available
-    // This flow is better tested in E2E where we can simulate the full user interaction
-    expect(true).toBe(true);
+  it('clears filters when Clear Filters button is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    // Select some filters
+    const vegetarianToggle = screen.getByText('vegetarian');
+    await user.click(vegetarianToggle);
+    expect(vegetarianToggle).toHaveAttribute('data-state', 'on');
+
+    const italianToggle = screen.getByText('italian');
+    await user.click(italianToggle);
+    expect(italianToggle).toHaveAttribute('data-state', 'on');
+
+    // Click Clear Filters
+    const clearButton = screen.getByText('Clear Filters');
+    await user.click(clearButton);
+
+    // Verify filters are cleared
+    expect(vegetarianToggle).toHaveAttribute('data-state', 'off');
+    expect(italianToggle).toHaveAttribute('data-state', 'off');
   });
 
-  it('NOTE: Error state and refresh button interactions should be tested in E2E tests', () => {
-    // These tests are noted for E2E testing due to complexities with async state management in test environment
-    expect(true).toBe(true);
+  it('switches between LLM and baseline recommendation modes', async () => {
+    const user = userEvent.setup();
+    renderWithClient(<RecommendationCarousel userId={mockUserId} initialMode="llm" />);
+
+    // Find AI Powered button (should be selected initially)
+    const aiButton = screen.getByRole('button', { name: /AI Powered/i });
+    expect(aiButton).toHaveClass('bg-emerald-500');
+
+    // Click Basic button
+    const basicButton = screen.getByRole('button', { name: /Basic/i });
+    await user.click(basicButton);
+
+    // Verify Basic is now selected
+    await waitFor(() => {
+      expect(basicButton).toHaveClass('bg-emerald-500');
+    });
   });
 
-  it('NOTE: Mental wellness indicators display should be tested in E2E tests', () => {
-    // This test requires user interaction (clicking "Get Recommendations" button) and
-    // complex state management with API calls, which is better tested in E2E environment
-    expect(true).toBe(true);
+  it('displays empty state when no recommendations are available', async () => {
+    const user = userEvent.setup();
+    const emptyResponse: MealRecommendationResponse = {
+      items: [],
+    };
+
+    vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(emptyResponse);
+
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    const getRecommendationsButton = screen.getByText('Get Recommendations');
+    await user.click(getRecommendationsButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('No recommendations available yet')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/No meals match your current filters/i)).toBeInTheDocument();
+
+    // Verify both action buttons are present
+    expect(screen.getByText('Adjust Filters')).toBeInTheDocument();
+    expect(screen.getByText('Try Again')).toBeInTheDocument();
   });
 
+  it('returns to filter configuration when Adjust Filters is clicked in empty state', async () => {
+    const user = userEvent.setup();
+    const emptyResponse: MealRecommendationResponse = {
+      items: [],
+    };
+
+    vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(emptyResponse);
+
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    // Get recommendations (will return empty)
+    const getRecommendationsButton = screen.getByText('Get Recommendations');
+    await user.click(getRecommendationsButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('No recommendations available yet')).toBeInTheDocument();
+    });
+
+    // Click Adjust Filters
+    const adjustFiltersButton = screen.getByText('Adjust Filters');
+    await user.click(adjustFiltersButton);
+
+    // Should return to initial state
+    await waitFor(() => {
+      expect(
+        screen.getByText('Get personalized meal suggestions based on your preferences')
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByText('Get Recommendations')).toBeInTheDocument();
+  });
+
+  it('displays error state when API call fails after retries', async () => {
+    const user = userEvent.setup();
+
+    // Mock will fail 3 times (initial + 2 retries) to exhaust React Query retries
+    vi.mocked(recommendationApi.getMealRecommendations)
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockRejectedValueOnce(new Error('Network error'));
+
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    // Click to trigger request
+    const getRecommendationsButton = screen.getByText('Get Recommendations');
+    await user.click(getRecommendationsButton);
+
+    // Wait for error state to appear (after all retries exhausted)
+    await waitFor(
+      () => {
+        expect(screen.getByText('Unable to load recommendations')).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    expect(screen.getByText(/Network error/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Try Again/i })).toBeInTheDocument();
+  });
+
+  it('retries fetching recommendations when Try Again is clicked in error state', async () => {
+    const user = userEvent.setup();
+
+    // First set: fail 3 times to trigger error state
+    vi.mocked(recommendationApi.getMealRecommendations)
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockRejectedValueOnce(new Error('Network error'));
+
+    renderWithClient(<RecommendationCarousel userId={mockUserId} />);
+
+    // First request triggers error
+    const getRecommendationsButton = screen.getByText('Get Recommendations');
+    await user.click(getRecommendationsButton);
+
+    // Wait for error state
+    await waitFor(
+      () => {
+        expect(screen.getByText('Unable to load recommendations')).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    // Setup success response for retry
+    const successResponse: MealRecommendationResponse = {
+      items: [
+        {
+          item_id: 'retry-1',
+          name: 'Recovery Meal',
+          score: 0.9,
+          explanation: 'Successfully loaded',
+          calories: 400,
+          price: 12.0,
+        },
+      ],
+    };
+    vi.mocked(recommendationApi.getMealRecommendations).mockResolvedValue(successResponse);
+
+    // Click Try Again
+    const tryAgainButtons = screen.getAllByRole('button', { name: /Try Again/i });
+    await user.click(tryAgainButtons[0]);
+
+    // Should show success
+    await waitFor(
+      () => {
+        expect(screen.getByText('Recovery Meal')).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+  });
   it('displays mental wellness indicators for magnesium-rich foods', async () => {
     const user = userEvent.setup();
     const stressReliefResponse: MealRecommendationResponse = {

@@ -70,9 +70,19 @@ class TestCreateMoodLogEndpoint:
         self, client: TestClient, auth_headers: dict
     ):
         """Test that occurred_at must be today in user's local timezone."""
-        # This test should pass a date from yesterday
-        old_date = datetime.now(timezone.utc) - timedelta(days=1)
-        mood_data = {"occurred_at": old_date.isoformat(), "mood_score": 7}
+        from zoneinfo import ZoneInfo
+
+        # Get user's timezone (default is America/New_York)
+        user_tz = ZoneInfo("America/New_York")
+
+        # Create a date that's definitely yesterday in user's local timezone
+        # by going back 2 days from now and setting time to noon local time
+        now_local = datetime.now(user_tz)
+        yesterday_local = (now_local - timedelta(days=2)).replace(
+            hour=12, minute=0, second=0, microsecond=0
+        )
+
+        mood_data = {"occurred_at": yesterday_local.isoformat(), "mood_score": 7}
 
         response = client.post(
             "/api/wellness/mood-logs", json=mood_data, headers=auth_headers
