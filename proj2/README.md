@@ -13,6 +13,23 @@ Eatsential is an LLM-powered platform that connects users to hyper-personalized 
 
 ---
 
+## 🎬 Demo Video
+
+Watch our 2-minute demo to see Eatsential in action:
+
+[![Eatsential Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](YOUR_VIDEO_URL_HERE)
+
+<!-- Embed the video directly -->
+<div align="center">
+  <a href="YOUR_VIDEO_URL_HERE">
+    <img src="https://img.shields.io/badge/🎥_Project_Demo-2--5_minutes-blue?style=for-the-badge" alt="Demo Video" />
+  </a>
+</div>
+
+> **Note:** Replace `YOUR_VIDEO_URL_HERE` with your actual video link (YouTube, Vimeo, or direct link)
+
+---
+
 ## ✨ Core Features
 
 - **Dual-Dimension Health Profile:** We offer support for both physical goals (muscle gain, weight loss) and mental well-being objectives (stress reduction, improved focus).
