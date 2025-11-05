@@ -9,7 +9,7 @@
 
 **YOUR PLATE, YOUR RULES. PRECISION NUTRITION FOR BODY AND MIND.**
 
-Eatsential is an LLM-powered platform that connects users to hyper-personalized food options. In a world of information overload, our platform is designed to eliminate the frustration and health risks associated with finding food that truly meets an individual's unique needs. We empower users to take control of their health by providing meal recommendations, recipes, and restaurant suggestions tailored to their holistic profile—from allergies and fitness goals to mental wellness objectives.
+Eatsential is a LLM-powered platform that connects users to food options with unprecedented precision. By creating a holistic profile that includes allergies, fitness goals (muscle gain, weight loss, endurance), dietary preferences (vegan, keto), and even mental wellness objectives (e.g., mood-boosting foods, stress reduction), our system delivers hyper-personalized meal recommendations, recipes, and restaurant suggestions.
 
 ---
 
@@ -21,7 +21,7 @@ Eatsential is an LLM-powered platform that connects users to hyper-personalized 
   
 [![Eatsential Demo Video](https://img.youtube.com/vi/K2KGYuvrB_Y/maxresdefault.jpg)](https://youtu.be/K2KGYuvrB_Y)
 
-**[▶️ Watch on YouTube](https://youtu.be/K2KGYuvrB_Y)** | Duration: 2-5 minutes
+**[▶️ Watch on YouTube](https://youtu.be/K2KGYuvrB_Y)** | 2 minutes
 
 </div>
 
@@ -29,41 +29,50 @@ Eatsential is an LLM-powered platform that connects users to hyper-personalized 
 
 ## ✨ Core Features
 
-- **Dual-Dimension Health Profile:** We offer support for both physical goals (muscle gain, weight loss) and mental well-being objectives (stress reduction, improved focus).
-- **Scientific Nutrition Engine:** Our recommendation system is built on a large nutritional database and a proprietary health-tagging system (e.g., `#PostWorkoutRecovery`, `#StressRelief`) to ensure every suggestion is a perfect nutritional match.
-- **AI Health Concierge:** A conversational AI, powered by a cutting-edge LLM, provides users with real-time, human-like support for questions, plan adjustments, or meal insights.
-- **Curated Healthy Restaurants:** We partner exclusively with vetted restaurants that use high-quality ingredients and provide transparent nutritional information.
-- **Visual Wellness Journey:** Users can track their progress—from calorie intake and weight changes to mood fluctuations—through intuitive charts and timelines.
+1. **Holistic Health Tracking:** Log meals, mood, stress, and sleep to build your 360° health profile, including detailed allergens and dietary preferences.
+2. **AI Recommendation Engine:** Get personalized restaurant recommendations based on your profile, goals, and strict allergen filters, with a feedback loop to learn your tastes.
+3. **AI Health Concierge:** A conversational chat assistant with memory that accesses your profile to provide real-time, personalized nutrition advice.
+4. **Dynamic Meal Planner:** Auto-generate 3-7 day meal plans based on your calorie/macro goals, with full support for manual swaps and adjustments.
+5. **Restaurant Discovery & Community Insights:** Explore healthy restaurants via an integrated map and view community reviews focused on healthfulness and allergen safety.
+6. **Secure & Managed Platform:** Features secure JWT authentication, protected routes, and a full admin dashboard for user management and system audits.
 
-## 🚀 Quick Start Guide
+## 🚀 Quick Start Guide (2-minute onboarding)
 
-This guide will get the project running on your local machine.
+Get Eatsential running on your local machine in just a few steps.
 
-1. Prerequisites
-   Ensure you have the following installed:
+### Automated Setup (Recommended) ⚡
 
-- Bun (v1.2.21+)
-- uv
-- Python (3.9+)
+Run our one-click setup script that handles everything automatically:
 
-2. Setup
-   Clone the repository and install all dependencies for the root, frontend, and backend with these commands:
-
-```Bash
+```bash
 # Clone the project and navigate into it
 git clone <repository-url>
 cd CSC510/proj2
 
-# Install root, frontend, and backend dependencies
-bun install
-cd frontend && bun install && cd ..
-cd backend && uv sync && cd ..
+# Run the automated setup script
+./setup.sh
 ```
 
-3. Run the Application
-   Start both the frontend and backend servers simultaneously with a single command from the root directory (proj2/):
+The script will:
+- ✅ Check for required tools (Bun, uv, Python)
+- 📦 Install all dependencies (root, frontend, backend)
+- 🔐 Generate a secure JWT secret key
+- 🗄️ Initialize the database with sample data
+- 🎯 Set up everything you need to start coding
 
-```Bash
+**Sample Credentials:**
+- Email: `admin@example.com`
+- Password: `Admin123!@#`
+
+### Manual Setup
+
+If you prefer manual control, see our detailed [INSTALL.md](INSTALL.md) guide.
+
+### Run the Application
+
+Start both the frontend and backend servers simultaneously from the root directory (proj2/):
+
+```bash
 bun dev
 ```
 
@@ -77,14 +86,16 @@ The application will now be running:
 
 This project is currently a **work in progress**. Our development is planned in two main releases:
 
-- **October: The Intelligent MVP**
-  - Launch core user accounts and the Dual-Dimension Health Profile
-  - Deploy the V1 Scientific Nutrition Engine for AI-powered recommendations
-  - Implement the interactive AI Health Concierge and Restaurant Discovery module.
-- **November: The Integrated Life Planner**
-  - Introduce a Dynamic Meal Planner and Smart Grocery Lists.
-  - Launch a Community & Social Hub for users to connect and share their journey.
-  - Close the Personalization Loop with an advanced feedback system to refine AI recommendations.
+- [x] **October Release - The Intelligent MVP**
+  - [x] Week 1 — v0.1 (Auth & Profile): Established the secure foundation with user signup, email activation, JWT auth, and basic health-profile CRUD
+  - [x] Week 2 — v0.2 (Health Data Management): Expanded profiles to cover detailed allergens and dietary preferences, and introduced the admin system with protected routes and user management.
+  - [x] Week 3 — v0.3 (Dual-Dimension Tracking): Enabled our dual-dimension tracking: meal logging (API + UI), mental-wellness tracking (mood, stress, sleep) with goal setting, plus admin audit logs.
+  - [x] Week 4 — v0.4 (AI Recommendation Engine): Shipped the AI recommendation engine, backed by a restaurant/menu database and a hybrid LLM + rules API, with strict allergen filtering and deterministic fallback to ensure safety and stability.
+- **November: Release 2 - The Integrated Life Planner**
+  - [ ] Week 5 — v1.1 (AI Feedback Loop & Personalization): Added like/dislike feedback (API + UI) and fed signals into the recommender to adapt future results and reduce unwanted items.
+  - [ ] Week 6 — v1.2 (Interactive AI Health Concierge): Launched a chat-based assistant with session memory and profile access to answer nutrition questions and give real-time, personalized advice.
+  - [ ] Week 7 — v1.3 (Restaurant Discovery & Reviews): Introduced a map-based restaurant explorer (Mapbox/Google Maps) and community reviews for healthfulness and allergen safety.
+  - [ ] Week 8 — v1.4 (Dynamic AI Meal Planner): Delivered multi-day meal planning (3–7 days) that auto-generates plans from calorie/macros/goals, with manual swap and adjustment support.
 
 ## 🤖 CI/CD Pipeline
 
@@ -93,6 +104,7 @@ This project uses GitHub Actions for CI/CD:
 - **test-coverage.yml:** Runs all tests and reports coverage for frontend and backend.
 - **linter.yml:** Lints frontend and backend code for style and quality.
 - **format-check.yml:** Checks code formatting for Python (Ruff) and frontend (Prettier).
+- **nightly-tests.yml**: Runs all tests nightly to provide daily check for code quality
 
 Workflow files are in `.github/workflows/`. CI status badges are at the top.
 
