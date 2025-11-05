@@ -22,6 +22,7 @@ This document tracks development tasks across all milestones, organized by modul
 
 ## 🏁 Sprint Summary
 
+- ✅ Closed [#175](https://github.com/Asoingbob225/CSC510/issues/175) (Update README and Project Documentation) on branch `feat/iss175-update-readme`.
 - ✅ Closed [#169](https://github.com/Asoingbob225/CSC510/issues/169) (Recommendation Carousel baseline UI copy + empty-state controls) on branch `fix/iss169-fe-basicREC`.
 - 🧭 Remaining focus: coordinate FE-04-002/FE-04-003 with BE-04-003 once recommendation API is ready.
 
@@ -29,7 +30,7 @@ This document tracks development tasks across all milestones, organized by modul
 
 | Status | Count | Details |
 | --- | --- | --- |
-| ✅ Complete | 1 | #169 Recommendation Carousel messaging and coverage adjustments |
+| ✅ Complete | 2 | #169 Recommendation Carousel, #175 Documentation Updates |
 | 🟡 In Progress | 0 | — |
 | 📝 To Do | 13 | Outstanding Sprint 0.4 backend, frontend, and testing tasks |
 
@@ -38,6 +39,7 @@ This document tracks development tasks across all milestones, organized by modul
 | Owner | Completed Work | Next Focus |
 | --- | --- | --- |
 | Frontend Team | Closed #169 to align RecommendationCarousel empty-state and tests | Prepare UI integrations once BE-04-003 delivers refreshed API |
+| Documentation | Closed #175 by creating an automated setup script and updating README/INSTALL guides | Monitor for new features requiring documentation updates |
 
 ---
 

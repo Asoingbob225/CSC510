@@ -8,15 +8,10 @@ Usage:
     uv run python db_initialize/create_admin_user.py
 """
 
-import sys
 import uuid
-from pathlib import Path
 
 from passlib.hash import argon2
 from sqlalchemy.orm import Session
-
-# Add the src directory to the path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from eatsential.db.database import Base, SessionLocal, engine
 from eatsential.models import AccountStatus, UserDB, UserRole
