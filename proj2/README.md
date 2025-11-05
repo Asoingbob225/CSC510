@@ -15,21 +15,15 @@ Eatsential is an LLM-powered platform that connects users to hyper-personalized 
 
 ## 🎬 Demo Video
 
-Watch our 2-5 minute demo to see Eatsential in action:
+**Watch our project demonstration on YouTube:**
 
-<!-- Video hosted in GitHub Releases -->
 <div align="center">
-  <a href="https://github.com/Asoingbob225/CSC510/releases/download/v1.0.0/csc510_proj2_demo.mov">
-    <img src="https://img.shields.io/badge/▶️_Watch_Demo-Download_Video-FF0000?style=for-the-badge&logo=github&logoColor=white" alt="Download Demo Video" />
-  </a>
-  <br><br>
-  <a href="https://github.com/Asoingbob225/CSC510/releases">
-    <img src="https://img.shields.io/badge/🎥_Project_Demo-2--5_minutes-blue?style=for-the-badge" alt="Demo Video - 2-5 minutes" />
-  </a>
-</div>
+  
+[![Eatsential Demo Video](https://img.youtube.com/vi/K2KGYuvrB_Y/maxresdefault.jpg)](https://youtu.be/K2KGYuvrB_Y)
 
-> **📥 Video Location:** The demo video is available in our [GitHub Releases](https://github.com/Asoingbob225/CSC510/releases)  
-> **📁 Filename:** `csc510_proj2_demo.mov`
+**[▶️ Watch on YouTube](https://youtu.be/K2KGYuvrB_Y)** | Duration: 2-5 minutes
+
+</div>
 
 ---
 
