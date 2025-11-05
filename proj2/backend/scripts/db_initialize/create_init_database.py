@@ -38,7 +38,7 @@ def main():
         else:
             print("Keeping existing database.")
             print("\nNext steps:")
-            print("1. Run 'alembic upgrade head' to apply any migrations")
+            print("1. Run 'uv run alembic upgrade head' to apply any migrations")
             print("2. Optionally seed data by running this script with --seed flag")
             print("3. Start your FastAPI application")
             return
@@ -60,7 +60,7 @@ def main():
         print("✅ Database file created successfully!")
         print(f"📁 Database location: {db_path}")
         print("\nNext steps:")
-        print("1. Run 'alembic upgrade head' to apply any migrations")
+        print("1. Run 'uv run alembic upgrade head' to apply any migrations")
         print("2. Optionally seed data by running this script with --seed flag")
         print("3. Start your FastAPI application")
 
@@ -106,11 +106,8 @@ def seed_data():
         print("✅ DATABASE SEEDING COMPLETED SUCCESSFULLY!")
         print("=" * 70)
         print("\n🚀 You can now:")
-        print(
-            "   1. Start backend: "
-            "cd proj2/backend && uv run uvicorn src.eatsential.main:app --reload"
-        )
-        print("   2. Login at: http://localhost:8000/docs")
+        print("   1. Start app: cd proj2 && bun run dev")
+        print("   2. Login at: http://localhost:5173")
         print("   3. Use credentials: admin@example.com / Admin123!@#")
         print("=" * 70 + "\n")
 
