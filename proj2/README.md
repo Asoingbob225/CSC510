@@ -15,18 +15,21 @@ Eatsential is an LLM-powered platform that connects users to hyper-personalized 
 
 ## 🎬 Demo Video
 
-Watch our 2-minute demo to see Eatsential in action:
+Watch our 2-5 minute demo to see Eatsential in action:
 
-[![Eatsential Demo](https://img.shields.io/badge/▶️_Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](YOUR_VIDEO_URL_HERE)
-
-<!-- Embed the video directly -->
+<!-- Video hosted in GitHub Releases -->
 <div align="center">
-  <a href="YOUR_VIDEO_URL_HERE">
-    <img src="https://img.shields.io/badge/🎥_Project_Demo-2--5_minutes-blue?style=for-the-badge" alt="Demo Video" />
+  <a href="https://github.com/Asoingbob225/CSC510/releases/download/v1.0.0/csc510_proj2_demo.mov">
+    <img src="https://img.shields.io/badge/▶️_Watch_Demo-Download_Video-FF0000?style=for-the-badge&logo=github&logoColor=white" alt="Download Demo Video" />
+  </a>
+  <br><br>
+  <a href="https://github.com/Asoingbob225/CSC510/releases">
+    <img src="https://img.shields.io/badge/🎥_Project_Demo-2--5_minutes-blue?style=for-the-badge" alt="Demo Video - 2-5 minutes" />
   </a>
 </div>
 
-> **Note:** Replace `YOUR_VIDEO_URL_HERE` with your actual video link (YouTube, Vimeo, or direct link)
+> **📥 Video Location:** The demo video is available in our [GitHub Releases](https://github.com/Asoingbob225/CSC510/releases)  
+> **📁 Filename:** `csc510_proj2_demo.mov`
 
 ---
 
