@@ -34,8 +34,10 @@ cd CSC510/proj2
 4. 🗄️ Creates and initializes the database
 5. 🌱 Seeds sample data (restaurants, allergens, admin user)
 
-> [!IMPORTANT] .ENV SETTING
-> Please remember to set your Gemini API keys in the `backend/.env` to use the AI features.
+> [!IMPORTANT]
+> **.ENV Setting Required**
+>
+> Please remember to set your **Gemini API keys** in the backend `.env` file to enable AI features.
 
 **Sample Credentials:**
 - Email: `admin@example.com`
