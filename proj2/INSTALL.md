@@ -170,6 +170,14 @@ Install the following extensions in Visual Studio Code for the best development 
    - 15 sample restaurants with 4 menu items each
    - 7 days of wellness logs for the admin user
 
+### Email Service Setup (Development)
+
+For email functionality (e.g., email verification), we use [MailDev](https://github.com/maildev/maildev) as a local SMTP server with a web interface for viewing and testing emails during development.
+
+Once started, you can:
+- **View emails** at `http://localhost:1080` (Web UI)
+- **SMTP server** runs on `localhost:1025`
+
 ### Running the Application
 
 #### Development Mode (Recommended)
