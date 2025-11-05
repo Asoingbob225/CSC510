@@ -34,6 +34,9 @@ cd CSC510/proj2
 4. 🗄️ Creates and initializes the database
 5. 🌱 Seeds sample data (restaurants, allergens, admin user)
 
+> [!IMPORTANT] .ENV SETTING
+> Please remember to set your Gemini API keys in the `backend/.env` to use the AI features.
+
 **Sample Credentials:**
 - Email: `admin@example.com`
 - Password: `Admin123!@#`
@@ -125,11 +128,12 @@ Install the following extensions in Visual Studio Code for the best development 
 
    The frontend uses Bun as its package manager (monorepo setup).
 
-4. **Set up the backend Python environment:**
+4. **Set up the backend Python environment and backend project in editable mode:**
 
    ```bash
    cd backend
    uv sync
+   uv pip install -e .
    cd ..
    ```
 
@@ -141,7 +145,7 @@ Install the following extensions in Visual Studio Code for the best development 
    # Copy environment configuration
    cp .env.example .env
    
-   # IMPORTANT: Edit .env and set a secure JWT_SECRET_KEY
+   # IMPORTANT: Edit .env and set a secure JWT_SECRET_KEY, and GEMINI_API_KEY
    # Replace 'your-secret-key-here-change-in-production-min-32-chars'
    # with a random string of at least 32 characters
    # You can generate one with: openssl rand -hex 32

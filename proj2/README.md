@@ -60,6 +60,9 @@ The script will:
 - 🗄️ Initialize the database with sample data
 - 🎯 Set up everything you need to start coding
 
+> [!IMPORTANT] .ENV SETTING
+> Please remember to set your Gemini API keys in the backend `.env` to use the AI features.
+
 **Sample Credentials:**
 - Email: `admin@example.com`
 - Password: `Admin123!@#`
