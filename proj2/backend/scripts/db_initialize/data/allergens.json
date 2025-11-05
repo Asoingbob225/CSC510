@@ -1,0 +1,230 @@
+[
+  {
+    "name": "milk",
+    "category": "dairy",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Dairy products containing milk proteins"
+  },
+  {
+    "name": "eggs",
+    "category": "animal_product",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Chicken eggs and egg-containing products"
+  },
+  {
+    "name": "fish",
+    "category": "seafood",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Finned fish species"
+  },
+  {
+    "name": "shellfish",
+    "category": "seafood",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Crustaceans and mollusks"
+  },
+  {
+    "name": "tree nuts",
+    "category": "nuts",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Tree-grown nuts (excludes peanuts)"
+  },
+  {
+    "name": "peanuts",
+    "category": "legume",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Ground nuts (legume family)"
+  },
+  {
+    "name": "wheat",
+    "category": "grain",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Wheat and wheat-containing products"
+  },
+  {
+    "name": "soybeans",
+    "category": "legume",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Soybeans and soy-derived products"
+  },
+  {
+    "name": "sesame",
+    "category": "seed",
+    "is_major_allergen": true,
+    "description": "FDA Big 9 Major Allergen - Sesame seeds and sesame oil"
+  },
+  {
+    "name": "almonds",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Almond nuts from Prunus dulcis"
+  },
+  {
+    "name": "walnuts",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Walnuts from Juglans genus"
+  },
+  {
+    "name": "cashews",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Cashew nuts from Anacardium occidentale"
+  },
+  {
+    "name": "pistachios",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Pistachio nuts from Pistacia vera"
+  },
+  {
+    "name": "pecans",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Pecan nuts from Carya illinoinensis"
+  },
+  {
+    "name": "hazelnuts",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Hazelnuts (filberts) from Corylus genus"
+  },
+  {
+    "name": "macadamia nuts",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Macadamia nuts from Macadamia genus"
+  },
+  {
+    "name": "brazil nuts",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Brazil nuts from Bertholletia excelsa"
+  },
+  {
+    "name": "pine nuts",
+    "category": "nuts",
+    "is_major_allergen": false,
+    "description": "Tree nut - Pine nuts from pine tree cones"
+  },
+  {
+    "name": "shrimp",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Crustacean shellfish - Shrimp and prawns"
+  },
+  {
+    "name": "crab",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Crustacean shellfish - Crab species"
+  },
+  {
+    "name": "lobster",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Crustacean shellfish - Lobster species"
+  },
+  {
+    "name": "clams",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Mollusk shellfish - Clam species"
+  },
+  {
+    "name": "oysters",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Mollusk shellfish - Oyster species"
+  },
+  {
+    "name": "mussels",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Mollusk shellfish - Mussel species"
+  },
+  {
+    "name": "scallops",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Mollusk shellfish - Scallop species"
+  },
+  {
+    "name": "salmon",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Finned fish - Salmon species"
+  },
+  {
+    "name": "tuna",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Finned fish - Tuna species"
+  },
+  {
+    "name": "cod",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Finned fish - Cod species"
+  },
+  {
+    "name": "halibut",
+    "category": "seafood",
+    "is_major_allergen": false,
+    "description": "Finned fish - Halibut species"
+  },
+  {
+    "name": "gluten",
+    "category": "protein",
+    "is_major_allergen": false,
+    "description": "Protein composite found in wheat and related grains"
+  },
+  {
+    "name": "lactose",
+    "category": "dairy",
+    "is_major_allergen": false,
+    "description": "Milk sugar found in dairy products"
+  },
+  {
+    "name": "corn",
+    "category": "grain",
+    "is_major_allergen": false,
+    "description": "Corn/maize and corn-derived products"
+  },
+  {
+    "name": "soy",
+    "category": "legume",
+    "is_major_allergen": false,
+    "description": "Soy products (alternative name for soybeans)"
+  },
+  {
+    "name": "mustard",
+    "category": "seed",
+    "is_major_allergen": false,
+    "description": "Mustard seeds and mustard-containing products"
+  },
+  {
+    "name": "celery",
+    "category": "vegetable",
+    "is_major_allergen": false,
+    "description": "Celery and celeriac (celery root)"
+  },
+  {
+    "name": "lupin",
+    "category": "legume",
+    "is_major_allergen": false,
+    "description": "Lupin beans and lupin flour"
+  },
+  {
+    "name": "sulfites",
+    "category": "additive",
+    "is_major_allergen": false,
+    "description": "Sulfur dioxide and sulfite preservatives"
+  },
+  {
+    "name": "nitrates",
+    "category": "additive",
+    "is_major_allergen": false,
+    "description": "Nitrate and nitrite preservatives"
+  }
+]

@@ -18,18 +18,27 @@ pip install -e .
 
 Follow the detailed [Database Setup Guide](DATABASE_SETUP.md) for initial configuration.
 
-Quick setup:
+Quick setup (for new developers):
 
 ```bash
 # Copy environment configuration
 cp env.example .env
 
-# Create initial database
-python create_init_database.py
+# Create initial database file
+uv run python scripts/db_initialize/create_init_database.py
 
-# Apply migrations
+# Apply database migrations
 uv run alembic upgrade head
+
+# Seed database with sample data (admin user, allergens, restaurants, wellness logs)
+uv run python scripts/db_initialize/create_init_database.py --seed
 ```
+
+**What gets seeded:**
+- Admin user (email: `admin@example.com`, password: `Admin123!@#`)
+- 38 allergens (FDA Big 9 + common allergens)
+- 15 sample restaurants with 4 menu items each
+- 7 days of wellness logs for the admin user
 
 ### 3. Run the Application
 

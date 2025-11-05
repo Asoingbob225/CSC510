@@ -87,11 +87,38 @@ Install the following extensions in Visual Studio Code for the best development 
    The frontend uses Bun as its package manager (monorepo setup).
 
 4. **Set up the backend Python environment:**
+
    ```bash
    cd backend
    uv sync
    cd ..
    ```
+
+5. **Initialize the database with sample data:**
+
+   ```bash
+   cd backend
+   
+   # Copy environment configuration
+   cp env.example .env
+   
+   # Create database file
+   uv run python scripts/db_initialize/create_init_database.py
+   
+   # Apply database migrations
+   uv run alembic upgrade head
+   
+   # Seed database with sample data
+   uv run python scripts/db_initialize/create_init_database.py --seed
+   
+   cd ..
+   ```
+
+   **What gets seeded:**
+   - Admin user (email: `admin@example.com`, password: `Admin123!@#`)
+   - 38 allergens (FDA Big 9 + common allergens)
+   - 15 sample restaurants with 4 menu items each
+   - 7 days of wellness logs for the admin user
 
 ### Running the Application
 
