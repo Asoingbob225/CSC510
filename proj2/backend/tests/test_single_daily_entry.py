@@ -216,18 +216,16 @@ def test_different_days_allowed(client: TestClient, auth_headers: dict, db):
     db.commit()
 
     # Create mood log for today via API (use current local time)
-    today_local = now_local.replace(hour=14, minute=0, second=0, microsecond=0)
+    # Use actual current time to avoid "future time" validation errors
     mood_data_today = {
-        "occurred_at": today_local.isoformat(),
+        "occurred_at": now_local.isoformat(),
         "mood_score": 8,
         "notes": "Today's mood",
     }
     response = client.post(
         "/api/wellness/mood-logs", json=mood_data_today, headers=auth_headers
     )
-    assert response.status_code == status.HTTP_201_CREATED
-
-    # Verify both logs exist
+    assert response.status_code == status.HTTP_201_CREATED  # Verify both logs exist
     response = client.get("/api/wellness/logs", headers=auth_headers)
     assert response.status_code == 200
     data = response.json()
