@@ -143,9 +143,18 @@ echo ""
 print_info "Setting up backend Python environment..."
 cd "$PROJECT_ROOT/backend"
 if uv sync; then
-    print_success "Backend Python environment set up"
+    print_success "Backend dependencies installed"
 else
-    print_error "Failed to set up backend Python environment"
+    print_error "Failed to install backend dependencies"
+    exit 1
+fi
+
+# Install the project in editable mode
+print_info "Installing backend project in editable mode..."
+if uv pip install -e .; then
+    print_success "Backend project installed"
+else
+    print_error "Failed to install backend project"
     exit 1
 fi
 
