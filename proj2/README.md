@@ -15,21 +15,19 @@ Eatsential is an LLM-powered platform that connects users to hyper-personalized 
 
 ## 🎬 Demo Video
 
-Watch our 2-5 minute demo to see Eatsential in action:
+**Watch our 2-5 minute project demonstration:**
 
-<!-- Video hosted in GitHub Releases -->
 <div align="center">
-  <a href="https://github.com/Asoingbob225/CSC510/releases/download/v1.0.0/csc510_proj2_demo.mov">
-    <img src="https://img.shields.io/badge/▶️_Watch_Demo-Download_Video-FF0000?style=for-the-badge&logo=github&logoColor=white" alt="Download Demo Video" />
-  </a>
-  <br><br>
-  <a href="https://github.com/Asoingbob225/CSC510/releases">
-    <img src="https://img.shields.io/badge/🎥_Project_Demo-2--5_minutes-blue?style=for-the-badge" alt="Demo Video - 2-5 minutes" />
-  </a>
+  
+### 📥 [Download Demo Video (csc510_proj2_demo.mov)](https://github.com/Asoingbob225/CSC510/releases/latest/download/csc510_proj2_demo.mov)
+
+*Video will be available once uploaded to [GitHub Releases](https://github.com/Asoingbob225/CSC510/releases)*
+
 </div>
 
-> **📥 Video Location:** The demo video is available in our [GitHub Releases](https://github.com/Asoingbob225/CSC510/releases)  
-> **📁 Filename:** `csc510_proj2_demo.mov`
+**Alternative viewing options:**
+- 📁 Local file location: `csc510_proj2_demo.mov` in repository root
+- 🌐 View all releases: [CSC510 Releases](https://github.com/Asoingbob225/CSC510/releases)
 
 ---
 
