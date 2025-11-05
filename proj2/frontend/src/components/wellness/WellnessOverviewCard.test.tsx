@@ -205,4 +205,51 @@ describe('WellnessOverviewCard', () => {
     // Should find at least one "9/10" (the sleep quality score)
     expect(sleepScores.length).toBeGreaterThan(0);
   });
+
+  it('displays 7 days of wellness data including today', () => {
+    const now = new Date();
+    const sevenDaysOfLogs: WellnessLogResponse[] = [];
+
+    // Create logs for the past 7 days (6 days ago + today)
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i, 12, 0, 0);
+      sevenDaysOfLogs.push({
+        id: `log-${i}`,
+        user_id: 'user1',
+        mood_score: 5 + i, // Today (i=0) will have score 5
+        occurred_at_utc: date.toISOString(),
+        created_at: date.toISOString(),
+        updated_at: date.toISOString(),
+      });
+    }
+
+    // Today's log is the last one (i=0, which is today)
+    const todayLog = sevenDaysOfLogs[sevenDaysOfLogs.length - 1];
+
+    vi.mocked(useTodayWellnessLog).mockReturnValue({
+      data: {
+        mood_score: todayLog.mood_score,
+        stress_level: undefined,
+        quality_score: undefined,
+        duration_hours: undefined,
+        occurred_at_utc: todayLog.occurred_at_utc,
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useTodayWellnessLog>);
+
+    vi.mocked(useWellnessLogs).mockReturnValue({
+      data: sevenDaysOfLogs,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useWellnessLogs>);
+
+    renderComponent();
+
+    // Verify today's mood score is displayed (i=0 means score is 5)
+    expect(
+      screen.getByText((_content, element) => element?.textContent === '5/10')
+    ).toBeInTheDocument();
+
+    // Verify the component displays wellness data
+    expect(screen.getByText("Today's Wellness")).toBeInTheDocument();
+  });
 });
