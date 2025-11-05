@@ -18,21 +18,17 @@ export function WellnessOverviewCard() {
   const { data: todayLog, isLoading: logLoading } = useTodayWellnessLog();
 
   // Get last 7 days of wellness data (in local timezone)
-  const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 6); // Last 7 days including today
+  const now = new Date();
 
-  // Format dates as YYYY-MM-DD in local timezone
-  const formatLocalDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  // Start of 6 days ago in LOCAL time (00:00:00)
+  const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6, 0, 0, 0, 0);
+
+  // End of today in LOCAL time (23:59:59.999)
+  const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
   const { data: weekLogs, isLoading: weekLoading } = useWellnessLogs({
-    start_date: formatLocalDate(startDate),
-    end_date: formatLocalDate(endDate),
+    start_date: startDate.toISOString(),
+    end_date: endDate.toISOString(),
   });
 
   // Prepare chart data for the last 7 days
