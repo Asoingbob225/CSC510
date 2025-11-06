@@ -22,34 +22,4 @@ Welcome to the main repository for CSC510. This repo contains two major subproje
 
 Our main effort is dedicated to `proj2`, aiming to deliver a personalized, LLM-powered health and nutrition recommendation platform.
 
-**Eatsential Platform Highlights:**
-
-- Dual-dimension health goals: physical and mental well-being
-- Scientific nutrition engine and health tagging system
-- Real-time AI health concierge
-- Curated healthy restaurants with transparent nutrition info
-- Progress tracking and data visualization
-
 For more features, installation, and development details, see [`proj2/README.md`](proj2/README.md).
-
----
-
-## 🚀 Quick Start
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd CSC510/proj2
-   ```
-2. Install dependencies:
-   ```bash
-   bun install
-   cd frontend && bun install && cd ..
-   cd backend && uv sync && cd ..
-   ```
-3. Start the services:
-   ```bash
-   bun dev
-   ```
-   - Frontend: http://localhost:5173
-   - Backend: http://localhost:8000
