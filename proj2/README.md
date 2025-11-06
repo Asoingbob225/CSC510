@@ -4,7 +4,7 @@
 [![Super-Linter](https://github.com/Asoingbob225/CSC510/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
 [![Formatters](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml)
 [![codecov](https://codecov.io/gh/Asoingbob225/CSC510/branch/main/graph/badge.svg)](https://codecov.io/gh/Asoingbob225/CSC510)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17528813.svg)](https://zenodo.org/records/17528813) 
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.17429003-blue)](https://doi.org/10.5281/zenodo.17429003)
 [![Project Status: WIP](https://img.shields.io/badge/status-wip-yellow.svg)](#)
 
 **YOUR PLATE, YOUR RULES. PRECISION NUTRITION FOR BODY AND MIND.**
