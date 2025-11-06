@@ -16,14 +16,14 @@ Each team starts with full marks but **loses** 0.33 marks for missing items:
 | Docs: what: point descriptions of each class/function (in isolation) | `proj2/docs/2-DESIGN/api-design.md`, `proj2/docs/AGENT-PLAN/03-API-SPECIFICATIONS.md` | 3 |
 | Docs: how: for common use cases X,Y,Z mini-tutorials showing worked examples on how to do X,Y,Z | `proj2/docs/1-REQUIREMENTS/use-cases.md`, `proj2/backend/docs/ADMIN_SYSTEM_GUIDE.md` | 3 |
 | Docs: why: docs tell a story, motivate the whole thing, deliver a punchline that makes you want to rush out and use the thing | `proj2/docs/System_Introduction.md`, `proj2/docs/5-PROJECT-MANAGEMENT/project-charter.md` | 3 |
-| Docs: short video, animated, hosted on your repo. That convinces people why they want to work on your code. | Video file not found in repo | 3 |
+| Docs: short video, animated, hosted on your repo. That convinces people why they want to work on your code. | Video link was found in `README.md` | 3 |
 | Use of version control tools | `proj2/docs/3-IMPLEMENTATION/git-workflow.md`, `proj2/.github/pull_request_template.md` | 3 |
 | Test cases exist | `proj2/backend/tests/`, `proj2/frontend/src/**/*.test.tsx` (Numerous test files) | 3 |
 | Test cases are routinely executed | `proj2/.github/workflows/test-coverage.yml` | 3 |
 | Issues are discussed before they are closed | Manually verified (GH History) | 3 |
 | Chat channel: exists | GitHub Issues & Discord | 3 |
-| Test cases: a large proportion of the issues related to handling failing cases. | Manually verified (GH History) | ? |
-| Evidence that the whole team is using the same tools: everyone can get to all tools and files | External verification needed | 3 |
+| Test cases: a large proportion of the issues related to handling failing cases. | Manually verified (GH History) | 3 |
+| Evidence that the whole team is using the same tools: everyone can get to all tools and files | PkG manager, Lint & Format test ensure the same tools and files | 3 |
 | Evidence that the whole team is using the same tools (e.g. config files in the repo, updated by lots of different people) | `proj2/backend/pyproject.toml`, `proj2/frontend/package.json`, `proj2/.prettierrc` | 3 |
 | Evidence that the whole team is using the same tools (e.g. tutor can ask anyone to share screen, they demonstrate the system running on their computer) | External verification needed | 3 |
 | Evidence that the members of the team are working across multiple places in the code base | Manually verified (GH History) | 3 |
@@ -35,7 +35,7 @@ Each team starts with full marks but **loses** 0.33 marks for missing items:
 | The file CONTRIBUTING.md lists coding standards and lots of tips on how to extend the system without screwing things up; e.g. see [example](https://github.com/probot/template/blob/master/CONTRIBUTING.md) | `proj2/CONTRIBUTING.md`, `proj2/docs/3-IMPLEMENTATION/coding-standards.md` | 3 |
 | The file README.md contains all the following | `proj2/README.md` | 3 |
 | Video | 2min video of new functionality, showing a significant delta from prior. | 3 |
-| DOI badge: exists. To get a Digitial Object Indentifier, regiser the project at [Zenodo](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content). DOI badges look like this: | `proj2/.zenodo.json` (file exists, setup for DOI) | 3 |
+| DOI badge: exists. To get a Digitial Object Indentifier, regiser the project at [Zenodo](https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content). DOI badges look like this: | `proj2/.zenodo.json` (file exists, setup for DOI), see `README.md` | 3 |
 | Badges showing your style checkers | `proj2/.github/workflows/linter.yml`, `proj2/backend/ruff.toml`, `proj2/frontend/eslint.config.js` | 3 |
 | Badges showing your code formatters. | `proj2/.github/workflows/format-check.yml`, `proj2/.prettierrc` | 3 |
 | Badges showing your syntax checkers. | (Same as style checkers) `proj2/.github/workflows/linter.yml` | 3 |
