@@ -3,6 +3,7 @@
 [![CI/CD Pipeline](https://github.com/Asoingbob225/CSC510/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/test-coverage.yml)
 [![Super-Linter](https://github.com/Asoingbob225/CSC510/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
 [![Formatters](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml/badge.svg)](https://github.com/Asoingbob225/CSC510/actions/workflows/format-check.yml)
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg)](https://github.com/Asoingbob225/CSC510/security/dependabot)
 [![codecov](https://codecov.io/gh/Asoingbob225/CSC510/branch/main/graph/badge.svg)](https://codecov.io/gh/Asoingbob225/CSC510)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.17429003-blue)](https://doi.org/10.5281/zenodo.17429003)
 [![Project Status: WIP](https://img.shields.io/badge/status-wip-yellow.svg)](#)
