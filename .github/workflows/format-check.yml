@@ -15,7 +15,7 @@ jobs:
         working-directory: proj2/backend
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: "Set up Python"
         uses: actions/setup-python@v6
@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: "Set up Bun"
         uses: oven-sh/setup-bun@v2
 
