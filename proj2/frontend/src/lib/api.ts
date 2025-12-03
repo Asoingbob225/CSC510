@@ -878,3 +878,49 @@ export const githubApi = {
     return response.data;
   },
 };
+
+// Chat API Types
+export interface ChatRequest {
+  message: string;
+  session_id?: string;
+}
+
+export interface ChatResponse {
+  response: string;
+  session_id: string;
+}
+
+export interface ChatMessageResponse {
+  role: string;
+  content: string;
+  id: string;
+  created_at: string;
+}
+
+export interface ChatSessionResponse {
+  id: string;
+  title?: string;
+  created_at: string;
+  updated_at: string;
+  messages: ChatMessageResponse[];
+}
+
+export const chatApi = {
+  // Send message
+  sendMessage: async (data: ChatRequest): Promise<ChatResponse> => {
+    const response = await apiClient.post<ChatResponse>('/chat', data);
+    return response.data;
+  },
+
+  // Get all sessions
+  getSessions: async (): Promise<ChatSessionResponse[]> => {
+    const response = await apiClient.get<ChatSessionResponse[]>('/chat/sessions');
+    return response.data;
+  },
+
+  // Get specific session
+  getSession: async (sessionId: string): Promise<ChatSessionResponse> => {
+    const response = await apiClient.get<ChatSessionResponse>(`/chat/sessions/${sessionId}`);
+    return response.data;
+  },
+};
