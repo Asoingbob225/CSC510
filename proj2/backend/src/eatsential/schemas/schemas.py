@@ -467,6 +467,28 @@ class MealListResponse(BaseModel):
     page_size: int
 
 
+# --- Orders Schemas ---
+
+
+class OrderCreate(BaseModel):
+    """Schema for creating an order from a recommended menu item"""
+
+    menu_item_id: str = Field(..., description="ID of the menu item to order")
+    meal_id: str = Field(..., description="ID of the associated meal log")
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class OrderResponse(BaseModel):
+    """Schema for order response"""
+
+    id: str
+    menu_item_id: str
+    meal_id: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # --- Goal Tracking Schemas ---
 
 

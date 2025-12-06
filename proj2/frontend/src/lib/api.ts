@@ -742,6 +742,26 @@ export const mealApi = {
   },
 };
 
+// Orders API Types
+export interface OrderCreate {
+  menu_item_id: string;
+  meal_id: string;
+}
+
+export interface OrderResponse {
+  id: string;
+  menu_item_id: string;
+  meal_id: string;
+}
+
+// Orders API
+export const ordersApi = {
+  createOrder: async (data: OrderCreate): Promise<OrderResponse> => {
+    const response = await apiClient.post<OrderResponse>('/orders', data);
+    return response.data;
+  },
+};
+
 // Meal Recommendation API Types
 export type RecommendationMode = 'llm' | 'baseline';
 
