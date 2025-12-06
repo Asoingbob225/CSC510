@@ -196,6 +196,7 @@ export function RecommendationCarousel({
   }));
   const [openPlanner, setOpenPlanner] = useState(false);
   const [selectedMealName, setSelectedMealName] = useState<string | undefined>(undefined);
+  const [selectedMealCalories, setSelectedMealCalories] = useState<string | undefined>(undefined);
   const [selectedMenuItemId, setSelectedMenuItemId] = useState<string | undefined>(undefined);
 
   // Track whether user has manually requested recommendations
@@ -260,9 +261,10 @@ export function RecommendationCarousel({
     });
   };
 
-  const loadMealPlanner = (menuItemId: string, name: string): void => {
+  const loadMealPlanner = (menuItemId: string, name: string, calories: string): void => {
     setSelectedMenuItemId(menuItemId);
     setSelectedMealName(name);
+    setSelectedMealCalories(calories);
     setOpenPlanner(true);
   };
 
@@ -770,11 +772,11 @@ export function RecommendationCarousel({
                   </div>
                   <Button
                     size="lg"
-                    onClick={() => loadMealPlanner(item.id, item.name)}
+                    onClick={() => loadMealPlanner(item.id, item.name, item.calories !== undefined ? `${Math.round(item.calories)}` : '0')}
                     className="px-4 w-full gap-2 bg-emerald-600 hover:bg-emerald-700"
                   >
                     <Plus className="size-5" />
-                    Add Meal
+                    Schedule Meal
                   </Button>
                 </div>
               );
@@ -782,7 +784,7 @@ export function RecommendationCarousel({
           </div>
         </CardContent>
       </Card>
-      <QuickMealPlanner open={openPlanner} onOpenChange={setOpenPlanner} mealName={selectedMealName} menuItemId={selectedMenuItemId} />
+      <QuickMealPlanner open={openPlanner} onOpenChange={setOpenPlanner} mealName={selectedMealName} mealCalories={selectedMealCalories} menuItemId={selectedMenuItemId} />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,8 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { useLogMeal } from '@/hooks/useMeals';
-import { ordersApi } from '@/lib/api';
+import { useLogOrder } from '@/hooks/useOrders';
 import type { MealTypeOption } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -55,7 +54,16 @@ const quickMealSchema = z.object({
   meal_time: z
     .string()
     .min(1, 'Meal time is required')
-    .refine((val) => !Number.isNaN(Date.parse(val)), 'Enter a valid date and time'),
+    .refine((val) => !Number.isNaN(Date.parse(val)), 'Enter a valid date and time')
+    .refine(
+      (val) => {
+        const selectedTime = new Date(val);
+        const minimumTime = new Date();
+        minimumTime.setMinutes(minimumTime.getMinutes() + 30);
+        return selectedTime >= minimumTime;
+      },
+      'Meal time must be at least 30 minutes in the future to allow for prep and delivery'
+    ),
   food_name: z.string().min(1, 'Food name is required'),
   portion_size: z
     .string()
@@ -64,7 +72,7 @@ const quickMealSchema = z.object({
       (val) => !Number.isNaN(Number(val)) && Number(val) > 0,
       'Portion size must be greater than 0'
     ),
-  portion_unit: 'serving',
+  portion_unit: z.string().min(1, 'Portion unit is required'),
   calories: numberString,
   protein_g: numberString,
   carbs_g: numberString,
@@ -79,10 +87,11 @@ interface QuickMealPlannerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   mealName?: string;
+  mealCalories?: string;
   menuItemId?: string;
 }
 
-export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: QuickMealPlannerProps) {
+export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, menuItemId }: QuickMealPlannerProps) {
   const [isMealDateOpen, setIsMealDateOpen] = useState(false);
 
   const {
@@ -100,61 +109,41 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
       food_name: mealName || '',
       portion_size: '',
       portion_unit: 'serving',
-      calories: '',
+      calories: mealCalories || '0',
       protein_g: '',
       carbs_g: '',
       fat_g: '',
     },
   });
 
+  // Sync prop changes to form when drawer opens
+  useEffect(() => {
+    if (open) {
+      if (mealName) setValue('food_name', mealName);
+      if (mealCalories) setValue('calories', mealCalories);
+      setValue('portion_size', '1')
+    }
+  }, [open, mealName, mealCalories, setValue]);
+
   const mealTime = watch('meal_time');
 
- const { mutate: logMeal, isPending } = useLogMeal({
+  const { mutate: logOrder, isPending } = useLogOrder({
     onSuccess: () => {
       toast.success('Meal logged successfully!');
-      reset();
-      onOpenChange(false);
-    },
-    onError: (error) => {
-      const message =
-        error instanceof Error ? error.message : 'Failed to log meal. Please try again.';
-      toast.error(message);
-    },
-  });
-
-  const { mutate: logMeal, isPending } = useLogMeal({
-    onSuccess: async (mealData) => {
-      // If a menu item was selected, create an order linking it to the meal
-      if (menuItemId && mealData.id) {
-        try {
-          await ordersApi.createOrder({
-            menu_item_id: menuItemId,
-            meal_id: mealData.id,
-          });
-          toast.success('Meal logged and linked to menu item!');
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : 'Failed to link menu item to meal';
-          toast.warning(`Meal logged, but ${message}`);
-        }
-      } else {
-        toast.success('Meal logged successfully!');
-      }
-
       reset({
         meal_type: 'breakfast',
         meal_time: getDefaultDateTime(),
         food_name: mealName || '',
         portion_size: '',
         portion_unit: 'serving',
-        calories: '',
+        calories: mealCalories || '0',
         protein_g: '',
         carbs_g: '',
         fat_g: '',
       });
       onOpenChange(false);
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       const message =
         error instanceof Error ? error.message : 'Failed to log meal. Please try again.';
       toast.error(message);
@@ -167,15 +156,22 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
     return Number.isNaN(parsed.getTime()) ? undefined : parsed;
   };
 
+  const getMinimumDateTime = (): Date => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 30);
+    return now;
+  };
+
   const onSubmit = (data: QuickMealFormValues) => {
     const payload = {
       meal_type: data.meal_type,
       meal_time: new Date(data.meal_time).toISOString(),
+      menu_item_id: menuItemId,
       food_items: [
         {
           food_name: data.food_name,
           portion_size: Number(data.portion_size),
-          portion_unit: 'serving',
+          portion_unit: data.portion_unit,
           calories: data.calories ? Number(data.calories) : undefined,
           protein_g: data.protein_g ? Number(data.protein_g) : undefined,
           carbs_g: data.carbs_g ? Number(data.carbs_g) : undefined,
@@ -184,15 +180,15 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
       ],
     };
 
-    logMeal(payload);
+    logOrder(payload);
   };
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[95vh]">
         <DrawerHeader>
-          <DrawerTitle>Order Meal</DrawerTitle>
-          <DrawerDescription>Place an order </DrawerDescription>
+          <DrawerTitle>Schedule Meal</DrawerTitle>
+          <DrawerDescription>Schedule a meal in advance </DrawerDescription>
         </DrawerHeader>
 
         <form
@@ -248,13 +244,13 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
                         if (date) {
                           const selectedDate = parseMealTimeValue(mealTime);
                           const next = new Date(date);
-                          const baseline = selectedDate ?? new Date();
+                          const baseline = selectedDate ?? getMinimumDateTime();
                           next.setHours(baseline.getHours(), baseline.getMinutes(), 0, 0);
                           setValue('meal_time', format(next, "yyyy-MM-dd'T'HH:mm"));
                           setIsMealDateOpen(false);
                         }
                       }}
-                      disabled={(date) => date > new Date()}
+                      disabled={(date) => date < getMinimumDateTime()}
                     />
                   </PopoverContent>
                 </Popover>
@@ -305,7 +301,7 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
           <FieldGroup>
             <FieldLabel>Food Name</FieldLabel>
             <Field>
-              <Input type="text" value={mealName} disabled />
+              <Input type="text" {...register('food_name')} disabled />
             </Field>
             {errors.food_name && <FieldError>{errors.food_name.message}</FieldError>}
           </FieldGroup>
@@ -314,17 +310,17 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
           <FieldGroup>
             <FieldLabel>Portions</FieldLabel>
             <Field>
-              <Input {...register('portion_size')} type="number" step="1" value="1" />
+              <Input {...register('portion_size')} type="number" step="1" min="0"/>
             </Field>
             {errors.portion_size && <FieldError>{errors.portion_size.message}</FieldError>}
           </FieldGroup>
 
-          {/* Nutrition (Optional) */}
+          {/* Nutrition */}
           <div className="grid gap-4 md:grid-cols-2">
             <FieldGroup>
-              <FieldLabel>Calories (optional)</FieldLabel>
+              <FieldLabel>Calories </FieldLabel>
               <Field>
-                <Input {...register('calories')} type="number" step="1" placeholder="0" />
+                <Input type="text" {...register('calories')} min="0"/>
               </Field>
               {errors.calories && <FieldError>{errors.calories.message}</FieldError>}
             </FieldGroup>
@@ -332,7 +328,7 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
             <FieldGroup>
               <FieldLabel>Protein (g) (optional)</FieldLabel>
               <Field>
-                <Input {...register('protein_g')} type="number" step="0.1" placeholder="0" />
+                <Input {...register('protein_g')} type="number" step="1" placeholder="0" min="0"/>
               </Field>
               {errors.protein_g && <FieldError>{errors.protein_g.message}</FieldError>}
             </FieldGroup>
@@ -340,7 +336,7 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
             <FieldGroup>
               <FieldLabel>Carbs (g) (optional)</FieldLabel>
               <Field>
-                <Input {...register('carbs_g')} type="number" step="0.1" placeholder="0" />
+                <Input {...register('carbs_g')} type="number" step="1" placeholder="0" min="0"/>
               </Field>
               {errors.carbs_g && <FieldError>{errors.carbs_g.message}</FieldError>}
             </FieldGroup>
@@ -348,7 +344,7 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, menuItemId }: Q
             <FieldGroup>
               <FieldLabel>Fat (g) (optional)</FieldLabel>
               <Field>
-                <Input {...register('fat_g')} type="number" step="0.1" placeholder="0" />
+                <Input {...register('fat_g')} type="number" step="1" placeholder="0" min="0"/>
               </Field>
               {errors.fat_g && <FieldError>{errors.fat_g.message}</FieldError>}
             </FieldGroup>

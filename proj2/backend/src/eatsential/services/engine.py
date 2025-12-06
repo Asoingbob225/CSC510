@@ -419,6 +419,8 @@ class RecommendationService:
                     name=item.name,
                     score=score,
                     explanation=explanation,
+                    price=price,
+                    calories=calories,
                 )
             )
 
@@ -586,12 +588,17 @@ class RecommendationService:
                 explanation_candidate = str(explanation_raw)
             explanation = explanation_candidate.strip() or "Selected by LLM ranking"
 
+            price = getattr(item, "price", None)
+            calories = getattr(item, "calories", None)
+
             recommendations.append(
                 RecommendedItem(
                     item_id=str(item.id),
                     name=name,
                     score=score,
                     explanation=explanation,
+                    price=price,
+                    calories=calories,
                 )
             )
 
@@ -636,7 +643,7 @@ class RecommendationService:
             f"Request Filters:\n{json.dumps(filters_payload, indent=2)}\n\n"
             f"Candidate {entity_type.title()}s:\n"
             f"{json.dumps(candidates_payload, indent=2)}\n\n"
-            "Task: From the candidate list provided, select and rank the top 5 items "
+            f"Task: From the candidate list provided, select and rank the top {self.max_results} items "
             "that best match the user's profile, health context, and request filters. "
             "For each item, provide a score between 0.0 and 1.0 "
             "and a short explanation for why it's a good match.\n\n"
