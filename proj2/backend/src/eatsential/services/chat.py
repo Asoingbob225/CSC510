@@ -133,7 +133,7 @@ class ChatService:
             full_prompt += "\nAssistant:"
 
             response = self.client.models.generate_content(
-                model="gemini-1.5-flash",
+                model="gemini-flash-latest",
                 contents=full_prompt
             )
             

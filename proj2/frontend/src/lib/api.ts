@@ -40,7 +40,7 @@ const apiClient = axios.create({
 // Request interceptor: automatically add JWT token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = getAuthToken();
+    const token = localStorage.getItem('eatsential_auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -908,19 +908,37 @@ export interface ChatSessionResponse {
 export const chatApi = {
   // Send message
   sendMessage: async (data: ChatRequest): Promise<ChatResponse> => {
-    const response = await apiClient.post<ChatResponse>('/chat', data);
+    const token = localStorage.getItem("eatsential_auth_token");
+
+    const response = await apiClient.post<ChatResponse>('/chat/', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   },
 
   // Get all sessions
   getSessions: async (): Promise<ChatSessionResponse[]> => {
-    const response = await apiClient.get<ChatSessionResponse[]>('/chat/sessions');
+    const token = localStorage.getItem("eatsential_auth_token");
+
+    const response = await apiClient.get<ChatSessionResponse[]>('/chat/sessions', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   },
 
   // Get specific session
   getSession: async (sessionId: string): Promise<ChatSessionResponse> => {
-    const response = await apiClient.get<ChatSessionResponse>(`/chat/sessions/${sessionId}`);
+    const token = localStorage.getItem("eatsential_auth_token");
+
+    const response = await apiClient.get<ChatSessionResponse>(`/chat/sessions/${sessionId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   },
 };
