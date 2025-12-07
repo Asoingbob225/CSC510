@@ -1,5 +1,6 @@
 """SQLAlchemy ORM models for database tables."""
 
+from .chat import ChatMessage, ChatSession
 from .models import (
     AccountStatus,
     ActivityLevel,
@@ -30,6 +31,8 @@ __all__ = [
     "AllergenDB",
     "AllergySeverity",
     "AuditAction",
+    "ChatMessage",
+    "ChatSession",
     "DietaryPreferenceDB",
     "GoalDB",
     "HealthProfileDB",
