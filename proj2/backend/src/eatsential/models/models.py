@@ -94,6 +94,10 @@ class UserDB(Base):
     sleep_logs: Mapped[list["SleepLogDB"]] = relationship(
         "SleepLogDB", back_populates="user", cascade="all, delete-orphan"
     )
+    recommendation_feedback: Mapped[list["RecommendationFeedbackDB"]] = relationship(
+        "RecommendationFeedbackDB",
+        cascade="all, delete-orphan",
+    )
 
 
 class ActivityLevel(str, Enum):
@@ -587,6 +591,23 @@ class MenuItem(Base):
         "AllergenDB", secondary=menu_item_allergens, back_populates="menu_items"
     )
 
+# ============================================================================
+# Orders Model
+# ============================================================================
+
+class Orders(Base):
+    """SQLAlchemy model representing a potentially scheduled order for a user."""
+
+    __tablename__ = "orders"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    menu_item_id : Mapped[str] = mapped_column(
+        String, ForeignKey("menu_items.id", ondelete="CASCADE"), nullable=False
+    )
+    meal_id : Mapped[str] = mapped_column(
+        String, ForeignKey("meals.id", ondelete="CASCADE"), nullable=False
+    )
+
 
 # ============================================================================
 # Audit Log Models
@@ -673,3 +694,53 @@ class UserAuditLogDB(Base):
 
     # Relationships
     admin_user: Mapped["UserDB"] = relationship("UserDB", foreign_keys=[admin_user_id])
+
+
+# ============================================================================
+# Recommendation Feedback Models
+# ============================================================================
+
+
+class FeedbackType(str, Enum):
+    """Feedback type enum"""
+
+    LIKE = "like"
+    DISLIKE = "dislike"
+
+
+class RecommendationFeedbackDB(Base):
+    """SQLAlchemy model for recommendation feedback table
+
+    Stores user feedback (like/dislike) on recommended items to improve
+    future recommendations by learning user preferences.
+    """
+
+    __tablename__ = "recommendation_feedback"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    item_id: Mapped[str] = mapped_column(
+        String, nullable=False, index=True
+    )  # Can be menu_item_id or restaurant_id
+    item_type: Mapped[str] = mapped_column(
+        String(20), nullable=False, index=True
+    )  # "meal" or "restaurant"
+    feedback_type: Mapped[str] = mapped_column(
+        String(20), nullable=False, index=True
+    )  # "like" or "dislike"
+
+    # Optional context
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, nullable=False, index=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
+
+    # Relationships
+    user: Mapped["UserDB"] = relationship("UserDB")

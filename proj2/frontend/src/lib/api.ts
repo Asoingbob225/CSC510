@@ -686,6 +686,14 @@ export interface MealCreateRequest {
   food_items: MealFoodItemInput[];
 }
 
+export interface MealUpdate {
+  meal_type?: MealTypeOption;
+  meal_time?: string;
+  notes?: string;
+  photo_url?: string;
+  food_items?: MealFoodItemInput[];
+}
+
 export interface MealFoodItemResponse {
   id: string;
   food_name: string;
@@ -738,6 +746,56 @@ export const mealApi = {
     const response = await apiClient.get<MealListResponse>('/meals', {
       params,
     });
+    return response.data;
+  },
+};
+
+// Orders API Types
+export interface OrderCreate {
+  menu_item_id: string;
+  meal_id: string;
+}
+
+export interface OrderResponse {
+  id: string;
+  menu_item_id: string;
+  meal_id: string;
+}
+
+export interface ScheduledOrderResponse {
+  id: string;
+  menu_item_id: string;
+  meal_id: string;
+  meal_type: string;
+  meal_time: string; // ISO datetime string
+  menu_item_name: string;
+  restaurant_name: string;
+  calories: number | null;
+  price: number | null;
+  portion_size: number;
+  portion_unit: string;
+}
+
+// Orders API
+export const ordersApi = {
+  createOrder: async (data: OrderCreate): Promise<OrderResponse> => {
+    const response = await apiClient.post<OrderResponse>('/orders', data);
+    return response.data;
+  },
+  
+  getScheduledOrders: async (days: number = 7): Promise<ScheduledOrderResponse[]> => {
+    const response = await apiClient.get<ScheduledOrderResponse[]>('/orders/scheduled', {
+      params: { days },
+    });
+    return response.data;
+  },
+
+  deleteOrder: async (orderId: string): Promise<void> => {
+    await apiClient.delete(`/orders/${orderId}`);
+  },
+
+  updateOrderMeal: async (orderId: string, mealUpdate: MealUpdate): Promise<ScheduledOrderResponse> => {
+    const response = await apiClient.put<ScheduledOrderResponse>(`/orders/${orderId}/meal`, mealUpdate);
     return response.data;
   },
 };
@@ -802,6 +860,22 @@ export type MealRecommendationResponse =
   | MealRecommendationResponseV2
   | MealRecommendationResponseLegacy;
 
+// Feedback types
+export interface FeedbackRequest {
+  item_id: string;
+  item_type: 'meal' | 'restaurant';
+  feedback_type: 'like' | 'dislike';
+  notes?: string;
+}
+
+export interface FeedbackResponse {
+  id: string;
+  item_id: string;
+  item_type: string;
+  feedback_type: string;
+  created_at: string;
+}
+
 // Meal Recommendation API
 export const recommendationApi = {
   getMealRecommendations: async (
@@ -824,6 +898,19 @@ export const recommendationApi = {
     const response = await apiClient.post<MealRecommendationResponse>(
       '/recommend/meal',
       Object.keys(payload).length > 0 ? payload : undefined
+    );
+    return response.data;
+  },
+
+  submitFeedback: async (request: FeedbackRequest): Promise<FeedbackResponse> => {
+    const response = await apiClient.post<FeedbackResponse>('/recommend/feedback', request);
+    return response.data;
+  },
+
+  getFeedback: async (itemIds: string[], itemType: 'meal' | 'restaurant'): Promise<Record<string, 'like' | 'dislike'>> => {
+    const itemIdsParam = itemIds.join(',');
+    const response = await apiClient.get<Record<string, 'like' | 'dislike'>>(
+      `/recommend/feedback?item_ids=${encodeURIComponent(itemIdsParam)}&item_type=${itemType}`
     );
     return response.data;
   },

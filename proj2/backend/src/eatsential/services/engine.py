@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import random
 from collections.abc import Sequence
 from dataclasses import dataclass
 from decimal import Decimal
@@ -17,6 +18,8 @@ from sqlalchemy.orm import Session, selectinload
 
 if TYPE_CHECKING:
     from google.genai.client import Client as GenAiClient
+
+MAX_LLM_CANDIDATES = 100
 
 from ..models.models import (
     GoalDB,
@@ -35,6 +38,7 @@ from ..schemas.recommendation_schemas import (
     RecommendationResponse,
     RecommendedItem,
 )
+from .feedback_service import FeedbackService
 
 logger = logging.getLogger(__name__)
 
@@ -135,25 +139,58 @@ class RecommendationService:
         if not safe_candidates:
             return RecommendationResponse(items=[])
 
+        # Filter out disliked items based on user feedback
+        feedback_service = FeedbackService(self.db)
+        disliked_items = feedback_service.get_user_disliked_items(
+            user_id=user.id, item_type="meal"
+        )
+        liked_items = feedback_service.get_user_liked_items(
+            user_id=user.id, item_type="meal"
+        )
+
+        # Remove disliked items from candidates
+        filtered_candidates = [
+            item for item in safe_candidates if str(item.id) not in disliked_items
+        ]
+
+        if not filtered_candidates:
+            # If all items were disliked, return empty or fall back to safe_candidates
+            # (depending on business logic - here we return empty to respect user preferences)
+            logger.warning(
+                "All meal candidates were filtered out due to user dislikes for user %s",
+                user.id,
+            )
+            return RecommendationResponse(items=[])
+        if len(safe_candidates) > MAX_LLM_CANDIDATES:
+            safe_candidates = random.sample(
+                safe_candidates, MAX_LLM_CANDIDATES
+            )
+
         if (request.mode or "llm") == "baseline":
-            baseline = self._get_baseline_meals(context, safe_candidates, filters)
+            baseline = self._get_baseline_meals(context, filtered_candidates, filters)
+            # Boost scores for liked items
+            baseline = self._apply_feedback_boosts(baseline, liked_items)
             return RecommendationResponse(items=baseline[: self.max_results])
 
         try:
             llm = self._get_llm_recommendations(
                 context=context,
-                items=safe_candidates,
+                items=filtered_candidates,
                 filters=filters,
                 entity_type="meal",
             )
             if llm:
+                # Boost scores for liked items
+                llm = self._apply_feedback_boosts(llm, liked_items)
                 return RecommendationResponse(items=llm[: self.max_results])
         except Exception as exc:
             logger.exception(
                 "LLM recommendation failed, falling back to baseline: %s", exc
             )
 
-        baseline = self._get_baseline_meals(context, safe_candidates, filters)
+        baseline = self._get_baseline_meals(context, filtered_candidates, filters)
+        # Boost scores for liked items
+        baseline = self._apply_feedback_boosts(baseline, liked_items)
         return RecommendationResponse(items=baseline[: self.max_results])
 
     def get_restaurant_recommendations(
@@ -174,21 +211,48 @@ class RecommendationService:
         if not safe_restaurants:
             return RecommendationResponse(items=[])
 
+        # Filter out disliked restaurants based on user feedback
+        feedback_service = FeedbackService(self.db)
+        disliked_items = feedback_service.get_user_disliked_items(
+            user_id=user.id, item_type="restaurant"
+        )
+        liked_items = feedback_service.get_user_liked_items(
+            user_id=user.id, item_type="restaurant"
+        )
+
+        # Remove disliked restaurants from candidates
+        filtered_restaurants = [
+            restaurant
+            for restaurant in safe_restaurants
+            if str(restaurant.id) not in disliked_items
+        ]
+
+        if not filtered_restaurants:
+            logger.warning(
+                "All restaurant candidates were filtered out due to user dislikes for user %s",
+                user.id,
+            )
+            return RecommendationResponse(items=[])
+
         if (request.mode or "llm") == "baseline":
             baseline = self._get_baseline_restaurants(
-                context, safe_restaurants, menu_map, filters
+                context, filtered_restaurants, menu_map, filters
             )
+            # Boost scores for liked restaurants
+            baseline = self._apply_feedback_boosts(baseline, liked_items)
             return RecommendationResponse(items=baseline[: self.max_results])
 
         try:
             llm = self._get_llm_recommendations(
                 context=context,
-                items=safe_restaurants,
+                items=filtered_restaurants,
                 filters=filters,
                 entity_type="restaurant",
                 restaurant_menu_map=menu_map,
             )
             if llm:
+                # Boost scores for liked restaurants
+                llm = self._apply_feedback_boosts(llm, liked_items)
                 return RecommendationResponse(items=llm[: self.max_results])
         except Exception as exc:
             logger.exception(
@@ -197,8 +261,10 @@ class RecommendationService:
             )
 
         baseline = self._get_baseline_restaurants(
-            context, safe_restaurants, menu_map, filters
+            context, filtered_restaurants, menu_map, filters
         )
+        # Boost scores for liked restaurants
+        baseline = self._apply_feedback_boosts(baseline, liked_items)
         return RecommendationResponse(items=baseline[: self.max_results])
 
     # ------------------------------------------------------------------ #
@@ -419,6 +485,8 @@ class RecommendationService:
                     name=item.name,
                     score=score,
                     explanation=explanation,
+                    price=price,
+                    calories=calories,
                 )
             )
 
@@ -586,17 +654,31 @@ class RecommendationService:
                 explanation_candidate = str(explanation_raw)
             explanation = explanation_candidate.strip() or "Selected by LLM ranking"
 
+            price = getattr(item, "price", None)
+            calories = getattr(item, "calories", None)
+
             recommendations.append(
                 RecommendedItem(
                     item_id=str(item.id),
                     name=name,
                     score=score,
                     explanation=explanation,
+                    price=price,
+                    calories=calories,
                 )
             )
 
         recommendations.sort(key=lambda rec: (-rec.score, rec.item_id))
-        return recommendations
+        
+        # Deduplicate by item_id (keep the one with highest score)
+        seen_ids: dict[str, RecommendedItem] = {}
+        for rec in recommendations:
+            if rec.item_id not in seen_ids:
+                seen_ids[rec.item_id] = rec
+            elif rec.score > seen_ids[rec.item_id].score:
+                seen_ids[rec.item_id] = rec
+        
+        return list(seen_ids.values())
 
     def _build_prompt(
         self,
@@ -636,7 +718,7 @@ class RecommendationService:
             f"Request Filters:\n{json.dumps(filters_payload, indent=2)}\n\n"
             f"Candidate {entity_type.title()}s:\n"
             f"{json.dumps(candidates_payload, indent=2)}\n\n"
-            "Task: From the candidate list provided, select and rank the top 5 items "
+            f"Task: From the candidate list provided, select and rank the top {self.max_results} items "
             "that best match the user's profile, health context, and request filters. "
             "For each item, provide a score between 0.0 and 1.0 "
             "and a short explanation for why it's a good match.\n\n"
@@ -857,3 +939,49 @@ class RecommendationService:
             if "sodium" in lower:
                 keywords.append("low sodium")
         return any(keyword in text for keyword in keywords)
+
+    def _apply_feedback_boosts(
+        self,
+        recommendations: list[RecommendedItem],
+        liked_items: set[str],
+    ) -> list[RecommendedItem]:
+        """Apply score boosts to items that the user has liked.
+
+        Args:
+            recommendations: List of recommended items
+            liked_items: Set of item IDs that the user has liked
+
+        Returns:
+            List of recommendations with boosted scores for liked items
+        """
+        if not liked_items:
+            return recommendations
+
+        boosted = []
+        for rec in recommendations:
+            if rec.item_id in liked_items:
+                # Boost score by 10% (capped at 1.0)
+                new_score = min(1.0, rec.score * 1.1)
+                boosted.append(
+                    RecommendedItem(
+                        item_id=rec.item_id,
+                        name=rec.name,
+                        score=new_score,
+                        explanation=f"{rec.explanation} (You liked this before)",
+                    )
+                )
+            else:
+                boosted.append(rec)
+
+        # Re-sort by score after boosting
+        boosted.sort(key=lambda r: (-r.score, r.item_id))
+        
+        # Deduplicate by item_id (keep the one with highest score)
+        seen_ids: dict[str, RecommendedItem] = {}
+        for rec in boosted:
+            if rec.item_id not in seen_ids:
+                seen_ids[rec.item_id] = rec
+            elif rec.score > seen_ids[rec.item_id].score:
+                seen_ids[rec.item_id] = rec
+        
+        return list(seen_ids.values())
