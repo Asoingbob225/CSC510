@@ -8,7 +8,7 @@ import { Plus } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { ChefHat, RefreshCw, Sparkles, UtensilsCrossed, Eraser, Bot, Baseline } from 'lucide-react';
 import { useMealRecommendations } from '@/hooks/useRecommendations';
-import { QuickMealPlanner } from './QuickMealPlanner';
+import { QuickMealPlanner } from './OrderDrawer';
 import type {
   MealRecommendationResponse,
   RecommendationFiltersPayload,

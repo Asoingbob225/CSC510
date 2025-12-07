@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
 import * as z from 'zod';
+import { useQueryClient } from '@tanstack/react-query';
 
 import {
   Drawer,
@@ -89,9 +90,11 @@ interface QuickMealPlannerProps {
   mealName?: string;
   mealCalories?: string;
   menuItemId?: string;
+  onOrderSuccess?: () => void;
 }
 
-export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, menuItemId }: QuickMealPlannerProps) {
+export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, menuItemId, onOrderSuccess }: QuickMealPlannerProps) {
+  const queryClient = useQueryClient();
   const [isMealDateOpen, setIsMealDateOpen] = useState(false);
 
   const {
@@ -141,6 +144,8 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, m
         carbs_g: '',
         fat_g: '',
       });
+      onOrderSuccess?.();
+      queryClient.invalidateQueries({ queryKey: ['scheduledOrders'] });
       onOpenChange(false);
     },
     onError: (error: unknown) => {
@@ -193,11 +198,11 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, m
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mx-auto w-full space-y-4 overflow-y-auto px-4 sm:max-w-2xl"
+          className="mx-auto w-full space-y-3 overflow-y-auto px-4 sm:max-w-2xl"
         >
           {/* Meal Type and Time */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <FieldGroup>
+          <div className="grid gap-3 md:grid-cols-2">
+            <FieldGroup className="gap-1">
               <FieldLabel>Meal Type</FieldLabel>
               <Field>
                 <Select
@@ -219,7 +224,7 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, m
               {errors.meal_type && <FieldError>{errors.meal_type.message}</FieldError>}
             </FieldGroup>
 
-            <FieldGroup>
+            <FieldGroup className="gap-1">
               <FieldLabel>Meal Time</FieldLabel>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Popover open={isMealDateOpen} onOpenChange={setIsMealDateOpen}>
@@ -298,7 +303,7 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, m
           </div>
 
           {/* Food Item */}
-          <FieldGroup>
+          <FieldGroup className="gap-1">
             <FieldLabel>Food Name</FieldLabel>
             <Field>
               <Input type="text" {...register('food_name')} disabled />
@@ -307,7 +312,7 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, m
           </FieldGroup>
 
           {/* Portion */}
-          <FieldGroup>
+          <FieldGroup className="gap-1">
             <FieldLabel>Portions</FieldLabel>
             <Field>
               <Input {...register('portion_size')} type="number" step="1" min="0"/>
@@ -315,9 +320,14 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, m
             {errors.portion_size && <FieldError>{errors.portion_size.message}</FieldError>}
           </FieldGroup>
 
+          {/* Nutrition Label */}
+          <div className="gap-1 text-center">
+            Nutrition Information per Portion (Optional)
+          </div>
+
           {/* Nutrition */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <FieldGroup>
+          <div className="grid gap-3 md:grid-cols-2">
+            <FieldGroup className="gap-1">
               <FieldLabel>Calories </FieldLabel>
               <Field>
                 <Input type="text" {...register('calories')} min="0"/>
@@ -325,24 +335,24 @@ export function QuickMealPlanner({ open, onOpenChange, mealName, mealCalories, m
               {errors.calories && <FieldError>{errors.calories.message}</FieldError>}
             </FieldGroup>
 
-            <FieldGroup>
-              <FieldLabel>Protein (g) (optional)</FieldLabel>
+            <FieldGroup className="gap-1">
+              <FieldLabel>Protein (g)</FieldLabel>
               <Field>
                 <Input {...register('protein_g')} type="number" step="1" placeholder="0" min="0"/>
               </Field>
               {errors.protein_g && <FieldError>{errors.protein_g.message}</FieldError>}
             </FieldGroup>
 
-            <FieldGroup>
-              <FieldLabel>Carbs (g) (optional)</FieldLabel>
+            <FieldGroup className="gap-1">
+              <FieldLabel>Carbs (g)</FieldLabel>
               <Field>
                 <Input {...register('carbs_g')} type="number" step="1" placeholder="0" min="0"/>
               </Field>
               {errors.carbs_g && <FieldError>{errors.carbs_g.message}</FieldError>}
             </FieldGroup>
 
-            <FieldGroup>
-              <FieldLabel>Fat (g) (optional)</FieldLabel>
+            <FieldGroup className="gap-1">
+              <FieldLabel>Fat (g)</FieldLabel>
               <Field>
                 <Input {...register('fat_g')} type="number" step="1" placeholder="0" min="0"/>
               </Field>

@@ -686,6 +686,14 @@ export interface MealCreateRequest {
   food_items: MealFoodItemInput[];
 }
 
+export interface MealUpdate {
+  meal_type?: MealTypeOption;
+  meal_time?: string;
+  notes?: string;
+  photo_url?: string;
+  food_items?: MealFoodItemInput[];
+}
+
 export interface MealFoodItemResponse {
   id: string;
   food_name: string;
@@ -754,10 +762,40 @@ export interface OrderResponse {
   meal_id: string;
 }
 
+export interface ScheduledOrderResponse {
+  id: string;
+  menu_item_id: string;
+  meal_id: string;
+  meal_type: string;
+  meal_time: string; // ISO datetime string
+  menu_item_name: string;
+  restaurant_name: string;
+  calories: number | null;
+  price: number | null;
+  portion_size: number;
+  portion_unit: string;
+}
+
 // Orders API
 export const ordersApi = {
   createOrder: async (data: OrderCreate): Promise<OrderResponse> => {
     const response = await apiClient.post<OrderResponse>('/orders', data);
+    return response.data;
+  },
+  
+  getScheduledOrders: async (days: number = 7): Promise<ScheduledOrderResponse[]> => {
+    const response = await apiClient.get<ScheduledOrderResponse[]>('/orders/scheduled', {
+      params: { days },
+    });
+    return response.data;
+  },
+
+  deleteOrder: async (orderId: string): Promise<void> => {
+    await apiClient.delete(`/orders/${orderId}`);
+  },
+
+  updateOrderMeal: async (orderId: string, mealUpdate: MealUpdate): Promise<ScheduledOrderResponse> => {
+    const response = await apiClient.put<ScheduledOrderResponse>(`/orders/${orderId}/meal`, mealUpdate);
     return response.data;
   },
 };

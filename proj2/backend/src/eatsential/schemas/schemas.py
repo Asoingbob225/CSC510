@@ -487,6 +487,24 @@ class OrderResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ScheduledOrderResponse(BaseModel):
+    """Extended order response with related meal and menu item data"""
+
+    id: str
+    menu_item_id: str
+    meal_id: str
+    meal_type: str
+    meal_time: datetime
+    menu_item_name: str
+    restaurant_name: str
+    calories: Optional[float] = None
+    price: Optional[float] = None
+    portion_size: float
+    portion_unit: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # --- Goal Tracking Schemas ---
 
 

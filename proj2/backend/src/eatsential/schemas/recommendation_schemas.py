@@ -47,8 +47,8 @@ class RecommendedItem(BaseModel):
     name: str
     score: float = Field(ge=0.0, le=1.0)
     explanation: str
-    price: float
-    calories: float
+    price: Optional[float] = None
+    calories: Optional[float] = None
 
 
 class RecommendationResponse(BaseModel):
