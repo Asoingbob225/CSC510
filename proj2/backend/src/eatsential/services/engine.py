@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import random
 from collections.abc import Sequence
 from dataclasses import dataclass
 from decimal import Decimal
@@ -17,6 +18,8 @@ from sqlalchemy.orm import Session, selectinload
 
 if TYPE_CHECKING:
     from google.genai.client import Client as GenAiClient
+
+MAX_LLM_CANDIDATES = 100
 
 from ..models.models import (
     GoalDB,
@@ -158,6 +161,10 @@ class RecommendationService:
                 user.id,
             )
             return RecommendationResponse(items=[])
+        if len(safe_candidates) > MAX_LLM_CANDIDATES:
+            safe_candidates = random.sample(
+                safe_candidates, MAX_LLM_CANDIDATES
+            )
 
         if (request.mode or "llm") == "baseline":
             baseline = self._get_baseline_meals(context, filtered_candidates, filters)
@@ -478,6 +485,8 @@ class RecommendationService:
                     name=item.name,
                     score=score,
                     explanation=explanation,
+                    price=price,
+                    calories=calories,
                 )
             )
 
@@ -645,12 +654,17 @@ class RecommendationService:
                 explanation_candidate = str(explanation_raw)
             explanation = explanation_candidate.strip() or "Selected by LLM ranking"
 
+            price = getattr(item, "price", None)
+            calories = getattr(item, "calories", None)
+
             recommendations.append(
                 RecommendedItem(
                     item_id=str(item.id),
                     name=name,
                     score=score,
                     explanation=explanation,
+                    price=price,
+                    calories=calories,
                 )
             )
 
@@ -704,7 +718,7 @@ class RecommendationService:
             f"Request Filters:\n{json.dumps(filters_payload, indent=2)}\n\n"
             f"Candidate {entity_type.title()}s:\n"
             f"{json.dumps(candidates_payload, indent=2)}\n\n"
-            "Task: From the candidate list provided, select and rank the top 5 items "
+            f"Task: From the candidate list provided, select and rank the top {self.max_results} items "
             "that best match the user's profile, health context, and request filters. "
             "For each item, provide a score between 0.0 and 1.0 "
             "and a short explanation for why it's a good match.\n\n"

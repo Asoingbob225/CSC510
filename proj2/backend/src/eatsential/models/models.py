@@ -591,6 +591,23 @@ class MenuItem(Base):
         "AllergenDB", secondary=menu_item_allergens, back_populates="menu_items"
     )
 
+# ============================================================================
+# Orders Model
+# ============================================================================
+
+class Orders(Base):
+    """SQLAlchemy model representing a potentially scheduled order for a user."""
+
+    __tablename__ = "orders"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    menu_item_id : Mapped[str] = mapped_column(
+        String, ForeignKey("menu_items.id", ondelete="CASCADE"), nullable=False
+    )
+    meal_id : Mapped[str] = mapped_column(
+        String, ForeignKey("meals.id", ondelete="CASCADE"), nullable=False
+    )
+
 
 # ============================================================================
 # Audit Log Models
