@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import random
 from collections.abc import Sequence
 from dataclasses import dataclass
 from decimal import Decimal
@@ -17,6 +18,8 @@ from sqlalchemy.orm import Session, selectinload
 
 if TYPE_CHECKING:
     from google.genai.client import Client as GenAiClient
+
+MAX_LLM_CANDIDATES = 100
 
 from ..models.models import (
     GoalDB,
@@ -134,6 +137,11 @@ class RecommendationService:
 
         if not safe_candidates:
             return RecommendationResponse(items=[])
+
+        if len(safe_candidates) > MAX_LLM_CANDIDATES:
+            safe_candidates = random.sample(
+                safe_candidates, MAX_LLM_CANDIDATES
+            )
 
         if (request.mode or "llm") == "baseline":
             baseline = self._get_baseline_meals(context, safe_candidates, filters)
