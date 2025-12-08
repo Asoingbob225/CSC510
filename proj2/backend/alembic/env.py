@@ -15,7 +15,6 @@ from src.eatsential.models import (  # noqa: F401 - needed for Base.metadata
     ChatMessage,
     ChatSession,
     MenuItem,
-    RecommendationFeedbackDB,
     Restaurant,
     UserDB,
 )
