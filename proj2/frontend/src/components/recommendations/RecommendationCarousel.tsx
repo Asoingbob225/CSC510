@@ -826,21 +826,7 @@ export function RecommendationCarousel({
                     <span>Reasoned by {mode === 'llm' ? 'LLM' : 'baseline'} engine</span>
                     <span>{item.explanation ? 'Explainer available' : 'No explanation'}</span>
                   </div>
-                )}
-
-                {item.highlights.length > 0 && (
-                  <ul className="mb-4 space-y-1 text-sm text-muted-foreground">
-                    {item.highlights.map((highlight, index) => (
-                      <li key={`${item.id}-highlight-${index}`}>• {highlight}</li>
-                    ))}
-                  </ul>
-                )}
-
-                <div className="mt-auto space-y-2">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Reasoned by {mode === 'llm' ? 'LLM' : 'baseline'} engine</span>
-                    <span>{item.explanation ? 'Explainer available' : 'No explanation'}</span>
-                  </div>
+                
                   <div className="flex gap-2">
                     <Button
                       type="button"
